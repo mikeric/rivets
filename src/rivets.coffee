@@ -4,19 +4,14 @@
 # license : MIT
 
 window.rivets = do ->
-  registerBinding = (el, interface, contexts, type, callback) ->
-    $("*[data-#{type}]", el).each ->
-      path = $(this).attr("data-#{type}").split '.'
-      context = path.shift()
-      keypath = path.join '.'
+  registerBinding = (el, interface, type, context, keypath) ->
+    bindings[type] el, interface.read(context, keypath)
 
-      callback this, interface.read contexts[context], keypath
+    interface.subscribe context, keypath, (value) ->
+      bindings[type] el, value
 
-      interface.subscribe contexts[context], keypath, (value) =>
-        callback this, value
-
-      if inputValue = getInputValue this
-        interface.publish contexts[context], keypath, inputValue
+    if inputValue = getInputValue el
+      interface.publish context, keypath, inputValue
 
   setAttribute = (el, attr, value, mirrored=false) ->
     if value
@@ -59,5 +54,19 @@ window.rivets = do ->
         setAttribute el, attr, value
 
   bind: (el, interface, contexts={}) ->
-    for type, callback of bindings
-      registerBinding el, interface, contexts, type, callback
+    $(el).add($('*', el)).each ->
+      target = this
+      nodeMap = target.attributes
+      
+      if nodeMap.length > 0
+        [0..(nodeMap.length - 1)].forEach (n) ->
+          node = nodeMap[n]
+          
+          if /^data-/.test node.name
+            type = node.name.replace 'data-', ''
+
+            if _.include _.keys(bindings), type
+              path = node.value.split '.'
+              context = path.shift()
+              keypath = path.join '.'
+              registerBinding $(target), interface, type, contexts[context], keypath
