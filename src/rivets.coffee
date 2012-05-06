@@ -5,14 +5,15 @@
 
 window.rivets = do ->
   registerBinding = (el, adapter, type, context, keypath) ->
-    bindings[type] el, adapter.read(context, keypath)
+    bind = bindings[type] || attributeBinding type
+    bind el, adapter.read context, keypath
 
     adapter.subscribe context, keypath, (value) ->
-      bindings[type] el, value
+      bind el, value
 
     if type in bidirectionalBindings
       $(el).bind 'change', ->
-        adapter.publish context, keypath, getInputValue(this)
+        adapter.publish context, keypath, getInputValue this
 
   setAttribute = (el, attr, value, mirrored=false) ->
     if value
@@ -47,13 +48,11 @@ window.rivets = do ->
     value: (el, value) ->
       $(el).val value
 
-  bidirectionalBindings = ['value', 'checked', 'unchecked', 'selected', 'unselected']
-  bindableAttributes = ['id', 'class', 'name', 'src', 'href', 'alt', 'title', 'placeholder']
+  attributeBinding = (attr) ->
+    (el, value) ->
+      setAttribute el, attr, value
 
-  for attr in bindableAttributes
-    do (attr) ->
-      bindings[attr] = (el, value) ->
-        setAttribute el, attr, value
+  bidirectionalBindings = ['value', 'checked', 'unchecked', 'selected', 'unselected']
 
   bind: (el, adapter, contexts={}) ->
     $(el).add($('*', el)).each ->
@@ -66,9 +65,7 @@ window.rivets = do ->
 
           if /^data-/.test node.name
             type = node.name.replace 'data-', ''
-
-            if type of bindings
-              path = node.value.split '.'
-              context = path.shift()
-              keypath = path.join '.'
-              registerBinding $(target), adapter, type, contexts[context], keypath
+            path = node.value.split '.'
+            context = path.shift()
+            keypath = path.join '.'
+            registerBinding $(target), adapter, type, contexts[context], keypath

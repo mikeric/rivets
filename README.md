@@ -24,7 +24,7 @@ No contrived example here yet, but the `rivets` module is simple. It exposes a s
 - **data-unchecked**: two-way inverse binding that sets the node's checked state.
 - **data-selected**: two-way binding that sets the node's selected state.
 - **data-unselected**: two-way inverse binding that sets the node's checked state.
-- **data-[attribute]**: one-way binding that sets the node's attribute value (currently only for a few select attributes).
+- **data-[attribute]**: one-way binding that sets the node's attribute value.
 
 ## Adapters
 
