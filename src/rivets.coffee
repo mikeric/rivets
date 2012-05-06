@@ -10,8 +10,9 @@ window.rivets = do ->
     adapter.subscribe context, keypath, (value) ->
       bindings[type] el, value
 
-    if inputValue = getInputValue el
-      adapter.publish context, keypath, inputValue
+    if _.include bidirectionalBindings, type
+      $(el).bind 'change', ->
+        adapter.publish context, keypath, getInputValue(this)
 
   setAttribute = (el, attr, value, mirrored=false) ->
     if value
@@ -21,8 +22,8 @@ window.rivets = do ->
 
   getInputValue = (el) ->
     switch $(el).attr 'type'
-      when 'text', 'textarea', 'password', 'select-one' then $(this).val()
-      when 'checkbox' then $(this).is ':checked'
+      when 'text', 'textarea', 'password', 'select-one' then $(el).val()
+      when 'checkbox' then $(el).is ':checked'
 
   bindings =
     show: (el, value) ->
@@ -46,6 +47,7 @@ window.rivets = do ->
     value: (el, value) ->
       $(el).val value
 
+  bidirectionalBindings = ['value', 'checked', 'unchecked', 'selected', 'unselected']
   bindableAttributes = ['id', 'class', 'name', 'src', 'href', 'alt', 'title', 'placeholder']
 
   for attr in bindableAttributes
@@ -57,11 +59,11 @@ window.rivets = do ->
     $(el).add($('*', el)).each ->
       target = this
       nodeMap = target.attributes
-      
+
       if nodeMap.length > 0
         [0..(nodeMap.length - 1)].forEach (n) ->
           node = nodeMap[n]
-          
+
           if /^data-/.test node.name
             type = node.name.replace 'data-', ''
 
