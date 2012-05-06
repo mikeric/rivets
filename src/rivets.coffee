@@ -4,14 +4,14 @@
 # license : MIT
 
 window.rivets = do ->
-  registerBinding = (el, interface, type, context, keypath) ->
-    bindings[type] el, interface.read(context, keypath)
+  registerBinding = (el, adapter, type, context, keypath) ->
+    bindings[type] el, adapter.read(context, keypath)
 
-    interface.subscribe context, keypath, (value) ->
+    adapter.subscribe context, keypath, (value) ->
       bindings[type] el, value
 
     if inputValue = getInputValue el
-      interface.publish context, keypath, inputValue
+      adapter.publish context, keypath, inputValue
 
   setAttribute = (el, attr, value, mirrored=false) ->
     if value
@@ -53,7 +53,7 @@ window.rivets = do ->
       bindings[attr] = (el, value) ->
         setAttribute el, attr, value
 
-  bind: (el, interface, contexts={}) ->
+  bind: (el, adapter, contexts={}) ->
     $(el).add($('*', el)).each ->
       target = this
       nodeMap = target.attributes
@@ -69,4 +69,4 @@ window.rivets = do ->
               path = node.value.split '.'
               context = path.shift()
               keypath = path.join '.'
-              registerBinding $(target), interface, type, contexts[context], keypath
+              registerBinding $(target), adapter, type, contexts[context], keypath
