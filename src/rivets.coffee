@@ -10,7 +10,7 @@ window.rivets = do ->
     adapter.subscribe context, keypath, (value) ->
       bindings[type] el, value
 
-    if _.include bidirectionalBindings, type
+    if type in bidirectionalBindings
       $(el).bind 'change', ->
         adapter.publish context, keypath, getInputValue(this)
 
@@ -67,7 +67,7 @@ window.rivets = do ->
           if /^data-/.test node.name
             type = node.name.replace 'data-', ''
 
-            if _.include _.keys(bindings), type
+            if type of bindings
               path = node.value.split '.'
               context = path.shift()
               keypath = path.join '.'
