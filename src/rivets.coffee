@@ -12,25 +12,25 @@ window.rivets = do ->
       bind el, value
 
     if type in bidirectionalBindings
-      $(el).bind 'change', ->
+      el.addEventListener 'change', ->
         adapter.publish context, keypath, getInputValue this
 
   setAttribute = (el, attr, value, mirrored=false) ->
     if value
-      $(el).attr attr, if mirrored then attr else value
+      el.setAttribute attr, if mirrored then attr else value
     else
-      $(el).removeAttr attr
+      el.removeAttribute attr
 
   getInputValue = (el) ->
-    switch $(el).attr 'type'
-      when 'text', 'textarea', 'password', 'select-one' then $(el).val()
-      when 'checkbox' then $(el).is ':checked'
+    switch el.type
+      when 'text', 'textarea', 'password', 'select-one' then el.value
+      when 'checkbox' then el.checked
 
   bindings =
     show: (el, value) ->
-      if value then $(el).show() else $(el).hide()
+      el.style.display = if value then '' else 'none'
     hide: (el, value) ->
-      if value then $(el).hide() else $(el).show()
+      el.style.display = if value then 'none' else ''
     enabled: (el, value) ->
       setAttribute el, 'disabled', !value, true
     disabled: (el, value) ->
@@ -44,9 +44,9 @@ window.rivets = do ->
     unselected: (el, value) ->
       setAttribute el, 'checked', !value, true
     text: (el, value) ->
-      $(el).text value or ''
+      el.innerHTML = value or ''
     value: (el, value) ->
-      $(el).val value
+      el.value = value
 
   attributeBinding = (attr) ->
     (el, value) ->
@@ -55,17 +55,18 @@ window.rivets = do ->
   bidirectionalBindings = ['value', 'checked', 'unchecked', 'selected', 'unselected']
 
   bind: (el, adapter, contexts={}) ->
-    $(el).add($('*', el)).each ->
-      target = this
-      nodeMap = target.attributes
+    nodes = el.getElementsByTagName '*'
 
-      if nodeMap.length > 0
-        [0..(nodeMap.length - 1)].forEach (n) ->
-          node = nodeMap[n]
+    [0..(nodes.length - 1)].forEach (n) ->
+      node = nodes[n]
+      
+      if node.attributes.length > 0
+        [0..(node.attributes.length - 1)].forEach (n) ->
+          attribute = node.attributes[n]
 
-          if /^data-/.test node.name
-            type = node.name.replace 'data-', ''
-            path = node.value.split '.'
+          if /^data-/.test attribute.name
+            type = attribute.name.replace 'data-', ''
+            path = attribute.value.split '.'
             context = path.shift()
             keypath = path.join '.'
-            registerBinding $(target), adapter, type, contexts[context], keypath
+            registerBinding node, adapter, type, contexts[context], keypath
