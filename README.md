@@ -15,6 +15,7 @@ No contrived example here yet, but the `rivets` module is simple. It exposes a s
 #### Available bindings:
 
 - **data-text**: one-way binding that sets the node's text.
+- **data-html**: one-way binding that sets the node's html content.
 - **data-value**: two-way binding that sets the node's value.
 - **data-show**: one-way binding that sets the node's display state.
 - **data-hide**: one-way inverse binding that sets the node's display state.

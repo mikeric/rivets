@@ -41,8 +41,10 @@ bindings =
   selected: (el, value) ->
     setAttribute el, 'selected', value, true
   unselected: (el, value) ->
-    setAttribute el, 'checked', !value, true
+    setAttribute el, 'selected', !value, true
   text: (el, value) ->
+    el.innerText = value or ''
+  html: (el, value) ->
     el.innerHTML = value or ''
   value: (el, value) ->
     el.value = value
