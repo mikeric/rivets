@@ -10,53 +10,49 @@ registerBinding = (el, adapter, type, context, keypath) ->
   adapter.subscribe context, keypath, (value) ->
     bind el, value
 
-  if type in bidirectionalBindings
+  if type in bidirectionals
     el.addEventListener 'change', ->
       adapter.publish context, keypath, getInputValue this
-
-setAttribute = (el, attr, value, mirrored=false) ->
-  if value
-    el.setAttribute attr, if mirrored then attr else value
-  else
-    el.removeAttribute attr
 
 getInputValue = (el) ->
   switch el.type
     when 'text', 'textarea', 'password', 'select-one' then el.value
     when 'checkbox' then el.checked
 
+attributeBinding = (attr) -> (el, value) ->
+  if value then el.setAttribute attr, value else el.removeAttribute attr
+
+stateBinding = (attr, inverse = false) -> (el, value) ->
+  attributeBinding(attr) el, if inverse is !value then attr else false
+
 bindings =
-  show: (el, value) ->
-    el.style.display = if value then '' else 'none'
-  hide: (el, value) ->
-    el.style.display = if value then 'none' else ''
-  enabled: (el, value) ->
-    setAttribute el, 'disabled', !value, true
-  disabled: (el, value) ->
-    setAttribute el, 'disabled', value, true
-  checked: (el, value) ->
-    setAttribute el, 'checked', value, true
-  unchecked: (el, value) ->
-    setAttribute el, 'checked', !value, true
-  selected: (el, value) ->
-    setAttribute el, 'selected', value, true
-  unselected: (el, value) ->
-    setAttribute el, 'selected', !value, true
+  checked:
+    stateBinding 'checked'
+  selected:
+    stateBinding 'selected'
+  disabled:
+    stateBinding 'disabled'
+  unchecked:
+    stateBinding 'checked', true
+  unselected:
+    stateBinding 'selected', true
+  enabled:
+    stateBinding 'disabled', true
   text: (el, value) ->
     el.innerText = value or ''
   html: (el, value) ->
     el.innerHTML = value or ''
   value: (el, value) ->
     el.value = value
+  show: (el, value) ->
+    el.style.display = if value then '' else 'none'
+  hide: (el, value) ->
+    el.style.display = if value then 'none' else ''
 
-attributeBinding = (attr) ->
-  (el, value) ->
-    setAttribute el, attr, value
-
-bidirectionalBindings = ['value', 'checked', 'unchecked', 'selected', 'unselected']
+bidirectionals = ['value', 'checked', 'unchecked', 'selected', 'unselected']
 
 rivets =
-  bind: (el, adapter, contexts={}) ->
+  bind: (el, adapter, contexts = {}) ->
     nodes = el.getElementsByTagName '*'
 
     [0..(nodes.length - 1)].forEach (n) ->
