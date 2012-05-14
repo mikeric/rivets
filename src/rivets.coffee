@@ -17,7 +17,7 @@ registerBinding = (el, adapter, type, context, keypath) ->
 getInputValue = (el) ->
   switch el.type
     when 'text', 'textarea', 'password', 'select-one' then el.value
-    when 'checkbox' then el.checked
+    when 'checkbox', 'radio' then el.checked
 
 attributeBinding = (attr) -> (el, value) ->
   if value then el.setAttribute attr, value else el.removeAttribute attr
