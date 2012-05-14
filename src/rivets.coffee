@@ -53,21 +53,14 @@ bidirectionals = ['value', 'checked', 'unchecked', 'selected', 'unselected']
 
 rivets =
   bind: (el, adapter, contexts = {}) ->
-    nodes = el.getElementsByTagName '*'
-
-    [0..(nodes.length - 1)].forEach (n) ->
-      node = nodes[n]
-
-      if node.attributes.length > 0
-        [0..(node.attributes.length - 1)].forEach (n) ->
-          attribute = node.attributes[n]
-
-          if /^data-/.test attribute.name
-            type = attribute.name.replace 'data-', ''
-            path = attribute.value.split '.'
-            context = path.shift()
-            keypath = path.join '.'
-            registerBinding node, adapter, type, contexts[context], keypath
+    for node in el.getElementsByTagName '*'
+      for attribute in node.attributes
+        if /^data-/.test attribute.name
+          type = attribute.name.replace 'data-', ''
+          path = attribute.value.split '.'
+          context = path.shift()
+          keypath = path.join '.'
+          registerBinding node, adapter, type, contexts[context], keypath
 
 if module?
   module.exports = rivets
