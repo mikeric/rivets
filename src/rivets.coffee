@@ -19,7 +19,7 @@ class Rivets.Binding
   # Conditionally also does the inverse and listens to the element for changes
   # to propogate back to the context object.
   bind: =>
-    @adapter.subscribe @context, @keypath, (value) => @set value
+    @set() and @adapter.subscribe @context, @keypath, (value) => @set value
 
     if @type in Rivets.bidirectionals
       @el.addEventListener 'change', (el) =>
@@ -79,6 +79,8 @@ Rivets.interface =
     Rivets.bindings[routine] = routineFunction
 
   bind: (el, adapter, contexts = {}) ->
+    bindings = []
+
     for node in el.getElementsByTagName '*'
       for attribute in node.attributes
         if /^data-/.test attribute.name
@@ -86,9 +88,10 @@ Rivets.interface =
           path = attribute.value.split '.'
           context = path.shift()
           keypath = path.join '.'
+          bindings.push new Rivets.Binding node, adapter, type, contexts[context], keypath
 
-          binding = new Rivets.Binding node, adapter, type, contexts[context], keypath
-          binding.bind()
+    binding.bind() for binding in bindings
+    bindings.length
 
 # Exports rivets for both CommonJS and the browser.
 if module?
