@@ -3,53 +3,60 @@
 #     author : Michael Richards
 #     license : MIT
 
-# Registers a specific binding routine between a model object and a DOM element.
-# All information for that routine is passed in when calling this function; the
-# specific element to bind to, an adapter interface for the model object, the
-# type of binding, the context object and the keypath at which to subscribe to
-# on the model object.
-registerBinding = (el, adapter, type, context, keypath) ->
-  bind = bindings[type] || attributeBinding type
-  bind el, adapter.read context, keypath
+Rivets =
+  Helpers: {}
 
-  adapter.subscribe context, keypath, (value) ->
-    bind el, value
+class Rivets.Binding
+  constructor: (@el, @adapter, @type, @context, @keypath) ->
+    @routine = Rivets.bindings[@type] || Rivets.Helpers.attributeBinding @type
 
-  if type in bidirectionals
-    el.addEventListener 'change', ->
-      adapter.publish context, keypath, getInputValue this
+  # Sets a value for this binding. Basically just runs the routine on the
+  # element with a suplied value.
+  set: (value = null) =>
+    @routine @el, value || @adapter.read @context, @keypath
+
+  # Subscribes to the context object for changes on the specific keypath.
+  # Conditionally also does the inverse and listens to the element for changes
+  # to propogate back to the context object.
+  bind: =>
+    @adapter.subscribe @context, @keypath, (value) => @set value
+
+    if @type in Rivets.bidirectionals
+      @el.addEventListener 'change', (el) =>
+        @adapter.publish @context, @keypath, Rivets.Helpers.getInputValue el
 
 # Returns the current input value for the specified element.
-getInputValue = (el) ->
+Rivets.Helpers.getInputValue = (el) ->
   switch el.type
     when 'text', 'textarea', 'password', 'select-one' then el.value
     when 'checkbox', 'radio' then el.checked
 
 # Returns an attribute binding routine for the specified attribute. This is what
 # `registerBinding` falls back to when there is no routine for the binding type.
-attributeBinding = (attr) -> (el, value) ->
+Rivets.Helpers.attributeBinding = (attr) -> (el, value) ->
   if value then el.setAttribute attr, value else el.removeAttribute attr
 
 # Returns a state binding routine for the specified attribute. Can optionally be
 # negatively evaluated. This is used to build a lot of the core state binding
 # routines.
-stateBinding = (attr, inverse = false) -> (el, value) ->
-  attributeBinding(attr) el, if inverse is !value then attr else false
+Rivets.Helpers.stateBinding = (attr, inverse = false) -> (el, value) ->
+  binding = Rivets.Helpers.attributeBinding(attr)
+  binding el, if inverse is !value then attr else false
 
 # Core binding routines.
-bindings =
+Rivets.bindings =
   checked:
-    stateBinding 'checked'
+    Rivets.Helpers.stateBinding 'checked'
   selected:
-    stateBinding 'selected'
+    Rivets.Helpers.stateBinding 'selected'
   disabled:
-    stateBinding 'disabled'
+    Rivets.Helpers.stateBinding 'disabled'
   unchecked:
-    stateBinding 'checked', true
+    Rivets.Helpers.stateBinding 'checked', true
   unselected:
-    stateBinding 'selected', true
+    Rivets.Helpers.stateBinding 'selected', true
   enabled:
-    stateBinding 'disabled', true
+    Rivets.Helpers.stateBinding 'disabled', true
   text: (el, value) ->
     el.innerText = value or ''
   html: (el, value) ->
@@ -63,13 +70,13 @@ bindings =
 
 # Bindings that should also be observed for changes on the DOM element in order
 # to propogate those changes back to the model object.
-bidirectionals = ['value', 'checked', 'unchecked', 'selected', 'unselected']
+Rivets.bidirectionals = ['value', 'checked', 'unchecked', 'selected', 'unselected']
 
 # The rivets module exposes `register` and `bind` functions to register new
 # binding routines and bind contexts to DOM elements.
-rivets =
+Rivets.interface =
   register: (routine, routineFunction) ->
-    bindings[routine] = routineFunction
+    Rivets.bindings[routine] = routineFunction
 
   bind: (el, adapter, contexts = {}) ->
     for node in el.getElementsByTagName '*'
@@ -79,10 +86,12 @@ rivets =
           path = attribute.value.split '.'
           context = path.shift()
           keypath = path.join '.'
-          registerBinding node, adapter, type, contexts[context], keypath
+
+          binding = new Rivets.Binding node, adapter, type, contexts[context], keypath
+          binding.bind()
 
 # Exports rivets for both CommonJS and the browser.
 if module?
-  module.exports = rivets
+  module.exports = Rivets.interface
 else
-  @rivets = rivets
+  @rivets = Rivets.interface
