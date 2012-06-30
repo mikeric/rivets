@@ -65,8 +65,12 @@ bindings =
 # to propogate those changes back to the model object.
 bidirectionals = ['value', 'checked', 'unchecked', 'selected', 'unselected']
 
-# The rivets module. Exposes a single `bind` function.
+# The rivets module exposes `register` and `bind` functions to register new
+# binding routines and bind contexts to DOM elements.
 rivets =
+  register: (routine, routineFunction) ->
+    bindings[routine] = routineFunction
+
   bind: (el, adapter, contexts = {}) ->
     for node in el.getElementsByTagName '*'
       for attribute in node.attributes
