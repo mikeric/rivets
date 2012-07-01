@@ -10,7 +10,7 @@ Rivets = {}
 class Rivets.Binding
   # All information about the binding is passed into the constructor; the DOM
   # element, the type of binding, the context object and the keypath at which to
-  # listed to for changes.
+  # listen to for changes.
   constructor: (@el, @type, @context, @keypath) ->
     @routine = Rivets.bindings[@type] || attributeBinding @type
 
@@ -29,6 +29,25 @@ class Rivets.Binding
     if @type in bidirectionals
       @el.addEventListener 'change', (el) =>
         Rivets.config.adapter.publish @context, @keypath, getInputValue el
+
+class Rivets.View
+  constructor: (@el, @contexts) ->
+    @build()
+
+  build: =>
+    @bindings = []
+
+    for node in @el.getElementsByTagName '*'
+      for attribute in node.attributes
+        if /^data-/.test attribute.name
+          type = attribute.name.replace 'data-', ''
+          path = attribute.value.split '.'
+          context = @contexts[path.shift()]
+          keypath = path.join '.'
+          @bindings.push new Rivets.Binding node, type, context, keypath
+
+  bind: =>
+    binding.bind() for binding in @bindings
 
 # Returns the current input value for the specified element.
 getInputValue = (el) ->
@@ -83,7 +102,7 @@ Rivets.config =
 
 # The rivets module. This is the public interface that gets exported.
 rivets =
-  # Used to set configuration options and the adapter interface.
+  # Used to set configuration options.
   configure: (options={}) ->
     for property, value of options
       Rivets.config[property] = value
@@ -93,21 +112,12 @@ rivets =
   register: (routine, routineFunction) ->
     Rivets.bindings[routine] = routineFunction
 
-  # Binds a set of context objects to the specified DOM element.
+  # Binds a set of context objects to the specified DOM element. Returns a new
+  # Rivets.View instance.
   bind: (el, contexts = {}) ->
-    bindings = []
-
-    for node in el.getElementsByTagName '*'
-      for attribute in node.attributes
-        if /^data-/.test attribute.name
-          type = attribute.name.replace 'data-', ''
-          path = attribute.value.split '.'
-          context = path.shift()
-          keypath = path.join '.'
-          bindings.push new Rivets.Binding node, type, contexts[context], keypath
-
-    binding.bind() for binding in bindings
-    bindings.length
+    view = new Rivets.View(el, contexts)
+    view.bind()
+    view
 
 # Exports rivets for both CommonJS and the browser.
 if module?
