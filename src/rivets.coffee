@@ -30,10 +30,14 @@ class Rivets.Binding
       @el.addEventListener 'change', (el) =>
         Rivets.config.adapter.publish @context, @keypath, getInputValue el
 
+# Parses and stores the binding data for an entire view binding.
 class Rivets.View
+  # Takes the parent DOM element as well as all the context objects that are to
+  # be binded to the view.
   constructor: (@el, @contexts) ->
     @build()
 
+  # Parses and builds new Rivets.Binding instances for the data bindings.
   build: =>
     @bindings = []
 
@@ -46,6 +50,7 @@ class Rivets.View
           keypath = path.join '.'
           @bindings.push new Rivets.Binding node, type, context, keypath
 
+  # Binds all of the current bindings for this view.
   bind: =>
     binding.bind() for binding in @bindings
 
