@@ -3,9 +3,14 @@
 #     author : Michael Richards
 #     license : MIT
 
+# The Rivets namespace.
 Rivets = {}
 
+# A single binding between a model attribute and a DOM element.
 class Rivets.Binding
+  # All information about the binding is passed into the constructor; the DOM
+  # element, the type of binding, the context object and the keypath at which to
+  # listed to for changes.
   constructor: (@el, @type, @context, @keypath) ->
     @routine = Rivets.bindings[@type] || attributeBinding @type
 
@@ -76,16 +81,19 @@ Rivets.bindings =
 Rivets.config =
   preloadData: true
 
-# The rivets module exposes `register` and `bind` functions to register new
-# binding routines and bind contexts to DOM elements.
+# The rivets module. This is the public interface that gets exported.
 rivets =
+  # Used to set configuration options and the adapter interface.
   configure: (options={}) ->
     for property, value of options
       Rivets.config[property] = value
 
+  # Registers a new binding routine function that can be used immediately in the
+  # view. This is what is used to add custom data bindings.
   register: (routine, routineFunction) ->
     Rivets.bindings[routine] = routineFunction
 
+  # Binds a set of context objects to the specified DOM element.
   bind: (el, contexts = {}) ->
     bindings = []
 
