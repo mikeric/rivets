@@ -18,7 +18,8 @@ class Rivets.Binding
   # Conditionally also does the inverse and listens to the element for changes
   # to propogate back to the context object.
   bind: =>
-    @set() and @adapter.subscribe @context, @keypath, (value) => @set value
+    @set() if Rivets.config.preloadData
+    @adapter.subscribe @context, @keypath, (value) => @set value
 
     if @type in bidirectionals
       @el.addEventListener 'change', (el) =>
@@ -79,7 +80,7 @@ Rivets.config =
 # binding routines and bind contexts to DOM elements.
 rivets =
   configure: (options={}) ->
-    for property, value in options
+    for property, value of options
       Rivets.config[property] = value
 
   register: (routine, routineFunction) ->
