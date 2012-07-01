@@ -3,12 +3,11 @@
 #     author : Michael Richards
 #     license : MIT
 
-Rivets =
-  Helpers: {}
+Rivets = {}
 
 class Rivets.Binding
   constructor: (@el, @adapter, @type, @context, @keypath) ->
-    @routine = Rivets.bindings[@type] || Rivets.Helpers.attributeBinding @type
+    @routine = Rivets.bindings[@type] || attributeBinding @type
 
   # Sets a value for this binding. Basically just runs the routine on the
   # element with a suplied value.
@@ -21,42 +20,46 @@ class Rivets.Binding
   bind: =>
     @set() and @adapter.subscribe @context, @keypath, (value) => @set value
 
-    if @type in Rivets.bidirectionals
+    if @type in bidirectionals
       @el.addEventListener 'change', (el) =>
-        @adapter.publish @context, @keypath, Rivets.Helpers.getInputValue el
+        @adapter.publish @context, @keypath, getInputValue el
 
 # Returns the current input value for the specified element.
-Rivets.Helpers.getInputValue = (el) ->
+getInputValue = (el) ->
   switch el.type
     when 'text', 'textarea', 'password', 'select-one' then el.value
     when 'checkbox', 'radio' then el.checked
 
 # Returns an attribute binding routine for the specified attribute. This is what
 # `registerBinding` falls back to when there is no routine for the binding type.
-Rivets.Helpers.attributeBinding = (attr) -> (el, value) ->
+attributeBinding = (attr) -> (el, value) ->
   if value then el.setAttribute attr, value else el.removeAttribute attr
 
 # Returns a state binding routine for the specified attribute. Can optionally be
 # negatively evaluated. This is used to build a lot of the core state binding
 # routines.
-Rivets.Helpers.stateBinding = (attr, inverse = false) -> (el, value) ->
-  binding = Rivets.Helpers.attributeBinding(attr)
+stateBinding = (attr, inverse = false) -> (el, value) ->
+  binding = attributeBinding(attr)
   binding el, if inverse is !value then attr else false
+
+# Bindings that should also be observed for changes on the DOM element in order
+# to propogate those changes back to the model object.
+bidirectionals = ['value', 'checked', 'unchecked', 'selected', 'unselected']
 
 # Core binding routines.
 Rivets.bindings =
   checked:
-    Rivets.Helpers.stateBinding 'checked'
+    stateBinding 'checked'
   selected:
-    Rivets.Helpers.stateBinding 'selected'
+    stateBinding 'selected'
   disabled:
-    Rivets.Helpers.stateBinding 'disabled'
+    stateBinding 'disabled'
   unchecked:
-    Rivets.Helpers.stateBinding 'checked', true
+    stateBinding 'checked', true
   unselected:
-    Rivets.Helpers.stateBinding 'selected', true
+    stateBinding 'selected', true
   enabled:
-    Rivets.Helpers.stateBinding 'disabled', true
+    stateBinding 'disabled', true
   text: (el, value) ->
     el.innerText = value or ''
   html: (el, value) ->
@@ -68,13 +71,17 @@ Rivets.bindings =
   hide: (el, value) ->
     el.style.display = if value then 'none' else ''
 
-# Bindings that should also be observed for changes on the DOM element in order
-# to propogate those changes back to the model object.
-Rivets.bidirectionals = ['value', 'checked', 'unchecked', 'selected', 'unselected']
+# Default configuration.
+Rivets.config =
+  preloadData: true
 
 # The rivets module exposes `register` and `bind` functions to register new
 # binding routines and bind contexts to DOM elements.
-Rivets.interface =
+rivets =
+  configure: (options={}) ->
+    for property, value in options
+      Rivets.config[property] = value
+
   register: (routine, routineFunction) ->
     Rivets.bindings[routine] = routineFunction
 
@@ -95,6 +102,6 @@ Rivets.interface =
 
 # Exports rivets for both CommonJS and the browser.
 if module?
-  module.exports = Rivets.interface
+  module.exports = rivets
 else
-  @rivets = Rivets.interface
+  @rivets = rivets
