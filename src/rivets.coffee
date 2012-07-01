@@ -6,24 +6,24 @@
 Rivets = {}
 
 class Rivets.Binding
-  constructor: (@el, @adapter, @type, @context, @keypath) ->
+  constructor: (@el, @type, @context, @keypath) ->
     @routine = Rivets.bindings[@type] || attributeBinding @type
 
   # Sets a value for this binding. Basically just runs the routine on the
   # element with a suplied value.
   set: (value = null) =>
-    @routine @el, value || @adapter.read @context, @keypath
+    @routine @el, value || Rivets.config.adapter.read @context, @keypath
 
   # Subscribes to the context object for changes on the specific keypath.
   # Conditionally also does the inverse and listens to the element for changes
   # to propogate back to the context object.
   bind: =>
     @set() if Rivets.config.preloadData
-    @adapter.subscribe @context, @keypath, (value) => @set value
+    Rivets.config.adapter.subscribe @context, @keypath, (value) => @set value
 
     if @type in bidirectionals
       @el.addEventListener 'change', (el) =>
-        @adapter.publish @context, @keypath, getInputValue el
+        Rivets.config.adapter.publish @context, @keypath, getInputValue el
 
 # Returns the current input value for the specified element.
 getInputValue = (el) ->
@@ -86,7 +86,7 @@ rivets =
   register: (routine, routineFunction) ->
     Rivets.bindings[routine] = routineFunction
 
-  bind: (el, adapter, contexts = {}) ->
+  bind: (el, contexts = {}) ->
     bindings = []
 
     for node in el.getElementsByTagName '*'
@@ -96,7 +96,7 @@ rivets =
           path = attribute.value.split '.'
           context = path.shift()
           keypath = path.join '.'
-          bindings.push new Rivets.Binding node, adapter, type, contexts[context], keypath
+          bindings.push new Rivets.Binding node, type, contexts[context], keypath
 
     binding.bind() for binding in bindings
     bindings.length
