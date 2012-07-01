@@ -1,6 +1,6 @@
 # Rivets.js
 
-Rivets.js is a declarative, observer-based DOM-binding facility that plays well with existing frameworks and supports multiple contexts. It aims to be lightweight, extensible, and configurable to work with any event-driven model.
+Rivets.js is a declarative, observer-based DOM-binding facility that plays well with existing frameworks and supports multiple contexts. It aims to be lightweight (1.2KB minified and gzipped), extensible, and configurable to work with any event-driven model.
 
 ## Disclaimer
 
@@ -8,9 +8,33 @@ Rivets.js is alpha software. While it should work well enough for prototyping an
 
 ## Usage
 
-No contrived example here yet, but the `rivets` module is simple. It exposes a single `bind` function that takes three arguements; the parent DOM element that you wish to bind to, an adapter interface, and a set of context objects.
+No contrived example here yet, but the `rivets` module is simple. It exposes three main functions; a `configure` function that is used to set configuration options and the adapter interface, a `register` function that is used to register custom data bindings and a `bind` function that is used to bind a set of context objects to a DOM element.
 
-    rivets.bind(el, adapter, {user: currentUser, item: item});
+The `bind` function takes two arguements; the parent DOM element that you wish to bind to and a set of context objects.
+
+    rivets.bind(el, {user: currentUser, item: item});
+
+Configuring Rivets.js is required before anything can be binded, as binding is dependant on having an adapter defined. Here's a sample configuration for using Rivets.js with Backbone.js.
+
+    rivets.configure({
+      adapter: {
+        subscribe: function(obj, keypath, callback) {
+          obj.on('change:' + keypath, function(m, v) { callback(v) });
+        },
+        read: function(obj, keypath) {
+          obj.get(keypath);
+        },
+        publish: function(obj, keypath, value) {
+          obj.set(keypath, data);
+        }
+      }
+    });
+
+To add custom data bindings, use the `register` function and pass in an identifier for the binding as well as the binding function. Binding functions take two arguments; `el` which is the DOM element and `value` which is any new incomming value from the observed context object.
+
+    rivets.register('active', function(el, value){
+      el.className = value ? 'active' : 'inactive';
+    });
 
 #### Available bindings:
 
@@ -29,23 +53,9 @@ No contrived example here yet, but the `rivets` module is simple. It exposes a s
 
 ## Adapters
 
-Rivets.js is model interface-agnostic, meaning that it can work with any event-driven model by way of defining an adapter. The following standard adapter observes `change:[attribute]` style events and works with frameworks like [Backbone.js](http://documentcloud.github.com/backbone/), [Spine.js](http://spinejs.com/) and [Stapes.js](http://hay.github.com/stapes/) with minimal alterations for each. If your model's events API differs, it's trivial to write an adapter that will work with your own model objects.
+Rivets.js is model interface-agnostic, meaning it can work with any event-driven model by way of defining an adapter. This makes it trivial to set up Rivets.js to work with frameworks like [Backbone.js](http://documentcloud.github.com/backbone/), [Spine.js](http://spinejs.com/) and [Stapes.js](http://hay.github.com/stapes/) with minimal configuration.
 
-An adapter is an object that responds to `subscribe`, `read` and `publish`.
-
-    backboneAdapter = {
-      subscribe: function(obj, keypath, callback) {
-        obj.on('change:' + keypath, function(m, v) { callback(v) });
-      },
-      
-      read: function(obj, keypath) {
-        obj.get(keypath);
-      },
-      
-      publish: function(obj, keypath, value) {
-        obj.set(keypath, data);
-      }
-    }
+An adapter is just an object that responds to `subscribe`, `read` and `publish`.
 
 #### subscribe(obj, keypath, callback)
 
