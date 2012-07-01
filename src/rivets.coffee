@@ -37,14 +37,20 @@ class Rivets.View
   constructor: (@el, @contexts) ->
     @build()
 
+  # The regular expression used to match Rivets.js data binding attributes.
+  bindingRegExp: =>
+    prefix = Rivets.config.prefix
+    if prefix then new RegExp("^data-#{prefix}-") else /^data-/
+
   # Parses and builds new Rivets.Binding instances for the data bindings.
   build: =>
     @bindings = []
 
     for node in @el.getElementsByTagName '*'
       for attribute in node.attributes
-        if /^data-/.test attribute.name
-          type = attribute.name.replace 'data-', ''
+        dataRegExp = new RegExp(@data, 'g')
+        if @bindingRegExp().test attribute.name
+          type = attribute.name.replace @bindingRegExp(), ''
           path = attribute.value.split '.'
           context = @contexts[path.shift()]
           keypath = path.join '.'
