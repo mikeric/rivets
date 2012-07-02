@@ -11,13 +11,17 @@ class Rivets.Binding
   # All information about the binding is passed into the constructor; the DOM
   # element, the type of binding, the context object and the keypath at which to
   # listen to for changes.
-  constructor: (@el, @type, @context, @keypath) ->
+  constructor: (@el, @type, @context, @keypath, @formatters = []) ->
     @routine = Rivets.bindings[@type] || attributeBinding @type
 
   # Sets a value for this binding. Basically just runs the routine on the
-  # element with a suplied value.
+  # element with a suplied value and applies any formatters.
   set: (value = null) =>
-    @routine @el, value || Rivets.config.adapter.read @context, @keypath
+    if value or= Rivets.config.adapter.read @context, @keypath
+      for formatter in @formatters
+        value = Rivets.config.formatters[formatter] value
+
+      @routine @el, value
 
   # Subscribes to the context object for changes on the specific keypath.
   # Conditionally also does the inverse and listens to the element for changes
@@ -51,10 +55,12 @@ class Rivets.View
         dataRegExp = new RegExp(@data, 'g')
         if @bindingRegExp().test attribute.name
           type = attribute.name.replace @bindingRegExp(), ''
-          path = attribute.value.split '.'
+          pipes = attribute.value.split('|').map (pipe) -> pipe.trim()
+          path = pipes.shift().split '.'
           context = @contexts[path.shift()]
           keypath = path.join '.'
-          @bindings.push new Rivets.Binding node, type, context, keypath
+
+          @bindings.push new Rivets.Binding node, type, context, keypath, pipes
 
   # Binds all of the current bindings for this view.
   bind: =>
