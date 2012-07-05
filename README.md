@@ -10,11 +10,16 @@ Rivets.js is alpha software. While it should work well enough for prototyping an
 
 No contrived example here yet, but the `rivets` module is simple. It exposes three main functions; a `configure` function that is used to set configuration options and the adapter interface, a `register` function that is used to register custom data bindings and a `bind` function that is used to bind a set of context objects to a DOM element.
 
-The `bind` function takes two arguements; the parent DOM element that you wish to bind to and a set of context objects.
+The `bind` function takes two arguments; the parent DOM element that you wish to bind to and a set of context objects.
 
     rivets.bind(el, {user: currentUser, item: item});
 
-Configuring Rivets.js is required before anything can be binded, as binding is dependant on having an adapter defined. Here's a sample configuration for using Rivets.js with Backbone.js.
+Context objects are referenced in your data-binding declarations using dot-notation:
+
+    <input type="text" data-value="currentUser.email">
+    <input type="checkbox" data-enabled="item.active">
+
+Configuring Rivets.js is required before anything can be bound, as binding is dependant on having an adapter defined. Here's a sample configuration for using Rivets.js with Backbone.js.
 
     rivets.configure({
       adapter: {
@@ -25,12 +30,12 @@ Configuring Rivets.js is required before anything can be binded, as binding is d
           obj.get(keypath);
         },
         publish: function(obj, keypath, value) {
-          obj.set(keypath, data);
+          obj.set(keypath, value);
         }
       }
     });
 
-To add custom data bindings, use the `register` function and pass in an identifier for the binding as well as the binding function. Binding functions take two arguments; `el` which is the DOM element and `value` which is any new incomming value from the observed context object.
+To add custom data bindings, use the `register` function and pass in an identifier for the binding as well as the binding function. Binding functions take two arguments; `el` which is the DOM element and `value` which is any new incoming value from the observed context object.
 
     rivets.register('active', function(el, value){
       el.className = value ? 'active' : 'inactive';
