@@ -16,19 +16,20 @@ class Rivets.Binding
 
   # Sets a value for this binding. Basically just runs the routine on the
   # element with a suplied value and applies any formatters.
-  set: (value = null) =>
-    if value or= Rivets.config.adapter.read @context, @keypath
-      for formatter in @formatters
-        value = Rivets.config.formatters[formatter] value
+  set: (value) =>
+    for formatter in @formatters
+      value = Rivets.config.formatters[formatter] value
 
-      @routine @el, value
+    @routine @el, value
 
   # Subscribes to the context object for changes on the specific keypath.
   # Conditionally also does the inverse and listens to the element for changes
   # to propogate back to the context object.
   bind: =>
-    @set() if Rivets.config.preloadData
     Rivets.config.adapter.subscribe @context, @keypath, (value) => @set value
+
+    if Rivets.config.preloadData
+      @set Rivets.config.adapter.read @context, @keypath
 
     if @type in bidirectionals
       @el.addEventListener 'change', (e) =>
