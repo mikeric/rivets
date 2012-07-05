@@ -31,7 +31,8 @@ class Rivets.Binding
     Rivets.config.adapter.subscribe @context, @keypath, (value) => @set value
 
     if @type in bidirectionals
-      @el.addEventListener 'change', (el) =>
+      @el.addEventListener 'change', (e) =>
+        el = e.target or e.srcElement
         Rivets.config.adapter.publish @context, @keypath, getInputValue el
 
 # Parses and stores the binding data for an entire view binding.
@@ -50,11 +51,12 @@ class Rivets.View
   build: =>
     @bindings = []
 
+    bindingRegExp = @bindingRegExp()
+
     for node in @el.getElementsByTagName '*'
       for attribute in node.attributes
-        dataRegExp = new RegExp(@data, 'g')
-        if @bindingRegExp().test attribute.name
-          type = attribute.name.replace @bindingRegExp(), ''
+        if bindingRegExp.test attribute.name
+          type = attribute.name.replace bindingRegExp, ''
           pipes = attribute.value.split('|').map (pipe) -> pipe.trim()
           path = pipes.shift().split '.'
           context = @contexts[path.shift()]
