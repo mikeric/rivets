@@ -27,7 +27,7 @@ Configuring Rivets.js is required before anything can be bound, as binding is de
           obj.on('change:' + keypath, function(m, v) { callback(v) });
         },
         read: function(obj, keypath) {
-          obj.get(keypath);
+          return obj.get(keypath);
         },
         publish: function(obj, keypath, value) {
           obj.set(keypath, value);
