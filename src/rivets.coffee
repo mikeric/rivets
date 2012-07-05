@@ -51,12 +51,10 @@ class Rivets.View
   build: =>
     @bindings = []
 
-    bindingRegExp = @bindingRegExp()
-
     for node in @el.getElementsByTagName '*'
       for attribute in node.attributes
-        if bindingRegExp.test attribute.name
-          type = attribute.name.replace bindingRegExp, ''
+        if @bindingRegExp().test attribute.name
+          type = attribute.name.replace @bindingRegExp(), ''
           pipes = attribute.value.split('|').map (pipe) -> pipe.trim()
           path = pipes.shift().split '.'
           context = @contexts[path.shift()]
