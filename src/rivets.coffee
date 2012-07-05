@@ -104,7 +104,10 @@ Rivets.bindings =
   enabled:
     stateBinding 'disabled', true
   text: (el, value) ->
-    el.innerText = value or ''
+    if el.innerText?
+      el.innerText = value or ''
+    else
+      el.textContent = value or ''
   html: (el, value) ->
     el.innerHTML = value or ''
   value: (el, value) ->
