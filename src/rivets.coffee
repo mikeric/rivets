@@ -31,7 +31,8 @@ class Rivets.Binding
     Rivets.config.adapter.subscribe @context, @keypath, (value) => @set value
 
     if @type in bidirectionals
-      @el.addEventListener 'change', (el) =>
+      @el.addEventListener 'change', (e) =>
+        el = e.target or e.srcElement
         Rivets.config.adapter.publish @context, @keypath, getInputValue el
 
 # Parses and stores the binding data for an entire view binding.
