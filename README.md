@@ -16,7 +16,7 @@ The `bind` function takes two arguments; the parent DOM element that you wish to
 
 Context objects are referenced in your data-binding declarations using dot-notation:
 
-    <input type="text" data-value="currentUser.email">
+    <input type="text" data-value="user.email">
     <input type="checkbox" data-enabled="item.active">
 
 Configuring Rivets.js is required before anything can be bound, as binding is dependant on having an adapter defined. Here's a sample configuration for using Rivets.js with Backbone.js.
