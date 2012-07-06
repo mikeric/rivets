@@ -26,108 +26,85 @@
         </ul>
       </header>
       <section>
-        <p>Rivets.js is a declarative, observer-based DOM-binding facility that plays well with existing frameworks such as <a href="http://documentcloud.github.com/backbone/">Backbone.js</a>, <a href="http://spinejs.com/">Spine.js</a> and <a href="http://hay.github.com/stapes/">Stapes.js</a>. It aims to be lightweight (1.2KB minified and gzipped), extensible, and configurable to work with any event-driven model.</p>
+        <p>Rivets.js is a declarative, observer-based DOM-binding facility that plays well with existing frameworks such as <a href="http://backbonejs.org">Backbone.js</a>, <a href="http://spinejs.com">Spine.js</a> and <a href="http://hay.github.com/stapes/">Stapes.js</a>. It aims to be lightweight (1.2KB minified and gzipped), extensible, and configurable to work with any event-driven model.</p>
+        <hr />
+        <p>Describe your UI directly in the DOM using data attributes:</p>
+<pre><code>&lt;div id=&#39;auction&#39;&gt;
+  &lt;h1 data-text=&#39;auction.title&#39;&gt;&lt;/h1&gt;
+  &lt;img data-src=&#39;auction.image_url&#39;&gt;
+  &lt;span data-text=&#39;auction.timeRemaining | time&#39;&gt;&lt;/span&gt;
 
-<hr><p>Describe your UI directly in the DOM using data attributes:</p>
-
-<pre><code>&lt;div id='auction'&gt;
-  &lt;h1 data-text='auction.title'&gt;&lt;/h1&gt;
-  &lt;img data-src='auction.image_url'&gt;
-  &lt;span data-text='auction.timeRemaining | time'&gt;&lt;/span&gt;
-
-  &lt;div class='alert-box' data-show='auction.endingSoon'&gt;
+  &lt;div class=&#39;alert-box&#39; data-show=&#39;auction.endingSoon&#39;&gt;
     &lt;p&gt;Hurry up! This auction is ending soon.&lt;/p&gt;
   &lt;/div&gt;
 
   &lt;dl&gt;
     &lt;dt&gt;Highest Bid:&lt;/dt&gt;
-    &lt;dd data-text='auction.bid | currency'&gt;&lt;/dd&gt;
+    &lt;dd data-text=&#39;auction.bid | currency&#39;&gt;&lt;/dd&gt;
     &lt;dt&gt;Bidder:&lt;/dt&gt;
-    &lt;dd data-text='auction.bidder'&gt;&lt;/dd&gt;
+    &lt;dd data-text=&#39;auction.bidder&#39;&gt;&lt;/dd&gt;
   &lt;/dl&gt;
 
   &lt;dl&gt;
     &lt;dt&gt;Bids Left:&lt;/dt&gt;
-    &lt;dd data-text='user.bidCount'&gt;&lt;/dd&gt;
+    &lt;dd data-text=&#39;user.bidCount&#39;&gt;&lt;/dd&gt;
   &lt;/dl&gt;
-&lt;/div&gt;
-</code></pre>
-
-<p>Then tell Rivets.js what model(s) to bind to what part of the DOM:</p>
-
-<pre><code>rivets.bind($('auction'), {auction: auction, user: currentUser});
-</code></pre>
-
-<h2>Configuring</h2>
-
-<p>Use <code>rivets.configure</code> to configure Rivets.js for your app. There are a few handy configuration options, such as setting the data attribute prefix and adding formatters that you can pipe binding values to, but setting the adapter is the only required configuration since Rivets.js needs to know how to observe your models for changes as they happen.</p>
-
-<h4>Adapter</h4>
-
-<p>Rivets.js is model interface-agnostic, meaning it can work with any event-driven model by way of defining an adapter. An adapter is just an object that responds to <code>subscribe</code>, <code>read</code> and <code>publish</code>. Here is a sample configuration with an adapter for using Rivets.js with Backbone.js.</p>
-
+&lt;/div&gt;</code></pre>
+        <p>Then tell Rivets.js what model(s) to bind to what part of the DOM:</p>
+<pre><code>rivets.bind($(&#39;auction&#39;), {auction: auction, user: currentUser});</code></pre>
+        <h2 id="configuring">Configuring</h2>
+        <p>Use <code>rivets.configure</code> to configure Rivets.js for your app. There are a few handy configuration options, such as setting the data attribute prefix and adding formatters that you can pipe binding values to, but setting the adapter is the only required configuration since Rivets.js needs to know how to observe your models for changes as they happen.</p>
+        <h4 id="adapter">Adapter</h4>
+        <p>Rivets.js is model interface-agnostic, meaning it can work with any event-driven model by way of defining an adapter. An adapter is just an object that responds to <code>subscribe</code>, <code>read</code> and <code>publish</code>. Here is a sample configuration with an adapter for using Rivets.js with Backbone.js.</p>
 <pre><code>rivets.configure({
   adapter: {
     subscribe: function(obj, keypath, callback) {
-      obj.on('change:' + keypath, function(m, v) { callback(v) });
+      obj.on(&#39;change:&#39; + keypath, function(m, v) { callback(v) });
     },
-    read: function(obj, key path) {
-      obj.get(keypath);
+    read: function(obj, keypath) {
+      return obj.get(keypath);
     },
     publish: function(obj, keypath, value) {
-      obj.set(keypath, data);
+      obj.set(keypath, value);
     }
   }
-});
-</code></pre>
-
-<h4>Formatters</h4>
-
-<p>Formatters are simple one-way functions that mutate the incomming value of a binding. You can use them to format dates, numbers, currencies, etc. and because they work in a similar fashion to the Unix pipeline, the output of each feeds directly as input to the next one, so you can stack as many of them together as you like.</p>
-
+});</code></pre>
+        <h4 id="formatters">Formatters</h4>
+        <p>Formatters are simple one-way functions that mutate the incoming value of a binding. You can use them to format dates, numbers, currencies, etc. and because they work in a similar fashion to the Unix pipeline, the output of each feeds directly as input to the next one, so you can stack as many of them together as you like.</p>
 <pre><code>rivets.configure({
   formatters: {
     money: function(value){
-      accounting.formatMoney(value);
+      return accounting.formatMoney(value);
     },
     date: function(value){
-      moment(value).format('MMM DD, YYYY');
+      return moment(value).format(&#39;MMM DD, YYYY&#39;);
     }
   }
-});
-</code></pre>
-
-<h4>Prefix and data preloading</h4>
-
-<p>To prevent data attribute collision, you can set the <code>prefix</code> configuration to something like 'rv' or 'bind' so that data attributes are prefixed like <code>data-rv-text</code>.</p>
-
-<p>Set the <code>preloadData</code> configuration to true or false depending on if you want the binding routines to run on the initial binding. If this is set to false, the binding routine will only run when the attribute value is updated.</p>
-
-<h2>Extending</h2>
-
-<p>You can extend Rivets.js by adding your own custom data bindings. Just use <code>rivets.register</code> by passing it an identifier and a binding function. Binding functions take two arguments: <code>el</code> which is the DOM element and <code>value</code> which is the value of the attribute that has been bound to. So let's say if we wanted a <code>data-color</code> binding that sets the element's colour. Here's what that might look like.</p>
-
-<pre><code>rivets.register('color', function(el, value){
+});</code></pre>
+        <h4 id="prefix-and-data-preloading">Prefix and data preloading</h4>
+        <p>To prevent data attribute collision, you can set the <code>prefix</code> option to something like ‘rv’ or ‘bind’ so that data attributes are prefixed like <code>data-rv-text</code>.</p>
+        <p>Set the <code>preloadData</code> option to <code>true</code> or <code>false</code> depending on if you want the binding routines to run immediately after the initial binding or not — if set to false, the binding routines will only run when the attribute value is updated.</p>
+        <h2 id="extending">Extending</h2>
+        <p>You can extend Rivets.js by adding your own custom data bindings (routines). Just pass <code>rivets.register</code> an identifier for the routine and routine function. Routine functions take two arguments, <code>el</code> which is the DOM element and <code>value</code> which is the incoming value of the attribute being bound to.</p>
+        <p>So let’s say we wanted a <code>data-color</code> binding that sets the element’s colour. Here’s what that might look like:</p>
+<pre><code>rivets.register(&#39;color&#39;, function(el, value){
   el.style.color = value;
-});
-</code></pre>
-
-<h4>Available bindings out-of-the-box</h4>
-
-<ul>
-<li>data-text</li>
-<li>data-html</li>
-<li>data-value</li>
-<li>data-show</li>
-<li>data-hide</li>
-<li>data-enabled</li>
-<li>data-disabled</li>
-<li>data-checked</li>
-<li>data-unchecked</li>
-<li>data-selected</li>
-<li>data-[attribute]</li>
-</ul>
-</section>
+});</code></pre>
+        <h4 id="available-bindings-out-of-the-box">Available bindings out-of-the-box</h4>
+        <ul>
+        <li>data-text</li>
+        <li>data-html</li>
+        <li>data-value</li>
+        <li>data-show</li>
+        <li>data-hide</li>
+        <li>data-enabled</li>
+        <li>data-disabled</li>
+        <li>data-checked</li>
+        <li>data-unchecked</li>
+        <li>data-selected</li>
+        <li>data-[attribute]</li>
+        </ul>
+      </section>
     </div>
     <script src="javascripts/scale.fix.js"></script>
     
