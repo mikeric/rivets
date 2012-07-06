@@ -1,25 +1,44 @@
 # Rivets.js
 
-Rivets.js is a declarative, observer-based DOM-binding facility that plays well with existing frameworks and supports multiple contexts. It aims to be lightweight (1.2KB minified and gzipped), extensible, and configurable to work with any event-driven model.
+Rivets.js is a declarative, observer-based DOM-binding facility that plays well with existing frameworks such as [Backbone.js](http://backbonejs.org), [Spine.js](http://spinejs.com) and [Stapes.js](http://hay.github.com/stapes/). It aims to be lightweight (1.2KB minified and gzipped), extensible, and configurable to work with any event-driven model.
 
-## Disclaimer
+---
 
-Rivets.js is alpha software. While it should work well enough for prototyping and weekend projects, it is still undergoing major development. APIs are subject to change.
+Describe your UI directly in the DOM using data attributes:
 
-## Usage
+    <div id='auction'>
+      <h1 data-text='auction.title'></h1>
+      <img data-src='auction.image_url'>
+      <span data-text='auction.timeRemaining | time'></span>
 
-No contrived example here yet, but the `rivets` module is simple. It exposes three main functions; a `configure` function that is used to set configuration options and the adapter interface, a `register` function that is used to register custom data bindings and a `bind` function that is used to bind a set of context objects to a DOM element.
+      <div class='alert-box' data-show='auction.endingSoon'>
+        <p>Hurry up! This auction is ending soon.</p>
+      </div>
 
-The `bind` function takes two arguments; the parent DOM element that you wish to bind to and a set of context objects.
+      <dl>
+        <dt>Highest Bid:</dt>
+        <dd data-text='auction.bid | currency'></dd>
+        <dt>Bidder:</dt>
+        <dd data-text='auction.bidder'></dd>
+      </dl>
 
-    rivets.bind(el, {user: currentUser, item: item});
+      <dl>
+        <dt>Bids Left:</dt>
+        <dd data-text='user.bidCount'></dd>
+      </dl>
+    </div>
 
-Context objects are referenced in your data-binding declarations using dot-notation:
+Then tell Rivets.js what model(s) to bind to what part of the DOM:
 
-    <input type="text" data-value="user.email">
-    <input type="checkbox" data-enabled="item.active">
+    rivets.bind($('auction'), {auction: auction, user: currentUser});
 
-Configuring Rivets.js is required before anything can be bound, as binding is dependant on having an adapter defined. Here's a sample configuration for using Rivets.js with Backbone.js.
+## Configuring
+
+Use `rivets.configure` to configure Rivets.js for your app. There are a few handy configuration options, such as setting the data attribute prefix and adding formatters that you can pipe binding values to, but setting the adapter is the only required configuration since Rivets.js needs to know how to observe your models for changes as they happen.
+
+#### Adapter
+
+Rivets.js is model interface-agnostic, meaning it can work with any event-driven model by way of defining an adapter. An adapter is just an object that responds to `subscribe`, `read` and `publish`. Here is a sample configuration with an adapter for using Rivets.js with Backbone.js.
 
     rivets.configure({
       adapter: {
@@ -35,46 +54,47 @@ Configuring Rivets.js is required before anything can be bound, as binding is de
       }
     });
 
-To add custom data bindings, use the `register` function and pass in an identifier for the binding as well as the binding function. Binding functions take two arguments; `el` which is the DOM element and `value` which is any new incoming value from the observed context object.
+#### Formatters
 
-    rivets.register('active', function(el, value){
-      el.className = value ? 'active' : 'inactive';
+Formatters are simple one-way functions that mutate the incoming value of a binding. You can use them to format dates, numbers, currencies, etc. and because they work in a similar fashion to the Unix pipeline, the output of each feeds directly as input to the next one, so you can stack as many of them together as you like.
+
+    rivets.configure({
+      formatters: {
+        money: function(value){
+          return accounting.formatMoney(value);
+        },
+        date: function(value){
+          return moment(value).format('MMM DD, YYYY');
+        }
+      }
     });
 
-#### Available bindings:
+#### Prefix and data preloading
 
-- **data-text**: one-way binding that sets the node's text.
-- **data-html**: one-way binding that sets the node's html content.
-- **data-value**: two-way binding that sets the node's value.
-- **data-show**: one-way binding that sets the node's display state.
-- **data-hide**: one-way inverse binding that sets the node's display state.
-- **data-enabled**: one-way binding that sets the node's enabled state.
-- **data-disabled**: one-way inverse binding that sets the node's enabled state.
-- **data-checked**: two-way binding that sets the node's checked state.
-- **data-unchecked**: two-way inverse binding that sets the node's checked state.
-- **data-selected**: two-way binding that sets the node's selected state.
-- **data-unselected**: two-way inverse binding that sets the node's checked state.
-- **data-[attribute]**: one-way binding that sets the node's attribute value.
+To prevent data attribute collision, you can set the `prefix` option to something like 'rv' or 'bind' so that data attributes are prefixed like `data-rv-text`.
 
-## Adapters
+Set the `preloadData` option to `true` or `false` depending on if you want the binding routines to run immediately after the initial binding or not — if set to false, the binding routines will only run when the attribute value is updated.
 
-Rivets.js is model interface-agnostic, meaning it can work with any event-driven model by way of defining an adapter. This makes it trivial to set up Rivets.js to work with frameworks like [Backbone.js](http://documentcloud.github.com/backbone/), [Spine.js](http://spinejs.com/) and [Stapes.js](http://hay.github.com/stapes/) with minimal configuration.
+## Extending
 
-An adapter is just an object that responds to `subscribe`, `read` and `publish`.
+You can extend Rivets.js by adding your own custom data bindings (routines). Just pass `rivets.register` an identifier for the routine and routine function. Routine functions take two arguments, `el` which is the DOM element and `value` which is the incoming value of the attribute being bound to.
 
-#### subscribe(obj, keypath, callback)
+So let's say we wanted a `data-color` binding that sets the element's colour. Here's what that might look like:
 
-- **obj**: The model object that we want to subscribe to for attribute changes. These are what get passed in as context objects when calling `rivets.bind`.
-- **keypath**: The attribute name that we want to scope to when subscribing to the model's attribute changes. This would most commonly be a single key or a nested keypath (support for nested keypaths depends on if your model object publishes events on nested attribute changes). You may define and intercept this value in any format, for example if your model object uses `author[profile][bio]` instead of `author.profile.bio`.
-- **callback**: The function that performs the binding routine. Call this function with the new attribute value.
+    rivets.register('color', function(el, value){
+      el.style.color = value;
+    });
 
-#### read(obj, keypath)
+#### Available bindings out-of-the-box
 
-- **obj**: The model object that we want to read the attribute from.
-- **keypath**: The attribute name that we want to read from the model object.
-
-#### publish(obj, keypath, value)
-
-- **obj**: The model object that we want to set the new attribute value on.
-- **keypath**: The attribute name that we want to set on the model object.
-- **value**: The new attribute value that we want to set on the model.
+- data-text
+- data-html
+- data-value
+- data-show
+- data-hide
+- data-enabled
+- data-disabled
+- data-checked
+- data-unchecked
+- data-selected
+- data-[attribute]
