@@ -1,5 +1,5 @@
 #     rivets.js
-#     version : 0.1.8
+#     version : 0.1.9
 #     author : Michael Richards
 #     license : MIT
 
@@ -9,46 +9,46 @@ Rivets = {}
 # A single binding between a model attribute and a DOM element.
 class Rivets.Binding
   # All information about the binding is passed into the constructor; the DOM
-  # element, the type of binding, the context object and the keypath at which to
-  # listen to for changes.
-  constructor: (@el, @type, @context, @keypath, @formatters = []) ->
-    @routine = Rivets.bindings[@type] || attributeBinding @type
+  # element, the routine identifier, the model object and the keypath at which
+  # to listen for changes.
+  constructor: (@el, @type, @model, @keypath, @formatters = []) ->
+    @routine = Rivets.routines[@type] || attributeBinding @type
 
-  # Sets a value for this binding. Basically just runs the routine on the
-  # element with a suplied value and applies any formatters.
+  # Sets the value for the binding. This Basically just runs the binding routine
+  # with the suplied value and applies any formatters.
   set: (value) =>
     for formatter in @formatters
       value = Rivets.config.formatters[formatter] value
 
     @routine @el, value
 
-  # Subscribes to the context object for changes on the specific keypath.
-  # Conditionally also does the inverse and listens to the element for changes
-  # to propogate back to the context object.
+  # Subscribes to the model for changes at the specified keypath. Bi-directional
+  # routines will also listen for changes on the element to propagate them back
+  # to the model.
   bind: =>
-    Rivets.config.adapter.subscribe @context, @keypath, (value) => @set value
+    Rivets.config.adapter.subscribe @model, @keypath, (value) => @set value
 
     if Rivets.config.preloadData
-      @set Rivets.config.adapter.read @context, @keypath
+      @set Rivets.config.adapter.read @model, @keypath
 
     if @type in bidirectionals
       @el.addEventListener 'change', (e) =>
         el = e.target or e.srcElement
-        Rivets.config.adapter.publish @context, @keypath, getInputValue el
+        Rivets.config.adapter.publish @model, @keypath, getInputValue el
 
-# Parses and stores the binding data for an entire view binding.
+# A collection of bindings for a parent element.
 class Rivets.View
-  # Takes the parent DOM element as well as all the context objects that are to
-  # be binded to the view.
-  constructor: (@el, @contexts) ->
+  # The parent DOM element and the model objects for binding are passed into the
+  # constructor.
+  constructor: (@el, @models) ->
     @build()
 
-  # The regular expression used to match Rivets.js data binding attributes.
+  # Regular expression used to match binding attributes.
   bindingRegExp: =>
     prefix = Rivets.config.prefix
     if prefix then new RegExp("^data-#{prefix}-") else /^data-/
 
-  # Parses and builds new Rivets.Binding instances for the data bindings.
+  # Builds the Rivets.Binding instances for the view.
   build: =>
     @bindings = []
 
@@ -58,10 +58,10 @@ class Rivets.View
           type = attribute.name.replace @bindingRegExp(), ''
           pipes = attribute.value.split('|').map (pipe) -> pipe.trim()
           path = pipes.shift().split '.'
-          context = @contexts[path.shift()]
+          model = @models[path.shift()]
           keypath = path.join '.'
 
-          @bindings.push new Rivets.Binding node, type, context, keypath, pipes
+          @bindings.push new Rivets.Binding node, type, model, keypath, pipes
 
   # Binds all of the current bindings for this view.
   bind: =>
@@ -86,11 +86,11 @@ stateBinding = (attr, inverse = false) -> (el, value) ->
   binding el, if inverse is !value then attr else false
 
 # Bindings that should also be observed for changes on the DOM element in order
-# to propogate those changes back to the model object.
+# to propagate those changes back to the model object.
 bidirectionals = ['value', 'checked', 'unchecked', 'selected', 'unselected']
 
 # Core binding routines.
-Rivets.bindings =
+Rivets.routines =
   checked:
     stateBinding 'checked'
   selected:
@@ -123,20 +123,20 @@ Rivets.config =
 
 # The rivets module. This is the public interface that gets exported.
 rivets =
-  # Used to set configuration options.
+  # Used for setting configuration options.
   configure: (options={}) ->
     for property, value of options
       Rivets.config[property] = value
 
-  # Registers a new binding routine function that can be used immediately in the
-  # view. This is what is used to add custom data bindings.
-  register: (routine, routineFunction) ->
-    Rivets.bindings[routine] = routineFunction
+  # Registers a new binding routine that can be used immediately in views. This
+  # is used for adding custom binding routines.
+  register: (identifier, routine) ->
+    Rivets.routines[identifier] = routine
 
-  # Binds a set of context objects to the specified DOM element. Returns a new
-  # Rivets.View instance.
-  bind: (el, contexts = {}) ->
-    view = new Rivets.View(el, contexts)
+  # Binds a set of model objects to a parent DOM element. Returns a Rivets.View
+  # instance.
+  bind: (el, models = {}) ->
+    view = new Rivets.View(el, models)
     view.bind()
     view
 
