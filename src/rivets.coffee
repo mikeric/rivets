@@ -26,7 +26,7 @@ class Rivets.Binding
   # routines will also listen for changes on the element to propagate them back
   # to the model.
   bind: =>
-    Rivets.config.adapter.subscribe @model, @keypath, (value) => @set value
+    Rivets.config.adapter.subscribe @model, @keypath, @set
 
     if Rivets.config.preloadData
       @set Rivets.config.adapter.read @model, @keypath
