@@ -30,7 +30,7 @@ Describe your UI directly in the DOM using data attributes:
 
 Then tell Rivets.js what model(s) to bind to what part of the DOM:
 
-    rivets.bind($('auction'), {auction: auction, user: currentUser});
+    rivets.bind($('#auction'), {auction: auction, user: currentUser});
 
 ## Configuring
 
