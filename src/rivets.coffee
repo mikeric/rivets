@@ -51,11 +51,12 @@ class Rivets.View
   # Builds the Rivets.Binding instances for the view.
   build: =>
     @bindings = []
+    bindingRegExp = @bindingRegExp()
 
     for node in @el.getElementsByTagName '*'
       for attribute in node.attributes
-        if @bindingRegExp().test attribute.name
-          type = attribute.name.replace @bindingRegExp(), ''
+        if bindingRegExp.test attribute.name
+          type = attribute.name.replace bindingRegExp, ''
           pipes = attribute.value.split('|').map (pipe) -> pipe.trim()
           path = pipes.shift().split '.'
           model = @models[path.shift()]
