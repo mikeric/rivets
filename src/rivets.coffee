@@ -32,7 +32,7 @@ class Rivets.Binding
       @set Rivets.config.adapter.read @model, @keypath
 
     if @type in bidirectionals
-      @el.addEventListener('change', @publish)
+      @el.addEventListener 'change', @publish
 
   publish: (e) =>
     el = e.target or e.srcElement
@@ -43,7 +43,7 @@ class Rivets.Binding
     Rivets.config.adapter.unsubscribe @model, @keypath, @set
 
     if @type in bidirectionals
-      @el.removeEventListener('change', @publish)
+      @el.removeEventListener 'change', @publish
 
 # A collection of bindings for a parent element.
 class Rivets.View
