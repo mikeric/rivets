@@ -26,15 +26,24 @@ class Rivets.Binding
   # routines will also listen for changes on the element to propagate them back
   # to the model.
   bind: =>
-    Rivets.config.adapter.subscribe @model, @keypath, (value) => @set value
+    Rivets.config.adapter.subscribe @model, @keypath, @set
 
     if Rivets.config.preloadData
       @set Rivets.config.adapter.read @model, @keypath
 
     if @type in bidirectionals
-      @el.addEventListener 'change', (e) =>
-        el = e.target or e.srcElement
-        Rivets.config.adapter.publish @model, @keypath, getInputValue el
+      @el.addEventListener('change', @publish)
+
+  publish: (e) =>
+    el = e.target or e.srcElement
+    Rivets.config.adapter.publish @model, @keypath, getInputValue el
+
+  # Unsubscribes from the model and the element
+  unbind: =>
+    Rivets.config.adapter.unsubscribe @model, @keypath, @set
+
+    if @type in bidirectionals
+      @el.removeEventListener('change', @publish)
 
 # A collection of bindings for a parent element.
 class Rivets.View
