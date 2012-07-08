@@ -86,7 +86,16 @@ getInputValue = (el) ->
 # Returns an attribute binding routine for the specified attribute. This is what
 # `registerBinding` falls back to when there is no routine for the binding type.
 attributeBinding = (attr) -> (el, value) ->
-  if value then el.setAttribute attr, value else el.removeAttribute attr
+  switch attr
+    when 'checked'
+      el.setAttribute( 'checked', value )
+      el.checked = value
+      el.defaultChecked = value
+    else
+      if value
+        el.setAttribute attr, value
+      else
+        el.removeAttribute attr
 
 # Returns a state binding routine for the specified attribute. Can optionally be
 # negatively evaluated. This is used to build a lot of the core state binding
