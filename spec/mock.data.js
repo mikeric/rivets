@@ -4,11 +4,32 @@ function Data(attributes) {
 }
 
 Data.prototype.on = function(key, callback) {
-  this.change[key][callback] = true;
+  if(this.hasCallback(key, callback))
+    return;
+  var ref = this.change[key] || (this.change[key] = []);
+  this.change[key].push(callback);
+}
+
+Data.prototype.hasCallback = function(key, callback) {
+  return indexOf(this.change[key], callback) !== -1;
+}
+
+indexOf = function(array, value) {
+  array || (array = [])
+  if(array.indexOf)
+    return array.indexOf(value);
+
+  for(i in array || {}) {
+    if(array[i] === value)
+      return i;
+  }
+  return -1;
 }
 
 Data.prototype.off = function(key, callback) {
-  delete this.change[key][callback];
+  var index = indexOf(this.change[key], callback);
+  if(index !== -1)
+    this.change[key].splice(index, 1);
 }
 
 Data.prototype.set = function(attributes) {
@@ -23,15 +44,17 @@ Data.prototype.set = function(attributes) {
 }
 
 Data.prototype.get = function(key) {
-  this.attributes[key];
+  return this.attributes[key];
 }
 
 Data.prototype.alertCallbacks = function(key) {
   if(!this.change[key])
     return;
 
-  for(callback in this.change[key])
-    callback(this.get(key));
+  var key, callbacks;
+  for(i in this.change[key]) {
+    this.change[key][i](this.get(key));
+  }
 }
 
 window.Data = Data;
