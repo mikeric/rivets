@@ -75,6 +75,9 @@ class Rivets.View
 
           @bindings.push new Rivets.Binding node, type, model, keypath, pipes
 
+    # To avoid returning the result of the loop
+    return
+
   # Binds all of the current bindings for this view.
   bind: =>
     binding.bind() for binding in @bindings
