@@ -61,8 +61,10 @@ class Rivets.View
   build: =>
     @bindings = []
     bindingRegExp = @bindingRegExp()
+    elements = [@el]
+    elements.concat Array::slice.call @el.getElementsByTagName '*'
 
-    for node in @el.getElementsByTagName '*'
+    for node in elements
       for attribute in node.attributes
         if bindingRegExp.test attribute.name
           type = attribute.name.replace bindingRegExp, ''
