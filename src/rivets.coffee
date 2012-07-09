@@ -34,6 +34,7 @@ class Rivets.Binding
     if @type in bidirectionals
       @el.addEventListener 'change', @publish
 
+  # Publishes the value currently set on the input element back to the model.
   publish: (e) =>
     el = e.target or e.srcElement
     Rivets.config.adapter.publish @model, @keypath, getInputValue el
