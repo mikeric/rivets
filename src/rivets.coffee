@@ -86,23 +86,7 @@ getInputValue = (el) ->
 # Returns an attribute binding routine for the specified attribute. This is what
 # `registerBinding` falls back to when there is no routine for the binding type.
 attributeBinding = (attr) -> (el, value) ->
-  switch attr
-    when 'checked'
-      el.setAttribute( 'checked', value )
-      el.checked = value
-      el.defaultChecked = value
-    else
-      if value
-        el.setAttribute attr, value
-      else
-        el.removeAttribute attr
-
-# Returns a state binding routine for the specified attribute. Can optionally be
-# negatively evaluated. This is used to build a lot of the core state binding
-# routines.
-stateBinding = (attr, inverse = false) -> (el, value) ->
-  binding = attributeBinding(attr)
-  binding el, if inverse is !value then attr else false
+  if value then el.setAttribute attr, value else el.removeAttribute attr
 
 # Bindings that should also be observed for changes on the DOM element in order
 # to propagate those changes back to the model object.
@@ -110,31 +94,31 @@ bidirectionals = ['value', 'checked', 'unchecked', 'selected', 'unselected']
 
 # Core binding routines.
 Rivets.routines =
-  checked:
-    stateBinding 'checked'
-  selected:
-    stateBinding 'selected'
-  disabled:
-    stateBinding 'disabled'
-  unchecked:
-    stateBinding 'checked', true
-  unselected:
-    stateBinding 'selected', true
-  enabled:
-    stateBinding 'disabled', true
+  enabled: (el, value) ->
+    el.disabled = !value
+  disabled: (el, value) ->
+    el.disabled = !!value
+  checked: (el, value) ->
+    el.checked = !!value
+  unchecked: (el, value) ->
+    el.checked = !value
+  selected: (el, value) ->
+    el.selected = !!value
+  unselected: (el, value) ->
+    el.selected = !value
+  show: (el, value) ->
+    el.style.display = if value then '' else 'none'
+  hide: (el, value) ->
+    el.style.display = if value then 'none' else ''
+  html:  (el, value) ->
+    el.innerHTML = value or ''
+  value: (el, value) ->
+    el.value = value
   text: (el, value) ->
     if el.innerText?
       el.innerText = value or ''
     else
       el.textContent = value or ''
-  html: (el, value) ->
-    el.innerHTML = value or ''
-  value: (el, value) ->
-    el.value = value
-  show: (el, value) ->
-    el.style.display = if value then '' else 'none'
-  hide: (el, value) ->
-    el.style.display = if value then 'none' else ''
 
 # Default configuration.
 Rivets.config =
