@@ -64,7 +64,7 @@ class Rivets.View
     @bindings = []
     bindingRegExp = @bindingRegExp()
 
-    for node in @el.getElementsByTagName '*'
+    for node in @el.children()
       for attribute in node.attributes
         if bindingRegExp.test attribute.name
           type = attribute.name.replace bindingRegExp, ''
