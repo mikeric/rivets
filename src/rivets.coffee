@@ -6,9 +6,8 @@
 # The Rivets namespace.
 Rivets = {}
 
-# Polyfill For String::trim
-unless String::trim
-  String::trim = -> return @.replace(/^\s\*/, '').replace(/\s\s*$/, '')
+# Polyfill For String::trim.
+unless String::trim then String::trim = -> @replace /^\s+|\s+$/g, ""
 
 # Polyfill For Array::map
 unless Array::map
