@@ -56,7 +56,13 @@ class Rivets.Binding
       @set Rivets.config.adapter.read @model, @keypath
 
     if @type in bidirectionals
-      @el.addEventListener 'change', @publish
+
+      #Check to see if addEventListener is available
+      if window.addEventListener
+        @el.addEventListener 'change', @publish
+      else
+      # Assume we are in IE and attach the event
+        @el.attatchEvent 'change', @publish
 
   # Publishes the value currently set on the input element back to the model.
   publish: (e) =>
