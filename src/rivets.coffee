@@ -34,6 +34,10 @@ class Rivets.Binding
       @el.addEventListener 'change', (e) =>
         el = e.target or e.srcElement
         Rivets.config.adapter.publish @context, @keypath, getInputValue el
+      # if our model has no value for a field, but the bound element does, set the
+      # value in the model
+      if !Rivets.config.adapter.read(@context, @keypath) && value = getInputValue @el
+        Rivets.config.adapter.publish @context, @keypath, value
 
 # Parses and stores the binding data for an entire view binding.
 class Rivets.View
