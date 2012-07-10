@@ -6,6 +6,9 @@
 # The Rivets namespace.
 Rivets = {}
 
+# Polyfill For String::trim.
+unless String::trim then String::trim = -> @replace /^\s+|\s+$/g, ""
+
 # A single binding between a model attribute and a DOM element.
 class Rivets.Binding
   # All information about the binding is passed into the constructor; the DOM
@@ -32,7 +35,12 @@ class Rivets.Binding
       @set Rivets.config.adapter.read @model, @keypath
 
     if @type in bidirectionals
-      @el.addEventListener 'change', @publish
+      # Check to see if addEventListener is available.
+      if window.addEventListener
+        @el.addEventListener 'change', @publish
+      else
+      # Assume we are in IE and use attachEvent.
+        @el.attachEvent 'change', @publish
 
   # Publishes the value currently set on the input element back to the model.
   publish: (e) =>
@@ -60,7 +68,7 @@ class Rivets.View
       for attribute in node.attributes
         if bindingRegExp.test attribute.name
           type = attribute.name.replace bindingRegExp, ''
-          pipes = attribute.value.split('|').map (pipe) -> pipe.trim()
+          pipes = (pipe.trim() for pipe in attribute.value.split '|')
           path = pipes.shift().split '.'
           model = @models[path.shift()]
           keypath = path.join '.'
