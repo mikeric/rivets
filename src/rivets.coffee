@@ -145,8 +145,13 @@ rivets =
     view.bind()
     view
 
-# Exports rivets for both CommonJS and the browser.
+# Exports rivets for both CommonJS, AMD and the browser.
 if module?
   module.exports = rivets
+else if typeof define == 'function' and define.amd
+  # Define the module for require.js
+  define(()->
+      return rivets
+    )
 else
   @rivets = rivets
