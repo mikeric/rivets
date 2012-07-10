@@ -9,26 +9,6 @@ Rivets = {}
 # Polyfill For String::trim.
 unless String::trim then String::trim = -> @replace /^\s+|\s+$/g, ""
 
-# Polyfill For Array::map
-unless Array::map
-  Array::map = (callback) ->
-    if this is null
-      throw new TypeError "Can't convert #{this} to object"
-    O = Object(this)
-    len = O.length >>> 0
-
-    throw new TypeError "#{callback} is not a function" unless typeof callback is 'function'
-
-    T = arguments[1]
-    A = new Array(len)
-    k = 0;
-
-    while k < len
-      A[k] = callbackfn.call(T, O[k], k, O)  if k of O
-      k++
-
-    return A
-
 # A single binding between a model attribute and a DOM element.
 class Rivets.Binding
   # All information about the binding is passed into the constructor; the DOM
@@ -88,7 +68,7 @@ class Rivets.View
       for attribute in node.attributes
         if bindingRegExp.test attribute.name
           type = attribute.name.replace bindingRegExp, ''
-          pipes = attribute.value.split('|').map (pipe) -> pipe.trim()
+          pipes = (pipe.trim() for pipe in attribute.value.split '|')
           path = pipes.shift().split '.'
           model = @models[path.shift()]
           keypath = path.join '.'
