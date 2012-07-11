@@ -51,7 +51,7 @@
   &lt;/dl&gt;
 &lt;/div&gt;</code></pre>
         <p>Then tell Rivets.js what model(s) to bind to what part of the DOM:</p>
-<pre><code>rivets.bind($(&#39;auction&#39;), {auction: auction, user: currentUser});</code></pre>
+<pre><code>rivets.bind($(&#39;#auction&#39;), {auction: auction, user: currentUser});</code></pre>
         <h2 id="configuring">Configuring</h2>
         <p>Use <code>rivets.configure</code> to configure Rivets.js for your app. There are a few handy configuration options, such as setting the data attribute prefix and adding formatters that you can pipe binding values to, but setting the adapter is the only required configuration since Rivets.js needs to know how to observe your models for changes as they happen.</p>
         <h4 id="adapter">Adapter</h4>
