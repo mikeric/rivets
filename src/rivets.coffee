@@ -14,8 +14,11 @@ class Rivets.Binding
   # All information about the binding is passed into the constructor; the DOM
   # element, the routine identifier, the model object and the keypath at which
   # to listen for changes.
-  constructor: (@el, @type, @model, @keypath, @formatters = []) ->
-    @routine = Rivets.routines[@type] || attributeBinding @type
+  constructor: (@el, @type, @bindType, @model, @keypath, @formatters = []) ->
+    if @bindType is "event"
+      @routine = eventBinding @type
+    else
+      @routine = Rivets.routines[@type] || attributeBinding @type
 
   # Sets the value for the binding. This Basically just runs the binding routine
   # with the suplied value and applies any formatters.
@@ -23,7 +26,11 @@ class Rivets.Binding
     for formatter in @formatters
       value = Rivets.config.formatters[formatter] value
 
-    @routine @el, value
+    if @bindType is "event"
+      @routine @el, value, @currentListener
+      @currentListener = value
+    else
+      @routine @el, value
 
   # Subscribes to the model for changes at the specified keypath. Bi-directional
   # routines will also listen for changes on the element to propagate them back
@@ -34,13 +41,8 @@ class Rivets.Binding
     if Rivets.config.preloadData
       @set Rivets.config.adapter.read @model, @keypath
 
-    if @type in bidirectionals
-      # Check to see if addEventListener is available.
-      if window.addEventListener
-        @el.addEventListener 'change', @publish
-      else
-      # Assume we are in IE and use attachEvent.
-        @el.attachEvent 'change', @publish
+    if @bindType is "bidirectional"
+      bindEvent @el, 'change', @publish
 
   # Publishes the value currently set on the input element back to the model.
   publish: (e) =>
@@ -64,27 +66,56 @@ class Rivets.View
   build: =>
     @bindings = []
     bindingRegExp = @bindingRegExp()
-
+    eventRegExp = /^event-/
     for node in @el.getElementsByTagName '*'
       for attribute in node.attributes
         if bindingRegExp.test attribute.name
+          bindType = "attribute"
           type = attribute.name.replace bindingRegExp, ''
           pipes = (pipe.trim() for pipe in attribute.value.split '|')
           path = pipes.shift().split '.'
           model = @models[path.shift()]
           keypath = path.join '.'
 
-          @bindings.push new Rivets.Binding node, type, model, keypath, pipes
+          if eventRegExp.test type
+            type = type.replace eventRegExp, ''
+            bindType = "event"
+          else if type in bidirectionals 
+            bindType = "bidirectional"
+
+          @bindings.push new Rivets.Binding node, type, bindType, model, keypath, pipes
 
   # Binds all of the current bindings for this view.
   bind: =>
     binding.bind() for binding in @bindings
+
+# Cross-browser event binding
+bindEvent = (el, event, fn) ->
+  # Check to see if addEventListener is available.
+  if window.addEventListener
+    el.addEventListener event, fn
+  else
+  # Assume we are in IE and use attachEvent.
+    el.attachEvent event, fn
+
+unbindEvent = (el, event, fn) ->
+  # Check to see if addEventListener is available.
+  if window.removeEventListener
+    el.removeEventListener event, fn
+  else
+  # Assume we are in IE and use attachEvent.
+    el.detachEvent event, fn
 
 # Returns the current input value for the specified element.
 getInputValue = (el) ->
   switch el.type
     when 'text', 'textarea', 'password', 'select-one' then el.value
     when 'checkbox', 'radio' then el.checked
+
+# Returns an element binding routine for the specified attribute.
+eventBinding = (event) -> (el, bind, unbind) ->
+    bindEvent el, event, bind if bind
+    unbindEvent el, event, unbind if unbind
 
 # Returns an attribute binding routine for the specified attribute. This is what
 # `registerBinding` falls back to when there is no routine for the binding type.
