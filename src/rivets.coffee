@@ -52,6 +52,7 @@ class Rivets.View
   # The parent DOM element and the model objects for binding are passed into the
   # constructor.
   constructor: (@el, @models) ->
+    @el = @el.get(0) if @el.jquery
     @build()
 
   # Regular expression used to match binding attributes.
