@@ -1,7 +1,7 @@
 {
   "name" : "rivets",
   "description" : "Declarative DOM-binding facility.",
-  "version" : "0.1.11",
+  "version" : "0.1.12",
   "author" : "Michael Richards",
   "main" : "./lib/rivets.js",
   "licenses" : [{
