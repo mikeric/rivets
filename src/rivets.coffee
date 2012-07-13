@@ -66,7 +66,7 @@ class Rivets.View
   build: =>
     @bindings = []
     bindingRegExp = @bindingRegExp()
-    eventRegExp = /^event-/
+    eventRegExp = /^on-/
     for node in @el.getElementsByTagName '*'
       for attribute in node.attributes
         if bindingRegExp.test attribute.name
