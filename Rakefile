@@ -1,6 +1,6 @@
 require 'rubygems'
 
-BUILD_DIRECTORY = 'build'
+BUILD_DIRECTORY = 'lib'
 SRC_DIRECTORY = 'src'
 
 desc "build the toast-min.js files for distribution"
@@ -14,7 +14,7 @@ task :build => :default
 desc "removes the build directory"
 task :clean do
   print_action('Removing existing build directory') do
-    FileUtils.rm_rf('build')
+    FileUtils.rm_rf(BUILD_DIRECTORY)
   end
 end
 
