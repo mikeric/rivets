@@ -1,12 +1,12 @@
-
-
 describe('Rivets', function() {
-  var data, bindData, el;
+  var data, bindData, el, input;
 
   beforeEach(function() {
     data = new Data({foo: 'bar'});
     bindData = {data: data};
     el = document.createElement('div');
+    input = document.createElement('input');
+    input.setAttribute('type', 'text');
 
     rivets.configure({
       preloadData: true,
@@ -83,13 +83,33 @@ describe('Rivets', function() {
       });
     });
 
-    describe('Updates', function() {
-      it('should change the value', function() {
-        el.setAttribute('data-text', 'data.foo');
-        rivets.bind(el, bindData);
-        data.set({foo: 'some new value'});
-        expect(el).toHaveTheTextContent(data.get('foo'));
+    describe('Value', function() {
+      it('should set the value of the element', function() {
+        input.setAttribute('data-value', 'data.foo');
+        rivets.bind(input, bindData);
+        expect(input.value).toBe(data.get('foo'));
       });
+    });
+  });
+
+  describe('Updates', function() {
+    it('should change the value', function() {
+      el.setAttribute('data-text', 'data.foo');
+      rivets.bind(el, bindData);
+      data.set({foo: 'some new value'});
+      expect(el).toHaveTheTextContent(data.get('foo'));
+    });
+  });
+
+  describe('Input', function() {
+    it('should update the model value', function() {
+      input.setAttribute('data-value', 'data.foo');
+      rivets.bind(input, bindData);
+      input.value = 'some new value';
+      var event = document.createEvent('HTMLEvents')
+      event.initEvent('change', true, true);
+      input.dispatchEvent(event);
+      expect(input.value).toBe(data.get('foo'));
     });
   });
 });
