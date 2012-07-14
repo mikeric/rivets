@@ -1,7 +1,7 @@
 {
   "name" : "rivets",
-  "description" : "Declarative DOM-binding facility.",
-  "version" : "0.1.9",
+  "description" : "Declarative data binding facility.",
+  "version" : "0.1.12",
   "author" : "Michael Richards",
   "main" : "./lib/rivets.js",
   "licenses" : [{
@@ -11,5 +11,8 @@
   "repository" : {
     "type" : "git",
     "url" : "https://github.com/mikeric/rivets.git"
+  },
+  "scripts" : {
+    "build" : "coffee -o lib -c src"
   }
 }

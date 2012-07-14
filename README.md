@@ -1,10 +1,10 @@
 # Rivets.js
 
-Rivets.js is a declarative, observer-based DOM-binding facility that plays well with existing frameworks such as [Backbone.js](http://backbonejs.org), [Spine.js](http://spinejs.com) and [Stapes.js](http://hay.github.com/stapes/). It aims to be lightweight (1.2KB minified and gzipped), extensible, and configurable to work with any event-driven model.
+Rivets.js is a declarative data binding facility that plays well with existing frameworks such as [Backbone.js](http://backbonejs.org), [Spine.js](http://spinejs.com) and [Stapes.js](http://hay.github.com/stapes/). It aims to be lightweight (1.2KB minified and gzipped), extensible, and configurable to work with any event-driven model.
 
 ---
 
-Describe your UI directly in the DOM using data attributes:
+Describe your UI in plain HTML using data attributes:
 
     <div id='auction'>
       <h1 data-text='auction.title'></h1>
@@ -28,11 +28,11 @@ Describe your UI directly in the DOM using data attributes:
       </dl>
     </div>
 
-Then tell Rivets.js what model(s) to bind to what part of the DOM:
+Then tell Rivets.js what model(s) to bind to it:
 
-    rivets.bind($('auction'), {auction: auction, user: currentUser});
+    rivets.bind($('#auction'), {auction: auction, user: currentUser});
 
-## Configuring
+## Configure
 
 Use `rivets.configure` to configure Rivets.js for your app. There are a few handy configuration options, such as setting the data attribute prefix and adding formatters that you can pipe binding values to, but setting the adapter is the only required configuration since Rivets.js needs to know how to observe your models for changes as they happen.
 
@@ -75,9 +75,9 @@ To prevent data attribute collision, you can set the `prefix` option to somethin
 
 Set the `preloadData` option to `true` or `false` depending on if you want the binding routines to run immediately after the initial binding or not — if set to false, the binding routines will only run when the attribute value is updated.
 
-## Extending
+## Extend
 
-You can extend Rivets.js by adding your own custom data bindings (routines). Just pass `rivets.register` an identifier for the routine and routine function. Routine functions take two arguments, `el` which is the DOM element and `value` which is the incoming value of the attribute being bound to.
+You can extend Rivets.js by adding your own custom data bindings (routines). Just pass `rivets.register` an identifier and a routine function. Routine functions take two arguments, `el` which is the DOM element and `value` which is the incoming value of the attribute being bound to.
 
 So let's say we wanted a `data-color` binding that sets the element's colour. Here's what that might look like:
 
@@ -97,4 +97,5 @@ So let's say we wanted a `data-color` binding that sets the element's colour. He
 - data-checked
 - data-unchecked
 - data-selected
-- data-[attribute]
+- data-*[attribute]*
+- data-on-*[event]*
