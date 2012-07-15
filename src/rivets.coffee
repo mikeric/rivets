@@ -67,7 +67,9 @@ class Rivets.View
     @bindings = []
     bindingRegExp = @bindingRegExp()
     eventRegExp = /^on-/
-    for node in @el.getElementsByTagName '*'
+    elements = [@el]
+    elements.concat Array::slice.call @el.getElementsByTagName '*'
+    for node in elements
       for attribute in node.attributes
         if bindingRegExp.test attribute.name
           bindType = "attribute"
@@ -80,10 +82,13 @@ class Rivets.View
           if eventRegExp.test type
             type = type.replace eventRegExp, ''
             bindType = "event"
-          else if type in bidirectionals 
+          else if type in bidirectionals
             bindType = "bidirectional"
 
           @bindings.push new Rivets.Binding node, type, bindType, model, keypath, pipes
+
+    # To avoid returning the result of the loop
+    return
 
   # Binds all of the current bindings for this view.
   bind: =>
