@@ -99,3 +99,15 @@ So let's say we wanted a `data-color` binding that sets the element's colour. He
 - data-selected
 - data-*[attribute]*
 - data-on-*[event]*
+
+## Building and Testing
+
+Before proceeding, make sure to run `npm install` so that you have all the development dependencies.
+
+#### Building
+
+Rivets.js uses [grunt](http://gruntjs.com/) as the build tool. Run `grunt` from within the project root and it will compile + minify into */lib* whenever the source file is saved. You can also run `grunt build` to rebuild the project manually.
+
+#### Testing
+
+Rivets.js uses [Jasmine](http://pivotal.github.com/jasmine/) as the testing framework. You can run the tests by opening the *test.html* file.
