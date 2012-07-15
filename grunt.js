@@ -1,0 +1,27 @@
+module.exports = function(grunt) {
+  grunt.initConfig({
+    lint: {
+      files: ['grunt.js', 'lib/**/*.js', 'spec/**/*.js']
+    },
+    min: {
+      dist: {
+        src: 'lib/rivets.js',
+        dest: 'lib/rivets.min.js'
+      }
+    },
+    watch: {
+      files: 'src/rivets.coffee',
+      tasks: 'build'
+    },
+  });
+
+  grunt.registerTask('default', 'watch');
+
+  grunt.registerTask('compile', 'Compiles CoffeeScript source into JavaScript.', function(){
+    var coffee = require('coffee-script');
+    var js = coffee.compile(grunt.file.read('src/rivets.coffee'));
+    if (js) grunt.file.write('lib/rivets.js', js);
+  });
+
+  grunt.registerTask('build', 'compile min');
+};
