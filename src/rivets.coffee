@@ -96,6 +96,10 @@ class Rivets.View
   bind: =>
     binding.bind() for binding in @bindings
 
+  # Unbinds all of the current bindings for this view.
+  unbind: =>
+    binding.unbind() for binding in @bindings
+
 # Cross-browser event binding
 bindEvent = (el, event, fn) ->
   # Check to see if addEventListener is available.
