@@ -105,13 +105,24 @@ So let's say we wanted a `data-color` binding that sets the element's colour. He
 #### Requirements
  * Ruby
  * Bundler
+or
+ * NPM
+ * Coffeescript compiler
 
 #### Steps
   1. Run `bundle` to install all the required gems.
   2. Run `rake build` or simply `rake`.
 
+or if NPM is more your thing:
+  1. Run `npm install`.
+  2. Run `npm run build`.
+
+However this won't minify the javascript.
+
 ## Testing
 
 You can run the tests by opening the `test.html` file.
-While developing there is a guard file you can use to compile your changes,
+While developing there is a guardfile you can use to compile your changes,
 simply run `guard` start it and Rivets will be recompiled when saving.
+
+The guardfile requires the ruby setup.
