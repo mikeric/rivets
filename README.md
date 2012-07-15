@@ -99,3 +99,19 @@ So let's say we wanted a `data-color` binding that sets the element's colour. He
 - data-selected
 - data-*[attribute]*
 - data-on-*[event]*
+
+## Building
+
+#### Requirements
+ * Ruby
+ * Bundler
+
+#### Steps
+  1. Run `bundle` to install all the required gems.
+  2. Run `rake build` or simply `rake`.
+
+## Testing
+
+You can run the tests by opening the `test.html` file.
+While developing there is a guard file you can use to compile your changes,
+simply run `guard` start it and Rivets will be recompiled when saving.
