@@ -67,9 +67,7 @@ class Rivets.View
     @bindings = []
     bindingRegExp = @bindingRegExp()
     eventRegExp = /^on-/
-    elements = [@el]
-    elements.concat Array::slice.call @el.getElementsByTagName '*'
-    for node in elements
+    for node in @el.getElementsByTagName '*'
       for attribute in node.attributes
         if bindingRegExp.test attribute.name
           bindType = "attribute"
@@ -86,9 +84,6 @@ class Rivets.View
             bindType = "bidirectional"
 
           @bindings.push new Rivets.Binding node, type, bindType, model, keypath, pipes
-
-    # To avoid returning the result of the loop
-    return
 
   # Binds all of the current bindings for this view.
   bind: =>
