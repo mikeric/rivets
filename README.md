@@ -38,7 +38,7 @@ Use `rivets.configure` to configure Rivets.js for your app. There are a few hand
 
 #### Adapter
 
-Rivets.js is model interface-agnostic, meaning it can work with any event-driven model by way of defining an adapter. An adapter is just an object that responds to `subscribe`, `read` and `publish`. Here is a sample configuration with an adapter for using Rivets.js with Backbone.js.
+Rivets.js is model interface-agnostic, meaning it can work with any event-driven model by way of defining an adapter. An adapter is just an object that responds to `subscribe`, `unsubscribe`, `read` and `publish`. Here is a sample configuration with an adapter for using Rivets.js with Backbone.js.
 
     rivets.configure({
       adapter: {
