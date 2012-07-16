@@ -104,6 +104,18 @@ So let's say we wanted a `data-color` binding that sets the element's colour. He
 - data-*[attribute]*
 - data-on-*[event]*
 
+## Usage Notes
+
+#### Rivets.View and Rivets.Binding
+
+The `rivets.bind` function returns a bound `Rivets.View` instance that you should hold on to for later. You may want to unbind it's listeners with `view.unbind()` and/or rebuild it's bindings with `view.build()`. You can also access the individual `Rivets.Binding` instances inside the view through `view.bindings` — this is useful for debugging purposes or if you want to unbind or manually set the value for certain bindings.
+
+#### Iteration Binding
+
+Even though a binding routine for `each-item` will likely be included in Rivets.js, you can use the `data-html` binding along with a set of formatters in the interim to do sorting and iterative rendering of collections (amongst other cool things).
+
+    <ul data-html="model.tags | sort | tagList"></ul>
+
 ## Building and Testing
 
 Before proceeding, make sure to run `npm install` so that you have all the development dependencies.
