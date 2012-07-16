@@ -30,7 +30,7 @@
         </ul>
       </header>
       <section>
-<p>Rivets.js is a declarative data binding facility that plays well with existing frameworks such as <a href="http://backbonejs.org">Backbone.js</a>, <a href="http://spinejs.com">Spine.js</a> and <a href="http://hay.github.com/stapes/">Stapes.js</a>. It aims to be lightweight (1.2KB minified and gzipped), extensible, and configurable to work with any event-driven model.</p>
+<p>Rivets.js is a declarative data binding facility that plays well with existing frameworks such as <a href="http://backbonejs.org">Backbone.js</a>, <a href="http://spinejs.com">Spine.js</a> and <a href="http://hay.github.com/stapes/">Stapes.js</a>. It aims to be lightweight (1.4KB minified and gzipped), extensible, and configurable to work with any event-driven model.</p>
 <hr />
 <p>Describe your UI in plain HTML using data attributes:</p>
 <pre><code>&lt;div id=&#39;auction&#39;&gt;
@@ -59,12 +59,16 @@
 <h2 id="configure">Configure</h2>
 <p>Use <code>rivets.configure</code> to configure Rivets.js for your app. There are a few handy configuration options, such as setting the data attribute prefix and adding formatters that you can pipe binding values to, but setting the adapter is the only required configuration since Rivets.js needs to know how to observe your models for changes as they happen.</p>
 <h4 id="adapter">Adapter</h4>
-<p>Rivets.js is model interface-agnostic, meaning it can work with any event-driven model by way of defining an adapter. An adapter is just an object that responds to <code>subscribe</code>, <code>read</code> and <code>publish</code>. Here is a sample configuration with an adapter for using Rivets.js with Backbone.js.</p>
+<p>Rivets.js is model interface-agnostic, meaning it can work with any event-driven model by way of defining an adapter. An adapter is just an object that responds to <code>subscribe</code>, <code>unsubscribe</code>, <code>read</code> and <code>publish</code>. Here is a sample configuration with an adapter for using Rivets.js with Backbone.js.</p>
 <pre><code>rivets.configure({
   adapter: {
     subscribe: function(obj, keypath, callback) {
-      obj.on(&#39;change:&#39; + keypath, function(m, v) { callback(v) });
+      callback.wrapped = function(m, v) { callback(v) };
+      obj.on(&#39;change:&#39; + keypath, callback.wrapped);
     },
+    unsubscribe: function(obj, keypath, callback) {
+      obj.off(&#39;change:&#39; + keypath, callback.wrapped);
+    }
     read: function(obj, keypath) {
       return obj.get(keypath);
     },
@@ -109,6 +113,12 @@
 <li>data-<em>[attribute]</em></li>
 <li>data-on-<em>[event]</em></li>
 </ul>
+<h2 id="usage-notes">Usage Notes</h2>
+<h4 id="rivets.view-and-rivets.binding">Rivets.View and Rivets.Binding</h4>
+<p>The <code>rivets.bind</code> function returns a bound <code>Rivets.View</code> instance that you should hold on to for later. You may want to unbind it’s listeners with <code>view.unbind()</code> and/or rebuild it’s bindings with <code>view.build()</code>. You can also access the individual <code>Rivets.Binding</code> instances inside the view through <code>view.bindings</code> — this is useful for debugging purposes or if you want to unbind or manually set the value for certain bindings.</p>
+<h4 id="iteration-binding">Iteration Binding</h4>
+<p>Even though a binding routine for <code>each-item</code> will likely be included in Rivets.js, you can use the <code>data-html</code> binding along with a set of formatters in the interim to do sorting and iterative rendering of collections (amongst other cool things).</p>
+<pre><code>&lt;ul data-html=&quot;model.tags | sort | tagList&quot;&gt;&lt;/ul&gt;</code></pre>
       </section>
     </div>
     <script src="javascripts/scale.fix.js"></script>
