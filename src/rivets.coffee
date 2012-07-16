@@ -49,6 +49,13 @@ class Rivets.Binding
     el = e.target or e.srcElement
     Rivets.config.adapter.publish @model, @keypath, getInputValue el
 
+  # Unsubscribes from the model and the element.
+  unbind: =>
+    Rivets.config.adapter.unsubscribe @model, @keypath, @set
+
+    if @bindType is "bidirectional"
+      @el.removeEventListener 'change', @publish
+
 # A collection of bindings for a parent element.
 class Rivets.View
   # The parent DOM element and the model objects for binding are passed into the
@@ -89,6 +96,10 @@ class Rivets.View
   bind: =>
     binding.bind() for binding in @bindings
 
+  # Unbinds all of the current bindings for this view.
+  unbind: =>
+    binding.unbind() for binding in @bindings
+
 # Cross-browser event binding
 bindEvent = (el, event, fn) ->
   # Check to see if addEventListener is available.
@@ -118,7 +129,7 @@ eventBinding = (event) -> (el, bind, unbind) ->
     unbindEvent el, event, unbind if unbind
 
 # Returns an attribute binding routine for the specified attribute. This is what
-# `registerBinding` falls back to when there is no routine for the binding type.
+# is used when there are no matching routines for an identifier.
 attributeBinding = (attr) -> (el, value) ->
   if value then el.setAttribute attr, value else el.removeAttribute attr
 
