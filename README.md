@@ -1,6 +1,6 @@
 # Rivets.js
 
-Rivets.js is a declarative data binding facility that plays well with existing frameworks such as [Backbone.js](http://backbonejs.org), [Spine.js](http://spinejs.com) and [Stapes.js](http://hay.github.com/stapes/). It aims to be lightweight (1.2KB minified and gzipped), extensible, and configurable to work with any event-driven model.
+Rivets.js is a declarative data binding facility that plays well with existing frameworks such as [Backbone.js](http://backbonejs.org), [Spine.js](http://spinejs.com) and [Stapes.js](http://hay.github.com/stapes/). It aims to be lightweight (1.4KB minified and gzipped), extensible, and configurable to work with any event-driven model.
 
 ---
 
@@ -43,8 +43,12 @@ Rivets.js is model interface-agnostic, meaning it can work with any event-driven
     rivets.configure({
       adapter: {
         subscribe: function(obj, keypath, callback) {
-          obj.on('change:' + keypath, function(m, v) { callback(v) });
+          callback.wrapped = function(m, v) { callback(v) };
+          obj.on('change:' + keypath, callback.wrapped);
         },
+        unsubscribe: function(obj, keypath, callback) {
+          obj.off('change:' + keypath, callback.wrapped);
+        }
         read: function(obj, keypath) {
           return obj.get(keypath);
         },
