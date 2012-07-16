@@ -129,7 +129,7 @@ eventBinding = (event) -> (el, bind, unbind) ->
     unbindEvent el, event, unbind if unbind
 
 # Returns an attribute binding routine for the specified attribute. This is what
-# `registerBinding` falls back to when there is no routine for the binding type.
+# is used when there are no matching routines for an identifier.
 attributeBinding = (attr) -> (el, value) ->
   if value then el.setAttribute attr, value else el.removeAttribute attr
 
