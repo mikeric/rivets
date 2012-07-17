@@ -126,4 +126,4 @@ Rivets.js uses [grunt](http://gruntjs.com/) as the build tool. Run `grunt` from 
 
 #### Testing
 
-Rivets.js uses [Jasmine](http://pivotal.github.com/jasmine/) as the testing framework. You can run the tests by opening the *test.html* file.
+Rivets.js uses [Jasmine](http://pivotal.github.com/jasmine/) as the testing framework. You can run the tests by opening */spec/index.html*.
