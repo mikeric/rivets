@@ -57,7 +57,7 @@
 <p>Then tell Rivets.js what model(s) to bind to it:</p>
 <pre><code>rivets.bind($(&#39;#auction&#39;), {auction: auction, user: currentUser});</code></pre>
 <h2 id="configure">Configure</h2>
-<p>Use <code>rivets.configure</code> to configure Rivets.js for your app. There are a few handy configuration options, such as setting the data attribute prefix and adding formatters that you can pipe binding values to, but setting the adapter is the only required configuration since Rivets.js needs to know how to observe your models for changes as they happen.</p>
+<p>Use <code>rivets.configure</code> to configure Rivets.js for your app (or set them manually on <code>rivets.config</code>). There are a few handy configuration options, such as setting the data attribute prefix and adding formatters that you can pipe binding values to, but setting the adapter is the only required configuration since Rivets.js needs to know how to observe your models for changes as they happen.</p>
 <h4 id="adapter">Adapter</h4>
 <p>Rivets.js is model interface-agnostic, meaning it can work with any event-driven model by way of defining an adapter. An adapter is just an object that responds to <code>subscribe</code>, <code>unsubscribe</code>, <code>read</code> and <code>publish</code>. Here is a sample configuration with an adapter for using Rivets.js with Backbone.js.</p>
 <pre><code>rivets.configure({
@@ -93,11 +93,13 @@
 <p>To prevent data attribute collision, you can set the <code>prefix</code> option to something like ‘rv’ or ‘bind’ so that data attributes are prefixed like <code>data-rv-text</code>.</p>
 <p>Set the <code>preloadData</code> option to <code>true</code> or <code>false</code> depending on if you want the binding routines to run immediately after the initial binding or not — if set to false, the binding routines will only run when the attribute value is updated.</p>
 <h2 id="extend">Extend</h2>
-<p>You can extend Rivets.js by adding your own custom data bindings (routines). Just pass <code>rivets.register</code> an identifier and a routine function. Routine functions take two arguments, <code>el</code> which is the DOM element and <code>value</code> which is the incoming value of the attribute being bound to.</p>
-<p>So let’s say we wanted a <code>data-color</code> binding that sets the element’s colour. Here’s what that might look like:</p>
-<pre><code>rivets.register(&#39;color&#39;, function(el, value){
+<p>Rivets.js comes bundled with a few commonly used bindings, but users are encouraged to add their own that are specific to the needs of their application. Rivets.js is easily extended by adding your own binding routines. <em>Binding routines</em> are the functions that run when an observed attribute changes. Their sole concern is to describe what happens to the element when a new value comes in. All binding routines are publicly available on the <code>rivets.routines</code> object.</p>
+<p>Let’s say we wanted a <code>data-color</code> binding that sets the element’s colour, here’s what the routine function for that binding might look like:</p>
+<pre><code>rivets.routines.color = function(el, value) {
   el.style.color = value;
-});</code></pre>
+};</code></pre>
+<p>With that routine defined, the following binding will update the element’s color when <code>model.color</code> changes:</p>
+<pre><code>&lt;span data-color=&quot;model.color&quot;&gt;COLOR&lt;/span&gt;</code></pre>
 <h4 id="available-bindings-out-of-the-box">Available bindings out-of-the-box</h4>
 <ul>
 <li>data-text</li>
