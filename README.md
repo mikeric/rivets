@@ -81,13 +81,17 @@ Set the `preloadData` option to `true` or `false` depending on if you want the b
 
 ## Extend
 
-You can extend Rivets.js by adding your own custom data bindings (routines). Just pass `rivets.register` an identifier and a routine function. Routine functions take two arguments, `el` which is the DOM element and `value` which is the incoming value of the attribute being bound to.
+Rivets.js comes with only the most commonly used bindings and encourages developers to add their own that are specific to the needs of their application. Rivets.js is extended by adding your own custom binding routines. *Binding routines* are the functions that run when an observed attribute changes. Their sole concern is to describe what happens to the element when a new value comes in.
 
-So let's say we wanted a `data-color` binding that sets the element's colour. Here's what that might look like:
+All binding routines are available on the `rivets.routines` object so it's easy to extend by adding/removing them from that object. Let's say we wanted a `data-color` binding that sets the element's colour, here's what the routine function for that might look like:
 
-    rivets.register('color', function(el, value){
+    rivets.routines.color = function(el, value) {
       el.style.color = value;
-    });
+    };
+
+With that routine defined, the following binding will update the elements color when `model.color` changes:
+
+    <span data-color="model.color">COLOR</span>
 
 #### Available bindings out-of-the-box
 
