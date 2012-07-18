@@ -105,6 +105,38 @@ describe('Rivets', function() {
         });
       });
     });
+  
+    describe('enabled', function() {
+      describe('with a truthy value', function() {
+        it('enables the element', function() {
+          rivets.routines.enabled(el, true);
+          expect(el.disabled).toBe(false);
+        });
+      });
+
+      describe('with a falsey value', function() {
+        it('disables the element', function() {
+          rivets.routines.enabled(el, false);
+          expect(el.disabled).toBe(true);
+        });
+      });
+    });
+
+    describe('disabled', function() {
+      describe('with a truthy value', function() {
+        it('disables the element', function() {
+          rivets.routines.disabled(el, true);
+          expect(el.disabled).toBe(true);
+        });
+      });
+
+      describe('with a falsey value', function() {
+        it('enables the element', function() {
+          rivets.routines.disabled(el, false);
+          expect(el.disabled).toBe(false);
+        });
+      });
+    });
   });
 
   describe('Binds', function() {
