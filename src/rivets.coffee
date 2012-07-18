@@ -175,15 +175,13 @@ Rivets.config =
 
 # The rivets module. This is the public interface that gets exported.
 rivets =
-  # Used for setting configuration options.
+  # Exposes the core binding routines that can be extended or stripped down.
+  routines: Rivets.routines
+
+  # Sets configuration options by merging an object literal.
   configure: (options={}) ->
     for property, value of options
       Rivets.config[property] = value
-
-  # Registers a new binding routine that can be used immediately in views. This
-  # is used for adding custom binding routines.
-  register: (identifier, routine) ->
-    Rivets.routines[identifier] = routine
 
   # Binds a set of model objects to a parent DOM element. Returns a Rivets.View
   # instance.
