@@ -137,6 +137,38 @@ describe('Rivets', function() {
         });
       });
     });
+
+    describe('checked', function() {
+      describe('with a truthy value', function() {
+        it('checks the element', function() {
+          rivets.routines.checked(el, true);
+          expect(el.checked).toBe(true);
+        });
+      });
+
+      describe('with a falsey value', function() {
+        it('unchecks the element', function() {
+          rivets.routines.checked(el, false);
+          expect(el.checked).toBe(false);
+        });
+      });
+    });
+
+    describe('unchecked', function() {
+      describe('with a truthy value', function() {
+        it('unchecks the element', function() {
+          rivets.routines.unchecked(el, true);
+          expect(el.checked).toBe(false);
+        });
+      });
+
+      describe('with a falsey value', function() {
+        it('checks the element', function() {
+          rivets.routines.unchecked(el, false);
+          expect(el.checked).toBe(true);
+        });
+      });
+    });
   });
 
   describe('Binds', function() {
