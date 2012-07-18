@@ -73,6 +73,38 @@ describe('Rivets', function() {
         expect(input.value).toBe('pitchfork');
       });
     });
+
+    describe('show', function() {
+      describe('with a truthy value', function() {
+        it('shows the element', function() {
+          rivets.routines.show(el, true);
+          expect(el.style.display).toBe('');
+        });
+      });
+
+      describe('with a falsey value', function() {
+        it('hides the element', function() {
+          rivets.routines.show(el, false);
+          expect(el.style.display).toBe('none');
+        });
+      });
+    });
+
+    describe('hide', function() {
+      describe('with a truthy value', function() {
+        it('hides the element', function() {
+          rivets.routines.hide(el, true);
+          expect(el.style.display).toBe('none');
+        });
+      });
+
+      describe('with a falsey value', function() {
+        it('shows the element', function() {
+          rivets.routines.hide(el, false);
+          expect(el.style.display).toBe('');
+        });
+      });
+    });
   });
 
   describe('Binds', function() {
