@@ -178,6 +178,10 @@ rivets =
   # Exposes the core binding routines that can be extended or stripped down.
   routines: Rivets.routines
 
+  # Exposes the rivets configuration options. These can be set manually or from
+  # rivets.configure with an object literal.
+  config: Rivets.config
+
   # Sets configuration options by merging an object literal.
   configure: (options={}) ->
     for property, value of options
