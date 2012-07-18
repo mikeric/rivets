@@ -50,6 +50,31 @@ describe('Rivets', function() {
     });
   });
 
+  describe('Routines', function() {
+    describe('text', function() {
+      it("sets the element's text content", function() {
+        rivets.routines.text(el, '<em>gluten-free</em>');
+        expect(el.textContent || el.innerText).toBe('<em>gluten-free</em>');
+        expect(el.innerHTML).toBe('&lt;em&gt;gluten-free&lt;/em&gt;');
+      });
+    });
+
+    describe('html', function() {
+      it("sets the element's HTML content", function() {
+        rivets.routines.html(el, '<strong>fixie</strong>');
+        expect(el.textContent || el.innerText).toBe('fixie');
+        expect(el.innerHTML).toBe('<strong>fixie</strong>');
+      });
+    });
+
+    describe('value', function() {
+      it("sets the element's value", function() {
+        rivets.routines.value(input, 'pitchfork');
+        expect(input.value).toBe('pitchfork');
+      });
+    });
+  });
+
   describe('Binds', function() {
     describe('Text', function() {
       it('should set the text content of the element', function() {
