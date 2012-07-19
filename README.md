@@ -48,7 +48,7 @@ Rivets.js is model interface-agnostic, meaning it can work with any event-driven
         },
         unsubscribe: function(obj, keypath, callback) {
           obj.off('change:' + keypath, callback.wrapped);
-        }
+        },
         read: function(obj, keypath) {
           return obj.get(keypath);
         },
