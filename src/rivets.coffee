@@ -124,8 +124,8 @@ unbindEvent = (el, event, fn) ->
 # Returns the current input value for the specified element.
 getInputValue = (el) ->
   switch el.type
-    when 'text', 'textarea', 'password', 'select-one' then el.value
-    when 'checkbox', 'radio' then el.checked
+    when 'text', 'textarea', 'password', 'select-one', 'radio' then el.value
+    when 'checkbox' then el.checked
 
 # Returns an element binding routine for the specified attribute.
 eventBinding = (event) -> (el, bind, unbind) ->
