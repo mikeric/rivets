@@ -139,7 +139,7 @@ attributeBinding = (attr) -> (el, value) ->
 
 # Bindings that should also be observed for changes on the DOM element in order
 # to propagate those changes back to the model object.
-bidirectionals = ['value', 'checked', 'unchecked', 'selected', 'unselected']
+bidirectionals = ['value', 'checked', 'unchecked']
 
 # Core binding routines.
 Rivets.routines =
@@ -157,10 +157,6 @@ Rivets.routines =
       el.checked = el.value isnt value
     else
       el.checked = !value
-  selected: (el, value) ->
-    el.selected = !!value
-  unselected: (el, value) ->
-    el.selected = !value
   show: (el, value) ->
     el.style.display = if value then '' else 'none'
   hide: (el, value) ->
