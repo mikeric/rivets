@@ -124,8 +124,8 @@ unbindEvent = (el, event, fn) ->
 # Returns the current input value for the specified element.
 getInputValue = (el) ->
   switch el.type
-    when 'text', 'textarea', 'password', 'select-one' then el.value
-    when 'checkbox', 'radio' then el.checked
+    when 'text', 'textarea', 'password', 'select-one', 'radio' then el.value
+    when 'checkbox' then el.checked
 
 # Returns an element binding routine for the specified attribute.
 eventBinding = (event) -> (el, bind, unbind) ->
@@ -139,7 +139,7 @@ attributeBinding = (attr) -> (el, value) ->
 
 # Bindings that should also be observed for changes on the DOM element in order
 # to propagate those changes back to the model object.
-bidirectionals = ['value', 'checked', 'unchecked', 'selected', 'unselected']
+bidirectionals = ['value', 'checked', 'unchecked']
 
 # Core binding routines.
 Rivets.routines =
@@ -148,13 +148,15 @@ Rivets.routines =
   disabled: (el, value) ->
     el.disabled = !!value
   checked: (el, value) ->
-    el.checked = !!value
+    if el.type is 'radio'
+      el.checked = el.value is value
+    else
+      el.checked = !!value
   unchecked: (el, value) ->
-    el.checked = !value
-  selected: (el, value) ->
-    el.selected = !!value
-  unselected: (el, value) ->
-    el.selected = !value
+    if el.type is 'radio'
+      el.checked = el.value isnt value
+    else
+      el.checked = !value
   show: (el, value) ->
     el.style.display = if value then '' else 'none'
   hide: (el, value) ->

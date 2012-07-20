@@ -104,7 +104,6 @@ With that routine defined, the following binding will update the element's color
 - data-disabled
 - data-checked
 - data-unchecked
-- data-selected
 - data-*[attribute]*
 - data-on-*[event]*
 
