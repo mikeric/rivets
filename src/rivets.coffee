@@ -148,9 +148,15 @@ Rivets.routines =
   disabled: (el, value) ->
     el.disabled = !!value
   checked: (el, value) ->
-    el.checked = !!value
+    if el.type is 'radio'
+      el.checked = el.value is value
+    else
+      el.checked = !!value
   unchecked: (el, value) ->
-    el.checked = !value
+    if el.type is 'radio'
+      el.checked = el.value isnt value
+    else
+      el.checked = !value
   selected: (el, value) ->
     el.selected = !!value
   unselected: (el, value) ->
