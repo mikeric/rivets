@@ -24,7 +24,7 @@ class Rivets.Binding
   # formatted value.
   formattedValue: (value) =>
     for formatter in @formatters
-      args = formatter.split /\W+/
+      args = formatter.split /\s+/
       id = args.shift()
       value = Rivets.config.formatters[id] value, args...
 
