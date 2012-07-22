@@ -63,4 +63,29 @@ describe('Rivets.Binding', function() {
       });
     });
   });
+
+  describe('formattedValue()', function() {
+    it('applies the current formatters on the supplied value', function() {
+      rivets.config.formatters = {
+        awesome: function(value) { return 'awesome ' + value }
+      };
+      binding.formatters.push('awesome');
+      expect(binding.formattedValue('hat')).toBe('awesome hat');
+    });
+
+    describe('with a multi-argument formatter string', function() {
+      beforeEach(function() {
+        rivets.config.formatters = {
+          awesome: function(value, prefix) {
+            return prefix + ' awesome ' + value;
+          }
+        };
+        binding.formatters.push('awesome super');
+      });
+      
+      it('applies the formatter with arguments', function() {
+        expect(binding.formattedValue('jacket')).toBe('super awesome jacket');
+      });
+    });
+  });
 });

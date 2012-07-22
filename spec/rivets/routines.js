@@ -134,36 +134,4 @@ describe('Routines', function() {
       });
     });
   });
-
-  describe('selected', function() {
-    describe('with a truthy value', function() {
-      it('selects the element', function() {
-        rivets.routines.selected(el, true);
-        expect(el.selected).toBe(true);
-      });
-    });
-
-    describe('with a falsey value', function() {
-      it('unselects the element', function() {
-        rivets.routines.selected(el, false);
-        expect(el.selected).toBe(false);
-      });
-    });
-  });
-
-  describe('unselected', function() {
-    describe('with a truthy value', function() {
-      it('unselects the element', function() {
-        rivets.routines.unselected(el, true);
-        expect(el.selected).toBe(false);
-      });
-    });
-
-    describe('with a falsey value', function() {
-      it('selects the element', function() {
-        rivets.routines.unselected(el, false);
-        expect(el.selected).toBe(true);
-      });
-    });
-  });
 });
