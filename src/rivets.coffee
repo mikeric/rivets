@@ -20,11 +20,20 @@ class Rivets.Binding
     else
       @routine = Rivets.routines[@type] || attributeBinding @type
 
-  # Sets the value for the binding. This Basically just runs the binding routine
-  # with the suplied value and applies any formatters.
-  set: (value) =>
+  # Applies all the current formatters to the supplied value and returns the
+  # formatted value.
+  formattedValue: (value) =>
     for formatter in @formatters
-      value = Rivets.config.formatters[formatter] value
+      args = formatter.split /\s+/
+      id = args.shift()
+      value = Rivets.config.formatters[id] value, args...
+
+    value
+
+  # Sets the value for the binding. This Basically just runs the binding routine
+  # with the suplied value formatted.
+  set: (value) =>
+    value = @formattedValue value
 
     if @bindType is "event"
       @routine @el, value, @currentListener
