@@ -68,7 +68,7 @@
     },
     unsubscribe: function(obj, keypath, callback) {
       obj.off(&#39;change:&#39; + keypath, callback.wrapped);
-    }
+    },
     read: function(obj, keypath) {
       return obj.get(keypath);
     },
@@ -111,7 +111,6 @@
 <li>data-disabled</li>
 <li>data-checked</li>
 <li>data-unchecked</li>
-<li>data-selected</li>
 <li>data-<em>[attribute]</em></li>
 <li>data-on-<em>[event]</em></li>
 </ul>
