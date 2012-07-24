@@ -69,8 +69,8 @@ class Rivets.Binding
 class Rivets.View
   # The parent DOM element and the model objects for binding are passed into the
   # constructor.
-  constructor: (@el, @models) ->
-    @el = @el.get(0) if @el.jquery
+  constructor: (@els, @models) ->
+    @els = [@els] unless (@els.jquery || @els instanceof Array)
     @build()
 
   # Regular expression used to match binding attributes.
@@ -102,8 +102,9 @@ class Rivets.View
 
           @bindings.push new Rivets.Binding node, type, bindType, model, keypath, pipes
 
-    parseNode @el
-    parseNode node for node in @el.getElementsByTagName '*'
+    for el in @els
+      parseNode el
+      parseNode node for node in el.getElementsByTagName '*'
 
   # Binds all of the current bindings for this view.
   bind: =>
