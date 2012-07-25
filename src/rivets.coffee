@@ -65,9 +65,9 @@ class Rivets.Binding
     if @bindType is "bidirectional"
       @el.removeEventListener 'change', @publish
 
-# A collection of bindings for a parent element.
+# A collection of bindings built from a set of parent elements.
 class Rivets.View
-  # The parent DOM element and the model objects for binding are passed into the
+  # The DOM elements and the model objects for binding are passed into the
   # constructor.
   constructor: (@els, @models) ->
     @els = [@els] unless (@els.jquery || @els instanceof Array)
