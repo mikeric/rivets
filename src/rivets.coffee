@@ -26,7 +26,7 @@ class Rivets.Binding
     for formatter in @formatters
       args = formatter.split /\s+/
       id = args.shift()
-      value = Rivets.config.formatters[id] value, args...
+      value = (Rivets.config.formatters[id] || @model[id]) value, args...
 
     value
 
