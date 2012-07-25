@@ -1,11 +1,19 @@
 module.exports = function(grunt) {
   grunt.initConfig({
+    pkg: '<json:package.json>',
+    meta: {
+      banner:
+        '// rivets.js\n' +
+        '// version: <%= pkg.version %>\n' +
+        '// author: <%= pkg.author %>\n' +
+        '// license: <%= pkg.licenses[0].type %>'
+    },
     lint: {
       files: ['grunt.js', 'lib/**/*.js', 'spec/**/*.js']
     },
     min: {
       dist: {
-        src: 'lib/rivets.js',
+        src: ['<banner:meta.banner>', 'lib/rivets.js'],
         dest: 'lib/rivets.min.js'
       }
     },
@@ -20,7 +28,8 @@ module.exports = function(grunt) {
   grunt.registerTask('compile', 'Compiles CoffeeScript source into JavaScript.', function(){
     var coffee = require('coffee-script');
     var js = coffee.compile(grunt.file.read('src/rivets.coffee'));
-    if (js) grunt.file.write('lib/rivets.js', js);
+    var banner = grunt.task.directive('<banner:meta.banner>', function() { return null; });
+    if (js) grunt.file.write('lib/rivets.js', banner + js);
   });
 
   grunt.registerTask('build', 'compile min');
