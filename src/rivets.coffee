@@ -139,8 +139,8 @@ getInputValue = (el) ->
 
 # Returns an element binding routine for the specified attribute.
 eventBinding = (event) -> (el, bind, unbind) ->
-    bindEvent el, event, bind if bind
-    unbindEvent el, event, unbind if unbind
+  bindEvent el, event, bind if bind
+  unbindEvent el, event, unbind if unbind
 
 # Returns an attribute binding routine for the specified attribute. This is what
 # is used when there are no matching routines for an identifier.
