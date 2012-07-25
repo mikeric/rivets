@@ -37,6 +37,11 @@ describe('Routines', function() {
       rivets.routines.value(input, 'pitchfork');
       expect(input.value).toBe('pitchfork');
     });
+    
+    it("applies a default value to the element when the model doesn't contain it", function() {
+      rivets.routines.value(input, undefined);
+      expect(input.value).toBe('');
+    });
   });
 
   describe('show', function() {
