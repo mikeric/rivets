@@ -90,6 +90,16 @@ describe('Functional', function() {
         expect(input.value).toBe(data.get('foo'));
       });
     });
+    
+    describe('Multiple', function() {
+      it('should bind a list of multiple elements', function() {
+        el.setAttribute('data-html', 'data.foo');
+        input.setAttribute('data-value', 'data.foo');
+        rivets.bind([el, input], bindData);
+        expect(el).toHaveTheTextContent(data.get('foo'));
+        expect(input.value).toBe(data.get('foo'));
+      });
+    });
   });
 
   describe('Updates', function() {
