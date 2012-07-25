@@ -174,7 +174,7 @@ Rivets.routines =
   html:  (el, value) ->
     el.innerHTML = value or ''
   value: (el, value) ->
-    el.value = value
+    el.value = value or ''
   text: (el, value) ->
     if el.innerText?
       el.innerText = value or ''
