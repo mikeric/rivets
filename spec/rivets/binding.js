@@ -40,7 +40,7 @@ describe('Rivets.Binding', function() {
 
     describe('on an event binding', function() {
       beforeEach(function() {
-        binding.bindType = 'event';
+        binding.options.special = 'event';
       });
 
       it('performs the binding routine with the supplied function and current listener', function() {
