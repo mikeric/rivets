@@ -21,6 +21,41 @@ describe('Rivets.Binding', function() {
     expect(binding.routine).toBe(rivets.routines.text);
   });
 
+  describe('bind()', function() {
+    it('subscribes to the model for changes via the adapter', function() {
+      spyOn(rivets.config.adapter, 'subscribe');
+      binding.bind();
+      expect(rivets.config.adapter.subscribe).toHaveBeenCalled();
+    });
+
+    describe('with preloadData set to true', function() {
+      beforeEach(function() {
+        rivets.config.preloadData = true;
+      });
+
+      it('sets the initial value via the adapter', function() {
+        spyOn(binding, 'set');
+        spyOn(rivets.config.adapter, 'read');
+        binding.bind();
+        expect(binding.set).toHaveBeenCalled();
+        expect(rivets.config.adapter.read).toHaveBeenCalled();
+      });
+    });
+
+    describe('with the bypass option set to true', function() {
+      beforeEach(function() {
+        binding.options.bypass = true;
+      });
+
+      it('sets the initial value from the model directly', function() {
+        spyOn(binding, 'set');
+        binding.model.name = 'espresso';
+        binding.bind();
+        expect(binding.set).toHaveBeenCalledWith('espresso');
+      });
+    });
+  });
+
   describe('set()', function() {
     it('performs the binding routine with the supplied value', function() {
       spyOn(binding, 'routine');
