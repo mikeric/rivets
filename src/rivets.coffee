@@ -52,10 +52,13 @@ class Rivets.Binding
   # routines will also listen for changes on the element to propagate them back
   # to the model.
   bind: =>
-    Rivets.config.adapter.subscribe @model, @keypath, @set
+    if @options.bypass
+      @set @model[@keypath]
+    else
+      Rivets.config.adapter.subscribe @model, @keypath, @set
 
-    if Rivets.config.preloadData
-      @set Rivets.config.adapter.read @model, @keypath
+      if Rivets.config.preloadData
+        @set Rivets.config.adapter.read @model, @keypath
 
     if @type in @bidirectionals
       bindEvent @el, 'change', @publish
@@ -101,7 +104,7 @@ class Rivets.View
           path = pipes.shift().split(/(\.|:)/)
           options.formatters = pipes
           model = @models[path.shift()]
-          path.shift()
+          options.bypass = path.shift() is ':'
           keypath = path.join()
 
           if eventRegExp.test type
