@@ -32,7 +32,7 @@ class Rivets.Binding
     for formatter in @formatters
       args = formatter.split /\s+/
       id = args.shift()
-      value = if Rivets.config.formatters && Rivets.config.formatters[id]
+      value = if Rivets.config.formatters[id]
         Rivets.config.formatters[id] value, args...
       else
         @model[id] value, args...
@@ -194,6 +194,7 @@ Rivets.routines =
 # Default configuration.
 Rivets.config =
   preloadData: true
+  formatters: {}
 
 # The rivets module. This is the public interface that gets exported.
 rivets =
