@@ -99,6 +99,24 @@ describe('Rivets.Binding', function() {
       });
     });
   });
+  
+  describe('publish()', function() {
+    it("should publish the value of a number input", function() {
+      numberInput = document.createElement('input');
+      numberInput.setAttribute('type', 'number');
+      numberInput.setAttribute('data-value', 'obj.num');
+      
+      view = rivets.bind(numberInput, {obj: {num: 42}});
+      binding = view.bindings[0];
+      model = binding.model;
+
+      numberInput.value = 42;
+      
+      spyOn(rivets.config.adapter, 'publish');
+      binding.publish({target: numberInput});
+      expect(rivets.config.adapter.publish).toHaveBeenCalledWith(model, 'num', '42');
+    });
+  });
 
   describe('formattedValue()', function() {
     it('applies the current formatters on the supplied value', function() {
