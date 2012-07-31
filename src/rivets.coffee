@@ -1,5 +1,5 @@
 #     rivets.js
-#     version : 0.2.4
+#     version : 0.2.5
 #     author : Michael Richards
 #     license : MIT
 
@@ -32,7 +32,10 @@ class Rivets.Binding
     for formatter in @formatters
       args = formatter.split /\s+/
       id = args.shift()
-      value = Rivets.config.formatters[id] value, args...
+      value = if Rivets.config.formatters && Rivets.config.formatters[id]
+        Rivets.config.formatters[id] value, args...
+      else
+        @model[id] value, args...
 
     value
 

@@ -15,6 +15,7 @@ describe('Rivets.Binding', function() {
     el.setAttribute('data-text', 'obj.name');
     view = rivets.bind(el, {obj: {}});
     binding = view.bindings[0];
+    model = binding.model;
   });
 
   it('gets assigned the routine function matching the identifier', function() {
@@ -106,6 +107,12 @@ describe('Rivets.Binding', function() {
       };
       binding.formatters.push('awesome');
       expect(binding.formattedValue('hat')).toBe('awesome hat');
+    });
+    
+    it('uses formatters on the model', function() {
+      model.modelAwesome = function(value) { return 'model awesome ' + value };
+      binding.formatters.push('modelAwesome');
+      expect(binding.formattedValue('hat')).toBe('model awesome hat');
     });
 
     describe('with a multi-argument formatter string', function() {
