@@ -12,13 +12,19 @@ unless String::trim then String::trim = -> @replace /^\s+|\s+$/g, ""
 # A single binding between a model attribute and a DOM element.
 class Rivets.Binding
   # All information about the binding is passed into the constructor; the DOM
-  # element, the routine identifier, the model object and the keypath at which
+  # element, the type of binding, the model object and the keypath at which
   # to listen for changes.
-  constructor: (@el, @type, @bindType, @model, @keypath, @formatters = []) ->
-    if @bindType is "event"
+  constructor: (@el, @type, @model, @keypath, @options = {}) ->
+    if @options.special is "event"
       @routine = eventBinding @type
     else
       @routine = Rivets.routines[@type] || attributeBinding @type
+
+    @formatters = @options.formatters || []
+
+  # Bindings that should also observe the DOM element for changes in order to
+  # propagate those changes back to the model object.
+  bidirectionals: ['value', 'checked', 'unchecked']
 
   # Applies all the current formatters to the supplied value and returns the
   # formatted value.
@@ -38,22 +44,26 @@ class Rivets.Binding
   set: (value) =>
     value = @formattedValue value
 
-    if @bindType is "event"
+    if @options.special is "event"
       @routine @el, value, @currentListener
       @currentListener = value
     else
+      value = value() if value instanceof Function
       @routine @el, value
 
   # Subscribes to the model for changes at the specified keypath. Bi-directional
   # routines will also listen for changes on the element to propagate them back
   # to the model.
   bind: =>
-    Rivets.config.adapter.subscribe @model, @keypath, @set
+    if @options.bypass
+      @set @model[@keypath]
+    else
+      Rivets.config.adapter.subscribe @model, @keypath, @set
 
-    if Rivets.config.preloadData
-      @set Rivets.config.adapter.read @model, @keypath
+      if Rivets.config.preloadData
+        @set Rivets.config.adapter.read @model, @keypath
 
-    if @bindType is "bidirectional"
+    if @type in @bidirectionals
       bindEvent @el, 'change', @publish
 
   # Publishes the value currently set on the input element back to the model.
@@ -65,7 +75,7 @@ class Rivets.Binding
   unbind: =>
     Rivets.config.adapter.unsubscribe @model, @keypath, @set
 
-    if @bindType is "bidirectional"
+    if @type in @bidirectionals
       @el.removeEventListener 'change', @publish
 
 # A collection of bindings built from a set of parent elements.
@@ -90,20 +100,21 @@ class Rivets.View
     parseNode = (node) =>
       for attribute in node.attributes
         if bindingRegExp.test attribute.name
-          bindType = "attribute"
+          options = {}
+
           type = attribute.name.replace bindingRegExp, ''
           pipes = (pipe.trim() for pipe in attribute.value.split '|')
-          path = pipes.shift().split '.'
+          path = pipes.shift().split(/(\.|:)/)
+          options.formatters = pipes
           model = @models[path.shift()]
-          keypath = path.join '.'
+          options.bypass = path.shift() is ':'
+          keypath = path.join()
 
           if eventRegExp.test type
             type = type.replace eventRegExp, ''
-            bindType = "event"
-          else if type in bidirectionals
-            bindType = "bidirectional"
+            options.special = "event"
 
-          @bindings.push new Rivets.Binding node, type, bindType, model, keypath, pipes
+          @bindings.push new Rivets.Binding node, type, model, keypath, options
 
     for el in @els
       parseNode el
@@ -140,7 +151,7 @@ getInputValue = (el) ->
     when 'text', 'textarea', 'password', 'select-one', 'radio' then el.value
     when 'checkbox' then el.checked
 
-# Returns an element binding routine for the specified attribute.
+# Returns an event binding routine for the specified event.
 eventBinding = (event) -> (el, bind, unbind) ->
   bindEvent el, event, bind if bind
   unbindEvent el, event, unbind if unbind
@@ -149,10 +160,6 @@ eventBinding = (event) -> (el, bind, unbind) ->
 # is used when there are no matching routines for an identifier.
 attributeBinding = (attr) -> (el, value) ->
   if value then el.setAttribute attr, value else el.removeAttribute attr
-
-# Bindings that should also be observed for changes on the DOM element in order
-# to propagate those changes back to the model object.
-bidirectionals = ['value', 'checked', 'unchecked']
 
 # Core binding routines.
 Rivets.routines =
