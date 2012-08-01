@@ -63,6 +63,14 @@ class Rivets.Binding
       if Rivets.config.preloadData
         @set Rivets.config.adapter.read @model, @keypath
 
+    if @options.dependencies?.length
+      for keypath in @options.dependencies
+        Rivets.config.adapter.subscribe @model, keypath, (stub) =>
+          @set if @options.bypass
+            @model[@keypath]
+          else
+            Rivets.config.adapter.read @model, @keypath
+
     if @type in @bidirectionals
       bindEvent @el, 'change', @publish
 
