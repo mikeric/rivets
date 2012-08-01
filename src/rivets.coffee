@@ -104,11 +104,15 @@ class Rivets.View
 
           type = attribute.name.replace bindingRegExp, ''
           pipes = (pipe.trim() for pipe in attribute.value.split '|')
-          path = pipes.shift().split(/(\.|:)/)
+          context = (ctx.trim() for ctx in pipes.shift().split '>')
+          path = context.shift().split /(\.|:)/
           options.formatters = pipes
           model = @models[path.shift()]
           options.bypass = path.shift() is ':'
           keypath = path.join()
+
+          if dependencies = context.shift()
+            options.dependencies = dependencies.split /\s+/
 
           if eventRegExp.test type
             type = type.replace eventRegExp, ''
