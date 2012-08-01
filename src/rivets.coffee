@@ -64,12 +64,14 @@ class Rivets.Binding
         @set Rivets.config.adapter.read @model, @keypath
 
     if @options.dependencies?.length
+      @reset = (value) =>
+        @set if @options.bypass
+          @model[@keypath]
+        else
+          Rivets.config.adapter.read @model, @keypath
+        
       for keypath in @options.dependencies
-        Rivets.config.adapter.subscribe @model, keypath, (stub) =>
-          @set if @options.bypass
-            @model[@keypath]
-          else
-            Rivets.config.adapter.read @model, @keypath
+        Rivets.config.adapter.subscribe @model, keypath, @reset
 
     if @type in @bidirectionals
       bindEvent @el, 'change', @publish
@@ -82,6 +84,10 @@ class Rivets.Binding
   # Unsubscribes from the model and the element.
   unbind: =>
     Rivets.config.adapter.unsubscribe @model, @keypath, @set
+
+    if @options.dependencies?.length
+      for keypath in @options.dependencies
+        Rivets.config.adapter.unsubscribe @model, keypath, @reset
 
     if @type in @bidirectionals
       @el.removeEventListener 'change', @publish
