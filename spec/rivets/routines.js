@@ -22,6 +22,12 @@ describe('Routines', function() {
       expect(el.textContent || el.innerText).toBe('<em>gluten-free</em>');
       expect(el.innerHTML).toBe('&lt;em&gt;gluten-free&lt;/em&gt;');
     });
+
+    it("sets the element's text content to zero when a numeric zero is passed", function() {
+        rivets.routines.text(el, 0);
+        expect(el.textContent || el.innerText).toBe('0');
+        expect(el.innerHTML).toBe('0');
+    });
   });
 
   describe('html', function() {
@@ -29,6 +35,12 @@ describe('Routines', function() {
       rivets.routines.html(el, '<strong>fixie</strong>');
       expect(el.textContent || el.innerText).toBe('fixie');
       expect(el.innerHTML).toBe('<strong>fixie</strong>');
+    });
+
+    it("sets the element's HTML content to zero when a zero value is passed", function() {
+      rivets.routines.html(el, 0);
+        expect(el.textContent || el.innerText).toBe('0');
+        expect(el.innerHTML).toBe('0');
     });
   });
 
@@ -41,6 +53,11 @@ describe('Routines', function() {
     it("applies a default value to the element when the model doesn't contain it", function() {
       rivets.routines.value(input, undefined);
       expect(input.value).toBe('');
+    });
+
+    it("sets the element's value to zero when a zero value is passed", function() {
+      rivets.routines.value(input, 0);
+      expect(input.value).toBe('0');
     });
   });
 
