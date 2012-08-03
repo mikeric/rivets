@@ -26,7 +26,7 @@ describe('Rivets.Binding', function() {
     it('subscribes to the model for changes via the adapter', function() {
       spyOn(rivets.config.adapter, 'subscribe');
       binding.bind();
-      expect(rivets.config.adapter.subscribe).toHaveBeenCalled();
+      expect(rivets.config.adapter.subscribe).toHaveBeenCalledWith(model, 'name', binding.set);
     });
 
     describe('with preloadData set to true', function() {
@@ -38,8 +38,8 @@ describe('Rivets.Binding', function() {
         spyOn(binding, 'set');
         spyOn(rivets.config.adapter, 'read');
         binding.bind();
+        expect(rivets.config.adapter.read).toHaveBeenCalledWith(model, 'name');
         expect(binding.set).toHaveBeenCalled();
-        expect(rivets.config.adapter.read).toHaveBeenCalled();
       });
     });
 
@@ -53,6 +53,19 @@ describe('Rivets.Binding', function() {
         binding.model.name = 'espresso';
         binding.bind();
         expect(binding.set).toHaveBeenCalledWith('espresso');
+      });
+    });
+
+    describe('with dependencies', function() {
+      beforeEach(function() {
+        binding.options.dependencies = ['fname', 'lname'];
+      });
+
+      it('sets up observers on the dependant attributes', function() {
+        spyOn(rivets.config.adapter, 'subscribe');
+        binding.bind();
+        expect(rivets.config.adapter.subscribe).toHaveBeenCalledWith(model, 'fname', binding.dependencyCallbacks['fname']);
+        expect(rivets.config.adapter.subscribe).toHaveBeenCalledWith(model, 'lname', binding.dependencyCallbacks['lname']);
       });
     });
   });
