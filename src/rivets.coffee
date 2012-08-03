@@ -203,14 +203,14 @@ Rivets.routines =
   hide: (el, value) ->
     el.style.display = if value then 'none' else ''
   html:  (el, value) ->
-    el.innerHTML = value or ''
+    el.innerHTML = if value? then value else ''
   value: (el, value) ->
-    el.value = value or ''
+    el.value = if value? then value else ''
   text: (el, value) ->
     if el.innerText?
-      el.innerText = value or ''
+      el.innerText = if value? then value else ''
     else
-      el.textContent = value or ''
+      el.textContent = if value? then value else ''
 
 # Default configuration.
 Rivets.config =
