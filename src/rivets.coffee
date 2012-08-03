@@ -63,6 +63,18 @@ class Rivets.Binding
       if Rivets.config.preloadData
         @set Rivets.config.adapter.read @model, @keypath
 
+    if @options.dependencies?.length
+      @dependencyCallbacks = {}
+
+      for keypath in @options.dependencies
+        callback = @dependencyCallbacks[keypath] = (value) =>
+          @set if @options.bypass
+            @model[@keypath]
+          else
+            Rivets.config.adapter.read @model, @keypath
+        
+        Rivets.config.adapter.subscribe @model, keypath, callback
+
     if @type in @bidirectionals
       bindEvent @el, 'change', @publish
 
@@ -74,6 +86,11 @@ class Rivets.Binding
   # Unsubscribes from the model and the element.
   unbind: =>
     Rivets.config.adapter.unsubscribe @model, @keypath, @set
+
+    if @options.dependencies?.length
+      for keypath in @options.dependencies
+        callback = @dependencyCallbacks[keypath]
+        Rivets.config.adapter.unsubscribe @model, keypath, callback
 
     if @type in @bidirectionals
       @el.removeEventListener 'change', @publish
@@ -104,11 +121,15 @@ class Rivets.View
 
           type = attribute.name.replace bindingRegExp, ''
           pipes = (pipe.trim() for pipe in attribute.value.split '|')
-          path = pipes.shift().split(/(\.|:)/)
+          context = (ctx.trim() for ctx in pipes.shift().split '>')
+          path = context.shift().split /(\.|:)/
           options.formatters = pipes
           model = @models[path.shift()]
           options.bypass = path.shift() is ':'
           keypath = path.join()
+
+          if dependencies = context.shift()
+            options.dependencies = dependencies.split /\s+/
 
           if eventRegExp.test type
             type = type.replace eventRegExp, ''
