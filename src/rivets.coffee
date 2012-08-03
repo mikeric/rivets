@@ -64,14 +64,16 @@ class Rivets.Binding
         @set Rivets.config.adapter.read @model, @keypath
 
     if @options.dependencies?.length
-      @reset = (value) =>
-        @set if @options.bypass
-          @model[@keypath]
-        else
-          Rivets.config.adapter.read @model, @keypath
-        
+      @dependencyCallbacks = {}
+
       for keypath in @options.dependencies
-        Rivets.config.adapter.subscribe @model, keypath, @reset
+        callback = @dependencyCallbacks[keypath] = (value) =>
+          @set if @options.bypass
+            @model[@keypath]
+          else
+            Rivets.config.adapter.read @model, @keypath
+        
+        Rivets.config.adapter.subscribe @model, keypath, callback
 
     if @type in @bidirectionals
       bindEvent @el, 'change', @publish
@@ -87,7 +89,8 @@ class Rivets.Binding
 
     if @options.dependencies?.length
       for keypath in @options.dependencies
-        Rivets.config.adapter.unsubscribe @model, keypath, @reset
+        callback = @dependencyCallbacks[keypath]
+        Rivets.config.adapter.unsubscribe @model, keypath, callback
 
     if @type in @bidirectionals
       @el.removeEventListener 'change', @publish
