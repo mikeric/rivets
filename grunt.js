@@ -8,6 +8,9 @@ module.exports = function(grunt) {
         '// author: <%= pkg.author %>\n' +
         '// license: <%= pkg.licenses[0].type %>'
     },
+    jasmine: {
+      all: ['spec/index.html']
+    },
     lint: {
       files: ['grunt.js', 'lib/**/*.js', 'spec/**/*.js']
     },
@@ -19,11 +22,11 @@ module.exports = function(grunt) {
     },
     watch: {
       files: 'src/rivets.coffee',
-      tasks: 'build'
+      tasks: 'build spec'
     },
   });
 
-  grunt.registerTask('default', 'watch');
+  grunt.loadNpmTasks('grunt-jasmine-task');
 
   grunt.registerTask('compile', 'Compiles CoffeeScript source into JavaScript.', function(){
     var coffee = require('coffee-script');
@@ -32,5 +35,7 @@ module.exports = function(grunt) {
     if (js) grunt.file.write('lib/rivets.js', banner + js);
   });
 
+  grunt.registerTask('default', 'watch');
+  grunt.registerTask('spec', 'jasmine');
   grunt.registerTask('build', 'compile min');
 };
