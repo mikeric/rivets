@@ -121,12 +121,12 @@ Even though a binding routine for `each-item` will likely be included in Rivets.
 
 ## Building and Testing
 
-Before proceeding, make sure to run `npm install` so that you have all the development dependencies.
+Make sure to run `npm install` so that you have all the development dependencies. To have the test suite run as part of the build process, you'll also need to have [PhantomJS](http://phantomjs.org) installed.
 
 #### Building
 
-Rivets.js uses [grunt](http://gruntjs.com/) as the build tool. Run `grunt` from within the project root and it will compile + minify into */lib* whenever the source file is saved. You can also run `grunt build` to rebuild the project manually.
+Rivets.js uses [grunt](http://gruntjs.com/) as the build tool. Run `grunt build` from within the project root to compile + minify the source into */lib*, or just run `grunt` to have it watch the source file for changes — it will compile + minify into */lib* and run the test suite whenever the source file is saved.
 
 #### Testing
 
-Rivets.js uses [Jasmine](http://pivotal.github.com/jasmine/) as the testing framework. You can run the tests by opening */spec/index.html*.
+Rivets.js uses [Jasmine](http://pivotal.github.com/jasmine/) as the testing framework. You can run the test suite with `grunt spec` or by opening */spec/index.html*.
