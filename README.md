@@ -1,6 +1,6 @@
 # Rivets.js
 
-Rivets.js is a declarative data binding facility that plays well with existing frameworks such as [Backbone.js](http://backbonejs.org), [Spine.js](http://spinejs.com) and [Stapes.js](http://hay.github.com/stapes/). It aims to be lightweight (1.4KB minified and gzipped), extensible, and configurable to work with any event-driven model.
+Rivets.js is a declarative data binding facility that plays well with existing frameworks such as [Backbone.js](http://backbonejs.org), [Spine.js](http://spinejs.com) and [Stapes.js](http://hay.github.com/stapes/). It aims to be lightweight (1.9KB minified and gzipped), extensible, and configurable to work with any event-driven model.
 
 ---
 
