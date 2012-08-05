@@ -42,7 +42,7 @@
         </ul>
       </header>
       <section>
-<p>Rivets.js is a declarative data binding facility that plays well with existing frameworks such as <a href="http://backbonejs.org">Backbone.js</a>, <a href="http://spinejs.com">Spine.js</a> and <a href="http://hay.github.com/stapes/">Stapes.js</a>. It aims to be lightweight (1.4KB minified and gzipped), extensible, and configurable to work with any event-driven model.</p>
+<p>Rivets.js is a declarative data binding facility that plays well with existing frameworks such as <a href="http://backbonejs.org">Backbone.js</a>, <a href="http://spinejs.com">Spine.js</a> and <a href="http://hay.github.com/stapes/">Stapes.js</a>. It aims to be lightweight (1.9KB minified and gzipped), extensible, and configurable to work with any event-driven model.</p>
 <hr />
 <p>Describe your UI in plain HTML using data attributes:</p>
 <pre><code>&lt;div id=&#39;auction&#39;&gt;
@@ -129,6 +129,12 @@
 <h2 id="usage-notes">Usage Notes</h2>
 <h4 id="rivets.view-and-rivets.binding">Rivets.View and Rivets.Binding</h4>
 <p>The <code>rivets.bind</code> function returns a bound <code>Rivets.View</code> instance that you should hold on to for later. You may want to unbind it’s listeners with <code>view.unbind()</code> and/or rebuild it’s bindings with <code>view.build()</code>. You can also access the individual <code>Rivets.Binding</code> instances inside the view through <code>view.bindings</code> — this is useful for debugging purposes or if you want to unbind or manually set the value for certain bindings.</p>
+<h4 id="adapter-bypass">Adapter Bypass</h4>
+<p>If your model object encapsulates it’s attributes (e.g. <code>model.attributes</code> for Backbone.js models) and your adapter conforms to that object specifically, you can still utilize properties defined outside of that object — such as functions or other static values defined on the object root.</p>
+<p>Just use <code>model:property</code> instead of <code>model.property</code> inside your binding declaration and Rivets.js will bypass the adapter completely and access that property as it’s defined on the object root. This obviously won’t sync any changes, but that is by design in this case as these properties should be mostly static and used in conjunction with other “dynamic” properties.</p>
+<h4 id="computed-properties">Computed Properties</h4>
+<p>Computed properties are functions that get re-evaluated when one or more dependent properties change. Declaring computed properties in Rivets.js is simple, just separate the function from it’s dependencies with a <code>&gt;</code>. The following <code>data-text</code> binding will get re-evaluated with <code>event.duration()</code> when either the event’s <code>start</code> or <code>end</code> attribute changes.</p>
+<pre><code>&lt;span data-text=&quot;event:duration &gt; start end&quot;&gt;&lt;/span&gt;</code></pre>
 <h4 id="iteration-binding">Iteration Binding</h4>
 <p>Even though a binding routine for <code>each-item</code> will likely be included in Rivets.js, you can use the <code>data-html</code> binding along with a set of formatters in the interim to do sorting and iterative rendering of collections (amongst other cool things).</p>
 <pre><code>&lt;ul data-html=&quot;model.tags | sort | tagList&quot;&gt;&lt;/ul&gt;</code></pre>
