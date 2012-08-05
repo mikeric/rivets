@@ -119,6 +119,12 @@ If your model object encapsulates it's attributes (e.g. `model.attributes` for B
 
 Just use `model:property` instead of `model.property` inside your binding declaration and Rivets.js will bypass the adapter completely and access that property as it's defined on the object root. This obviously won't sync any changes, but that is by design in this case as these properties should be mostly static and used in conjunction with other "dynamic" properties.
 
+#### Computed Properties
+
+Computed properties are functions that get re-evaluated when one or more dependent properties change. Declaring computed properties in Rivets.js is simple, just separate the function from it's dependencies with a `>`. The following `data-text` binding will get re-evaluated with `event.duration()` when either the event's `start` or `end` attribute changes.
+
+    <span data-text="event:duration > start end"></span>
+
 #### Iteration Binding
 
 Even though a binding routine for `each-item` will likely be included in Rivets.js, you can use the `data-html` binding along with a set of formatters in the interim to do sorting and iterative rendering of collections (amongst other cool things).
