@@ -113,6 +113,12 @@ With that routine defined, the following binding will update the element's color
 
 The `rivets.bind` function returns a bound `Rivets.View` instance that you should hold on to for later. You may want to unbind it's listeners with `view.unbind()` and/or rebuild it's bindings with `view.build()`. You can also access the individual `Rivets.Binding` instances inside the view through `view.bindings` — this is useful for debugging purposes or if you want to unbind or manually set the value for certain bindings.
 
+#### Adapter Bypass
+
+If your model object encapsulates it's attributes (e.g. `model.attributes` for Backbone.js models) and your adapter conforms to that object specifically, you can still utilize properties defined outside of that object — such as functions or other static values defined on the object root.
+
+Just use `model:property` instead of `model.property` inside your binding declaration and Rivets.js will bypass the adapter completely and access that property as it's defined on the object root. This obviously won't sync any changes, but that is by design in this case as these properties should be mostly static and used in conjunction with other "dynamic" properties.
+
 #### Iteration Binding
 
 Even though a binding routine for `each-item` will likely be included in Rivets.js, you can use the `data-html` binding along with a set of formatters in the interim to do sorting and iterative rendering of collections (amongst other cool things).
