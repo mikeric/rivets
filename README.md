@@ -58,20 +58,6 @@ Rivets.js is model interface-agnostic, meaning it can work with any event-driven
       }
     });
 
-#### Formatters
-
-Formatters are simple one-way functions that mutate the incoming value of a binding. You can use them to format dates, numbers, currencies, etc. and because they work in a similar fashion to the Unix pipeline, the output of each feeds directly as input to the next one, so you can stack as many of them together as you like.
-
-    rivets.configure({
-      formatters: {
-        money: function(value){
-          return accounting.formatMoney(value);
-        },
-        date: function(value){
-          return moment(value).format('MMM DD, YYYY');
-        }
-      }
-    });
 
 #### Prefix and data preloading
 
@@ -81,7 +67,11 @@ Set the `preloadData` option to `true` or `false` depending on if you want the b
 
 ## Extend
 
-Rivets.js comes bundled with a few commonly used bindings, but users are encouraged to add their own that are specific to the needs of their application. Rivets.js is easily extended by adding your own binding routines. *Binding routines* are the functions that run when an observed attribute changes. Their sole concern is to describe what happens to the element when a new value comes in. All binding routines are publicly available on the `rivets.routines` object.
+Rivets.js is easily extended by adding your own custom *binding routines* and *formatters*. Rivets.js comes bundled with a few commonly used bindings, but users are encouraged to add their own that are specific to the needs of their application. 
+
+#### Binding Routines
+
+*Binding routines* are the functions that run when an observed attribute changes. Their sole concern is to describe what happens to the element when a new value comes in. All binding routines are publicly available on the `rivets.routines` object.
 
 Let's say we wanted a `data-color` binding that sets the element's colour, here's what the routine function for that binding might look like:
 
@@ -93,7 +83,7 @@ With that routine defined, the following binding will update the element's color
 
     <span data-color="model.color">COLOR</span>
 
-#### Available bindings out-of-the-box
+Available bindings out-of-the-box:
 
 - data-text
 - data-html
@@ -106,6 +96,18 @@ With that routine defined, the following binding will update the element's color
 - data-unchecked
 - data-*[attribute]*
 - data-on-*[event]*
+
+#### Formatters
+
+*Formatters* are simple one-way functions that mutate the incoming value of a binding. You can use them to format dates, numbers, currencies, etc. and because they work in a similar fashion to the Unix pipeline, the output of each feeds directly as input to the next one, so you can stack as many of them together as you like.
+
+    rivets.formatters.money = function(value){
+      return accounting.formatMoney(value);
+    };
+
+    rivets.formatters.date = function(value){
+      return moment(value).format('MMM DD, YYYY');
+    };
 
 ## Usage Notes
 
