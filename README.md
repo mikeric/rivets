@@ -34,11 +34,11 @@ Then tell Rivets.js what model(s) to bind to it:
 
 ## Configure
 
-Use `rivets.configure` to configure Rivets.js for your app (or set them manually on `rivets.config`). There are a few handy configuration options, such as setting the data attribute prefix and adding formatters that you can pipe binding values to, but setting the adapter is the only required configuration since Rivets.js needs to know how to observe your models for changes as they happen.
+Use `rivets.configure` to configure Rivets.js for your app (or you can set configuration options manually on `rivets.config`).
 
 #### Adapter
 
-Rivets.js is model interface-agnostic, meaning it can work with any event-driven model by way of defining an adapter. An adapter is just an object that responds to `subscribe`, `unsubscribe`, `read` and `publish`. Here is a sample configuration with an adapter for using Rivets.js with Backbone.js.
+Rivets.js is model interface-agnostic, meaning it can work with any event-driven model by way of defining an adapter. This is the only required configuration as it's what Rivet.js uses to observe and interact with your model objects. An adapter is just an object that responds to `subscribe`, `unsubscribe`, `read` and `publish`. Here is a sample configuration with an adapter for using Rivets.js with Backbone.js.
 
     rivets.configure({
       adapter: {
@@ -63,7 +63,15 @@ Rivets.js is model interface-agnostic, meaning it can work with any event-driven
 
 To prevent data attribute collision, you can set the `prefix` option to something like 'rv' or 'bind' so that data attributes are prefixed like `data-rv-text`.
 
-Set the `preloadData` option to `true` or `false` depending on if you want the binding routines to run immediately after the initial binding or not — if set to false, the binding routines will only run when the attribute value is updated.
+    rivets.configure({
+      prefix: 'rv'
+    });
+
+Set the `preloadData` option to `false` if you don't want your bindings to be bootstrapped with the current model values on bind. This option is set to `true` by default.
+
+    rivets.configure({
+      preloadData: false
+    });
 
 ## Extend
 
