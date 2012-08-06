@@ -78,9 +78,7 @@ describe('Rivets.Binding', function() {
     });
 
     it('applies any formatters to the value before performing the routine', function() {
-      rivets.config.formatters = {
-        awesome: function(value) { return 'awesome ' + value }
-      };
+      rivets.formatters.awesome = function(value) { return 'awesome ' + value };
       binding.formatters.push('awesome');
       spyOn(binding, 'routine');
       binding.set('sweater');
@@ -133,9 +131,7 @@ describe('Rivets.Binding', function() {
 
   describe('formattedValue()', function() {
     it('applies the current formatters on the supplied value', function() {
-      rivets.config.formatters = {
-        awesome: function(value) { return 'awesome ' + value }
-      };
+      rivets.formatters.awesome = function(value) { return 'awesome ' + value };
       binding.formatters.push('awesome');
       expect(binding.formattedValue('hat')).toBe('awesome hat');
     });
@@ -148,10 +144,8 @@ describe('Rivets.Binding', function() {
 
     describe('with a multi-argument formatter string', function() {
       beforeEach(function() {
-        rivets.config.formatters = {
-          awesome: function(value, prefix) {
-            return prefix + ' awesome ' + value;
-          }
+        rivets.formatters.awesome = function(value, prefix) {
+          return prefix + ' awesome ' + value;
         };
         binding.formatters.push('awesome super');
       });
