@@ -34,8 +34,8 @@ class Rivets.Binding
       id = args.shift()
       value = if @model[id] instanceof Function
         @model[id] value, args...
-      else if Rivets.config.formatters[id]
-        Rivets.config.formatters[id] value, args...
+      else if Rivets.formatters[id]
+        Rivets.formatters[id] value, args...
 
     value
 
@@ -215,12 +215,17 @@ Rivets.routines =
 # Default configuration.
 Rivets.config =
   preloadData: true
-  formatters: {}
+
+# Default formatters. There aren't any.
+Rivets.formatters = {}
 
 # The rivets module. This is the public interface that gets exported.
 rivets =
   # Exposes the core binding routines that can be extended or stripped down.
   routines: Rivets.routines
+
+  # Exposes the formatters object to be extended.
+  formatters: Rivets.formatters
 
   # Exposes the rivets configuration options. These can be set manually or from
   # rivets.configure with an object literal.
