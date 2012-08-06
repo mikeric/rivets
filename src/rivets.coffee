@@ -72,7 +72,7 @@ class Rivets.Binding
             @model[@keypath]
           else
             Rivets.config.adapter.read @model, @keypath
-        
+
         Rivets.config.adapter.subscribe @model, keypath, callback
 
     if @type in @bidirectionals
@@ -122,11 +122,12 @@ class Rivets.View
           type = attribute.name.replace bindingRegExp, ''
           pipes = (pipe.trim() for pipe in attribute.value.split '|')
           context = (ctx.trim() for ctx in pipes.shift().split '>')
-          path = context.shift().split /(\.|:)/
+          path = context.shift()
+          splitPath = path.split /\.|:/
           options.formatters = pipes
-          model = @models[path.shift()]
-          options.bypass = path.shift() is ':'
-          keypath = path.join()
+          model = @models[splitPath.shift()]
+          options.bypass = path.indexOf(":") != -1
+          keypath = splitPath.join()
 
           if dependencies = context.shift()
             options.dependencies = dependencies.split /\s+/
@@ -153,18 +154,20 @@ class Rivets.View
 bindEvent = (el, event, fn) ->
   # Check to see if addEventListener is available.
   if window.addEventListener
-    el.addEventListener event, fn
+    el.addEventListener event, fn, false
   else
   # Assume we are in IE and use attachEvent.
+    event = "on" + event
     el.attachEvent event, fn
 
 unbindEvent = (el, event, fn) ->
   # Check to see if addEventListener is available.
   if window.removeEventListener
-    el.removeEventListener event, fn
+    el.removeEventListener event, fn, false
   else
   # Assume we are in IE and use attachEvent.
-    el.detachEvent event, fn
+    event = "on" + event
+    el.detachEvent  event, fn
 
 # Returns the current input value for the specified element.
 getInputValue = (el) ->
