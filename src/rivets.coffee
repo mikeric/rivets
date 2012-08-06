@@ -153,18 +153,20 @@ class Rivets.View
 bindEvent = (el, event, fn) ->
   # Check to see if addEventListener is available.
   if window.addEventListener
-    el.addEventListener event, fn
+    el.addEventListener event, fn, false
   else
   # Assume we are in IE and use attachEvent.
+    event = "on" + event
     el.attachEvent event, fn
 
 unbindEvent = (el, event, fn) ->
   # Check to see if addEventListener is available.
   if window.removeEventListener
-    el.removeEventListener event, fn
+    el.removeEventListener event, fn, false
   else
   # Assume we are in IE and use attachEvent.
-    el.detachEvent event, fn
+    event = "on" + event
+    el.detachEvent  event, fn
 
 # Returns the current input value for the specified element.
 getInputValue = (el) ->
