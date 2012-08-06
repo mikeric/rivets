@@ -72,7 +72,7 @@ class Rivets.Binding
             @model[@keypath]
           else
             Rivets.config.adapter.read @model, @keypath
-        
+
         Rivets.config.adapter.subscribe @model, keypath, callback
 
     if @type in @bidirectionals
@@ -122,11 +122,12 @@ class Rivets.View
           type = attribute.name.replace bindingRegExp, ''
           pipes = (pipe.trim() for pipe in attribute.value.split '|')
           context = (ctx.trim() for ctx in pipes.shift().split '>')
-          path = context.shift().split /(\.|:)/
+          path = context.shift()
+          splitPath = path.split /\.|:/
           options.formatters = pipes
-          model = @models[path.shift()]
-          options.bypass = path.shift() is ':'
-          keypath = path.join()
+          model = @models[splitPath.shift()]
+          options.bypass = path.indexOf(":") != -1
+          keypath = splitPath.join()
 
           if dependencies = context.shift()
             options.dependencies = dependencies.split /\s+/
