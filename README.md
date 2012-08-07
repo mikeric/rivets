@@ -109,13 +109,19 @@ Available bindings out-of-the-box:
 
 *Formatters* are simple one-way functions that mutate the incoming value of a binding. You can use them to format dates, numbers, currencies, etc. and because they work in a similar fashion to the Unix pipeline, the output of each feeds directly as input to the next one, so you can stack as many of them together as you like.
 
-    rivets.formatters.money = function(value){
-      return accounting.formatMoney(value);
-    };
+```
+rivets.formatters.money = function(value){
+  return accounting.formatMoney(value);
+};
 
-    rivets.formatters.date = function(value){
-      return moment(value).format('MMM DD, YYYY');
-    };
+rivets.formatters.date = function(value){
+  return moment(value).format('MMM DD, YYYY');
+};
+```
+
+```
+<span data-text="event.startDate | date"></span>
+```
 
 ## Usage Notes
 
