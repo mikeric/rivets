@@ -69,9 +69,9 @@
 <p>Then tell Rivets.js what model(s) to bind to it:</p>
 <pre><code>rivets.bind($(&#39;#auction&#39;), {auction: auction, user: currentUser});</code></pre>
 <h2 id="configure">Configure</h2>
-<p>Use <code>rivets.configure</code> to configure Rivets.js for your app (or set them manually on <code>rivets.config</code>). There are a few handy configuration options, such as setting the data attribute prefix and adding formatters that you can pipe binding values to, but setting the adapter is the only required configuration since Rivets.js needs to know how to observe your models for changes as they happen.</p>
+<p>Use <code>rivets.configure</code> to configure Rivets.js for your app (or you can set configuration options manually on <code>rivets.config</code>).</p>
 <h4 id="adapter">Adapter</h4>
-<p>Rivets.js is model interface-agnostic, meaning it can work with any event-driven model by way of defining an adapter. An adapter is just an object that responds to <code>subscribe</code>, <code>unsubscribe</code>, <code>read</code> and <code>publish</code>. Here is a sample configuration with an adapter for using Rivets.js with Backbone.js.</p>
+<p>Rivets.js is model interface-agnostic, meaning it can work with any event-driven model by way of defining an adapter. This is the only required configuration as it’s what Rivet.js uses to observe and interact with your model objects. An adapter is just an object that responds to <code>subscribe</code>, <code>unsubscribe</code>, <code>read</code> and <code>publish</code>. Here is a sample configuration with an adapter for using Rivets.js with Backbone.js.</p>
 <pre><code>rivets.configure({
   adapter: {
     subscribe: function(obj, keypath, callback) {
@@ -89,30 +89,26 @@
     }
   }
 });</code></pre>
-<h4 id="formatters">Formatters</h4>
-<p>Formatters are simple one-way functions that mutate the incoming value of a binding. You can use them to format dates, numbers, currencies, etc. and because they work in a similar fashion to the Unix pipeline, the output of each feeds directly as input to the next one, so you can stack as many of them together as you like.</p>
-<pre><code>rivets.configure({
-  formatters: {
-    money: function(value){
-      return accounting.formatMoney(value);
-    },
-    date: function(value){
-      return moment(value).format(&#39;MMM DD, YYYY&#39;);
-    }
-  }
-});</code></pre>
 <h4 id="prefix-and-data-preloading">Prefix and data preloading</h4>
 <p>To prevent data attribute collision, you can set the <code>prefix</code> option to something like ‘rv’ or ‘bind’ so that data attributes are prefixed like <code>data-rv-text</code>.</p>
-<p>Set the <code>preloadData</code> option to <code>true</code> or <code>false</code> depending on if you want the binding routines to run immediately after the initial binding or not — if set to false, the binding routines will only run when the attribute value is updated.</p>
+<pre><code>rivets.configure({
+  prefix: &#39;rv&#39;
+});</code></pre>
+<p>Set the <code>preloadData</code> option to <code>false</code> if you don’t want your bindings to be bootstrapped with the current model values on bind. This option is set to <code>true</code> by default.</p>
+<pre><code>rivets.configure({
+  preloadData: false
+});</code></pre>
 <h2 id="extend">Extend</h2>
-<p>Rivets.js comes bundled with a few commonly used bindings, but users are encouraged to add their own that are specific to the needs of their application. Rivets.js is easily extended by adding your own binding routines. <em>Binding routines</em> are the functions that run when an observed attribute changes. Their sole concern is to describe what happens to the element when a new value comes in. All binding routines are publicly available on the <code>rivets.routines</code> object.</p>
+<p>Rivets.js is easily extended by adding your own custom <em>binding routines</em> and <em>formatters</em>. Rivets.js comes bundled with a few commonly used bindings, but users are encouraged to add their own that are specific to the needs of their application.</p>
+<h4 id="binding-routines">Binding Routines</h4>
+<p><em>Binding routines</em> are the functions that run when an observed attribute changes. Their sole concern is to describe what happens to the element when a new value comes in. All binding routines are publicly available on the <code>rivets.routines</code> object.</p>
 <p>Let’s say we wanted a <code>data-color</code> binding that sets the element’s colour, here’s what the routine function for that binding might look like:</p>
 <pre><code>rivets.routines.color = function(el, value) {
   el.style.color = value;
 };</code></pre>
 <p>With that routine defined, the following binding will update the element’s color when <code>model.color</code> changes:</p>
 <pre><code>&lt;span data-color=&quot;model.color&quot;&gt;COLOR&lt;/span&gt;</code></pre>
-<h4 id="available-bindings-out-of-the-box">Available bindings out-of-the-box</h4>
+<p>Available bindings out-of-the-box:</p>
 <ul>
 <li>data-text</li>
 <li>data-html</li>
@@ -126,6 +122,16 @@
 <li>data-<em>[attribute]</em></li>
 <li>data-on-<em>[event]</em></li>
 </ul>
+<h4 id="formatters">Formatters</h4>
+<p><em>Formatters</em> are simple one-way functions that mutate the incoming value of a binding. You can use them to format dates, numbers, currencies, etc. and because they work in a similar fashion to the Unix pipeline, the output of each feeds directly as input to the next one, so you can stack as many of them together as you like.</p>
+<pre><code>rivets.formatters.money = function(value){
+  return accounting.formatMoney(value);
+};
+
+rivets.formatters.date = function(value){
+  return moment(value).format(&#39;MMM DD, YYYY&#39;);
+};</code></pre>
+<code>&lt;span data-text=&quot;event.startDate | date&quot;&gt;&lt;/span&gt;</code>
 <h2 id="usage-notes">Usage Notes</h2>
 <h4 id="rivets.view-and-rivets.binding">Rivets.View and Rivets.Binding</h4>
 <p>The <code>rivets.bind</code> function returns a bound <code>Rivets.View</code> instance that you should hold on to for later. You may want to unbind it’s listeners with <code>view.unbind()</code> and/or rebuild it’s bindings with <code>view.build()</code>. You can also access the individual <code>Rivets.Binding</code> instances inside the view through <code>view.bindings</code> — this is useful for debugging purposes or if you want to unbind or manually set the value for certain bindings.</p>
