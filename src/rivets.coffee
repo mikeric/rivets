@@ -192,6 +192,8 @@ eventBinding = (event) -> (el, bind, unbind) ->
 
 # Returns an iteration binding routine for the specified collection.
 iterationBinding = (name) -> (el, collection, binding) ->
+  Rivets.routines.hide el, true
+
   for iteration in binding.iterated
     iteration.view.unbind()
     iteration.el.parentNode.removeChild iteration.el
@@ -203,6 +205,7 @@ iterationBinding = (name) -> (el, collection, binding) ->
     data[name] = item
 
     itemEl = el.cloneNode true
+    Rivets.routines.show itemEl, true
     el.parentNode.insertBefore itemEl, el
 
     binding.iterated.push
