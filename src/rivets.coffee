@@ -88,15 +88,16 @@ class Rivets.Binding
 
   # Unsubscribes from the model and the element.
   unbind: =>
-    Rivets.config.adapter.unsubscribe @model, @keypath, @set
+    unless @options.bypass
+      Rivets.config.adapter.unsubscribe @model, @keypath, @set
 
-    if @options.dependencies?.length
-      for keypath in @options.dependencies
-        callback = @dependencyCallbacks[keypath]
-        Rivets.config.adapter.unsubscribe @model, keypath, callback
+      if @options.dependencies?.length
+        for keypath in @options.dependencies
+          callback = @dependencyCallbacks[keypath]
+          Rivets.config.adapter.unsubscribe @model, keypath, callback
 
-    if @type in @bidirectionals
-      @el.removeEventListener 'change', @publish
+      if @type in @bidirectionals
+        @el.removeEventListener 'change', @publish
 
 # A collection of bindings built from a set of parent elements.
 class Rivets.View
