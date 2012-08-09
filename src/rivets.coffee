@@ -15,10 +15,10 @@ class Rivets.Binding
   # element, the type of binding, the model object and the keypath at which
   # to listen for changes.
   constructor: (@el, @type, @model, @keypath, @options = {}) ->
-    if @options.special is "event"
-      @routine = eventBinding @type
-    else
-      @routine = Rivets.routines[@type] || attributeBinding @type
+    @routine = switch @options.special
+      when "event"     then eventBinding @type
+      when "iteration" then iterationBinding @type
+      else Rivets.routines[@type] || attributeBinding @type
 
     @formatters = @options.formatters || []
 
@@ -47,6 +47,9 @@ class Rivets.Binding
     if @options.special is "event"
       @routine @el, value, @currentListener
       @currentListener = value
+    else if @options.special is "iteration"
+      @iterated or= []
+      @routine @el, value, @
     else
       value = value() if value instanceof Function
       @routine @el, value
@@ -113,6 +116,7 @@ class Rivets.View
     @bindings = []
     bindingRegExp = @bindingRegExp()
     eventRegExp = /^on-/
+    iterationRegExp = /^each-/
 
     parseNode = (node) =>
       for attribute in node.attributes
@@ -129,14 +133,19 @@ class Rivets.View
           options.bypass = path.indexOf(":") != -1
           keypath = splitPath.join()
 
-          if dependencies = context.shift()
-            options.dependencies = dependencies.split /\s+/
+          if model
+            if dependencies = context.shift()
+              options.dependencies = dependencies.split /\s+/
 
-          if eventRegExp.test type
-            type = type.replace eventRegExp, ''
-            options.special = "event"
+            if eventRegExp.test type
+              type = type.replace eventRegExp, ''
+              options.special = "event"
 
-          @bindings.push new Rivets.Binding node, type, model, keypath, options
+            if iterationRegExp.test type
+              type = type.replace iterationRegExp, ''
+              options.special = "iteration"
+
+            @bindings.push new Rivets.Binding node, type, model, keypath, options
 
     for el in @els
       parseNode el
@@ -179,6 +188,25 @@ getInputValue = (el) ->
 eventBinding = (event) -> (el, bind, unbind) ->
   bindEvent el, event, bind if bind
   unbindEvent el, event, unbind if unbind
+
+# Returns an iteration binding routine for the specified collection.
+iterationBinding = (name) -> (el, collection, binding) ->
+  for iteration in binding.iterated
+    iteration.view.unbind()
+    iteration.el.parentNode.removeChild iteration.el
+  
+  binding.iterated = []
+
+  for item in collection
+    data = {}
+    data[name] = item
+
+    itemEl = el.cloneNode true
+    el.parentNode.insertBefore itemEl, el
+
+    binding.iterated.push
+      el: itemEl
+      view: rivets.bind itemEl, data
 
 # Returns an attribute binding routine for the specified attribute. This is what
 # is used when there are no matching routines for an identifier.
