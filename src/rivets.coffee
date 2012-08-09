@@ -48,7 +48,6 @@ class Rivets.Binding
       @routine @el, value, @currentListener
       @currentListener = value
     else if @options.special is "iteration"
-      @iterated or= []
       @routine @el, value, @
     else
       value = value() if value instanceof Function
@@ -192,21 +191,23 @@ eventBinding = (event) -> (el, bind, unbind) ->
 
 # Returns an iteration binding routine for the specified collection.
 iterationBinding = (name) -> (el, collection, binding) ->
-  Rivets.routines.hide el, true
-
-  for iteration in binding.iterated
-    iteration.view.unbind()
-    iteration.el.parentNode.removeChild iteration.el
+  if binding.iterated?
+    for iteration in binding.iterated
+      iteration.view.unbind()
+      iteration.el.parentNode.removeChild iteration.el
+  else
+    binding.marker = document.createComment " rivets: each-#{name} "
+    el.parentNode.insertBefore binding.marker, el
+    el.parentNode.removeChild el
   
   binding.iterated = []
 
   for item in collection
     data = {}
     data[name] = item
-
     itemEl = el.cloneNode true
-    Rivets.routines.show itemEl, true
-    el.parentNode.insertBefore itemEl, el
+    previous = binding.iterated[binding.iterated.length - 1] or binding.marker
+    binding.marker.parentNode.insertBefore itemEl, previous.nextSibling
 
     binding.iterated.push
       el: itemEl
