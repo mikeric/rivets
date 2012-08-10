@@ -132,8 +132,6 @@ class Rivets.View
                 iterator = [attribute]
 
         for attribute in iterator or node.attributes
-          iterator = null
-
           if bindingRegExp.test attribute.name
             options = {}
 
@@ -163,6 +161,10 @@ class Rivets.View
               binding.view = @
 
               @bindings.push binding
+
+          if iterator
+            node.removeAttribute(a.name) for a in iterator
+            iterator = null
 
     for el in @els
       parseNode el
