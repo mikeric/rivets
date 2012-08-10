@@ -114,38 +114,52 @@ class Rivets.View
   # Builds the Rivets.Binding instances for the view.
   build: =>
     @bindings = []
+    skipNodes = []
+    iterator = null
     bindingRegExp = @bindingRegExp()
     eventRegExp = /^on-/
     iterationRegExp = /^each-/
 
     parseNode = (node) =>
-      for attribute in node.attributes
-        if bindingRegExp.test attribute.name
-          options = {}
-
-          type = attribute.name.replace bindingRegExp, ''
-          pipes = (pipe.trim() for pipe in attribute.value.split '|')
-          context = (ctx.trim() for ctx in pipes.shift().split '>')
-          path = context.shift()
-          splitPath = path.split /\.|:/
-          options.formatters = pipes
-          model = @models[splitPath.shift()]
-          options.bypass = path.indexOf(":") != -1
-          keypath = splitPath.join()
-
-          if model
-            if dependencies = context.shift()
-              options.dependencies = dependencies.split /\s+/
-
-            if eventRegExp.test type
-              type = type.replace eventRegExp, ''
-              options.special = "event"
+      unless node in skipNodes
+        for attribute in node.attributes
+          if bindingRegExp.test attribute.name
+            type = attribute.name.replace bindingRegExp, ''
 
             if iterationRegExp.test type
-              type = type.replace iterationRegExp, ''
-              options.special = "iteration"
+              unless @models[type.replace iterationRegExp, '']
+                skipNodes.push n for n in node.getElementsByTagName '*'
+                iterator = [attribute]
 
-            @bindings.push new Rivets.Binding node, type, model, keypath, options
+        for attribute in iterator or node.attributes
+          iterator = null
+
+          if bindingRegExp.test attribute.name
+            options = {}
+
+            type = attribute.name.replace bindingRegExp, ''
+            pipes = (pipe.trim() for pipe in attribute.value.split '|')
+            context = (ctx.trim() for ctx in pipes.shift().split '>')
+            path = context.shift()
+            splitPath = path.split /\.|:/
+            options.formatters = pipes
+            model = @models[splitPath.shift()]
+            options.bypass = path.indexOf(":") != -1
+            keypath = splitPath.join()
+
+            if model
+              if dependencies = context.shift()
+                options.dependencies = dependencies.split /\s+/
+
+              if eventRegExp.test type
+                type = type.replace eventRegExp, ''
+                options.special = "event"
+
+              if iterationRegExp.test type
+                type = type.replace iterationRegExp, ''
+                options.special = "iteration"
+
+              @bindings.push new Rivets.Binding node, type, model, keypath, options
 
     for el in @els
       parseNode el
