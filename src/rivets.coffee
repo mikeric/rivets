@@ -50,7 +50,7 @@ class Rivets.Binding
     else if @options.special is "iteration"
       @routine @el, value, @
     else
-      value = value() if value instanceof Function
+      value = value.call(@model) if value instanceof Function
       @routine @el, value
 
   # Subscribes to the model for changes at the specified keypath. Bi-directional
