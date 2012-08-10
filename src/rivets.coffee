@@ -223,6 +223,7 @@ iterationBinding = (name) -> (el, collection, binding) ->
 
   for item in collection
     data = {}
+    data[n] = m for n, m of binding.view.models
     data[name] = item
     itemEl = el.cloneNode true
     previous = binding.iterated[binding.iterated.length - 1] or binding.marker
