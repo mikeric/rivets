@@ -15,10 +15,10 @@ class Rivets.Binding
   # element, the type of binding, the model object and the keypath at which
   # to listen for changes.
   constructor: (@el, @type, @model, @keypath, @options = {}) ->
-    if @options.special is "event"
-      @routine = eventBinding @type
-    else
-      @routine = Rivets.routines[@type] || attributeBinding @type
+    @routine = switch @options.special
+      when "event"     then eventBinding @type
+      when "iteration" then iterationBinding @type
+      else Rivets.routines[@type] || attributeBinding @type
 
     @formatters = @options.formatters || []
 
@@ -47,6 +47,8 @@ class Rivets.Binding
     if @options.special is "event"
       @routine @el, value, @currentListener
       @currentListener = value
+    else if @options.special is "iteration"
+      @routine @el, value, @
     else
       value = value.call(@model) if value instanceof Function
       @routine @el, value
@@ -85,15 +87,16 @@ class Rivets.Binding
 
   # Unsubscribes from the model and the element.
   unbind: =>
-    Rivets.config.adapter.unsubscribe @model, @keypath, @set
+    unless @options.bypass
+      Rivets.config.adapter.unsubscribe @model, @keypath, @set
 
-    if @options.dependencies?.length
-      for keypath in @options.dependencies
-        callback = @dependencyCallbacks[keypath]
-        Rivets.config.adapter.unsubscribe @model, keypath, callback
+      if @options.dependencies?.length
+        for keypath in @options.dependencies
+          callback = @dependencyCallbacks[keypath]
+          Rivets.config.adapter.unsubscribe @model, keypath, callback
 
-    if @type in @bidirectionals
-      @el.removeEventListener 'change', @publish
+      if @type in @bidirectionals
+        @el.removeEventListener 'change', @publish
 
 # A collection of bindings built from a set of parent elements.
 class Rivets.View
@@ -111,32 +114,57 @@ class Rivets.View
   # Builds the Rivets.Binding instances for the view.
   build: =>
     @bindings = []
+    skipNodes = []
+    iterator = null
     bindingRegExp = @bindingRegExp()
     eventRegExp = /^on-/
+    iterationRegExp = /^each-/
 
     parseNode = (node) =>
-      for attribute in node.attributes
-        if bindingRegExp.test attribute.name
-          options = {}
+      unless node in skipNodes
+        for attribute in node.attributes
+          if bindingRegExp.test attribute.name
+            type = attribute.name.replace bindingRegExp, ''
 
-          type = attribute.name.replace bindingRegExp, ''
-          pipes = (pipe.trim() for pipe in attribute.value.split '|')
-          context = (ctx.trim() for ctx in pipes.shift().split '>')
-          path = context.shift()
-          splitPath = path.split /\.|:/
-          options.formatters = pipes
-          model = @models[splitPath.shift()]
-          options.bypass = path.indexOf(":") != -1
-          keypath = splitPath.join()
+            if iterationRegExp.test type
+              unless @models[type.replace iterationRegExp, '']
+                skipNodes.push n for n in node.getElementsByTagName '*'
+                iterator = [attribute]
 
-          if dependencies = context.shift()
-            options.dependencies = dependencies.split /\s+/
+        for attribute in iterator or node.attributes
+          if bindingRegExp.test attribute.name
+            options = {}
 
-          if eventRegExp.test type
-            type = type.replace eventRegExp, ''
-            options.special = "event"
+            type = attribute.name.replace bindingRegExp, ''
+            pipes = (pipe.trim() for pipe in attribute.value.split '|')
+            context = (ctx.trim() for ctx in pipes.shift().split '>')
+            path = context.shift()
+            splitPath = path.split /\.|:/
+            options.formatters = pipes
+            model = @models[splitPath.shift()]
+            options.bypass = path.indexOf(":") != -1
+            keypath = splitPath.join()
 
-          @bindings.push new Rivets.Binding node, type, model, keypath, options
+            if model
+              if dependencies = context.shift()
+                options.dependencies = dependencies.split /\s+/
+
+              if eventRegExp.test type
+                type = type.replace eventRegExp, ''
+                options.special = "event"
+
+              if iterationRegExp.test type
+                type = type.replace iterationRegExp, ''
+                options.special = "iteration"
+
+              binding = new Rivets.Binding node, type, model, keypath, options
+              binding.view = @
+
+              @bindings.push binding
+
+          if iterator
+            node.removeAttribute(a.name) for a in iterator
+            iterator = null
 
     for el in @els
       parseNode el
@@ -179,6 +207,31 @@ getInputValue = (el) ->
 eventBinding = (event) -> (el, bind, unbind) ->
   bindEvent el, event, bind if bind
   unbindEvent el, event, unbind if unbind
+
+# Returns an iteration binding routine for the specified collection.
+iterationBinding = (name) -> (el, collection, binding) ->
+  if binding.iterated?
+    for iteration in binding.iterated
+      iteration.view.unbind()
+      iteration.el.parentNode.removeChild iteration.el
+  else
+    binding.marker = document.createComment " rivets: each-#{name} "
+    el.parentNode.insertBefore binding.marker, el
+    el.parentNode.removeChild el
+  
+  binding.iterated = []
+
+  for item in collection
+    data = {}
+    data[n] = m for n, m of binding.view.models
+    data[name] = item
+    itemEl = el.cloneNode true
+    previous = binding.iterated[binding.iterated.length - 1] or binding.marker
+    binding.marker.parentNode.insertBefore itemEl, previous.nextSibling
+
+    binding.iterated.push
+      el: itemEl
+      view: rivets.bind itemEl, data
 
 # Returns an attribute binding routine for the specified attribute. This is what
 # is used when there are no matching routines for an identifier.

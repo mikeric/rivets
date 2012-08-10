@@ -116,6 +116,19 @@ describe('Rivets.Binding', function() {
         expect(binding.routine).toHaveBeenCalledWith(el, funcb, funca);
       });
     });
+
+    describe('on an iteration binding', function(){
+      beforeEach(function(){
+        binding.options.special = 'iteration';
+      });
+
+      it('performs the binding routine with the supplied collection and binding', function() {
+        spyOn(binding, 'routine');
+        array = [{name: 'a'}, {name: 'b'}];
+        binding.set(array);
+        expect(binding.routine).toHaveBeenCalledWith(el, array, binding);
+      });
+    });
   });
 
   describe('publish()', function() {

@@ -2,7 +2,7 @@ describe('Functional', function() {
   var data, bindData, el, input;
 
   beforeEach(function() {
-    data = new Data({foo: 'bar'});
+    data = new Data({foo: 'bar', items: [{name: 'a'}, {name: 'b'}]});
     bindData = {data: data};
     el = document.createElement('div');
     input = document.createElement('input');
@@ -98,6 +98,52 @@ describe('Functional', function() {
         rivets.bind([el, input], bindData);
         expect(el).toHaveTheTextContent(data.get('foo'));
         expect(input.value).toBe(data.get('foo'));
+      });
+    });
+
+    describe('Iteration', function() {
+      beforeEach(function(){
+        list = document.createElement('ul');
+        el.appendChild(list);
+        listItem = document.createElement('li');
+        listItem.setAttribute('data-each-item', 'data.items');
+        list.appendChild(listItem);
+      });
+
+      it('should loop over a collection and create new instances of that element + children', function() {
+        expect(el.getElementsByTagName('li').length).toBe(1);
+        rivets.bind(el, bindData);
+        expect(el.getElementsByTagName('li').length).toBe(2);
+      });
+
+      it('should re-loop over the collection and create new instances when the array changes', function() {
+        rivets.bind(el, bindData);
+        expect(el.getElementsByTagName('li').length).toBe(2);
+
+        newItems = [{name: 'a'}, {name: 'b'}, {name: 'c'}];
+        data.set({items: newItems});
+        expect(el.getElementsByTagName('li').length).toBe(3);
+      });
+
+      it('should allow binding to the iterated item as well as any parent contexts', function() {
+        span1 = document.createElement('span');
+        span1.setAttribute('data-text', 'item:name')
+        span2 = document.createElement('span');
+        span2.setAttribute('data-text', 'data.foo')
+        listItem.appendChild(span1);
+        listItem.appendChild(span2);
+
+        rivets.bind(el, bindData);
+        expect(el.getElementsByTagName('span')[0]).toHaveTheTextContent('a');
+        expect(el.getElementsByTagName('span')[1]).toHaveTheTextContent('bar');
+      });
+
+      it('should allow binding to the iterated element directly', function() {
+        listItem.setAttribute('data-text', 'item:name');
+        listItem.setAttribute('data-class', 'data.foo');
+        rivets.bind(el, bindData);
+        expect(el.getElementsByTagName('li')[0]).toHaveTheTextContent('a');
+        expect(el.getElementsByTagName('li')[0].className).toBe('bar');
       });
     });
   });
