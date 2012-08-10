@@ -48,7 +48,7 @@ class Rivets.Binding
       @routine @el, value, @currentListener
       @currentListener = value
     else
-      value = value() if value instanceof Function
+      value = value.call(@model) if value instanceof Function
       @routine @el, value
 
   # Subscribes to the model for changes at the specified keypath. Bi-directional
