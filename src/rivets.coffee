@@ -159,7 +159,10 @@ class Rivets.View
                 type = type.replace iterationRegExp, ''
                 options.special = "iteration"
 
-              @bindings.push new Rivets.Binding node, type, model, keypath, options
+              binding = new Rivets.Binding node, type, model, keypath, options
+              binding.view = @
+
+              @bindings.push binding
 
     for el in @els
       parseNode el
