@@ -85,6 +85,13 @@ describe('Rivets.Binding', function() {
       expect(binding.routine).toHaveBeenCalledWith(el, 'awesome sweater');
     });
 
+    it('calls methods with the object as context', function() {
+      binding.model = {foo: 'bar'};
+      spyOn(binding, 'routine');
+      binding.set(function() { return this.foo; });
+      expect(binding.routine).toHaveBeenCalledWith(el, binding.model.foo);
+    });
+
     describe('on an event binding', function() {
       beforeEach(function() {
         binding.options.special = 'event';
@@ -110,19 +117,19 @@ describe('Rivets.Binding', function() {
       });
     });
   });
-  
+
   describe('publish()', function() {
     it("should publish the value of a number input", function() {
       numberInput = document.createElement('input');
       numberInput.setAttribute('type', 'number');
       numberInput.setAttribute('data-value', 'obj.num');
-      
+
       view = rivets.bind(numberInput, {obj: {num: 42}});
       binding = view.bindings[0];
       model = binding.model;
 
       numberInput.value = 42;
-      
+
       spyOn(rivets.config.adapter, 'publish');
       binding.publish({target: numberInput});
       expect(rivets.config.adapter.publish).toHaveBeenCalledWith(model, 'num', '42');
@@ -135,7 +142,7 @@ describe('Rivets.Binding', function() {
       binding.formatters.push('awesome');
       expect(binding.formattedValue('hat')).toBe('awesome hat');
     });
-    
+
     it('uses formatters on the model', function() {
       model.modelAwesome = function(value) { return 'model awesome ' + value };
       binding.formatters.push('modelAwesome');
@@ -149,7 +156,7 @@ describe('Rivets.Binding', function() {
         };
         binding.formatters.push('awesome super');
       });
-      
+
       it('applies the formatter with arguments', function() {
         expect(binding.formattedValue('jacket')).toBe('super awesome jacket');
       });
