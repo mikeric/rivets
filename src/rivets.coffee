@@ -165,10 +165,12 @@ class Rivets.View
           if iterator
             node.removeAttribute(a.name) for a in iterator
             iterator = null
+      return
 
     for el in @els
       parseNode el
       parseNode node for node in el.getElementsByTagName '*'
+    return
 
   # Binds all of the current bindings for this view.
   bind: =>
@@ -218,7 +220,7 @@ iterationBinding = (name) -> (el, collection, binding) ->
     binding.marker = document.createComment " rivets: each-#{name} "
     el.parentNode.insertBefore binding.marker, el
     el.parentNode.removeChild el
-  
+
   binding.iterated = []
 
   for item in collection
@@ -291,6 +293,7 @@ rivets =
   configure: (options={}) ->
     for property, value of options
       Rivets.config[property] = value
+    return
 
   # Binds a set of model objects to a parent DOM element. Returns a Rivets.View
   # instance.
