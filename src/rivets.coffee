@@ -17,6 +17,7 @@ class Rivets.Binding
   constructor: (@el, @type, @model, @keypath, @options = {}) ->
     @routine = switch @options.special
       when "event"     then eventBinding @type
+      when "class"     then classBinding @type
       when "iteration" then iterationBinding @type
       else Rivets.routines[@type] || attributeBinding @type
 
@@ -118,6 +119,7 @@ class Rivets.View
     iterator = null
     bindingRegExp = @bindingRegExp()
     eventRegExp = /^on-/
+    classRegExp = /^class-/
     iterationRegExp = /^each-/
 
     parseNode = (node) =>
@@ -152,6 +154,10 @@ class Rivets.View
               if eventRegExp.test type
                 type = type.replace eventRegExp, ''
                 options.special = "event"
+
+              if classRegExp.test type
+                type = type.replace classRegExp, ''
+                options.special = "class"
 
               if iterationRegExp.test type
                 type = type.replace iterationRegExp, ''
@@ -207,6 +213,17 @@ getInputValue = (el) ->
 eventBinding = (event) -> (el, bind, unbind) ->
   bindEvent el, event, bind if bind
   unbindEvent el, event, unbind if unbind
+
+# Returns a class binding routine for the specified class name.
+classBinding = (name) -> (el, value) ->
+  elClass = " #{el.className} "
+  hasClass = elClass.indexOf(" #{name} ") != -1
+
+  if !value is hasClass
+    el.className = if value
+      "#{el.className} #{name}"
+    else
+      elClass.replace(" #{name} ", " ").trim()
 
 # Returns an iteration binding routine for the specified collection.
 iterationBinding = (name) -> (el, collection, binding) ->
