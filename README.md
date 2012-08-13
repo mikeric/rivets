@@ -103,6 +103,7 @@ Available bindings out-of-the-box:
 - data-checked
 - data-unchecked
 - data-*[attribute]*
+- data-class-*[class]*
 - data-on-*[event]*
 - data-each-*[item]*
 
