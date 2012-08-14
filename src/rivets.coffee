@@ -139,7 +139,7 @@ class Rivets.View
 
             type = attribute.name.replace bindingRegExp, ''
             pipes = (pipe.trim() for pipe in attribute.value.split '|')
-            context = (ctx.trim() for ctx in pipes.shift().split '>')
+            context = (ctx.trim() for ctx in pipes.shift().split '<')
             path = context.shift()
             splitPath = path.split /\.|:/
             options.formatters = pipes
