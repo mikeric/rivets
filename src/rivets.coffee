@@ -43,7 +43,10 @@ class Rivets.Binding
   # Sets the value for the binding. This Basically just runs the binding routine
   # with the suplied value formatted.
   set: (value) =>
-    value = @formattedValue value
+    value = if value instanceof Function and @options.special isnt "event"
+      @formattedValue value.call @model
+    else
+      @formattedValue value
 
     if @options.special is "event"
       @routine @el, value, @currentListener
@@ -51,7 +54,6 @@ class Rivets.Binding
     else if @options.special is "iteration"
       @routine @el, value, @
     else
-      value = value.call(@model) if value instanceof Function
       @routine @el, value
 
   # Subscribes to the model for changes at the specified keypath. Bi-directional
