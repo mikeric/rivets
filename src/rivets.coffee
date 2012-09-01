@@ -188,17 +188,25 @@ class Rivets.View
 
 # Cross-browser event binding
 bindEvent = (el, event, fn) ->
+  # Check to see if jQuery is loaded.
+  if window.jQuery?
+    el = jQuery el
+    if el.on? then el.on event, fn else el.bind event, fn
   # Check to see if addEventListener is available.
-  if window.addEventListener
+  else if window.addEventListener?
     el.addEventListener event, fn, false
   else
-  # Assume we are in IE and use attachEvent.
+    # Assume we are in IE and use attachEvent.
     event = "on" + event
     el.attachEvent event, fn
 
 unbindEvent = (el, event, fn) ->
+  # Check to see if jQuery is loaded.
+  if window.jQuery?
+    el = jQuery el
+    if el.off? then el.off event, fn else el.unbind event, fn
   # Check to see if addEventListener is available.
-  if window.removeEventListener
+  else if window.removeEventListener
     el.removeEventListener event, fn, false
   else
   # Assume we are in IE and use attachEvent.
