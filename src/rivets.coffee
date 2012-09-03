@@ -23,9 +23,11 @@ class Rivets.Binding
 
     @formatters = @options.formatters || []
 
-  # Bindings that should also observe the DOM element for changes in order to
-  # propagate those changes back to the model object.
-  bidirectionals: ['value', 'checked', 'unchecked']
+  # Returns true|false depending on whether or not the binding should also
+  # observe the DOM element for changes in order to propagate those changes
+  # back to the model object.
+  isBidirectional: =>
+    @type in ['value', 'checked', 'unchecked']
 
   # Applies all the current formatters to the supplied value and returns the
   # formatted value.
@@ -77,7 +79,7 @@ class Rivets.Binding
       for keypath in @options.dependencies
         Rivets.config.adapter.subscribe @model, keypath, @sync
 
-    if @type in @bidirectionals
+    if @isBidirectional()
       bindEvent @el, 'change', @publish
 
   # Publishes the value currently set on the input element back to the model.
@@ -94,7 +96,7 @@ class Rivets.Binding
         for keypath in @options.dependencies
           Rivets.config.adapter.unsubscribe @model, keypath, @sync
 
-      if @type in @bidirectionals
+      if @isBidirectional()
         @el.removeEventListener 'change', @publish
 
 # A collection of bindings built from a set of parent elements.
