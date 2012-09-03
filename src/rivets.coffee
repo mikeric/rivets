@@ -178,8 +178,9 @@ class Rivets.View
       parseNode node for node in el.getElementsByTagName '*'
     return
 
-  bidirectionals: =>
-    binding for binding in @bindings when binding.isBidirectional()
+  # Returns an array of bindings where the supplied function evaluates to true.
+  select: (fn) =>
+    binding for binding in @bindings when fn binding
 
   # Binds all of the current bindings for this view.
   bind: =>
@@ -193,7 +194,7 @@ class Rivets.View
     binding.sync() for binding in @bindings
 
   publish: =>
-    binding.publish() for binding in @bidirectionals()
+    binding.publish() for binding in @select (b) -> b.isBidirectional()
 
 # Cross-browser event binding
 bindEvent = (el, event, fn) ->
