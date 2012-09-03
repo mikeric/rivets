@@ -43,11 +43,10 @@ Rivets.js is model interface-agnostic, meaning it can work with any event-driven
     rivets.configure({
       adapter: {
         subscribe: function(obj, keypath, callback) {
-          callback.wrapped = function(m, v) { callback(v) };
-          obj.on('change:' + keypath, callback.wrapped);
+          obj.on('change:' + keypath, callback);
         },
         unsubscribe: function(obj, keypath, callback) {
-          obj.off('change:' + keypath, callback.wrapped);
+          obj.off('change:' + keypath, callback);
         },
         read: function(obj, keypath) {
           return obj.get(keypath);
