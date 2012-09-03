@@ -26,7 +26,7 @@ describe('Rivets.Binding', function() {
     it('subscribes to the model for changes via the adapter', function() {
       spyOn(rivets.config.adapter, 'subscribe');
       binding.bind();
-      expect(rivets.config.adapter.subscribe).toHaveBeenCalledWith(model, 'name', binding.set);
+      expect(rivets.config.adapter.subscribe).toHaveBeenCalledWith(model, 'name', binding.sync);
     });
 
     describe('with preloadData set to true', function() {
@@ -64,8 +64,8 @@ describe('Rivets.Binding', function() {
       it('sets up observers on the dependant attributes', function() {
         spyOn(rivets.config.adapter, 'subscribe');
         binding.bind();
-        expect(rivets.config.adapter.subscribe).toHaveBeenCalledWith(model, 'fname', binding.dependencyCallbacks['fname']);
-        expect(rivets.config.adapter.subscribe).toHaveBeenCalledWith(model, 'lname', binding.dependencyCallbacks['lname']);
+        expect(rivets.config.adapter.subscribe).toHaveBeenCalledWith(model, 'fname', binding.sync);
+        expect(rivets.config.adapter.subscribe).toHaveBeenCalledWith(model, 'lname', binding.sync);
       });
     });
   });
