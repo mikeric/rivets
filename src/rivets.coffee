@@ -65,6 +65,10 @@ class Rivets.Binding
     else
       Rivets.config.adapter.read @model, @keypath
 
+  # Publishes the value currently set on the input element back to the model.
+  publish: =>
+    Rivets.config.adapter.publish @model, @keypath, getInputValue @el
+
   # Subscribes to the model for changes at the specified keypath. Bi-directional
   # routines will also listen for changes on the element to propagate them back
   # to the model.
@@ -81,11 +85,6 @@ class Rivets.Binding
 
     if @isBidirectional()
       bindEvent @el, 'change', @publish
-
-  # Publishes the value currently set on the input element back to the model.
-  publish: (e) =>
-    el = e.target or e.srcElement
-    Rivets.config.adapter.publish @model, @keypath, getInputValue el
 
   # Unsubscribes from the model and the element.
   unbind: =>
