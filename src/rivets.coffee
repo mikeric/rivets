@@ -178,6 +178,9 @@ class Rivets.View
       parseNode node for node in el.getElementsByTagName '*'
     return
 
+  bidirectionals: =>
+    binding for binding in @bindings when binding.isBidirectional()
+
   # Binds all of the current bindings for this view.
   bind: =>
     binding.bind() for binding in @bindings
