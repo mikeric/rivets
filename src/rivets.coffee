@@ -205,7 +205,7 @@ class Rivets.View
   publish: =>
     binding.publish() for binding in @select (b) -> b.isBidirectional()
 
-# Cross-browser event binding
+# Cross-browser event binding.
 bindEvent = (el, event, fn) ->
   # Check to see if jQuery is loaded.
   if window.jQuery?
@@ -219,6 +219,7 @@ bindEvent = (el, event, fn) ->
     event = "on" + event
     el.attachEvent event, fn
 
+# Cross-browser event unbinding.
 unbindEvent = (el, event, fn) ->
   # Check to see if jQuery is loaded.
   if window.jQuery?
