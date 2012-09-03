@@ -190,9 +190,11 @@ class Rivets.View
   unbind: =>
     binding.unbind() for binding in @bindings
 
+  # Syncs up the view with the model by running the routines on all bindings.
   sync: =>
     binding.sync() for binding in @bindings
 
+  # Publishes the input values from the view back to the model (reverse sync).
   publish: =>
     binding.publish() for binding in @select (b) -> b.isBidirectional()
 
