@@ -189,6 +189,12 @@ class Rivets.View
   unbind: =>
     binding.unbind() for binding in @bindings
 
+  sync: =>
+    binding.sync() for binding in @bindings
+
+  publish: =>
+    binding.publish() for binding in @bidirectionals()
+
 # Cross-browser event binding
 bindEvent = (el, event, fn) ->
   # Check to see if jQuery is loaded.
