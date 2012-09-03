@@ -6,32 +6,35 @@ Rivets.js is a declarative data binding facility that plays well with existing f
 
 Describe your UI in plain HTML using data attributes:
 
-    <div id='auction'>
-      <h1 data-text='auction.title'></h1>
-      <img data-src='auction.image_url'>
-      <span data-text='auction.timeRemaining | time'></span>
+```html
+<div id='auction'>
+  <h1 data-text='auction.title'></h1>
+  <img data-src='auction.image_url'>
+  <span data-text='auction.timeRemaining | time'></span>
 
-      <div class='alert-box' data-show='auction.endingSoon'>
-        <p>Hurry up! This auction is ending soon.</p>
-      </div>
+  <div class='alert-box' data-show='auction.endingSoon'>
+    <p>Hurry up! This auction is ending soon.</p>
+  </div>
 
-      <dl>
-        <dt>Highest Bid:</dt>
-        <dd data-text='auction.bid | currency'></dd>
-        <dt>Bidder:</dt>
-        <dd data-text='auction.bidder'></dd>
-      </dl>
+  <dl>
+    <dt>Highest Bid:</dt>
+    <dd data-text='auction.bid | currency'></dd>
+    <dt>Bidder:</dt>
+    <dd data-text='auction.bidder'></dd>
+  </dl>
 
-      <dl>
-        <dt>Bids Left:</dt>
-        <dd data-text='user.bidCount'></dd>
-      </dl>
-    </div>
+  <dl>
+    <dt>Bids Left:</dt>
+    <dd data-text='user.bidCount'></dd>
+  </dl>
+</div>
+```
 
 Then tell Rivets.js what model(s) to bind to it:
 
-    rivets.bind($('#auction'), {auction: auction, user: currentUser});
-
+```javascript
+rivets.bind($('#auction'), {auction: auction, user: currentUser});
+```
 ## Configure
 
 Use `rivets.configure` to configure Rivets.js for your app (or you can set configuration options manually on `rivets.config`).
@@ -40,37 +43,42 @@ Use `rivets.configure` to configure Rivets.js for your app (or you can set confi
 
 Rivets.js is model interface-agnostic, meaning it can work with any event-driven model by way of defining an adapter. This is the only required configuration as it's what Rivet.js uses to observe and interact with your model objects. An adapter is just an object that responds to `subscribe`, `unsubscribe`, `read` and `publish`. Here is a sample configuration with an adapter for using Rivets.js with Backbone.js.
 
-    rivets.configure({
-      adapter: {
-        subscribe: function(obj, keypath, callback) {
-          obj.on('change:' + keypath, callback);
-        },
-        unsubscribe: function(obj, keypath, callback) {
-          obj.off('change:' + keypath, callback);
-        },
-        read: function(obj, keypath) {
-          return obj.get(keypath);
-        },
-        publish: function(obj, keypath, value) {
-          obj.set(keypath, value);
-        }
-      }
-    });
-
+```javascript
+rivets.configure({
+  adapter: {
+    subscribe: function(obj, keypath, callback) {
+      obj.on('change:' + keypath, callback);
+    },
+    unsubscribe: function(obj, keypath, callback) {
+      obj.off('change:' + keypath, callback);
+    },
+    read: function(obj, keypath) {
+      return obj.get(keypath);
+    },
+    publish: function(obj, keypath, value) {
+      obj.set(keypath, value);
+    }
+  }
+});
+```
 
 #### Prefix and data preloading
 
 To prevent data attribute collision, you can set the `prefix` option to something like 'rv' or 'bind' so that data attributes are prefixed like `data-rv-text`.
 
-    rivets.configure({
-      prefix: 'rv'
-    });
+```javascript
+rivets.configure({
+  prefix: 'rv'
+});
+```
 
 Set the `preloadData` option to `false` if you don't want your bindings to be bootstrapped with the current model values on bind. This option is set to `true` by default.
 
-    rivets.configure({
-      preloadData: false
-    });
+```javascript
+rivets.configure({
+  preloadData: false
+});
+```
 
 ## Extend
 
@@ -82,13 +90,17 @@ Rivets.js is easily extended by adding your own custom *binding routines* and *f
 
 Let's say we wanted a `data-color` binding that sets the element's colour, here's what the routine function for that binding might look like:
 
-    rivets.routines.color = function(el, value) {
-      el.style.color = value;
-    };
+```javascript
+rivets.routines.color = function(el, value) {
+  el.style.color = value;
+};
+```
 
 With that routine defined, the following binding will update the element's color when `model.color` changes:
 
-    <span data-color="model.color">COLOR</span>
+```html
+<span data-color="model.color">COLOR</span>
+```
 
 Available bindings out-of-the-box:
 
@@ -110,7 +122,7 @@ Available bindings out-of-the-box:
 
 *Formatters* are simple one-way functions that mutate the incoming value of a binding. You can use them to format dates, numbers, currencies, etc. and because they work in a similar fashion to the Unix pipeline, the output of each feeds directly as input to the next one, so you can stack as many of them together as you like.
 
-```
+```javascript
 rivets.formatters.money = function(value){
   return accounting.formatMoney(value);
 };
@@ -120,7 +132,7 @@ rivets.formatters.date = function(value){
 };
 ```
 
-```
+```html
 <span data-text="event.startDate | date"></span>
 ```
 
@@ -140,13 +152,15 @@ Just use `model:property` instead of `model.property` inside your binding declar
 
 Computed properties are functions that get re-evaluated when one or more dependent properties change. Declaring computed properties in Rivets.js is simple, just separate the function from it's dependencies with a *<*. The following `data-text` binding will get re-evaluated with `event.duration()` when either the event's `start` or `end` attribute changes.
 
-    <span data-text="event:duration < start end"></span>
+```html
+<span data-text="event:duration < start end"></span>
+```
 
 #### Iteration Binding
 
 Use the `data-each-[item]` binding to have Rivets.js automatically loop over items in an array and append bound instances of that element. Within that element you can bind to the iterated item as well as any contexts that are available in the parent view.
 
-```
+```html
 <ul>
   <li data-each-todo="list.todos">
     <input type="checkbox" data-checked="todo.done">
@@ -157,7 +171,7 @@ Use the `data-each-[item]` binding to have Rivets.js automatically loop over ite
 
 If the array you're binding to contains non-model objects (they don't conform to your adapter), you can still iterate over them, just make sure to use the adapter bypass syntax — in doing so, the iteration binding will still update when the array changes, however the individual items will not since they'd be bypassing the `adapter.subscribe`.
 
-```
+```html
 <ul>
   <li data-each-link="item.links">
     <a data-href="link:url" data-text="link:title"></span>
@@ -167,7 +181,7 @@ If the array you're binding to contains non-model objects (they don't conform to
 
 Also note that you may bind to the iterated item directly on the parent element.
 
-```
+```html
 <ul>
   <li data-each-tag="item.tags" data-text="tag:name"></li>
 </ul>
