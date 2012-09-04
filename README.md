@@ -156,7 +156,7 @@ Computed properties are functions that get re-evaluated when one or more depende
 <span data-text="event:duration < .start .end"></span>
 ```
 
-The prepended `.` is a shorthand syntax for specifying dependencies that are the same object as the target object, so the above declaration is effectively the same as `event:duration < event.start event.end`.
+The prepended `.` is a shorthand syntax for specifying dependencies that are on the same object as the target, so that the above declaration is effectively the same as `event:duration < event.start event.end`.
 
 #### Iteration Binding
 
