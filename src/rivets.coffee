@@ -80,8 +80,16 @@ class Rivets.Binding
       @sync() if Rivets.config.preloadData
 
     if @options.dependencies?.length
-      for keypath in @options.dependencies
-        Rivets.config.adapter.subscribe @model, keypath, @sync
+      for dependency in @options.dependencies
+        if /^\./.test dependency
+          model = @model
+          keypath = dependency.substr 1
+        else
+          dependency = dependency.split '.'
+          model = @view.models[dependency.shift()]
+          keypath = dependency.join '.'
+
+        Rivets.config.adapter.subscribe model, keypath, @sync
 
     if @isBidirectional()
       bindEvent @el, 'change', @publish
@@ -197,7 +205,7 @@ class Rivets.View
   publish: =>
     binding.publish() for binding in @select (b) -> b.isBidirectional()
 
-# Cross-browser event binding
+# Cross-browser event binding.
 bindEvent = (el, event, fn) ->
   # Check to see if jQuery is loaded.
   if window.jQuery?
@@ -211,6 +219,7 @@ bindEvent = (el, event, fn) ->
     event = "on" + event
     el.attachEvent event, fn
 
+# Cross-browser event unbinding.
 unbindEvent = (el, event, fn) ->
   # Check to see if jQuery is loaded.
   if window.jQuery?
