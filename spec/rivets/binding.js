@@ -58,7 +58,7 @@ describe('Rivets.Binding', function() {
 
     describe('with dependencies', function() {
       beforeEach(function() {
-        binding.options.dependencies = ['fname', 'lname'];
+        binding.options.dependencies = ['.fname', '.lname'];
       });
 
       it('sets up observers on the dependant attributes', function() {
