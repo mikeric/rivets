@@ -7,7 +7,7 @@
 Rivets = {}
 
 # Polyfill For String::trim.
-unless String::trim then String::trim = -> @replace /^\s+|\s+$/g, ""
+unless String::trim then String::trim = -> @replace /^\s+|\s+$/g, ''
 
 # A single binding between a model attribute and a DOM element.
 class Rivets.Binding
@@ -16,9 +16,9 @@ class Rivets.Binding
   # to listen for changes.
   constructor: (@el, @type, @model, @keypath, @options = {}) ->
     @routine = switch @options.special
-      when "event"     then eventBinding @type
-      when "class"     then classBinding @type
-      when "iteration" then iterationBinding @type
+      when 'event'     then eventBinding @type
+      when 'class'     then classBinding @type
+      when 'iteration' then iterationBinding @type
       else Rivets.routines[@type] || attributeBinding @type
 
     @formatters = @options.formatters || []
@@ -45,15 +45,15 @@ class Rivets.Binding
   # Sets the value for the binding. This Basically just runs the binding routine
   # with the suplied value formatted.
   set: (value) =>
-    value = if value instanceof Function and @options.special isnt "event"
+    value = if value instanceof Function and @options.special isnt 'event'
       @formattedValue value.call @model
     else
       @formattedValue value
 
-    if @options.special is "event"
+    if @options.special is 'event'
       @routine @el, value, @currentListener
       @currentListener = value
-    else if @options.special is "iteration"
+    else if @options.special is 'iteration'
       @routine @el, value, @
     else
       @routine @el, value
@@ -151,7 +151,7 @@ class Rivets.View
             splitPath = path.split /\.|:/
             options.formatters = pipes
             model = @models[splitPath.shift()]
-            options.bypass = path.indexOf(":") != -1
+            options.bypass = path.indexOf(':') != -1
             keypath = splitPath.join '.'
 
             if model
@@ -160,15 +160,15 @@ class Rivets.View
 
               if eventRegExp.test type
                 type = type.replace eventRegExp, ''
-                options.special = "event"
+                options.special = 'event'
 
               if classRegExp.test type
                 type = type.replace classRegExp, ''
-                options.special = "class"
+                options.special = 'class'
 
               if iterationRegExp.test type
                 type = type.replace iterationRegExp, ''
-                options.special = "iteration"
+                options.special = 'iteration'
 
               binding = new Rivets.Binding node, type, model, keypath, options
               binding.view = @
@@ -216,7 +216,7 @@ bindEvent = (el, event, fn) ->
     el.addEventListener event, fn, false
   else
     # Assume we are in IE and use attachEvent.
-    event = "on" + event
+    event = 'on' + event
     el.attachEvent event, fn
 
 # Cross-browser event unbinding.
@@ -230,7 +230,7 @@ unbindEvent = (el, event, fn) ->
     el.removeEventListener event, fn, false
   else
   # Assume we are in IE and use attachEvent.
-    event = "on" + event
+    event = 'on' + event
     el.detachEvent  event, fn
 
 # Returns the current input value for the specified element.
@@ -253,7 +253,7 @@ classBinding = (name) -> (el, value) ->
     el.className = if value
       "#{el.className} #{name}"
     else
-      elClass.replace(" #{name} ", " ").trim()
+      elClass.replace(" #{name} ", ' ').trim()
 
 # Returns an iteration binding routine for the specified collection.
 iterationBinding = (name) -> (el, collection, binding) ->
