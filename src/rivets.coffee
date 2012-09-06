@@ -152,7 +152,7 @@ class Rivets.View
             options.formatters = pipes
             model = @models[splitPath.shift()]
             options.bypass = path.indexOf(":") != -1
-            keypath = splitPath.join()
+            keypath = splitPath.join '.'
 
             if model
               if dependencies = context.shift()
