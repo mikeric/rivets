@@ -1,242 +1,35 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Rivets.js — A declarative data binding facility</title>
+---
+layout: default
+title: A declarative data binding facility
+---
+<aside>
+  <header>
+    <img src="/img/rivets.png">
+  </header>
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+  <nav>
+    <ul>
+      <li><a href="https://raw.github.com/mikeric/rivets/v0.3.8/lib/rivets.min.js">Download Rivets.js (0.3.8)</a></li>
+    </ul>
 
-    <script type="text/javascript">
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-6079274-2']);
-      _gaq.push(['_trackPageview']);
+    <ul>
+      <li><a href="https://github.com/mikeric/rivets">Github Repository &rarr;</a></li>
+      <li><a href="/docs/rivets.html">Annotated Source &rarr;</a></li>
+    </ul>
 
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-    </script>
-  </head>
-  <body>
-    <div class="wrapper">
-      <header>
-        <img src='images/rivets.min.png'>
+    <ul>
+    {% for post in site.posts %}
+      <li><a href="#{{ post.anchor }}">{{ post.title }}</a></li>
+    {% endfor %}
+    </ul>
+  </nav>
+</aside>
 
-        <p class="view">
-          <a href="https://github.com/mikeric/rivets">View the project on GitHub</a>
-          <br/>
-          <a href="/docs/rivets.html">View the annotated source code</a>
-        </p>
-
-        <ul>
-          <li><a href="https://github.com/mikeric/rivets/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/mikeric/rivets/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/mikeric/rivets">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-<article class="markdown-body entry-content" itemprop="mainContentOfPage">
-
-<p>Rivets.js is a declarative data binding facility that plays well with existing frameworks such as <a href="http://backbonejs.org">Backbone.js</a>, <a href="http://spinejs.com">Spine.js</a> and <a href="http://hay.github.com/stapes/">Stapes.js</a>. It aims to be lightweight (2.3KB minified and gzipped), extensible, and configurable to work with any event-driven model.</p>
-
-<hr><p>Describe your UI in plain HTML using data attributes:</p>
-
-<div class="highlight"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">'auction'</span><span class="nt">&gt;</span>
-  <span class="nt">&lt;h1</span> <span class="na">data-text=</span><span class="s">'auction.title'</span><span class="nt">&gt;&lt;/h1&gt;</span>
-  <span class="nt">&lt;img</span> <span class="na">data-src=</span><span class="s">'auction.image_url'</span><span class="nt">&gt;</span>
-  <span class="nt">&lt;span</span> <span class="na">data-text=</span><span class="s">'auction.timeRemaining | time'</span><span class="nt">&gt;&lt;/span&gt;</span>
-
-  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">'alert-box'</span> <span class="na">data-show=</span><span class="s">'auction.endingSoon'</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;p&gt;</span>Hurry up! This auction is ending soon.<span class="nt">&lt;/p&gt;</span>
-  <span class="nt">&lt;/div&gt;</span>
-
-  <span class="nt">&lt;dl&gt;</span>
-    <span class="nt">&lt;dt&gt;</span>Highest Bid:<span class="nt">&lt;/dt&gt;</span>
-    <span class="nt">&lt;dd</span> <span class="na">data-text=</span><span class="s">'auction.bid | currency'</span><span class="nt">&gt;&lt;/dd&gt;</span>
-    <span class="nt">&lt;dt&gt;</span>Bidder:<span class="nt">&lt;/dt&gt;</span>
-    <span class="nt">&lt;dd</span> <span class="na">data-text=</span><span class="s">'auction.bidder'</span><span class="nt">&gt;&lt;/dd&gt;</span>
-  <span class="nt">&lt;/dl&gt;</span>
-
-  <span class="nt">&lt;dl&gt;</span>
-    <span class="nt">&lt;dt&gt;</span>Bids Left:<span class="nt">&lt;/dt&gt;</span>
-    <span class="nt">&lt;dd</span> <span class="na">data-text=</span><span class="s">'user.bidCount'</span><span class="nt">&gt;&lt;/dd&gt;</span>
-  <span class="nt">&lt;/dl&gt;</span>
-<span class="nt">&lt;/div&gt;</span>
-</pre></div>
-
-<p>Then tell Rivets.js what model(s) to bind to it:</p>
-
-<div class="highlight"><pre><span class="nx">rivets</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="s1">'#auction'</span><span class="p">),</span> <span class="p">{</span><span class="nx">auction</span><span class="o">:</span> <span class="nx">auction</span><span class="p">,</span> <span class="nx">user</span><span class="o">:</span> <span class="nx">currentUser</span><span class="p">});</span>
-</pre></div>
-
-<h2>
-<a name="configure" class="anchor" href="#configure"><span class="mini-icon mini-icon-link"></span></a>Configure</h2>
-
-<p>Use <code>rivets.configure</code> to configure Rivets.js for your app (or you can set configuration options manually on <code>rivets.config</code>).</p>
-
-<h4>
-<a name="adapter" class="anchor" href="#adapter"><span class="mini-icon mini-icon-link"></span></a>Adapter</h4>
-
-<p>Rivets.js is model interface-agnostic, meaning it can work with any event-driven model by way of defining an adapter. This is the only required configuration as it's what Rivet.js uses to observe and interact with your model objects. An adapter is just an object that responds to <code>subscribe</code>, <code>unsubscribe</code>, <code>read</code> and <code>publish</code>. Here is a sample configuration with an adapter for using Rivets.js with Backbone.js.</p>
-
-<div class="highlight"><pre><span class="nx">rivets</span><span class="p">.</span><span class="nx">configure</span><span class="p">({</span>
-  <span class="nx">adapter</span><span class="o">:</span> <span class="p">{</span>
-    <span class="nx">subscribe</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">keypath</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">obj</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'change:'</span> <span class="o">+</span> <span class="nx">keypath</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
-    <span class="p">},</span>
-    <span class="nx">unsubscribe</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">keypath</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">obj</span><span class="p">.</span><span class="nx">off</span><span class="p">(</span><span class="s1">'change:'</span> <span class="o">+</span> <span class="nx">keypath</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
-    <span class="p">},</span>
-    <span class="nx">read</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">keypath</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">return</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">keypath</span><span class="p">);</span>
-    <span class="p">},</span>
-    <span class="nx">publish</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">keypath</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">obj</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">keypath</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">});</span>
-</pre></div>
-
-<h4>
-<a name="prefix-and-data-preloading" class="anchor" href="#prefix-and-data-preloading"><span class="mini-icon mini-icon-link"></span></a>Prefix and data preloading</h4>
-
-<p>To prevent data attribute collision, you can set the <code>prefix</code> option to something like 'rv' or 'bind' so that data attributes are prefixed like <code>data-rv-text</code>.</p>
-
-<div class="highlight"><pre><span class="nx">rivets</span><span class="p">.</span><span class="nx">configure</span><span class="p">({</span>
-  <span class="nx">prefix</span><span class="o">:</span> <span class="s1">'rv'</span>
-<span class="p">});</span>
-</pre></div>
-
-<p>Set the <code>preloadData</code> option to <code>false</code> if you don't want your bindings to be bootstrapped with the current model values on bind. This option is set to <code>true</code> by default.</p>
-
-<div class="highlight"><pre><span class="nx">rivets</span><span class="p">.</span><span class="nx">configure</span><span class="p">({</span>
-  <span class="nx">preloadData</span><span class="o">:</span> <span class="kc">false</span>
-<span class="p">});</span>
-</pre></div>
-
-<h2>
-<a name="extend" class="anchor" href="#extend"><span class="mini-icon mini-icon-link"></span></a>Extend</h2>
-
-<p>Rivets.js is easily extended by adding your own custom <em>binding routines</em> and <em>formatters</em>. Rivets.js comes bundled with a few commonly used bindings, but users are encouraged to add their own that are specific to the needs of their application. </p>
-
-<h4>
-<a name="binding-routines" class="anchor" href="#binding-routines"><span class="mini-icon mini-icon-link"></span></a>Binding Routines</h4>
-
-<p><em>Binding routines</em> are the functions that run when an observed attribute changes. Their sole concern is to describe what happens to the element when a new value comes in. All binding routines are publicly available on the <code>rivets.routines</code> object.</p>
-
-<p>Let's say we wanted a <code>data-color</code> binding that sets the element's colour, here's what the routine function for that binding might look like:</p>
-
-<div class="highlight"><pre><span class="nx">rivets</span><span class="p">.</span><span class="nx">routines</span><span class="p">.</span><span class="nx">color</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">color</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
-<span class="p">};</span>
-</pre></div>
-
-<p>With that routine defined, the following binding will update the element's color when <code>model.color</code> changes:</p>
-
-<div class="highlight"><pre><span class="nt">&lt;span</span> <span class="na">data-color=</span><span class="s">"model.color"</span><span class="nt">&gt;</span>COLOR<span class="nt">&lt;/span&gt;</span>
-</pre></div>
-
-<p>Available bindings out-of-the-box:</p>
-
-<ul>
-<li>data-text</li>
-<li>data-html</li>
-<li>data-value</li>
-<li>data-show</li>
-<li>data-hide</li>
-<li>data-enabled</li>
-<li>data-disabled</li>
-<li>data-checked</li>
-<li>data-unchecked</li>
-<li>data-<em>[attribute]</em>
-</li>
-<li>data-class-<em>[class]</em>
-</li>
-<li>data-on-<em>[event]</em>
-</li>
-<li>data-each-<em>[item]</em>
-</li>
-</ul><h4>
-<a name="formatters" class="anchor" href="#formatters"><span class="mini-icon mini-icon-link"></span></a>Formatters</h4>
-
-<p><em>Formatters</em> are simple one-way functions that mutate the incoming value of a binding. You can use them to format dates, numbers, currencies, etc. and because they work in a similar fashion to the Unix pipeline, the output of each feeds directly as input to the next one, so you can stack as many of them together as you like.</p>
-
-<div class="highlight"><pre><span class="nx">rivets</span><span class="p">.</span><span class="nx">formatters</span><span class="p">.</span><span class="nx">money</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
-  <span class="k">return</span> <span class="nx">accounting</span><span class="p">.</span><span class="nx">formatMoney</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
-<span class="p">};</span>
-
-<span class="nx">rivets</span><span class="p">.</span><span class="nx">formatters</span><span class="p">.</span><span class="nx">date</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
-  <span class="k">return</span> <span class="nx">moment</span><span class="p">(</span><span class="nx">value</span><span class="p">).</span><span class="nx">format</span><span class="p">(</span><span class="s1">'MMM DD, YYYY'</span><span class="p">);</span>
-<span class="p">};</span>
-</pre></div>
-
-<div class="highlight"><pre><span class="nt">&lt;span</span> <span class="na">data-text=</span><span class="s">"event.startDate | date"</span><span class="nt">&gt;&lt;/span&gt;</span>
-</pre></div>
-
-<h2>
-<a name="usage-notes" class="anchor" href="#usage-notes"><span class="mini-icon mini-icon-link"></span></a>Usage Notes</h2>
-
-<h4>
-<a name="rivetsview-and-rivetsbinding" class="anchor" href="#rivetsview-and-rivetsbinding"><span class="mini-icon mini-icon-link"></span></a>Rivets.View and Rivets.Binding</h4>
-
-<p>The <code>rivets.bind</code> function returns a bound <code>Rivets.View</code> instance that you should hold on to for later. You may want to unbind it's listeners with <code>view.unbind()</code> and/or rebuild it's bindings with <code>view.build()</code>. You can also access the individual <code>Rivets.Binding</code> instances inside the view through <code>view.bindings</code> — this is useful for debugging purposes or if you want to unbind or manually set the value for certain bindings.</p>
-
-<h4>
-<a name="adapter-bypass" class="anchor" href="#adapter-bypass"><span class="mini-icon mini-icon-link"></span></a>Adapter Bypass</h4>
-
-<p>If your model object encapsulates it's attributes (e.g. <code>model.attributes</code> for Backbone.js models) and your adapter conforms to that object specifically, you can still utilize properties defined outside of that object — such as functions or other static values defined on the object root.</p>
-
-<p>Just use <code>model:property</code> instead of <code>model.property</code> inside your binding declaration and Rivets.js will bypass the adapter completely and access that property as it's defined on the object root. This obviously won't sync any changes, but that is by design in this case as these properties should be mostly static and used in conjunction with other "dynamic" properties.</p>
-
-<h4>
-<a name="computed-properties" class="anchor" href="#computed-properties"><span class="mini-icon mini-icon-link"></span></a>Computed Properties</h4>
-
-<p>Computed properties are functions that get re-evaluated when one or more dependent properties change. Declaring computed properties in Rivets.js is simple, just separate the function from it's dependencies with a <em>&lt;</em>. The following <code>data-text</code> binding will get re-evaluated with <code>event.duration()</code> when either the event's <code>start</code> or <code>end</code> attribute changes.</p>
-
-<div class="highlight"><pre><span class="nt">&lt;span</span> <span class="na">data-text=</span><span class="s">"event:duration &lt; .start .end"</span><span class="nt">&gt;&lt;/span&gt;</span>
-</pre></div>
-
-<p>The prepended <code>.</code> is a shorthand syntax for specifying dependencies that are on the same object as the target, so that the above declaration is effectively the same as <code>event:duration &lt; event.start event.end</code>.</p>
-
-<h4>
-<a name="iteration-binding" class="anchor" href="#iteration-binding"><span class="mini-icon mini-icon-link"></span></a>Iteration Binding</h4>
-
-<p>Use the <code>data-each-[item]</code> binding to have Rivets.js automatically loop over items in an array and append bound instances of that element. Within that element you can bind to the iterated item as well as any contexts that are available in the parent view.</p>
-
-<div class="highlight"><pre><span class="nt">&lt;ul&gt;</span>
-  <span class="nt">&lt;li</span> <span class="na">data-each-todo=</span><span class="s">"list.todos"</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"checkbox"</span> <span class="na">data-checked=</span><span class="s">"todo.done"</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;span</span> <span class="na">data-text=</span><span class="s">"todo.summary"</span><span class="nt">&gt;&lt;/span&gt;</span>
-  <span class="nt">&lt;/li&gt;</span>
-<span class="nt">&lt;ul&gt;</span>
-</pre></div>
-
-<p>If the array you're binding to contains non-model objects (they don't conform to your adapter), you can still iterate over them, just make sure to use the adapter bypass syntax — in doing so, the iteration binding will still update when the array changes, however the individual items will not since they'd be bypassing the <code>adapter.subscribe</code>.</p>
-
-<div class="highlight"><pre><span class="nt">&lt;ul&gt;</span>
-  <span class="nt">&lt;li</span> <span class="na">data-each-link=</span><span class="s">"item.links"</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;a</span> <span class="na">data-href=</span><span class="s">"link:url"</span> <span class="na">data-text=</span><span class="s">"link:title"</span><span class="nt">&gt;&lt;/span&gt;</span>
-  <span class="nt">&lt;/li&gt;</span>
-<span class="nt">&lt;/ul&gt;</span>
-</pre></div>
-
-<p>Also note that you may bind to the iterated item directly on the parent element.</p>
-
-<div class="highlight"><pre><span class="nt">&lt;ul&gt;</span>
-  <span class="nt">&lt;li</span> <span class="na">data-each-tag=</span><span class="s">"item.tags"</span> <span class="na">data-text=</span><span class="s">"tag:name"</span><span class="nt">&gt;&lt;/li&gt;</span>
-<span class="nt">&lt;/ul&gt;</span>
-</pre></div>
+<article>
+  {% for post in site.posts %}
+    <section id="{{ post.anchor }}">
+      <h2>{{ post.title }}</h2>
+      {{ post.content | markdownify }}
+    </section>
+  {% endfor %}
 </article>
-      </section>
-    </div>
-    <script src="javascripts/scale.fix.js"></script>
-    
-  </body>
-</html>

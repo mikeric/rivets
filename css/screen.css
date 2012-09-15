@@ -1,0 +1,85 @@
+body {
+  font-family: "Lato", serif;
+  font-size: 16px;
+  line-height: 1.4;
+  font-weight: 300;
+  color: #675A5A;
+  background: url("/img/bgnoise.png");
+}
+
+strong {
+  font-weight: normal;
+}
+
+aside {
+  float: left;
+  width: 300px;
+}
+
+aside nav ul {
+  padding-left: 30px;
+}
+
+article {
+  float: left;
+  width: 640px;
+}
+
+#rivets h2 {
+  display: none;
+}
+
+code {
+  font-size: 13px;
+  background-color: #fafbf0;
+}
+
+pre {
+  border-top: 3px solid #e0e0e0;
+  border-bottom: 3px solid #e0e0e0;
+  background-color: white;
+  padding: 1em;
+  line-height: 1.2;
+}
+
+pre code {
+  background-color: inherit;
+}
+
+h2 {
+  margin-top: 1.5em;
+  font-size: 36px;
+  font-weight: 300;
+}
+
+h1, h2, h3, h4, h5 {
+  color: #473A3A;
+}
+
+a {
+  color: #bcb8b0;
+  -webkit-transition: color 0.1s ease-in;  
+  -moz-transition: color 0.1s ease-in;  
+  -o-transition: color 0.1s ease-in;  
+  transition: color 0.1s ease-in;  
+}
+
+a:hover {
+  color: #8c8880;
+}
+
+#wrapper {
+  margin: 50px auto 0;
+  width: 940px;
+}
+
+#rivets h2 + p {
+  margin-top: 55px;
+  padding-bottom: 1em;
+  font-size: 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+#rivets h2 + p strong {
+  font-weight: bold;
+}
