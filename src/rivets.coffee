@@ -51,8 +51,7 @@ class Rivets.Binding
       @formattedValue value
 
     if @options.special is 'event'
-      @routine @el, value, @currentListener
-      @currentListener = value
+      @currentListener = @routine @el, @model, value, @currentListener
     else if @options.special is 'iteration'
       @routine @el, value, @
     else
@@ -206,7 +205,9 @@ class Rivets.View
     binding.publish() for binding in @select (b) -> b.isBidirectional()
 
 # Cross-browser event binding.
-bindEvent = (el, event, fn) ->
+bindEvent = (el, event, handler, context) ->
+  fn = (e) -> handler.call context, e
+
   # Check to see if jQuery is loaded.
   if window.jQuery?
     el = jQuery el
@@ -218,6 +219,8 @@ bindEvent = (el, event, fn) ->
     # Assume we are in IE and use attachEvent.
     event = 'on' + event
     el.attachEvent event, fn
+
+  fn
 
 # Cross-browser event unbinding.
 unbindEvent = (el, event, fn) ->
@@ -240,9 +243,9 @@ getInputValue = (el) ->
     else el.value
 
 # Returns an event binding routine for the specified event.
-eventBinding = (event) -> (el, bind, unbind) ->
-  bindEvent el, event, bind if bind
+eventBinding = (event) -> (el, context, bind, unbind) ->
   unbindEvent el, event, unbind if unbind
+  bindEvent el, event, bind, context
 
 # Returns a class binding routine for the specified class name.
 classBinding = (name) -> (el, value) ->
