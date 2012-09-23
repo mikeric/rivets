@@ -101,19 +101,7 @@ describe('Rivets.Binding', function() {
         spyOn(binding, 'routine');
         func = function() { return 1 + 2; }
         binding.set(func);
-        expect(binding.routine).toHaveBeenCalledWith(el, func, undefined);
-      });
-
-      it('passes the previously set funcation as the current listener on subsequent calls', function() {
-        spyOn(binding, 'routine');
-        funca = function() { return 1 + 2; };
-        funcb = function() { return 2 + 5; };
-
-        binding.set(funca);
-        expect(binding.routine).toHaveBeenCalledWith(el, funca, undefined);
-
-        binding.set(funcb);
-        expect(binding.routine).toHaveBeenCalledWith(el, funcb, funca);
+        expect(binding.routine).toHaveBeenCalledWith(el, binding.model, func, undefined);
       });
     });
 
