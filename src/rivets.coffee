@@ -240,6 +240,7 @@ unbindEvent = (el, event, fn) ->
 getInputValue = (el) ->
   switch el.type
     when 'checkbox' then el.checked
+    when 'select-multiple' then o.value for o in el when o.selected
     else el.value
 
 # Returns an event binding routine for the specified event.
@@ -311,7 +312,10 @@ Rivets.routines =
   html:  (el, value) ->
     el.innerHTML = if value? then value else ''
   value: (el, value) ->
-    el.value = if value? then value else ''
+    if el.type is 'select-multiple'
+      o.selected = o.value in value for o in el if value?
+    else
+      el.value = if value? then value else ''
   text: (el, value) ->
     if el.innerText?
       el.innerText = if value? then value else ''
