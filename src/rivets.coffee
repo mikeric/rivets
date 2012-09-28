@@ -278,7 +278,7 @@ iterationBinding = (name) -> (el, collection, binding) ->
     data[name] = item
     itemEl = el.cloneNode true
     previous = binding.iterated[binding.iterated.length - 1] or binding.marker
-    binding.marker.parentNode.insertBefore itemEl, previous.nextSibling
+    binding.marker.parentNode.insertBefore itemEl, previous.nextSibling ? null
 
     binding.iterated.push
       el: itemEl
