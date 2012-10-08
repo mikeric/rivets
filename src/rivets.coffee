@@ -272,7 +272,7 @@ iterationBinding = (name) -> (el, collection, binding) ->
 
   binding.iterated = []
 
-  for item in collection
+  itemProcesser = (item) ->
     data = {}
     data[n] = m for n, m of binding.view.models
     data[name] = item
@@ -283,6 +283,11 @@ iterationBinding = (name) -> (el, collection, binding) ->
     binding.iterated.push
       el: itemEl
       view: rivets.bind itemEl, data
+
+  if collection.map?
+    collection.map itemProcesser
+  else
+    itemProcesser(item) for item in collection
 
 # Returns an attribute binding routine for the specified attribute. This is what
 # is used when there are no matching routines for an identifier.
