@@ -90,7 +90,7 @@ class Rivets.Binding
 
         Rivets.config.adapter.subscribe model, keypath, @sync
 
-    if @isBidirectional()
+    if @isBidirectional() and not @options.bypass
       bindEvent @el, 'change', @publish
 
   # Unsubscribes from the model and the element.
