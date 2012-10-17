@@ -3,6 +3,20 @@
 #     author : Michael Richards
 #     license : MIT
 
+splitPath = (pathString) ->
+  splitSubPath = (pathString) ->
+    if !~pathString.indexOf ":"
+      return {keypath: pathString, bypass: false}
+    pathData = for pathPart in pathString.split ":"
+      {keypath: pathPart, bypass: true}
+    pathData[0].bypass = false
+    pathData
+
+  pathData = []
+  for pathPart in pathString.split "."
+    pathData = pathData.concat splitSubPath pathPart
+  pathData
+
 # The Rivets namespace.
 Rivets = {}
 
@@ -14,7 +28,7 @@ class Rivets.Binding
   # All information about the binding is passed into the constructor; the DOM
   # element, the type of binding, the model object and the keypath at which
   # to listen for changes.
-  constructor: (@el, @type, @model, @keypath, @options = {}) ->
+  constructor: (@el, @type, @model, @pathDatas, @options = {}) ->
     @routine = switch @options.special
       when 'event'     then eventBinding @type
       when 'class'     then classBinding @type
@@ -57,53 +71,77 @@ class Rivets.Binding
     else
       @routine @el, value
 
+  getValueByPath: ->
+    lastData = @model
+    for pathData in @pathDatas
+      if pathData.bypass
+        lastData = lastData[pathData.keypath]
+      else
+        lastData = Rivets.config.adapter.read lastData, pathData.keypath
+    lastData
+
+  getBindConfig: (model=@model, pathDatas=@pathDatas) ->
+    lastModel = model
+    for pathData in pathDatas.slice 0, -1
+      if pathData.bypass
+        lastModel = lastModel[pathData.keypath]
+      else
+        lastModel = Rivets.config.adapter.read lastModel, pathData.keypath
+    model: lastModel, pathData: pathDatas.slice(-1)[0]
+
   # Syncs up the view binding with the model.
   sync: =>
-    @set if @options.bypass
-      @model[@keypath]
-    else
-      Rivets.config.adapter.read @model, @keypath
+    @set @getValueByPath()
 
   # Publishes the value currently set on the input element back to the model.
   publish: =>
-    Rivets.config.adapter.publish @model, @keypath, getInputValue @el
+    {model, pathData: {keypath}} = @getBindConfig()
+    Rivets.config.adapter.publish model, keypath, getInputValue @el
 
   # Subscribes to the model for changes at the specified keypath. Bi-directional
   # routines will also listen for changes on the element to propagate them back
   # to the model.
+  bindDep: ->
+    return unless @options.dependencies?.length
+    for dependency in @options.dependencies
+      if /^\./.test dependency
+        model = @model
+        keypath = dependency.substr 1
+      else
+        dependencyData = splitPath dependency
+        {model, pathData: {keypath}} = @getBindConfig @view.models, dependencyData
+
+      Rivets.config.adapter.subscribe model, keypath, @sync
+
   bind: =>
-    if @options.bypass
+    debugger
+    {model, pathData: {keypath, bypass}} = @getBindConfig()
+    if bypass
       @sync()
     else
-      Rivets.config.adapter.subscribe @model, @keypath, @sync
+      Rivets.config.adapter.subscribe model, keypath, @sync
       @sync() if Rivets.config.preloadData
 
-    if @options.dependencies?.length
-      for dependency in @options.dependencies
-        if /^\./.test dependency
-          model = @model
-          keypath = dependency.substr 1
-        else
-          dependency = dependency.split '.'
-          model = @view.models[dependency.shift()]
-          keypath = dependency.join '.'
-
-        Rivets.config.adapter.subscribe model, keypath, @sync
-
+    @bindDep()
     if @isBidirectional()
       bindEvent @el, 'change', @publish
 
   # Unsubscribes from the model and the element.
+  unbindDep: ->
+    return unless @options.dependencies?.length
+    for dependency in @options.dependencies
+      dependencyData = splitPath dependency
+      {model, pathData: {keypath}} = @getBindConfig @view.models, dependencyData
+      Rivets.config.adapter.unsubscribe model, keypath, @sync
+
   unbind: =>
-    unless @options.bypass
-      Rivets.config.adapter.unsubscribe @model, @keypath, @sync
+    {model, pathData: {keypath, bypass}} = @getBindConfig()
+    return if bypass
+    Rivets.config.adapter.unsubscribe @model, @keypath, @sync
 
-      if @options.dependencies?.length
-        for keypath in @options.dependencies
-          Rivets.config.adapter.unsubscribe @model, keypath, @sync
-
-      if @isBidirectional()
-        @el.removeEventListener 'change', @publish
+    @unbindDep()
+    if @isBidirectional()
+      @el.removeEventListener 'change', @publish
 
 # A collection of bindings built from a set of parent elements.
 class Rivets.View
@@ -147,11 +185,9 @@ class Rivets.View
             pipes = (pipe.trim() for pipe in attribute.value.split '|')
             context = (ctx.trim() for ctx in pipes.shift().split '<')
             path = context.shift()
-            splitPath = path.split /\.|:/
+            pathDatas = splitPath path
             options.formatters = pipes
-            model = @models[splitPath.shift()]
-            options.bypass = path.indexOf(':') != -1
-            keypath = splitPath.join '.'
+            model = @models[pathDatas.shift().keypath]
 
             if model
               if dependencies = context.shift()
@@ -169,7 +205,7 @@ class Rivets.View
                 type = type.replace iterationRegExp, ''
                 options.special = 'iteration'
 
-              binding = new Rivets.Binding node, type, model, keypath, options
+              binding = new Rivets.Binding node, type, model, pathDatas, options
               binding.view = @
 
               @bindings.push binding
