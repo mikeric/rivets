@@ -87,7 +87,7 @@ class Rivets.Binding
         lastModel = lastModel[pathData.keypath]
       else
         lastModel = Rivets.config.adapter.read lastModel, pathData.keypath
-    model: lastModel, pathData: pathDatas.slice(-1)[0]
+    model: lastModel, pathData: pathDatas.slice(-1)[0] or {}
 
   # Syncs up the view binding with the model.
   sync: =>
@@ -114,7 +114,6 @@ class Rivets.Binding
       Rivets.config.adapter.subscribe model, keypath, @sync
 
   bind: =>
-    debugger
     {model, pathData: {keypath, bypass}} = @getBindConfig()
     if bypass
       @sync()
