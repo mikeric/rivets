@@ -78,6 +78,9 @@ class Rivets.Binding
       Rivets.config.adapter.subscribe @model, @keypath, @sync
       @sync() if Rivets.config.preloadData
 
+      if @isBidirectional()
+        bindEvent @el, 'change', @publish
+
     if @options.dependencies?.length
       for dependency in @options.dependencies
         if /^\./.test dependency
@@ -90,20 +93,18 @@ class Rivets.Binding
 
         Rivets.config.adapter.subscribe model, keypath, @sync
 
-    if @isBidirectional() and not @options.bypass
-      bindEvent @el, 'change', @publish
 
   # Unsubscribes from the model and the element.
   unbind: =>
     unless @options.bypass
       Rivets.config.adapter.unsubscribe @model, @keypath, @sync
 
-      if @options.dependencies?.length
-        for keypath in @options.dependencies
-          Rivets.config.adapter.unsubscribe @model, keypath, @sync
-
       if @isBidirectional()
         @el.removeEventListener 'change', @publish
+
+    if @options.dependencies?.length
+      for keypath in @options.dependencies
+        Rivets.config.adapter.unsubscribe @model, keypath, @sync
 
 # A collection of bindings built from a set of parent elements.
 class Rivets.View
