@@ -100,7 +100,7 @@ class Rivets.Binding
       Rivets.config.adapter.unsubscribe @model, @keypath, @sync
 
       if @isBidirectional()
-        @el.removeEventListener 'change', @publish
+        unbindEvent @el 'change', @publish
 
     if @options.dependencies?.length
       for keypath in @options.dependencies
