@@ -150,8 +150,12 @@ class Rivets.View
             path = context.shift()
             splitPath = path.split /\.|:/
             options.formatters = pipes
-            model = @models[splitPath.shift()]
             options.bypass = path.indexOf(':') != -1
+            if splitPath[0]
+              model = @models[splitPath.shift()]
+            else
+              model = @models
+              splitPath.shift()
             keypath = splitPath.join '.'
 
             if model
