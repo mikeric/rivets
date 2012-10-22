@@ -46,17 +46,17 @@ describe('Routines', function() {
 
   describe('value', function() {
     it("sets the element's value", function() {
-      rivets.routines.value(input, 'pitchfork');
+      rivets.routines.value.routine(input, 'pitchfork');
       expect(input.value).toBe('pitchfork');
     });
     
     it("applies a default value to the element when the model doesn't contain it", function() {
-      rivets.routines.value(input, undefined);
+      rivets.routines.value.routine(input, undefined);
       expect(input.value).toBe('');
     });
 
     it("sets the element's value to zero when a zero value is passed", function() {
-      rivets.routines.value(input, 0);
+      rivets.routines.value.routine(input, 0);
       expect(input.value).toBe('0');
     });
   });
@@ -128,14 +128,14 @@ describe('Routines', function() {
   describe('checked', function() {
     describe('with a truthy value', function() {
       it('checks the element', function() {
-        rivets.routines.checked(el, true);
+        rivets.routines.checked.routine(el, true);
         expect(el.checked).toBe(true);
       });
     });
 
     describe('with a falsey value', function() {
       it('unchecks the element', function() {
-        rivets.routines.checked(el, false);
+        rivets.routines.checked.routine(el, false);
         expect(el.checked).toBe(false);
       });
     });
@@ -144,14 +144,14 @@ describe('Routines', function() {
   describe('unchecked', function() {
     describe('with a truthy value', function() {
       it('unchecks the element', function() {
-        rivets.routines.unchecked(el, true);
+        rivets.routines.unchecked.routine(el, true);
         expect(el.checked).toBe(false);
       });
     });
 
     describe('with a falsey value', function() {
       it('checks the element', function() {
-        rivets.routines.unchecked(el, false);
+        rivets.routines.unchecked.routine(el, false);
         expect(el.checked).toBe(true);
       });
     });
