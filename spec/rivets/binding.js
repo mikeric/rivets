@@ -18,8 +18,8 @@ describe('Rivets.Binding', function() {
     model = binding.model;
   });
 
-  it('gets assigned the routine function matching the identifier', function() {
-    expect(binding.routine).toBe(rivets.routines.text);
+  it('gets assigned the proper binder routine matching the identifier', function() {
+    expect(binding.binder.routine).toBe(rivets.routines.text);
   });
 
   describe('bind()', function() {
@@ -72,50 +72,24 @@ describe('Rivets.Binding', function() {
 
   describe('set()', function() {
     it('performs the binding routine with the supplied value', function() {
-      spyOn(binding, 'routine');
+      spyOn(binding.binder, 'routine');
       binding.set('sweater');
-      expect(binding.routine).toHaveBeenCalledWith(el, 'sweater');
+      expect(binding.binder.routine).toHaveBeenCalledWith(el, 'sweater');
     });
 
     it('applies any formatters to the value before performing the routine', function() {
       rivets.formatters.awesome = function(value) { return 'awesome ' + value };
       binding.formatters.push('awesome');
-      spyOn(binding, 'routine');
+      spyOn(binding.binder, 'routine');
       binding.set('sweater');
-      expect(binding.routine).toHaveBeenCalledWith(el, 'awesome sweater');
+      expect(binding.binder.routine).toHaveBeenCalledWith(el, 'awesome sweater');
     });
 
     it('calls methods with the object as context', function() {
       binding.model = {foo: 'bar'};
-      spyOn(binding, 'routine');
+      spyOn(binding.binder, 'routine');
       binding.set(function() { return this.foo; });
-      expect(binding.routine).toHaveBeenCalledWith(el, binding.model.foo);
-    });
-
-    describe('on an event binding', function() {
-      beforeEach(function() {
-        binding.options.special = 'event';
-      });
-
-      it('performs the binding routine with the supplied function and current listener', function() {
-        spyOn(binding, 'routine');
-        func = function() { return 1 + 2; }
-        binding.set(func);
-        expect(binding.routine).toHaveBeenCalledWith(el, binding.model, func, undefined);
-      });
-    });
-
-    describe('on an iteration binding', function(){
-      beforeEach(function(){
-        binding.options.special = 'iteration';
-      });
-
-      it('performs the binding routine with the supplied collection and binding', function() {
-        spyOn(binding, 'routine');
-        array = [{name: 'a'}, {name: 'b'}];
-        binding.set(array);
-        expect(binding.routine).toHaveBeenCalledWith(el, array, binding);
-      });
+      expect(binding.binder.routine).toHaveBeenCalledWith(el, binding.model.foo);
     });
   });
 
