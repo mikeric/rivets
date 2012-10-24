@@ -74,6 +74,7 @@ class Rivets.Binding
   getValueByPath: ->
     lastData = @model
     for pathData in @pathDatas
+      break unless lastData
       if pathData.bypass
         lastData = lastData[pathData.keypath]
       else
@@ -83,6 +84,7 @@ class Rivets.Binding
   getBindConfig: (model=@model, pathDatas=@pathDatas) ->
     lastModel = model
     for pathData in pathDatas.slice 0, -1
+      break unless lastModel
       if pathData.bypass
         lastModel = lastModel[pathData.keypath]
       else
@@ -111,11 +113,12 @@ class Rivets.Binding
         dependencyData = splitPath dependency
         {model, pathData: {keypath}} = @getBindConfig @view.models, dependencyData
 
+      return unless model
       Rivets.config.adapter.subscribe model, keypath, @sync
 
   bind: =>
     {model, pathData: {keypath, bypass}} = @getBindConfig()
-    if bypass
+    if bypass or not model
       @sync()
     else
       Rivets.config.adapter.subscribe model, keypath, @sync
@@ -131,11 +134,12 @@ class Rivets.Binding
     for dependency in @options.dependencies
       dependencyData = splitPath dependency
       {model, pathData: {keypath}} = @getBindConfig @view.models, dependencyData
+      return unless model
       Rivets.config.adapter.unsubscribe model, keypath, @sync
 
   unbind: =>
     {model, pathData: {keypath, bypass}} = @getBindConfig()
-    return if bypass
+    return if bypass or not model
     Rivets.config.adapter.unsubscribe @model, @keypath, @sync
 
     @unbindDep()
