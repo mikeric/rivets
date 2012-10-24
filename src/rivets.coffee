@@ -15,8 +15,8 @@ class Rivets.Binding
   # element, the type of binding, the model object and the keypath at which
   # to listen for changes.
   constructor: (@el, @type, @model, @keypath, @options = {}) ->
-    unless @binder = Rivets.routines[type]
-      for identifier, value of Rivets.routines
+    unless @binder = Rivets.binders[type]
+      for identifier, value of Rivets.binders
         if identifier isnt '*' and identifier.indexOf('*') isnt -1
           regexp = new RegExp "^#{identifier.replace('*', '.+')}$"
           if regexp.test type
@@ -24,7 +24,7 @@ class Rivets.Binding
             @args = new RegExp("^#{identifier.replace('*', '(.+)')}$").exec type
             @args.shift()
 
-    @binder or= Rivets.routines['*']
+    @binder or= Rivets.binders['*']
 
     if @binder instanceof Function
       @binder = {routine: @binder}
@@ -121,14 +121,14 @@ class Rivets.View
         for attribute in node.attributes
           if bindingRegExp.test attribute.name
             type = attribute.name.replace bindingRegExp, ''
-            unless binder = Rivets.routines[type]
-              for identifier, value of Rivets.routines
+            unless binder = Rivets.binders[type]
+              for identifier, value of Rivets.binders
                 if identifier isnt '*' and identifier.indexOf('*') isnt -1
                   regexp = new RegExp "^#{identifier.replace('*', '.+')}$"
                   if regexp.test type
                     binder = value
 
-            binder or= Rivets.routines['*']
+            binder or= Rivets.binders['*']
 
             if binder.block
               skipNodes.push n for n in node.getElementsByTagName '*'
@@ -231,7 +231,7 @@ getInputValue = (el) ->
     else el.value
 
 # Core binding routines.
-Rivets.routines =
+Rivets.binders =
   enabled: (el, value) ->
     el.disabled = !value
 
@@ -345,7 +345,7 @@ Rivets.formatters = {}
 # The rivets module. This is the public interface that gets exported.
 rivets =
   # Exposes the core binding routines that can be extended or stripped down.
-  routines: Rivets.routines
+  binders: Rivets.binders
 
   # Exposes the formatters object to be extended.
   formatters: Rivets.formatters

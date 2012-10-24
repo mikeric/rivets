@@ -19,7 +19,7 @@ describe('Rivets.Binding', function() {
   });
 
   it('gets assigned the proper binder routine matching the identifier', function() {
-    expect(binding.binder.routine).toBe(rivets.routines.text);
+    expect(binding.binder.routine).toBe(rivets.binders.text);
   });
 
   describe('bind()', function() {
