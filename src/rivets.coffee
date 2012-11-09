@@ -243,9 +243,9 @@ Rivets.binders =
   checked:
     publishes: true
     bind: (el) ->
-      bindEvent el, 'change', @publish
+      @currentListener = bindEvent el, 'change', @publish
     unbind: (el) ->
-      unbindEvent el, 'change', @publish
+      unbindEvent el, 'change', @currentListener
     routine: (el, value) ->
       if el.type is 'radio'
         el.checked = el.value is value
@@ -255,9 +255,9 @@ Rivets.binders =
   unchecked:
     publishes: true
     bind: (el) ->
-      bindEvent el, 'change', @publish
+      @currentListener = bindEvent el, 'change', @publish
     unbind: (el) ->
-      unbindEvent el, 'change', @publish
+      unbindEvent el, 'change', @currentListener
     routine: (el, value) ->
       if el.type is 'radio'
         el.checked = el.value isnt value
@@ -276,9 +276,9 @@ Rivets.binders =
   value:
     publishes: true
     bind: (el) ->
-      bindEvent el, 'change', @publish
+      @currentListener = bindEvent el, 'change', @publish
     unbind: (el) ->
-      unbindEvent el, 'change', @publish
+      unbindEvent el, 'change', @currentListener
     routine: (el, value) ->
       if el.type is 'select-multiple'
         o.selected = o.value in value for o in el if value?
