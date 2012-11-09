@@ -29,6 +29,17 @@ describe('Rivets.Binding', function() {
       expect(rivets.config.adapter.subscribe).toHaveBeenCalledWith(model, 'name', binding.sync);
     });
 
+    it("calls the binder's bind method if one exists", function() {
+      expect(function(){
+        binding.bind();
+      }).not.toThrow(new Error());
+
+      binding.binder.bind = function(){};
+      spyOn(binding.binder, 'bind');
+      binding.bind();
+      expect(binding.binder.bind).toHaveBeenCalled();
+    });
+
     describe('with preloadData set to true', function() {
       beforeEach(function() {
         rivets.config.preloadData = true;
@@ -54,6 +65,17 @@ describe('Rivets.Binding', function() {
         binding.bind();
         expect(binding.set).toHaveBeenCalledWith('espresso');
       });
+
+      it("calls the binder's bind method if one exists", function() {
+        expect(function(){
+          binding.bind();
+        }).not.toThrow(new Error());
+
+        binding.binder.bind = function(){};
+        spyOn(binding.binder, 'bind');
+        binding.bind();
+        expect(binding.binder.bind).toHaveBeenCalled();
+      });
     });
 
     describe('with dependencies', function() {
@@ -66,6 +88,36 @@ describe('Rivets.Binding', function() {
         binding.bind();
         expect(rivets.config.adapter.subscribe).toHaveBeenCalledWith(model, 'fname', binding.sync);
         expect(rivets.config.adapter.subscribe).toHaveBeenCalledWith(model, 'lname', binding.sync);
+      });
+    });
+  });
+
+  describe('unbind()', function() {
+    it("calls the binder's unbind method if one exists", function() {
+      expect(function(){
+        binding.unbind();
+      }).not.toThrow(new Error());
+
+      binding.binder.unbind = function(){};
+      spyOn(binding.binder, 'unbind');
+      binding.unbind();
+      expect(binding.binder.unbind).toHaveBeenCalled();
+    });
+    
+    describe('with the bypass option set to true', function() {
+      beforeEach(function() {
+        binding.options.bypass = true;
+      });
+
+      it("calls the binder's unbind method if one exists", function() {
+        expect(function(){
+          binding.unbind();
+        }).not.toThrow(new Error());
+
+        binding.binder.unbind = function(){};
+        spyOn(binding.binder, 'unbind');
+        binding.unbind();
+        expect(binding.binder.unbind).toHaveBeenCalled();
       });
     });
   });
