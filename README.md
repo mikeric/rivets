@@ -29,3 +29,18 @@ Rivets.js uses [grunt](http://gruntjs.com/) as the build tool. Run `grunt build`
 #### Testing
 
 Rivets.js uses [Jasmine](http://pivotal.github.com/jasmine/) as the testing framework. You can run the test suite with `grunt spec` or by opening */spec/index.html*.
+
+## Contributing
+
+#### Bug Reporting
+
+1. Ensure the bug can be reproduced on the latest master release.
+2. Open an issue on GitHub and include an isolated JSFiddle demonstration of the bug. The more information you provide, the easier it will be to validate and fix.
+
+#### Pull Requests
+
+1. Fork the repository and create a topic branch.
+2. Be sure to associate commits to their corresponding issue using `[#1]` or `[Closes #1]` if the commit resolves the issue.
+3. Make sure not to commit any changes under `lib/` as they will surely cause merge conflicts with other's changes. Files under `lib/` are only committed when a new build is released.
+4. Include tests for your changes and make them pass.
+5. Push to your fork and submit a pull-request with an explanation and reference to the issue number(s).
