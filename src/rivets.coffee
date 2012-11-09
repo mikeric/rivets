@@ -69,10 +69,11 @@ class Rivets.Binding
   # routines will also listen for changes on the element to propagate them back
   # to the model.
   bind: =>
+    @binder.bind?.call @, @el
+
     if @options.bypass
       @sync()
     else
-      @binder.bind?.call @, @el
       Rivets.config.adapter.subscribe @model, @keypath, @sync
       @sync() if Rivets.config.preloadData
 
@@ -90,8 +91,9 @@ class Rivets.Binding
 
   # Unsubscribes from the model and the element.
   unbind: =>
+    @binder.unbind?.call @, @el
+
     unless @options.bypass
-      @binder.unbind?.call @, @el
       Rivets.config.adapter.unsubscribe @model, @keypath, @sync
 
     if @options.dependencies?.length
