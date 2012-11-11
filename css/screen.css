@@ -4,7 +4,6 @@ body {
   line-height: 1.4;
   font-weight: 300;
   color: #675A5A;
-  background: url("/img/bgnoise.png");
 }
 
 strong {
@@ -25,19 +24,25 @@ article {
   width: 640px;
 }
 
+article p {
+width: 80%;
+}
+
 #rivets h2 {
   display: none;
 }
 
 code {
-  font-size: 13px;
-  background-color: #fafbf0;
+  font-size: 12px;
+  background-color: #f8faf0;
+  padding: 0.25em 0.5em;
+  border-radius: 3px;
 }
 
 pre {
-  border-top: 3px solid #e0e0e0;
-  border-bottom: 3px solid #e0e0e0;
-  background-color: white;
+  border: 1px solid #dcdcda;
+  border-radius: 3px;
+  box-shadow: 0px 1px 3px #ececea;
   padding: 1em;
   line-height: 1.2;
 }
@@ -78,6 +83,7 @@ a:hover {
   padding-bottom: 1em;
   font-size: 20px;
   border-bottom: 1px solid #ddd;
+  width: 100%;
 }
 
 #rivets h2 + p strong {
