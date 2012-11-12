@@ -130,7 +130,7 @@ describe('Rivets.Binding', function() {
     });
 
     it('applies any formatters to the value before performing the routine', function() {
-      rivets.formatters.awesome = function(value) { return 'awesome ' + value };
+      rivets.formatters.awesome = function(value) { return 'awesome ' + value; };
       binding.formatters.push('awesome');
       spyOn(binding.binder, 'routine');
       binding.set('sweater');
@@ -163,15 +163,149 @@ describe('Rivets.Binding', function() {
     });
   });
 
+  describe('publishTwoWay()', function() {
+
+    it('applies a two-way read formatter to function same as a single-way', function() {
+      rivets.formatters.awesome = {
+        read: function(value) { return 'awesome ' + value; },
+      };
+      binding.formatters.push('awesome');
+      spyOn(binding.binder, 'routine');
+      binding.set('sweater');
+      expect(binding.binder.routine).toHaveBeenCalledWith(el, 'awesome sweater');
+    });
+
+    it("should publish the value of a number input", function() {
+      rivets.formatters.awesome = {
+        publish: function(value) { return 'awesome ' + value; },
+      };
+
+      numberInput = document.createElement('input');
+      numberInput.setAttribute('type', 'number');
+      numberInput.setAttribute('data-value', 'obj.num | awesome');
+
+      view = rivets.bind(numberInput, {obj: {num: 42}});
+      binding = view.bindings[0];
+      model = binding.model;
+
+      numberInput.value = 42;
+
+      spyOn(rivets.config.adapter, 'publish');
+      binding.publish({target: numberInput});
+      expect(rivets.config.adapter.publish).toHaveBeenCalledWith(model, 'num', 'awesome 42');
+    });
+
+    it("should format a value in both directions", function() {
+      rivets.formatters.awesome = {
+        publish: function(value) { return 'awesome ' + value; },
+        read: function(value) { return value + ' is awesome'; }
+      };
+      valueInput = document.createElement('input');
+      valueInput.setAttribute('type','text');
+      valueInput.setAttribute('data-value', 'obj.name | awesome');
+
+      view = rivets.bind(valueInput, {obj: { name: 'nothing' }});
+      binding = view.bindings[0];
+      model = binding.model;
+
+      spyOn(rivets.config.adapter, 'publish');
+      valueInput.value = 'charles';
+      binding.publish({target: valueInput});
+      expect(rivets.config.adapter.publish).toHaveBeenCalledWith(model, 'name', 'awesome charles');
+
+      spyOn(binding.binder, 'routine');
+      binding.set('fred');
+      expect(binding.binder.routine).toHaveBeenCalledWith(valueInput, 'fred is awesome');
+    });
+
+    it("should not fail or format if the specified binding function doesn't exist", function() {
+      rivets.formatters.awesome = { };
+      valueInput = document.createElement('input');
+      valueInput.setAttribute('type','text');
+      valueInput.setAttribute('data-value', 'obj.name | awesome');
+
+      view = rivets.bind(valueInput, {obj: { name: 'nothing' }});
+      binding = view.bindings[0];
+      model = binding.model;
+
+      spyOn(rivets.config.adapter, 'publish');
+      valueInput.value = 'charles';
+      binding.publish({target: valueInput});
+      expect(rivets.config.adapter.publish).toHaveBeenCalledWith(model, 'name', 'charles');
+
+      spyOn(binding.binder, 'routine');
+      binding.set('fred');
+      expect(binding.binder.routine).toHaveBeenCalledWith(valueInput, 'fred');
+    });
+
+
+    it("should apply read binders left to right, and write binders right to left", function() {
+      rivets.formatters.totally = { 
+        publish: function(value) { return value + ' totally'; },
+        read: function(value) { return value + ' totally'; }
+      };
+      rivets.formatters.awesome = { 
+        publish: function(value) { return value + ' is awesome'; },
+        read: function(value) { return value + ' is awesome'; }
+      };
+
+      valueInput = document.createElement('input');
+      valueInput.setAttribute('type','text');
+      valueInput.setAttribute('data-value', 'obj.name | awesome | totally');
+
+      view = rivets.bind(valueInput, {obj: { name: 'nothing' }});
+      binding = view.bindings[0];
+      model = binding.model;
+
+      spyOn(binding.binder, 'routine');
+      binding.set('fred');
+      expect(binding.binder.routine).toHaveBeenCalledWith(valueInput, 'fred is awesome totally');
+
+      spyOn(rivets.config.adapter, 'publish');
+      valueInput.value = 'fred';
+      binding.publish({target: valueInput});
+      expect(rivets.config.adapter.publish).toHaveBeenCalledWith(model, 'name', 'fred totally is awesome');
+    });
+
+     it("binders in a chain should be skipped if they're not there", function() {
+      rivets.formatters.totally = { 
+        publish: function(value) { return value + ' totally'; },
+        read: function(value) { return value + ' totally'; }
+      };
+      rivets.formatters.radical = {
+        publish: function(value) { return value + ' is radical'; },
+      };
+      rivets.formatters.awesome = function(value) { return value + ' is awesome'; };
+
+      valueInput = document.createElement('input');
+      valueInput.setAttribute('type','text');
+      valueInput.setAttribute('data-value', 'obj.name | awesome | radical | totally');
+
+      view = rivets.bind(valueInput, {obj: { name: 'nothing' }});
+      binding = view.bindings[0];
+      model = binding.model;
+
+      spyOn(binding.binder, 'routine');
+      binding.set('fred');
+      expect(binding.binder.routine).toHaveBeenCalledWith(valueInput, 'fred is awesome totally');
+
+      spyOn(rivets.config.adapter, 'publish');
+      valueInput.value = 'fred';
+      binding.publish({target: valueInput});
+      expect(rivets.config.adapter.publish).toHaveBeenCalledWith(model, 'name', 'fred totally is radical');
+    });
+
+  });
+
   describe('formattedValue()', function() {
     it('applies the current formatters on the supplied value', function() {
-      rivets.formatters.awesome = function(value) { return 'awesome ' + value };
+      rivets.formatters.awesome = function(value) { return 'awesome ' + value; };
       binding.formatters.push('awesome');
       expect(binding.formattedValue('hat')).toBe('awesome hat');
     });
 
     it('uses formatters on the model', function() {
-      model.modelAwesome = function(value) { return 'model awesome ' + value };
+      model.modelAwesome = function(value) { return 'model awesome ' + value; };
       binding.formatters.push('modelAwesome');
       expect(binding.formattedValue('hat')).toBe('model awesome hat');
     });
