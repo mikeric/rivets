@@ -40,8 +40,14 @@ class Rivets.Binding
       value = if @model[id] instanceof Function
         @model[id] value, args...
       else if Rivets.formatters[id]
-        Rivets.formatters[id] value, args...
-
+        if Rivets.formatters[id].read instanceof Function
+          Rivets.formatters[id].read value, args...
+        else if Rivets.formatters[id] instanceof Function  # could occur if fmt = { publish: function() {}}
+          Rivets.formatters[id] value, args...
+        else    # skip if no read function exists
+          value
+      else      # skip if no formatter exists
+        value
     value
 
   # Sets the value for the binding. This Basically just runs the binding routine
@@ -62,8 +68,20 @@ class Rivets.Binding
       Rivets.config.adapter.read @model, @keypath
 
   # Publishes the value currently set on the input element back to the model.
-  publish: =>
-    Rivets.config.adapter.publish @model, @keypath, getInputValue @el
+  publish: => 
+    value = getInputValue @el
+    if @formatters
+      i = @formatters.length-1
+      while(i > -1)
+        formatter = @formatters[i]
+        args = formatter.split /\s+/
+        id = args.shift()
+        # only re-assign if there is a two-way formatter.
+        if Rivets.formatters[id] and Rivets.formatters[id].publish
+          value = Rivets.formatters[id].publish value, args...
+        i--
+    if(value)
+      Rivets.config.adapter.publish @model, @keypath, value
 
   # Subscribes to the model for changes at the specified keypath. Bi-directional
   # routines will also listen for changes on the element to propagate them back
