@@ -37,17 +37,17 @@ class Rivets.Binding
     for formatter in @formatters
       args = formatter.split /\s+/
       id = args.shift()
-      value = if @model[id] instanceof Function
-        @model[id] value, args...
-      else if Rivets.formatters[id]
-        if Rivets.formatters[id].read instanceof Function
-          Rivets.formatters[id].read value, args...
-        else if Rivets.formatters[id] instanceof Function  # could occur if fmt = { publish: function() {}}
-          Rivets.formatters[id] value, args...
-        else    # skip if no read function exists
-          value
-      else      # skip if no formatter exists
-        value
+
+      formatter = if @model[id] instanceof Function
+        @model[id]
+      else
+        Rivets.formatters[id]
+
+      if formatter?.read instanceof Function
+        value = formatter.read value, args...
+      else if formatter instanceof Function
+        value = formatter value, args...
+
     value
 
   # Sets the value for the binding. This Basically just runs the binding routine
@@ -70,18 +70,15 @@ class Rivets.Binding
   # Publishes the value currently set on the input element back to the model.
   publish: => 
     value = getInputValue @el
-    if @formatters
-      i = @formatters.length-1
-      while(i > -1)
-        formatter = @formatters[i]
-        args = formatter.split /\s+/
-        id = args.shift()
-        # only re-assign if there is a two-way formatter.
-        if Rivets.formatters[id] and Rivets.formatters[id].publish
-          value = Rivets.formatters[id].publish value, args...
-        i--
-    if(value)
-      Rivets.config.adapter.publish @model, @keypath, value
+
+    for formatter in @formatters.slice(0).reverse()
+      args = formatter.split /\s+/
+      id = args.shift()
+
+      if Rivets.formatters[id]?.publish
+        value = Rivets.formatters[id].publish value, args...
+
+    Rivets.config.adapter.publish @model, @keypath, value
 
   # Subscribes to the model for changes at the specified keypath. Bi-directional
   # routines will also listen for changes on the element to propagate them back
