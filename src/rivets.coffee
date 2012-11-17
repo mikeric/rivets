@@ -37,17 +37,17 @@ class Rivets.Binding
     for formatter in @formatters
       args = formatter.split /\s+/
       id = args.shift()
-      value = if @model[id] instanceof Function
-        @model[id] value, args...
-      else if Rivets.formatters[id]
-        if Rivets.formatters[id].read instanceof Function
-          Rivets.formatters[id].read value, args...
-        else if Rivets.formatters[id] instanceof Function  # could occur if fmt = { publish: function() {}}
-          Rivets.formatters[id] value, args...
-        else    # skip if no read function exists
-          value
-      else      # skip if no formatter exists
-        value
+
+      formatter = if @model[id] instanceof Function
+        @model[id]
+      else
+        Rivets.formatters[id]
+
+      if formatter?.read instanceof Function
+        value = formatter.read value, args...
+      else if formatter instanceof Function
+        value = formatter value, args...
+
     value
 
   # Sets the value for the binding. This Basically just runs the binding routine
