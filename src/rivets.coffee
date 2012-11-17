@@ -133,7 +133,7 @@ class Rivets.View
     skipNodes = []
     bindingRegExp = @bindingRegExp()
 
-    parseNode = (node) =>
+    parse = (node) =>
       unless node in skipNodes
         for attribute in node.attributes
           if bindingRegExp.test attribute.name
@@ -183,8 +183,8 @@ class Rivets.View
       return
 
     for el in @els
-      parseNode el
-      parseNode node for node in el.getElementsByTagName '*'
+      parse el
+      parse node for node in el.getElementsByTagName '*' when node.attributes?
 
     return
 
