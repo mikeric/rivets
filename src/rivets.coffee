@@ -128,6 +128,9 @@ class Rivets.View
     prefix = Rivets.config.prefix
     if prefix then new RegExp("^data-#{prefix}-") else /^data-/
 
+  # Parses the DOM tree and builds Rivets.Binding instances for every matched
+  # binding declaration. Subsequent calls to build will replace the previous
+  # Rivets.Binding instances with new ones, so be sure to unbind them first.
   build: =>
     @bindings = []
     skipNodes = []
