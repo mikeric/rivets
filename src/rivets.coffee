@@ -112,8 +112,16 @@ class Rivets.Binding
       Rivets.config.adapter.unsubscribe @model, @keypath, @sync
 
     if @options.dependencies?.length
-      for keypath in @options.dependencies
-        Rivets.config.adapter.unsubscribe @model, keypath, @sync
+      for dependency in @options.dependencies
+        if /^\./.test dependency
+          model = @model
+          keypath = dependency.substr 1
+        else
+          dependency = dependency.split '.'
+          model = @view.models[dependency.shift()]
+          keypath = dependency.join '.'
+
+        Rivets.config.adapter.unsubscribe model, keypath, @sync
 
 # A collection of bindings built from a set of parent elements.
 class Rivets.View
