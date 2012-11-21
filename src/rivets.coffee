@@ -1,5 +1,5 @@
 #     rivets.js
-#     version : 0.4.3
+#     version : 0.4.4
 #     author : Michael Richards
 #     license : MIT
 
