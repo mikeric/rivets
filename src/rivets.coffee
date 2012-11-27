@@ -363,6 +363,48 @@ Rivets.binders =
     else
       el.removeAttribute @type
 
+  "options": (el, value) ->
+
+    return  unless value
+
+    mustache = (template) ->
+      r = /{{ *(\w+) *}}/g
+      (ob) ->
+        template.replace r, (m, group) ->
+          val = ob[group]
+          if val
+            val
+          else
+            throw "missing key: " + group
+
+
+    outerHTML = (target) ->
+      wrap = document.createElement 'p'
+      wrap.appendChild(target.cloneNode(true))
+      wrap.innerHTML
+
+
+    config = {}
+    option = el.getElementsByTagName 'option'
+    template = undefined
+
+    # try to read the config attribute
+    r = /(\w*): *'([^']*)'/g
+    s = el.getAttribute "data-options-config"
+    config[match[1]] = match[2]  while (match = r.exec(s)) isnt null
+
+    if option.length > 0
+      template = mustache outerHTML(option[0])
+    else if config.value and config.label
+      template = (x) -> "<option value=\"#{ x[config.value] }\"> #{ x[config.label] } </option>"
+    else
+      template = (x) -> "<option value=\"#{ x }\">#{ x }</option>"
+
+    options = (template(o) for o in value)
+    config.caption and options.unshift("<option value=\"\"> #{ config.caption } </option>")
+    el.innerHTML = options.join(" ")
+
+
 # Default configuration.
 Rivets.config =
   preloadData: true
