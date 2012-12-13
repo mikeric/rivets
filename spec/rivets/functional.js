@@ -145,6 +145,23 @@ describe('Functional', function() {
         expect(el.getElementsByTagName('li')[0]).toHaveTheTextContent('a');
         expect(el.getElementsByTagName('li')[0].className).toBe('bar');
       });
+
+      it('should insert items between any surrounding elements', function(){
+        firstItem = document.createElement('li');
+        lastItem = document.createElement('li');
+        firstItem.textContent = 'first';
+        lastItem.textContent = 'last';
+        list.appendChild(lastItem);
+        list.insertBefore(firstItem, listItem);
+
+        listItem.setAttribute('data-text', 'item:name');
+
+        rivets.bind(el, bindData);
+        expect(el.getElementsByTagName('li')[0]).toHaveTheTextContent('first');
+        expect(el.getElementsByTagName('li')[1]).toHaveTheTextContent('a');
+        expect(el.getElementsByTagName('li')[2]).toHaveTheTextContent('b');
+        expect(el.getElementsByTagName('li')[3]).toHaveTheTextContent('last');
+      })
     });
   });
 
