@@ -344,7 +344,10 @@ Rivets.binders =
         data[n] = m for n, m of @view.models
         data[@args[0]] = item
         itemEl = el.cloneNode true
-        previous = @iterated[@iterated.length - 1] or @marker
+        if @iterated.length > 0
+          previous = @iterated[@iterated.length - 1].els[0]
+        else
+          previous = @marker
         @marker.parentNode.insertBefore itemEl, previous.nextSibling ? null
         @iterated.push rivets.bind itemEl, data
 
