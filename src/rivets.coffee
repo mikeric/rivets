@@ -14,7 +14,7 @@ class Rivets.Binding
   # All information about the binding is passed into the constructor; the DOM
   # element, the type of binding, the model object and the keypath at which
   # to listen for changes.
-  constructor: (@el, @type, @model, @keypath, @options = {}) ->
+  constructor: (@el, @type, @model, @keypath, @options = {}, @itemContext) ->
     unless @binder = Rivets.binders[type]
       for identifier, value of Rivets.binders
         if identifier isnt '*' and identifier.indexOf('*') isnt -1
@@ -184,7 +184,13 @@ class Rivets.View
               if dependencies = context.shift()
                 options.dependencies = dependencies.split /\s+/
 
-              binding = new Rivets.Binding node, type, model, keypath, options
+              # Add context of the current item template so that event bindings can be passed the object
+              iteration = []
+              for property of _this.models
+                iteration.push property
+              iterationModel = @models[iteration.pop()]
+
+              binding = new Rivets.Binding node, type, model, keypath, options, iterationModel
               binding.view = @
 
               @bindings.push binding
@@ -220,8 +226,23 @@ class Rivets.View
     binding.publish() for binding in @select (b) -> b.binder.publishes
 
 # Cross-browser event binding.
-bindEvent = (el, event, handler, context) ->
-  fn = (e) -> handler.call context, e
+bindEvent = (el, event, handler, context, keypath, item) ->
+  if not handler? and keypath and keypath.indexOf(".") > -1
+    paths = keypath.split(".")
+    x = null
+    while paths.length > 1
+      x = paths.shift()
+      context = Rivets.config.adapter.read(context, x)
+      throw new Error("can not bind event handler, context is null")  if null is context
+    handler = context[paths[0]]
+    if null is handler
+      throw new Error("handle undefined")
+    else throw new Error("handle is not a function")  unless typeof (handler) is "function"
+
+  fn = (e, data) ->
+    if e['preventDefault']?
+      e.preventDefault()
+    handler.call context, item, e, data
 
   # Check to see if jQuery is loaded.
   if window.jQuery?
@@ -321,7 +342,7 @@ Rivets.binders =
     function: true
     routine: (el, value) ->
       unbindEvent el, @args[0], @currentListener if @currentListener
-      @currentListener = bindEvent el, @args[0], value, @model
+      @currentListener = bindEvent el, @args[0], value, @model, @keypath, @itemContext
 
   "each-*":
     block: true
@@ -339,6 +360,7 @@ Rivets.binders =
 
       @iterated = []
 
+      return [] unless collection
       for item in collection
         data = {}
         data[n] = m for n, m of @view.models

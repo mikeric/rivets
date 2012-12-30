@@ -125,6 +125,16 @@ describe('Functional', function() {
         expect(el.getElementsByTagName('li').length).toBe(3);
       });
 
+      it ('should allow binding to a null array', function() {
+        data.set({items: null});
+        rivets.bind(el, bindData);
+        expect(el.getElementsByTagName('li').length).toBe(0);
+
+        newItems = [{name: 'a'}, {name: 'b'}, {name: 'c'}];
+        data.set({items: newItems});
+        expect(el.getElementsByTagName('li').length).toBe(3);
+      })
+
       it('should allow binding to the iterated item as well as any parent contexts', function() {
         span1 = document.createElement('span');
         span1.setAttribute('data-text', 'item:name')
@@ -146,6 +156,58 @@ describe('Functional', function() {
         expect(el.getElementsByTagName('li')[0].className).toBe('bar');
       });
 
+      it('should pass the context of the current iterated object to any registered event handlers', function() {
+
+        var whatWasClickedOn = null;
+        data.poke = function(item) {
+            whatWasClickedOn = item;
+        };
+
+        listItem.setAttribute('data-text', 'item:name');
+        listItem.setAttribute('data-on-click', 'data:poke');
+
+        rivets.bind(el, bindData);
+
+        var clickEvent = document.createEvent('HTMLEvents')
+        clickEvent.initEvent('click', true, true);
+
+        el.getElementsByTagName('li')[1].dispatchEvent(clickEvent);
+        expect(whatWasClickedOn.name).toBe('b');
+
+        el.getElementsByTagName('li')[0].dispatchEvent(clickEvent);
+        expect(whatWasClickedOn.name).toBe('a');
+
+      });
+
+      it('should allow deep invocation of a registered event handler', function() {
+
+        var whatWasClickedOn = null;
+        data.attributes.deeply = new Data({ 
+          nested: new Data({ 
+            model: { 
+              poke: function(item) {
+                whatWasClickedOn = item;
+              }
+            } 
+          }) 
+        });
+
+        listItem.setAttribute('data-text', 'item:name');
+        listItem.setAttribute('data-on-click', 'data.deeply.nested.model.poke');
+
+        rivets.bind(el, bindData);
+
+        var clickEvent = document.createEvent('HTMLEvents')
+        clickEvent.initEvent('click', true, true);
+
+        el.getElementsByTagName('li')[1].dispatchEvent(clickEvent);
+        expect(whatWasClickedOn.name).toBe('b');
+
+        el.getElementsByTagName('li')[0].dispatchEvent(clickEvent);
+        expect(whatWasClickedOn.name).toBe('a');
+
+      });
+
       it('should insert items between any surrounding elements', function(){
         firstItem = document.createElement('li');
         lastItem = document.createElement('li');
@@ -161,7 +223,8 @@ describe('Functional', function() {
         expect(el.getElementsByTagName('li')[1]).toHaveTheTextContent('a');
         expect(el.getElementsByTagName('li')[2]).toHaveTheTextContent('b');
         expect(el.getElementsByTagName('li')[3]).toHaveTheTextContent('last');
-      })
+      });
+
     });
   });
 
