@@ -152,7 +152,6 @@ describe('Functional', function() {
         expect(el.getElementsByTagName('li')[0].className).toBe('bar');
       });
 
-      /*
       it('should insert items between any surrounding elements', function(){
         firstItem = document.createElement('li');
         lastItem = document.createElement('li');
@@ -168,7 +167,7 @@ describe('Functional', function() {
         expect(el.getElementsByTagName('li')[1]).toHaveTheTextContent('a');
         expect(el.getElementsByTagName('li')[2]).toHaveTheTextContent('b');
         expect(el.getElementsByTagName('li')[3]).toHaveTheTextContent('last');
-      })*/
+      })
 
     });
   });
