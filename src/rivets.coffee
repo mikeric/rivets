@@ -352,7 +352,7 @@ Rivets.binders =
           @marker.parentNode.insertBefore itemEl, previous.nextSibling ? null
           @iterated.push rivets.bind itemEl, data
 
-        binding.sync() for binding in @view.bindings when binding.el is @marker.parentNode if el.nodeName is 'OPTION'
+        binding.sync() for binding in @view.bindings when binding.el is @marker.parentNode and binding.type is 'value' if el.nodeName is 'OPTION'
 
   "class-*": (el, value) ->
     elClass = " #{el.className} "
