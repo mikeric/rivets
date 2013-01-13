@@ -90,7 +90,7 @@ describe('Functional', function() {
         expect(input.value).toBe(data.get('foo'));
       });
     });
-    
+
     describe('Multiple', function() {
       it('should bind a list of multiple elements', function() {
         el.setAttribute('data-html', 'data.foo');
@@ -167,8 +167,26 @@ describe('Functional', function() {
         expect(el.getElementsByTagName('li')[1]).toHaveTheTextContent('a');
         expect(el.getElementsByTagName('li')[2]).toHaveTheTextContent('b');
         expect(el.getElementsByTagName('li')[3]).toHaveTheTextContent('last');
-      })
+      });
 
+      it("should call parent select's bindings after rendering the options", function(){
+        var el = document.createElement('form');
+
+        var select = document.createElement('select');
+        select.setAttribute('data-value', 'data.item');
+        el.appendChild(select);
+
+        var option = document.createElement('option');
+        option.setAttribute('data-each-item', 'data.items');
+        option.setAttribute('data-text', 'item:name');
+        option.setAttribute('data-value', 'item:name');
+        select.appendChild(option);
+
+        data.set({item: 'b'});
+
+        rivets.bind(el, bindData);
+        expect(select.selectedIndex).toBe(1);
+      });
     });
   });
 

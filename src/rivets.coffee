@@ -68,7 +68,7 @@ class Rivets.Binding
       Rivets.config.adapter.read @model, @keypath
 
   # Publishes the value currently set on the input element back to the model.
-  publish: => 
+  publish: =>
     value = getInputValue @el
 
     for formatter in @formatters.slice(0).reverse()
@@ -351,6 +351,8 @@ Rivets.binders =
             previous = @marker
           @marker.parentNode.insertBefore itemEl, previous.nextSibling ? null
           @iterated.push rivets.bind itemEl, data
+
+        binding.sync() for binding in @view.bindings when binding.el is @marker.parentNode if @marker.parentNode.type in ['select-one', 'select-multiple']
 
   "class-*": (el, value) ->
     elClass = " #{el.className} "
