@@ -172,6 +172,18 @@ describe('Functional', function() {
     });
   });
 
+  describe('Multiple Binds', function () {
+    it('should behave like one bind', function () {
+      input.setAttribute('data-value', 'data.foo');
+      rivets.bind(input, bindData);
+      rivets.bind(input, bindData);
+      rivets.bind(input, bindData);
+      spyOn(rivets.binders.value, 'routine');
+      data.set({foo: 'some new value'});
+      expect(rivets.binders.value.routine.calls.length).toEqual(1);
+    });
+  });
+
   describe('Updates', function() {
     it('should change the value', function() {
       el.setAttribute('data-text', 'data.foo');

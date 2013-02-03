@@ -146,6 +146,13 @@ class Rivets.View
 
     parse = (node) =>
       unless node in skipNodes
+
+        if node.hasOwnProperty '_rivets'
+          # use cached bindings
+          for type, typeCache of node._rivets.types
+            @bindings.push typeCache.bind
+          return
+
         for attribute in node.attributes
           if bindingRegExp.test attribute.name
             type = attribute.name.replace bindingRegExp, ''
@@ -205,11 +212,39 @@ class Rivets.View
 
   # Binds all of the current bindings for this view.
   bind: =>
-    binding.bind() for binding in @bindings
+    for binding in @bindings
+      cache = binding.el._rivets
+
+      unless cache
+        # init cache object
+        cache =
+          count: 0
+          types: {}
+        binding.el._rivets = cache
+
+      unless cache.types.hasOwnProperty binding.type
+        # init cache for this type
+        cache.count++
+        cache.types[binding.type] =
+          bind: binding
+          used: 0
+
+      # bind new types or synch existing binds
+      if cache.types[binding.type].used++
+        binding.sync()
+      else
+        binding.bind()
 
   # Unbinds all of the current bindings for this view.
   unbind: =>
-    binding.unbind() for binding in @bindings
+    for binding in @bindings
+      if cache = binding.el._rivets
+        # only remove if last use of this type
+        unless cache.types[binding.type].used -= 1
+          binding.unbind()
+          delete cache.types[binding.type]
+          # remove all cache when there are no more types
+          delete binding.el._rivets unless cache.count -= 1
 
   # Syncs up the view with the model by running the routines on all bindings.
   sync: =>
