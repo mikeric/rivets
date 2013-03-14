@@ -40,6 +40,8 @@ class Rivets.Binding
 
       formatter = if @model[id] instanceof Function
         @model[id]
+      else if @options?.bindingOptions?.formatters?[id] instanceof Function
+        @options.bindingOptions.formatters[id]
       else
         Rivets.formatters[id]
 
@@ -68,7 +70,7 @@ class Rivets.Binding
       Rivets.config.adapter.read @model, @keypath
 
   # Publishes the value currently set on the input element back to the model.
-  publish: => 
+  publish: =>
     value = getInputValue @el
 
     for formatter in @formatters.slice(0).reverse()
@@ -127,7 +129,7 @@ class Rivets.Binding
 class Rivets.View
   # The DOM elements and the model objects for binding are passed into the
   # constructor.
-  constructor: (@els, @models) ->
+  constructor: (@els, @models, @options) ->
     @els = [@els] unless (@els.jquery || @els instanceof Array)
     @build()
 
@@ -165,6 +167,9 @@ class Rivets.View
         for attribute in attributes or node.attributes
           if bindingRegExp.test attribute.name
             options = {}
+
+            if @options? and typeof @options is 'object'
+                options.bindingOptions = @options
 
             type = attribute.name.replace bindingRegExp, ''
             pipes = (pipe.trim() for pipe in attribute.value.split '|')
@@ -394,8 +399,8 @@ rivets =
 
   # Binds a set of model objects to a parent DOM element. Returns a Rivets.View
   # instance.
-  bind: (el, models = {}) ->
-    view = new Rivets.View(el, models)
+  bind: (el, models = {}, options) ->
+    view = new Rivets.View(el, models, options)
     view.bind()
     view
 
