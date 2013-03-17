@@ -28,7 +28,7 @@ Describe your UI in plain HTML using data attributes:
 
   <dl>
     <dt>Current Bid</dt>
-    <dd data-text='aution.currentBid | money'></dd>
+    <dd data-text='auction.currentBid | money'></dd>
     <dt>Time left</dt>
     <dt data-text='auction.remaining | time'></dt>
   </dl>
