@@ -14,7 +14,7 @@ class Rivets.Binding
   # All information about the binding is passed into the constructor; the DOM
   # element, the type of binding, the model object and the keypath at which
   # to listen for changes.
-  constructor: (@el, @type, @model, @keypath, @options = {}, @bindContext) ->
+  constructor: (@el, @type, @model, @keypath, @options = {}) ->
     unless @binder = Rivets.binders[type]
       for identifier, value of Rivets.binders
         if identifier isnt '*' and identifier.indexOf('*') isnt -1
@@ -173,6 +173,7 @@ class Rivets.View
             splitPath = path.split /\.|:/
             options.formatters = pipes
             options.bypass = path.indexOf(':') != -1
+            options.models = @models
             if splitPath[0]
               model = @models[splitPath.shift()]
             else
@@ -184,7 +185,7 @@ class Rivets.View
               if dependencies = context.shift()
                 options.dependencies = dependencies.split /\s+/
 
-              binding = new Rivets.Binding node, type, model, keypath, options, @models
+              binding = new Rivets.Binding node, type, model, keypath, options
               binding.view = @
 
               @bindings.push binding
@@ -321,7 +322,7 @@ Rivets.binders =
     function: true
     routine: (el, value) ->
       unbindEvent el, @args[0], @currentListener if @currentListener
-      @currentListener = bindEvent el, @args[0], value, @model, @bindContext
+      @currentListener = bindEvent el, @args[0], value, @model, @options.bindContext
 
   "each-*":
     block: true
