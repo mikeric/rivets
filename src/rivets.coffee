@@ -14,7 +14,7 @@ class Rivets.Binding
   # All information about the binding is passed into the constructor; the DOM
   # element, the type of binding, the model object and the keypath at which
   # to listen for changes.
-  constructor: (@el, @type, @model, @keypath, @options = {}) ->
+  constructor: (@el, @type, @model, @keypath, @options = {}, @bindContext) ->
     unless @binder = Rivets.binders[type]
       for identifier, value of Rivets.binders
         if identifier isnt '*' and identifier.indexOf('*') isnt -1
@@ -184,7 +184,7 @@ class Rivets.View
               if dependencies = context.shift()
                 options.dependencies = dependencies.split /\s+/
 
-              binding = new Rivets.Binding node, type, model, keypath, options
+              binding = new Rivets.Binding node, type, model, keypath, options, @models
               binding.view = @
 
               @bindings.push binding
@@ -220,8 +220,8 @@ class Rivets.View
     binding.publish() for binding in @select (b) -> b.binder.publishes
 
 # Cross-browser event binding.
-bindEvent = (el, event, handler, context) ->
-  fn = (e) -> handler.call context, e
+bindEvent = (el, event, handler, context, bindContext) ->
+  fn = (e) -> handler.call context, e, bindContext
 
   # Check to see if jQuery is loaded.
   if window.jQuery?
@@ -321,7 +321,7 @@ Rivets.binders =
     function: true
     routine: (el, value) ->
       unbindEvent el, @args[0], @currentListener if @currentListener
-      @currentListener = bindEvent el, @args[0], value, @model
+      @currentListener = bindEvent el, @args[0], value, @model, @bindContext
 
   "each-*":
     block: true
