@@ -173,7 +173,7 @@ class Rivets.View
             splitPath = path.split /\.|:/
             options.formatters = pipes
             options.bypass = path.indexOf(':') != -1
-            options.models = @models
+            options.bindContext = @models
             if splitPath[0]
               model = @models[splitPath.shift()]
             else
