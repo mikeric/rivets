@@ -117,7 +117,54 @@ loopDeps = (binder, callback) ->
 
   callback model, keypath
 
+expressionRegex = /(.*?)\{\{([^{}]+)\}\}/
+
+createSubExpressionBinder = (outerBinding, values, i) ->
+  values[i] = null
+  routine: (el, value) ->
+      values[i] = value
+      outerBinding.sync()
+
 defaultExpressionParser = (view, node, type, models, value) ->
+  if expressionRegex.test value
+    binding = new Rivets.Binding node, type, models
+
+    values = []
+    subs = []
+    while value && expressionRegex.test value
+      matches = expressionRegex.exec value
+      value = value.substring matches[0].length
+      values[values.length] = matches[1] if matches[1]
+      subs[subs.length] = subBinding = defaultExpressionParser view, null, '*', models, matches[2]
+      subBinding.binder = createSubExpressionBinder binding, values, values.length
+    values[values.length] = value if value
+    bindMethod = binding.bind
+    unbindMethod = binding.unbind
+    binding.sync = ->
+      binding.set values.join ''
+
+    # Publishes the value currently set on the input element back to the model.
+    binding.publish = ->
+      # can't really do anything with this
+
+    # Subscribes to the model for changes at the specified keypath. Bi-directional
+    # routines will also listen for changes on the element to propagate them back
+    # to the model.
+    binding.bind = ->
+      bindMethod()
+
+      for sub in subs
+        sub.bind()
+
+    # Unsubscribes from the model and the element.
+    binding.unbind = ->
+      unbindMethod()
+
+      for sub in subs
+        sub.unbind()
+
+    return binding
+
   pipes = (pipe.trim() for pipe in value.split '|')
   context = (ctx.trim() for ctx in pipes.shift().split '<')
   path = context.shift()
