@@ -347,6 +347,7 @@ Rivets.binders =
           data = {}
           data[n] = m for n, m of @view.models
           data[@args[0]] = item
+          data["#{@args[0]}_index"] = i
           itemEl = el.cloneNode true
           if iterated.length > 0
             previous = iterated[iterated.length - 1].els[0]
