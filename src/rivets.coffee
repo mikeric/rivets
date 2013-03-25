@@ -34,12 +34,13 @@ class Rivets.Binding
   # Applies all the current formatters to the supplied value and returns the
   # formatted value.
   formattedValue: (value) =>
+    model = @model
     for formatter in @formatters
       args = formatter.split /\s+/
       id = args.shift()
 
-      formatter = if @model[id] instanceof Function
-        @model[id]
+      formatter = if model[id] instanceof Function
+        model[id]
       else
         Rivets.formatters[id]
 
@@ -92,17 +93,7 @@ class Rivets.Binding
       Rivets.config.adapter.subscribe @model, @keypath, @sync
       @sync() if Rivets.config.preloadData
 
-    if @options.dependencies?.length
-      for dependency in @options.dependencies
-        if /^\./.test dependency
-          model = @model
-          keypath = dependency.substr 1
-        else
-          dependency = dependency.split '.'
-          model = @view.models[dependency.shift()]
-          keypath = dependency.join '.'
-
-        Rivets.config.adapter.subscribe model, keypath, @sync
+    loopDeps @, (model, keypath) => Rivets.config.adapter.subscribe model, keypath, @sync
 
   # Unsubscribes from the model and the element.
   unbind: =>
@@ -111,17 +102,20 @@ class Rivets.Binding
     unless @options.bypass
       Rivets.config.adapter.unsubscribe @model, @keypath, @sync
 
-    if @options.dependencies?.length
-      for dependency in @options.dependencies
-        if /^\./.test dependency
-          model = @model
-          keypath = dependency.substr 1
-        else
-          dependency = dependency.split '.'
-          model = @view.models[dependency.shift()]
-          keypath = dependency.join '.'
+    loopDeps @, (model, keypath) => Rivets.config.adapter.unsubscribe model, keypath, @sync
 
-        Rivets.config.adapter.unsubscribe model, keypath, @sync
+loopDeps = (binder, callback) ->
+  if binder.options.dependencies?.length
+    for dependency in binder.options.dependencies
+      if /^\./.test dependency
+        model = binder.model
+        keypath = dependency.substr 1
+      else
+        dependency = dependency.split '.'
+        model = binder.view.models[dependency.shift()]
+        keypath = dependency.join '.'
+
+  callback model, keypath
 
 # A collection of bindings built from a set of parent elements.
 class Rivets.View
@@ -321,8 +315,10 @@ Rivets.binders =
   "on-*":
     function: true
     routine: (el, value) ->
-      unbindEvent el, @args[0], @currentListener if @currentListener
-      @currentListener = bindEvent el, @args[0], value, @model, @options.bindContext
+      firstArg = @args[0]
+      currentListener = @currentListener
+      unbindEvent el, firstArg, currentListener if currentListener
+      @currentListener = bindEvent el, firstArg, value, @model, @options.bindContext
 
   "each-*":
     block: true
@@ -338,7 +334,7 @@ Rivets.binders =
         el.parentNode.insertBefore @marker, el
         el.parentNode.removeChild el
 
-      @iterated = []
+      @iterated = iterated = []
 
       if collection
         for item in collection
@@ -346,12 +342,12 @@ Rivets.binders =
           data[n] = m for n, m of @view.models
           data[@args[0]] = item
           itemEl = el.cloneNode true
-          if @iterated.length > 0
-            previous = @iterated[@iterated.length - 1].els[0]
+          if iterated.length > 0
+            previous = iterated[iterated.length - 1].els[0]
           else
             previous = @marker
           @marker.parentNode.insertBefore itemEl, previous.nextSibling ? null
-          @iterated.push rivets.bind itemEl, data
+          iterated.push rivets.bind itemEl, data
 
   "class-*": (el, value) ->
     elClass = " #{el.className} "
