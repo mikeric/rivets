@@ -253,6 +253,9 @@ getInputValue = (el) ->
     when 'select-multiple' then o.value for o in el when o.selected
     else el.value
 
+iterate = (collection, callback) ->
+  callback item for item in collection
+
 # Core binding routines.
 Rivets.binders =
   enabled: (el, value) ->
@@ -337,7 +340,7 @@ Rivets.binders =
       @iterated = iterated = []
 
       if collection
-        for item in collection
+        iterate collection, (item) =>
           data = {}
           data[n] = m for n, m of @view.models
           data[@args[0]] = item
