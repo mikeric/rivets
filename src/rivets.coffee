@@ -287,6 +287,26 @@ getInputSelection = (el) ->
 
       {start: start, end: end}
 
+# Maintains the approximate selection of an input element.
+maintainSelection = (el, callback) ->
+  if document.activeElement is el
+    selection = getInputSelection el
+    callback()
+
+    if selection
+      if window.getSelection
+        el.selectionStart = selection.start
+        el.selectionEnd = selection.end
+        el.focus()
+      else if document.selection?.createRange
+        range = el.createTextRange()
+        range.moveStart 'character', selection.start
+        range.collapse()
+        range.moveEnd 'character', selection.start - selection.end
+        range.select()
+  else
+    callback()
+
 # Core binding routines.
 Rivets.binders =
   enabled: (el, value) ->
