@@ -117,6 +117,31 @@ loopDeps = (binder, callback) ->
 
   callback model, keypath
 
+defaultExpressionParser = (view, node, type, models, value) ->
+  pipes = (pipe.trim() for pipe in value.split '|')
+  context = (ctx.trim() for ctx in pipes.shift().split '<')
+  path = context.shift()
+  splitPath = path.split /\.|:/
+  options = {}
+  options.formatters = pipes
+  options.bypass = path.indexOf(':') != -1
+  options.bindContext = models
+  if splitPath[0]
+    model = models[splitPath.shift()]
+  else
+    model = models
+    splitPath.shift()
+  keypath = splitPath.join '.'
+
+  if model
+    if dependencies = context.shift()
+      options.dependencies = dependencies.split /\s+/
+
+    binding = new Rivets.Binding node, type, model, keypath, options
+    binding.view = view
+
+  binding
+
 # A collection of bindings built from a set of parent elements.
 class Rivets.View
   # The DOM elements and the model objects for binding are passed into the
@@ -158,30 +183,10 @@ class Rivets.View
 
         for attribute in attributes or node.attributes
           if bindingRegExp.test attribute.name
-            options = {}
-
             type = attribute.name.replace bindingRegExp, ''
-            pipes = (pipe.trim() for pipe in attribute.value.split '|')
-            context = (ctx.trim() for ctx in pipes.shift().split '<')
-            path = context.shift()
-            splitPath = path.split /\.|:/
-            options.formatters = pipes
-            options.bypass = path.indexOf(':') != -1
-            options.bindContext = @models
-            if splitPath[0]
-              model = @models[splitPath.shift()]
-            else
-              model = @models
-              splitPath.shift()
-            keypath = splitPath.join '.'
+            binding = defaultExpressionParser @, node, type, @models, attribute.value
 
-            if model
-              if dependencies = context.shift()
-                options.dependencies = dependencies.split /\s+/
-
-              binding = new Rivets.Binding node, type, model, keypath, options
-              binding.view = @
-
+            if binding
               @bindings.push binding
 
         attributes = null if attributes
