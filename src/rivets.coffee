@@ -254,7 +254,10 @@ getInputValue = (el) ->
     else el.value
 
 iterate = (collection, callback) ->
-  callback item, i for item, i in collection
+  if Rivets.config.adapter.iterate
+    Rivets.config.adapter.iterate collection, callback
+  else
+    callback(item, i) for item, i in collection
 
 # Core binding routines.
 Rivets.binders =
