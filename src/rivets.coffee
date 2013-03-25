@@ -254,7 +254,7 @@ getInputValue = (el) ->
     else el.value
 
 iterate = (collection, callback) ->
-  callback item for item in collection
+  callback item, i for item, i in collection
 
 # Core binding routines.
 Rivets.binders =
@@ -340,7 +340,7 @@ Rivets.binders =
       @iterated = iterated = []
 
       if collection
-        iterate collection, (item) =>
+        iterate collection, (item, i) =>
           data = {}
           data[n] = m for n, m of @view.models
           data[@args[0]] = item
