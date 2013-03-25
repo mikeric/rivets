@@ -258,6 +258,55 @@ getInputValue = (el) ->
     when 'select-multiple' then o.value for o in el when o.selected
     else el.value
 
+# Returns the current selection's start and end index.
+getInputSelection = (el) ->
+  if typeof el.selectionStart is 'number' and typeof el.selectionEnd is 'number'
+    {start: el.selectionStart, end: el.selectionEnd}
+  else if document.selection?.createRange
+    range = document.selection.createRange()
+
+    if range and range.parentElement() is el
+      len = el.value.length
+      normalizedValue = el.value.replace /\r\n/g, '\n'
+      textInputRange = el.createTextRange()
+      textInputRange.moveToBookmark range.getBookmark()
+      endRange = el.createTextRange()
+      endRange.collapse false
+
+      if textInputRange.compareEndPoints('StartToEnd', endRange) > -1
+        start = end = len
+      else
+        start = -textInputRange.moveStart 'character', -len
+        start += normalizedValue.slice(0, start).split("\n").length - 1
+
+        if textInputRange.compareEndPoints('EndToEnd', endRange) > -1
+          end = len
+        else
+          end = -textInputRange.moveEnd 'character', -len
+          end += normalizedValue.slice(0, end).split("\n").length - 1
+
+      {start: start, end: end}
+
+# Maintains the approximate selection of an input element.
+maintainSelection = (el, callback) ->
+  if document.activeElement is el
+    selection = getInputSelection el
+    callback()
+
+    if selection
+      if window.getSelection
+        el.selectionStart = selection.start
+        el.selectionEnd = selection.end
+        el.focus()
+      else if document.selection?.createRange
+        range = el.createTextRange()
+        range.moveStart 'character', selection.start
+        range.collapse()
+        range.moveEnd 'character', selection.start - selection.end
+        range.select()
+  else
+    callback()
+
 # Core binding routines.
 Rivets.binders =
   enabled: (el, value) ->
@@ -309,7 +358,8 @@ Rivets.binders =
       if el.type is 'select-multiple'
         o.selected = o.value in value for o in el if value?
       else
-        el.value = if value? then value else ''
+        maintainSelection el, ->
+          el.value = if value? then value else ''
 
   text: (el, value) ->
     if el.innerText?
