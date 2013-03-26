@@ -115,7 +115,7 @@ loopDeps = (binder, callback) ->
         model = binder.view.models[dependency.shift()]
         keypath = dependency.join '.'
 
-  callback model, keypath
+    callback model, keypath
 
 expressionRegex = /(.*?)\{\{([^{}]+)\}\}/
 
