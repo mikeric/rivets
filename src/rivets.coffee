@@ -15,31 +15,34 @@ class Rivets.Binding
   # element, the type of binding, the model object and the keypath at which
   # to listen for changes.
   constructor: (@el, @type, @model, @keypath, @options = {}) ->
-    unless @binder = Rivets.binders[type]
+    unless binder = Rivets.binders[type]
       for identifier, value of Rivets.binders
         if identifier isnt '*' and identifier.indexOf('*') isnt -1
           regexp = new RegExp "^#{identifier.replace('*', '.+')}$"
           if regexp.test type
-            @binder = value
-            @args = new RegExp("^#{identifier.replace('*', '(.+)')}$").exec type
-            @args.shift()
+            binder = value
+            args = new RegExp("^#{identifier.replace('*', '(.+)')}$").exec type
+            args.shift()
+            @args = args
 
-    @binder or= Rivets.binders['*']
+    binder or= Rivets.binders['*']
 
-    if @binder instanceof Function
-      @binder = {routine: @binder}
+    if binder instanceof Function
+      binder = {routine: binder}
 
-    @formatters = @options.formatters || []
+    @binder = binder
+    @formatters = options.formatters || []
 
   # Applies all the current formatters to the supplied value and returns the
   # formatted value.
   formattedValue: (value) =>
+    model = @model
     for formatter in @formatters
       args = formatter.split /\s+/
       id = args.shift()
 
-      formatter = if @model[id] instanceof Function
-        @model[id]
+      formatter = if model[id] instanceof Function
+        model[id]
       else
         Rivets.formatters[id]
 
@@ -53,19 +56,21 @@ class Rivets.Binding
   # Sets the value for the binding. This Basically just runs the binding routine
   # with the suplied value formatted.
   set: (value) =>
-    value = if value instanceof Function and !@binder.function
-      @formattedValue value.call @model
+    binder = @binder
+    value = @formattedValue if value instanceof Function and !binder.function
+      value.call @model, @options.bindContext
     else
-      @formattedValue value
+      value
 
-    @binder.routine?.call @, @el, value
+    binder.routine?.call @, @el, value
 
   # Syncs up the view binding with the model.
   sync: =>
+    keypath = @keypath
     @set if @options.bypass
-      @model[@keypath]
+      @model[keypath]
     else
-      Rivets.config.adapter.read @model, @keypath
+      Rivets.config.adapter.read @model, keypath
 
   # Publishes the value currently set on the input element back to the model.
   publish: => 
@@ -75,8 +80,9 @@ class Rivets.Binding
       args = formatter.split /\s+/
       id = args.shift()
 
-      if Rivets.formatters[id]?.publish
-        value = Rivets.formatters[id].publish value, args...
+      f = Rivets.formatters[id]
+      if f?.publish
+        value = f.publish value, args...
 
     Rivets.config.adapter.publish @model, @keypath, value
 
@@ -92,17 +98,7 @@ class Rivets.Binding
       Rivets.config.adapter.subscribe @model, @keypath, @sync
       @sync() if Rivets.config.preloadData
 
-    if @options.dependencies?.length
-      for dependency in @options.dependencies
-        if /^\./.test dependency
-          model = @model
-          keypath = dependency.substr 1
-        else
-          dependency = dependency.split '.'
-          model = @view.models[dependency.shift()]
-          keypath = dependency.join '.'
-
-        Rivets.config.adapter.subscribe model, keypath, @sync
+    loopDeps @, (model, keypath) => Rivets.config.adapter.subscribe model, keypath, @sync
 
   # Unsubscribes from the model and the element.
   unbind: =>
@@ -111,24 +107,99 @@ class Rivets.Binding
     unless @options.bypass
       Rivets.config.adapter.unsubscribe @model, @keypath, @sync
 
-    if @options.dependencies?.length
-      for dependency in @options.dependencies
-        if /^\./.test dependency
-          model = @model
-          keypath = dependency.substr 1
-        else
-          dependency = dependency.split '.'
-          model = @view.models[dependency.shift()]
-          keypath = dependency.join '.'
+    loopDeps @, (model, keypath) => Rivets.config.adapter.unsubscribe model, keypath, @sync
 
-        Rivets.config.adapter.unsubscribe model, keypath, @sync
+loopDeps = (binder, callback) ->
+  if binder.options.dependencies?.length
+    for dependency in binder.options.dependencies
+      if /^\./.test dependency
+        model = binder.model
+        keypath = dependency.substr 1
+      else
+        dependency = dependency.split '.'
+        model = binder.view.models[dependency.shift()]
+        keypath = dependency.join '.'
+
+      callback model, keypath
+
+expressionRegex = /(.*?)\{\{([^{}]+)\}\}/
+
+createSubExpressionBinder = (outerBinding, values, i) ->
+  values[i] = null
+  routine: (el, value) ->
+      values[i] = value
+      outerBinding.sync()
+
+defaultExpressionParser = (view, node, type, models, value) ->
+  if expressionRegex.test value
+    binding = new Rivets.Binding node, type, models
+
+    values = []
+    subs = []
+    while value && expressionRegex.test value
+      matches = expressionRegex.exec value
+      value = value.substring matches[0].length
+      values[values.length] = matches[1] if matches[1]
+      subs[subs.length] = subBinding = defaultExpressionParser view, null, '*', models, matches[2]
+      subBinding.binder = createSubExpressionBinder binding, values, values.length
+    values[values.length] = value if value
+    bindMethod = binding.bind
+    unbindMethod = binding.unbind
+    binding.sync = ->
+      binding.set values.join ''
+
+    # Publishes the value currently set on the input element back to the model.
+    binding.publish = ->
+      # can't really do anything with this
+
+    # Subscribes to the model for changes at the specified keypath. Bi-directional
+    # routines will also listen for changes on the element to propagate them back
+    # to the model.
+    binding.bind = ->
+      bindMethod()
+
+      for sub in subs
+        sub.bind()
+
+    # Unsubscribes from the model and the element.
+    binding.unbind = ->
+      unbindMethod()
+
+      for sub in subs
+        sub.unbind()
+
+    return binding
+
+  pipes = (pipe.trim() for pipe in value.split '|')
+  context = (ctx.trim() for ctx in pipes.shift().split '<')
+  path = context.shift()
+  splitPath = path.split /\.|:/
+  options =
+    formatters: pipes
+    bypass: path.indexOf(':') != -1
+    bindContext: models
+  firstPart = splitPath.shift()
+  model = if firstPart
+    models[firstPart]
+  else
+    models
+  keypath = splitPath.join '.'
+
+  if model
+    if dependencies = context.shift()
+      options.dependencies = dependencies.split /\s+/
+
+    binding = new Rivets.Binding node, type, model, keypath, options
+    binding.view = view
+
+  binding
 
 # A collection of bindings built from a set of parent elements.
 class Rivets.View
   # The DOM elements and the model objects for binding are passed into the
   # constructor.
-  constructor: (@els, @models) ->
-    @els = [@els] unless (@els.jquery || @els instanceof Array)
+  constructor: (els, @models) ->
+    @els = if (els.jquery || els instanceof Array) then els else [els]
     @build()
 
   # Regular expression used to match binding attributes.
@@ -140,7 +211,7 @@ class Rivets.View
   # binding declaration. Subsequent calls to build will replace the previous
   # Rivets.Binding instances with new ones, so be sure to unbind them first.
   build: =>
-    @bindings = []
+    bindings = @bindings = []
     skipNodes = []
     bindingRegExp = @bindingRegExp()
 
@@ -164,30 +235,11 @@ class Rivets.View
 
         for attribute in attributes or node.attributes
           if bindingRegExp.test attribute.name
-            options = {}
-
             type = attribute.name.replace bindingRegExp, ''
-            pipes = (pipe.trim() for pipe in attribute.value.split '|')
-            context = (ctx.trim() for ctx in pipes.shift().split '<')
-            path = context.shift()
-            splitPath = path.split /\.|:/
-            options.formatters = pipes
-            options.bypass = path.indexOf(':') != -1
-            if splitPath[0]
-              model = @models[splitPath.shift()]
-            else
-              model = @models
-              splitPath.shift()
-            keypath = splitPath.join '.'
+            binding = defaultExpressionParser @, node, type, @models, attribute.value
 
-            if model
-              if dependencies = context.shift()
-                options.dependencies = dependencies.split /\s+/
-
-              binding = new Rivets.Binding node, type, model, keypath, options
-              binding.view = @
-
-              @bindings.push binding
+            if binding
+              bindings.push binding
 
         attributes = null if attributes
 
@@ -220,8 +272,8 @@ class Rivets.View
     binding.publish() for binding in @select (b) -> b.binder.publishes
 
 # Cross-browser event binding.
-bindEvent = (el, event, handler, context) ->
-  fn = (e) -> handler.call context, e
+bindEvent = (el, event, handler, context, bindContext) ->
+  fn = (e) -> handler.call context, e, bindContext
 
   # Check to see if jQuery is loaded.
   if window.jQuery?
@@ -258,6 +310,12 @@ getInputValue = (el) ->
     when 'select-multiple' then o.value for o in el when o.selected
     else el.value
 
+iterate = (collection, callback) ->
+  if Rivets.config.adapter.iterate
+    Rivets.config.adapter.iterate collection, callback
+  else
+    callback(item, i) for item, i in collection
+
 # Core binding routines.
 Rivets.binders =
   enabled: (el, value) ->
@@ -273,10 +331,10 @@ Rivets.binders =
     unbind: (el) ->
       unbindEvent el, 'change', @currentListener
     routine: (el, value) ->
-      if el.type is 'radio'
-        el.checked = el.value is value
+      el.checked = if el.type is 'radio'
+        el.value is value
       else
-        el.checked = !!value
+        !!value
 
   unchecked:
     publishes: true
@@ -285,10 +343,10 @@ Rivets.binders =
     unbind: (el) ->
       unbindEvent el, 'change', @currentListener
     routine: (el, value) ->
-      if el.type is 'radio'
-        el.checked = el.value isnt value
+      el.checked = if el.type is 'radio'
+        el.value isnt value
       else
-        el.checked = !value
+        !value
 
   show: (el, value) ->
     el.style.display = if value then '' else 'none'
@@ -312,45 +370,52 @@ Rivets.binders =
         el.value = if value? then value else ''
 
   text: (el, value) ->
+    newValue = if value? then value else ''
     if el.innerText?
-      el.innerText = if value? then value else ''
+      el.innerText = newValue
     else
-      el.textContent = if value? then value else ''
+      el.textContent = newValue
 
   "on-*":
     function: true
     routine: (el, value) ->
-      unbindEvent el, @args[0], @currentListener if @currentListener
-      @currentListener = bindEvent el, @args[0], value, @model
+      firstArg = @args[0]
+      currentListener = @currentListener
+      unbindEvent el, firstArg, currentListener if currentListener
+      @currentListener = bindEvent el, firstArg, value, @model, @options.bindContext
 
   "each-*":
     block: true
     bind: (el, collection) ->
       el.removeAttribute ['data', rivets.config.prefix, @type].join('-').replace '--', '-'
     routine: (el, collection) ->
-      if @iterated?
-        for view in @iterated
+      iterated = @iterated
+      if iterated?
+        for view in iterated
           view.unbind()
           e.parentNode.removeChild e for e in view.els
       else
-        @marker = document.createComment " rivets: #{@type} "
-        el.parentNode.insertBefore @marker, el
-        el.parentNode.removeChild el
+        marker = @marker = document.createComment " rivets: #{@type} "
+        parentNode = el.parentNode
+        parentNode.insertBefore marker, el
+        parentNode.removeChild el
 
-      @iterated = []
+      @iterated = iterated = []
 
       if collection
-        for item in collection
+        marker = @marker
+        iterate collection, (item, i) =>
           data = {}
           data[n] = m for n, m of @view.models
           data[@args[0]] = item
+          data["#{@args[0]}_index"] = data['rivets_index'] = i
           itemEl = el.cloneNode true
-          if @iterated.length > 0
-            previous = @iterated[@iterated.length - 1].els[0]
+          previous = if iterated.length > 0
+            iterated[iterated.length - 1].els[0]
           else
-            previous = @marker
-          @marker.parentNode.insertBefore itemEl, previous.nextSibling ? null
-          @iterated.push rivets.bind itemEl, data
+            marker
+          marker.parentNode.insertBefore itemEl, previous.nextSibling ? null
+          iterated.push rivets.bind itemEl, data
 
   "class-*": (el, value) ->
     elClass = " #{el.className} "
