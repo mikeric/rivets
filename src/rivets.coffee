@@ -68,10 +68,11 @@ class Rivets.Binding
   # Syncs up the view binding with the model.
   sync: =>
     keypath = @keypath
+    model = @model
     @set if @options.bypass
-      @model[keypath]
+      model[keypath]
     else
-      Rivets.config.adapter.read @model, keypath
+      Rivets.config.adapter.read model, keypath
 
   # Publishes the value currently set on the input element back to the model.
   publish: => 
@@ -318,6 +319,14 @@ iterate = (collection, callback) ->
     callback(item, i) for item, i in collection
 
 # Core binding routines.
+createInputBinder = (routine) ->
+  publishes: true
+  bind: (el) ->
+    @currentListener = bindEvent el, 'change', @publish
+  unbind: (el) ->
+    unbindEvent el, 'change', @currentListener
+  routine: routine
+
 Rivets.binders =
   enabled: (el, value) ->
     el.disabled = !value
@@ -325,29 +334,17 @@ Rivets.binders =
   disabled: (el, value) ->
     el.disabled = !!value
 
-  checked:
-    publishes: true
-    bind: (el) ->
-      @currentListener = bindEvent el, 'change', @publish
-    unbind: (el) ->
-      unbindEvent el, 'change', @currentListener
-    routine: (el, value) ->
-      el.checked = if el.type is 'radio'
-        el.value is value
-      else
-        !!value
+  checked: createInputBinder (el, value) ->
+    el.checked = if el.type is 'radio'
+      el.value is value
+    else
+      !!value
 
-  unchecked:
-    publishes: true
-    bind: (el) ->
-      @currentListener = bindEvent el, 'change', @publish
-    unbind: (el) ->
-      unbindEvent el, 'change', @currentListener
-    routine: (el, value) ->
-      el.checked = if el.type is 'radio'
-        el.value isnt value
-      else
-        !value
+  unchecked: createInputBinder (el, value) ->
+    el.checked = if el.type is 'radio'
+      el.value isnt value
+    else
+      !value
 
   show: (el, value) ->
     el.style.display = if value then '' else 'none'
@@ -358,17 +355,11 @@ Rivets.binders =
   html: (el, value) ->
     el.innerHTML = if value? then value else ''
 
-  value:
-    publishes: true
-    bind: (el) ->
-      @currentListener = bindEvent el, 'change', @publish
-    unbind: (el) ->
-      unbindEvent el, 'change', @currentListener
-    routine: (el, value) ->
-      if el.type is 'select-multiple'
-        o.selected = o.value in value for o in el if value?
-      else
-        el.value = if value? then value else ''
+  value: createInputBinder (el, value) ->
+    if el.type is 'select-multiple'
+      o.selected = o.value in value for o in el if value?
+    else
+      el.value = if value? then value else ''
 
   text: (el, value) ->
     newValue = if value? then value else ''
