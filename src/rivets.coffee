@@ -17,16 +17,15 @@ class Rivets.Binding
   constructor: (@el, @type, @model, @keypath, options) ->
     @options = (options ||= {})
     unless binder = Rivets.binders[type]
+      binder = Rivets.binders['*']
       for identifier, value of Rivets.binders
         if identifier isnt '*' and identifier.indexOf('*') isnt -1
-          regexp = new RegExp "^#{identifier.replace('*', '.+')}$"
+          regexp = new RegExp "^#{identifier.replace('*', '(.+)')}$"
           if regexp.test type
             binder = value
-            args = new RegExp("^#{identifier.replace('*', '(.+)')}$").exec type
+            args = regexp.exec type
             args.shift()
             @args = args
-
-    binder or= Rivets.binders['*']
 
     if binder instanceof Function
       binder = {routine: binder}
@@ -259,19 +258,19 @@ class Rivets.View
 
   # Binds all of the current bindings for this view.
   bind: =>
-    binding.bind() for binding in @bindings
+    @bindings.map (binding) -> binding.bind()
 
   # Unbinds all of the current bindings for this view.
   unbind: =>
-    binding.unbind() for binding in @bindings
+    @bindings.map (binding) -> binding.unbind()
 
   # Syncs up the view with the model by running the routines on all bindings.
   sync: =>
-    binding.sync() for binding in @bindings
+    @bindings.map (binding) -> binding.sync()
 
   # Publishes the input values from the view back to the model (reverse sync).
   publish: =>
-    binding.publish() for binding in @select (b) -> b.binder.publishes
+    (@select (b) -> b.binder.publishes).map (binding) -> binding.publish()
 
 # Cross-browser event binding.
 bindEvent = (el, event, handler, context, bindContext) ->
