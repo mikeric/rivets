@@ -180,7 +180,11 @@ defaultExpressionParser = (view, node, type, models, value) ->
     formatters: pipes
     bypass: path.indexOf(':') != -1
     bindContext: models
-  firstPart = splitPath.shift()
+  parsingSupport = Rivets.config.adapter.parsingSupport
+  firstPart = if parsingSupport
+    splitPath[0]
+  else
+    splitPath.shift()
   model = if firstPart
     Rivets.config.adapter.read models, firstPart
   else
@@ -191,7 +195,7 @@ defaultExpressionParser = (view, node, type, models, value) ->
     if dependencies = context.shift()
       options.dependencies = dependencies.split /\s+/
 
-    binding = new Rivets.Binding node, type, model, keypath, options
+    binding = new Rivets.Binding node, type, (if parsingSupport then models else model), keypath, options
     binding.view = view
 
   binding
