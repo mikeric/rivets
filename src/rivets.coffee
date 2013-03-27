@@ -14,7 +14,8 @@ class Rivets.Binding
   # All information about the binding is passed into the constructor; the DOM
   # element, the type of binding, the model object and the keypath at which
   # to listen for changes.
-  constructor: (@el, @type, @model, @keypath, @options = {}) ->
+  constructor: (@el, @type, @model, @keypath, options) ->
+    @options = (options ||= {})
     unless binder = Rivets.binders[type]
       for identifier, value of Rivets.binders
         if identifier isnt '*' and identifier.indexOf('*') isnt -1
@@ -452,14 +453,16 @@ rivets =
   config: Rivets.config
 
   # Sets configuration options by merging an object literal.
-  configure: (options={}) ->
+  configure: (options) ->
+    options ||= {}
     for property, value of options
       Rivets.config[property] = value
     return
 
   # Binds a set of model objects to a parent DOM element. Returns a Rivets.View
   # instance.
-  bind: (el, models = {}) ->
+  bind: (el, models) ->
+    models ||= {}
     view = new Rivets.View(el, models)
     view.bind()
     view
