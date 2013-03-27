@@ -6,7 +6,7 @@ describe('Rivets.Binding', function() {
       adapter: {
         subscribe: function() {},
         unsubscribe: function() {},
-        read: function() {},
+        read: function(model, key) { return model[key]; },
         publish: function() {}
       }
     });

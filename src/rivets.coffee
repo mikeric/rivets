@@ -41,8 +41,9 @@ class Rivets.Binding
       args = formatter.split /\s+/
       id = args.shift()
 
-      formatter = if model[id] instanceof Function
-        model[id]
+      m = Rivets.config.adapter.read model, id
+      formatter = if m instanceof Function
+        m
       else
         Rivets.formatters[id]
 
