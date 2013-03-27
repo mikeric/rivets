@@ -314,8 +314,10 @@ getInputValue = (el) ->
 iterate = (collection, callback) ->
   if Rivets.config.adapter.iterate
     Rivets.config.adapter.iterate collection, callback
-  else
+  else if collection instanceof Array
     callback(item, i) for item, i in collection
+  else
+    callback(m, n) for n, m of collection
 
 # Core binding routines.
 createInputBinder = (routine) ->
@@ -397,7 +399,7 @@ Rivets.binders =
         marker = @marker
         iterate collection, (item, i) =>
           data = {}
-          data[n] = m for n, m of @view.models
+          iterate @view.models, (item, i) => data[i] = item
           data[@args[0]] = item
           data["#{@args[0]}_index"] = data['rivets_index'] = i
           itemEl = el.cloneNode true
