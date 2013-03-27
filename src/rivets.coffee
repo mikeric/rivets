@@ -319,6 +319,12 @@ iterate = (collection, callback) ->
   else
     callback(m, n) for n, m of collection
 
+convertToModel = (data) ->
+  if Rivets.config.adapter.convertToModel
+    Rivets.config.adapter.convertToModel(data)
+  else
+    data
+
 # Core binding routines.
 createInputBinder = (routine) ->
   publishes: true
@@ -402,6 +408,7 @@ Rivets.binders =
           iterate @view.models, (item, i) => data[i] = item
           data[@args[0]] = item
           data["#{@args[0]}_index"] = data['rivets_index'] = i
+          data = convertToModel data
           itemEl = el.cloneNode true
           previous = if iterated.length > 0
             iterated[iterated.length - 1].els[0]
