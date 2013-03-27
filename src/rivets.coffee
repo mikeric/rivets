@@ -182,7 +182,7 @@ defaultExpressionParser = (view, node, type, models, value) ->
     bindContext: models
   firstPart = splitPath.shift()
   model = if firstPart
-    models[firstPart]
+    Rivets.config.adapter.read models, firstPart
   else
     models
   keypath = splitPath.join '.'

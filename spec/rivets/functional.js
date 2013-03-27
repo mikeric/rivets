@@ -15,12 +15,18 @@ describe('Functional', function() {
           obj.on(keypath, callback);
         },
         read: function(obj, keypath) {
-          return obj.get(keypath);
+          if (obj instanceof Data) {
+            return obj.get(keypath);
+	  }
+          return obj[keypath];
         },
         publish: function(obj, keypath, value) {
-          attributes = {};
-          attributes[keypath] = value;
-          obj.set(attributes);
+          if (obj instanceof Data) {
+            attributes = {};
+            attributes[keypath] = value;
+            obj.set(attributes);
+          }
+          obj[keypath] = value;
         }
       }
     });
