@@ -118,7 +118,7 @@ loopDeps = (binder, callback) ->
         keypath = dependency.substr 1
       else
         dependency = dependency.split '.'
-        model = binder.view.models[dependency.shift()]
+        model = Rivets.config.adapter.read binder.view.models dependency.shift()
         keypath = dependency.join '.'
 
       callback model, keypath
