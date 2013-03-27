@@ -96,7 +96,7 @@ class Rivets.Binding
     if @options.bypass
       @sync()
     else
-      Rivets.config.adapter.subscribe @model, @keypath, @sync
+      Rivets.config.adapter.subscribe @model, @keypath, @sync if @keypath
       @sync() if Rivets.config.preloadData
 
     loopDeps @, (model, keypath) => Rivets.config.adapter.subscribe model, keypath, @sync
@@ -106,7 +106,7 @@ class Rivets.Binding
     @binder.unbind?.call @, @el
 
     unless @options.bypass
-      Rivets.config.adapter.unsubscribe @model, @keypath, @sync
+      Rivets.config.adapter.unsubscribe @model, @keypath, @sync if @keypath
 
     loopDeps @, (model, keypath) => Rivets.config.adapter.unsubscribe model, keypath, @sync
 
