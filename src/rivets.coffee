@@ -82,6 +82,7 @@ class Rivets.Binding
 
   # Publishes the value currently set on the input element back to the model.
   publish: => 
+    return if @binder.tokenizes
     value = getInputValue @el
 
     for formatter in @formatters.slice(0).reverse()
@@ -103,7 +104,7 @@ class Rivets.Binding
     if @options.bypass
       @sync()
     else
-      Rivets.config.adapter.subscribe @model, @keypath, @sync if @keypath
+      Rivets.config.adapter.subscribe @model, @keypath, @sync if @keypath and !@binder.tokenizes
       @sync() if Rivets.config.preloadData
 
     loopDeps @, (model, keypath) => Rivets.config.adapter.subscribe model, keypath, @sync
@@ -112,7 +113,7 @@ class Rivets.Binding
   unbind: =>
     @binder.unbind?.call @, @el
 
-    unless @options.bypass
+    unless @options.bypass or !@binder.tokenizes
       Rivets.config.adapter.unsubscribe @model, @keypath, @sync if @keypath
 
     loopDeps @, (model, keypath) => Rivets.config.adapter.unsubscribe model, keypath, @sync
@@ -187,18 +188,20 @@ defaultExpressionParser = (view, node, type, models, value) ->
     bypass: path.indexOf(':') != -1
     bindContext: models
   parsingSupport = Rivets.config.adapter.parsingSupport
-  [options.binder, options.args] = findBinder type
-  firstPart = if parsingSupport
+  [binder, options.args] = findBinder type
+  binderTokenizes = binder.tokenizes
+  options.binder = binder
+  firstPart = if parsingSupport or binderTokenizes
     splitPath[0]
   else
     splitPath.shift()
-  model = if firstPart
+  model = if firstPart or !binderTokenizes
     Rivets.config.adapter.read models, firstPart
   else
     models
   keypath = splitPath.join '.'
 
-  if model
+  if model or binderTokenizes
     if dependencies = context.shift()
       options.dependencies = dependencies.split /\s+/
 
