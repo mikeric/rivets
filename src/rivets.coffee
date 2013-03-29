@@ -308,7 +308,7 @@ Rivets.binders =
     routine: (el, value) ->
       if el.type is 'select-multiple'
         o.selected = o.value in value for o in el if value?
-      else
+      else if value?.toString() isnt el.value?.toString()
         el.value = if value? then value else ''
 
   text: (el, value) ->
