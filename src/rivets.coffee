@@ -33,7 +33,10 @@ class Rivets.Binding
   constructor: (@el, @type, @model, @keypath, options) ->
     @options = (options ||= {})
 
-    [@binder, @args] = findBinder(type)
+    [@binder, @args] = if options.binder
+      [options.binder, options.args]
+    else
+      findBinder type
     @formatters = options.formatters || []
 
   # Applies all the current formatters to the supplied value and returns the
@@ -184,6 +187,7 @@ defaultExpressionParser = (view, node, type, models, value) ->
     bypass: path.indexOf(':') != -1
     bindContext: models
   parsingSupport = Rivets.config.adapter.parsingSupport
+  [options.binder, options.args] = findBinder type
   firstPart = if parsingSupport
     splitPath[0]
   else
