@@ -262,7 +262,7 @@ class Rivets.View
       return
 
     for el in @els
-      parse el
+      parse el if el.attributes?
       parse node for node in el.getElementsByTagName '*' when node.attributes?
 
     return
