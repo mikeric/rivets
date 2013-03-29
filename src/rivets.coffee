@@ -9,6 +9,22 @@ Rivets = {}
 # Polyfill For String::trim.
 unless String::trim then String::trim = -> @replace /^\s+|\s+$/g, ''
 
+findBinder = (type) ->
+  unless binder = Rivets.binders[type]
+    binder = Rivets.binders['*']
+    for identifier, value of Rivets.binders
+      if identifier isnt '*' and identifier.indexOf('*') isnt -1
+        regexp = new RegExp "^#{identifier.replace('*', '(.+)')}$"
+        if regexp.test type
+          binder = value
+          args = regexp.exec type
+          args.shift()
+
+  if binder instanceof Function
+    binder = {routine: binder}
+
+  [binder, args]
+
 # A single binding between a model attribute and a DOM element.
 class Rivets.Binding
   # All information about the binding is passed into the constructor; the DOM
@@ -16,21 +32,8 @@ class Rivets.Binding
   # to listen for changes.
   constructor: (@el, @type, @model, @keypath, options) ->
     @options = (options ||= {})
-    unless binder = Rivets.binders[type]
-      binder = Rivets.binders['*']
-      for identifier, value of Rivets.binders
-        if identifier isnt '*' and identifier.indexOf('*') isnt -1
-          regexp = new RegExp "^#{identifier.replace('*', '(.+)')}$"
-          if regexp.test type
-            binder = value
-            args = regexp.exec type
-            args.shift()
-            @args = args
 
-    if binder instanceof Function
-      binder = {routine: binder}
-
-    @binder = binder
+    [@binder, @args] = findBinder(type)
     @formatters = options.formatters || []
 
   # Applies all the current formatters to the supplied value and returns the
