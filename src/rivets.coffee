@@ -375,32 +375,34 @@ Rivets.config =
 Rivets.formatters = {}
 
 # The rivets module. This is the public interface that gets exported.
-rivets =
+factory = (exports) ->
   # Exposes the core binding routines that can be extended or stripped down.
-  binders: Rivets.binders
+  exports.binders = Rivets.binders
 
   # Exposes the formatters object to be extended.
-  formatters: Rivets.formatters
+  exports.formatters = Rivets.formatters
 
   # Exposes the rivets configuration options. These can be set manually or from
   # rivets.configure with an object literal.
-  config: Rivets.config
+  exports.config = Rivets.config
 
   # Sets configuration options by merging an object literal.
-  configure: (options={}) ->
+  exports.configure = (options={}) ->
     for property, value of options
       Rivets.config[property] = value
     return
 
   # Binds a set of model objects to a parent DOM element. Returns a Rivets.View
   # instance.
-  bind: (el, models = {}) ->
+  exports.bind = (el, models = {}) ->
     view = new Rivets.View(el, models)
     view.bind()
     view
 
-# Exports rivets for both CommonJS and the browser.
-if module?
-  module.exports = rivets
+# Exports rivets for CommonJS, AMD and the browser.
+if typeof exports == 'object'
+  factory(exports)
+else if typeof define == 'function' && define.amd
+  define ['exports'], factory
 else
-  @rivets = rivets
+  factory(@rivets = {})
