@@ -274,7 +274,7 @@ Rivets.binders =
       unbindEvent el, 'change', @currentListener
     routine: (el, value) ->
       if el.type is 'radio'
-        el.checked = el.value is value
+        el.checked = el.value?.toString() is value?.toString()
       else
         el.checked = !!value
 
@@ -286,7 +286,7 @@ Rivets.binders =
       unbindEvent el, 'change', @currentListener
     routine: (el, value) ->
       if el.type is 'radio'
-        el.checked = el.value isnt value
+        el.checked = el.value?.toString() isnt value?.toString()
       else
         el.checked = !value
 
