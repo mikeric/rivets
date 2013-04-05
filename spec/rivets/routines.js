@@ -1,5 +1,15 @@
 describe('Routines', function() {
-  var el, input, trueRadioInput, falseRadioInput;
+  var el, input, trueRadioInput, falseRadioInput, checkboxInput;
+
+  var createInputElement = function(type, value) {
+    var elem = document.createElement('input');
+    elem.setAttribute('type', type);
+    if (value !== undefined){
+      elem.setAttribute('value', value);
+    }
+    document.body.appendChild(elem);
+    return elem;
+  };
 
   beforeEach(function() {
     rivets.configure({
@@ -14,21 +24,16 @@ describe('Routines', function() {
     el = document.createElement('div');
     document.body.appendChild(el);
 
-    input = document.createElement('input');
-    input.setAttribute('type', 'text');
-    document.body.appendChild(input);
+    input = createInputElement('text');
 
     // to test the radio input scenario when its value is "true"
-    trueRadioInput = document.createElement('input');
-    trueRadioInput.setAttribute('type', 'radio');
-    trueRadioInput.value = 'true';
-    document.body.appendChild(trueRadioInput);
+    trueRadioInput = createInputElement('radio', 'true');
     
     // to test the radio input scenario when its value is "false"
-    falseRadioInput = document.createElement('input');
-    falseRadioInput.setAttribute('type', 'radio');
-    falseRadioInput.value = 'false';
-    document.body.appendChild(falseRadioInput);
+    falseRadioInput = createInputElement('radio', 'false');
+
+    // to test the checkbox input scenario
+    checkboxInput = createInputElement('checkbox');
 
   });
 
@@ -37,6 +42,7 @@ describe('Routines', function() {
     input.parentNode.removeChild(input);
     trueRadioInput.parentNode.removeChild(trueRadioInput);
     falseRadioInput.parentNode.removeChild(falseRadioInput);
+    checkboxInput.parentNode.removeChild(checkboxInput);
   });
 
   describe('text', function() {
@@ -149,6 +155,22 @@ describe('Routines', function() {
   });
 
   describe('checked', function() {
+    describe('with a checkbox input', function() {
+      describe('and a truthy value', function() {
+        it('checks the checkbox input', function() {
+          rivets.binders.checked.routine(checkboxInput, true);
+          expect(checkboxInput.checked).toBe(true);
+        });
+      });
+
+      describe('with a falsey value', function() {
+        it('unchecks the checkbox input', function() {
+          rivets.binders.checked.routine(checkboxInput, false);
+          expect(checkboxInput.checked).toBe(false);
+        });
+      });
+    });
+
     describe('with a radio input with value="true"', function() {
       describe('and a truthy value', function() {
         it('checks the radio input', function() {
@@ -183,6 +205,22 @@ describe('Routines', function() {
   });
 
   describe('unchecked', function() {
+    describe('and a truthy value', function() {
+      describe('and a truthy value', function() {
+        it('checks the checkbox input', function() {
+          rivets.binders.unchecked.routine(checkboxInput, true);
+          expect(checkboxInput.checked).toBe(false);
+        });
+      });
+
+      describe('with a falsey value', function() {
+        it('unchecks the checkbox input', function() {
+          rivets.binders.unchecked.routine(checkboxInput, false);
+          expect(checkboxInput.checked).toBe(true);
+        });
+      });
+    });
+
     describe('with a radio input with value="true"', function() {
       describe('and a truthy value', function() {
         it('checks the radio input', function() {
