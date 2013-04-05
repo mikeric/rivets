@@ -1,5 +1,5 @@
 describe('Routines', function() {
-  var el, input, radioBox;
+  var el, input, trueRadioInput, falseRadioInput;
 
   beforeEach(function() {
     rivets.configure({
@@ -18,17 +18,25 @@ describe('Routines', function() {
     input.setAttribute('type', 'text');
     document.body.appendChild(input);
 
-    // to test the radio box scenario
-    radioBox = document.createElement('input');
-    radioBox.setAttribute('type', 'radio');
-    document.body.appendChild(radioBox);
+    // to test the radio input scenario when its value is "true"
+    trueRadioInput = document.createElement('input');
+    trueRadioInput.setAttribute('type', 'radio');
+    trueRadioInput.value = 'true';
+    document.body.appendChild(trueRadioInput);
+    
+    // to test the radio input scenario when its value is "false"
+    falseRadioInput = document.createElement('input');
+    falseRadioInput.setAttribute('type', 'radio');
+    falseRadioInput.value = 'false';
+    document.body.appendChild(falseRadioInput);
 
   });
 
   afterEach(function(){
     el.parentNode.removeChild(el);
     input.parentNode.removeChild(input);
-    radioBox.parentNode.removeChild(radioBox);
+    trueRadioInput.parentNode.removeChild(trueRadioInput);
+    falseRadioInput.parentNode.removeChild(falseRadioInput);
   });
 
   describe('text', function() {
@@ -141,33 +149,69 @@ describe('Routines', function() {
   });
 
   describe('checked', function() {
-    describe('with a truthy value', function() {
-      it('checks the element', function() {
-        rivets.binders.checked.routine(el, true);
-        expect(el.checked).toBe(true);
+    describe('with a radio input with value="true"', function() {
+      describe('and a truthy value', function() {
+        it('checks the radio input', function() {
+          rivets.binders.checked.routine(trueRadioInput, true);
+          expect(trueRadioInput.checked).toBe(true);
+        });
+      });
+
+      describe('with a falsey value', function() {
+        it('unchecks the radio input', function() {
+          rivets.binders.checked.routine(trueRadioInput, false);
+          expect(trueRadioInput.checked).toBe(false);
+        });
       });
     });
 
-    describe('with a falsey value', function() {
-      it('unchecks the element', function() {
-        rivets.binders.checked.routine(el, false);
-        expect(el.checked).toBe(false);
+    describe('with a radio input with value="false"', function() {
+      describe('and a truthy value', function() {
+        it('checks the radio input', function() {
+          rivets.binders.checked.routine(falseRadioInput, true);
+          expect(falseRadioInput.checked).toBe(false);
+        });
+      });
+
+      describe('with a falsey value', function() {
+        it('unchecks the radio input', function() {
+          rivets.binders.checked.routine(falseRadioInput, false);
+          expect(falseRadioInput.checked).toBe(true);
+        });
       });
     });
   });
 
   describe('unchecked', function() {
-    describe('with a truthy value', function() {
-      it('unchecks the element', function() {
-        rivets.binders.unchecked.routine(el, true);
-        expect(el.checked).toBe(false);
+    describe('with a radio input with value="true"', function() {
+      describe('and a truthy value', function() {
+        it('checks the radio input', function() {
+          rivets.binders.unchecked.routine(trueRadioInput, true);
+          expect(trueRadioInput.checked).toBe(false);
+        });
+      });
+
+      describe('with a falsey value', function() {
+        it('unchecks the radio input', function() {
+          rivets.binders.unchecked.routine(trueRadioInput, false);
+          expect(trueRadioInput.checked).toBe(true);
+        });
       });
     });
 
-    describe('with a falsey value', function() {
-      it('checks the element', function() {
-        rivets.binders.unchecked.routine(el, false);
-        expect(el.checked).toBe(true);
+    describe('with a radio input with value="false"', function() {
+      describe('and a truthy value', function() {
+        it('checks the radio input', function() {
+          rivets.binders.unchecked.routine(falseRadioInput, true);
+          expect(falseRadioInput.checked).toBe(true);
+        });
+      });
+
+      describe('with a falsey value', function() {
+        it('unchecks the radio input', function() {
+          rivets.binders.unchecked.routine(falseRadioInput, false);
+          expect(falseRadioInput.checked).toBe(false);
+        });
       });
     });
   });
