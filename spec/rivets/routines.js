@@ -1,5 +1,5 @@
 describe('Routines', function() {
-  var el, input;
+  var el, input, radioBox;
 
   beforeEach(function() {
     rivets.configure({
@@ -12,8 +12,23 @@ describe('Routines', function() {
     });
 
     el = document.createElement('div');
+    document.body.appendChild(el);
+
     input = document.createElement('input');
     input.setAttribute('type', 'text');
+    document.body.appendChild(input);
+
+    // to test the radio box scenario
+    radioBox = document.createElement('input');
+    radioBox.setAttribute('type', 'radio');
+    document.body.appendChild(radioBox);
+
+  });
+
+  afterEach(function(){
+    el.parentNode.removeChild(el);
+    input.parentNode.removeChild(input);
+    radioBox.parentNode.removeChild(radioBox);
   });
 
   describe('text', function() {
