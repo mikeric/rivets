@@ -403,6 +403,8 @@ factory = (exports) ->
 if typeof exports == 'object'
   factory(exports)
 else if typeof define == 'function' && define.amd
-  define ['exports'], (exports) -> @rivets = factory(exports)
+  define ['exports'], (exports) ->
+    factory(@rivets = exports)
+    return exports
 else
   factory(@rivets = {})
