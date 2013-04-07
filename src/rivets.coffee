@@ -251,12 +251,19 @@ unbindEvent = (el, event, fn) ->
     event = 'on' + event
     el.detachEvent  event, fn
 
-# Returns the current input value for the specified element.
+# Cross-browser input value getter.
 getInputValue = (el) ->
-  switch el.type
-    when 'checkbox' then el.checked
-    when 'select-multiple' then o.value for o in el when o.selected
-    else el.value
+  if window.jQuery?
+    el = jQuery el
+
+    switch el[0].type
+      when 'checkbox' then el.is ':checked'
+      else el.val()
+  else
+    switch el.type
+      when 'checkbox' then el.checked
+      when 'select-multiple' then o.value for o in el when o.selected
+      else el.value
 
 # Core binding routines.
 Rivets.binders =
