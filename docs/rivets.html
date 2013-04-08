@@ -1,303 +1,913 @@
-<!DOCTYPE html>  <html> <head>   <title>rivets.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               rivets.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <pre><code>rivets.js
-version : 0.4.5
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>rivets.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>rivets.coffee</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <pre><code>rivets.js
+version : 0.4.8
 author : Michael Richards
-license : MIT
-</code></pre>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>The Rivets namespace.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">Rivets = </span><span class="p">{}</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Polyfill For String::trim.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">unless</span> <span class="nb">String</span><span class="o">::</span><span class="nx">trim</span> <span class="k">then</span> <span class="nb">String</span><span class="o">::</span><span class="nv">trim = </span><span class="o">-&gt;</span> <span class="nx">@replace</span> <span class="sr">/^\s+|\s+$/g</span><span class="p">,</span> <span class="s">&#39;&#39;</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>A single binding between a model attribute and a DOM element.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">Rivets</span><span class="p">.</span><span class="nx">Binding</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>All information about the binding is passed into the constructor; the DOM
+license : MIT</code></pre>
+<p>The Rivets namespace.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Rivets = {}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Polyfill For String::trim.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">unless</span> String::trim <span class="keyword">then</span> String::<span class="function"><span class="title">trim</span></span> = -&gt; <span class="property">@replace</span> <span class="regexp">/^\s+|\s+$/g</span>, <span class="string">''</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>A single binding between a model attribute and a DOM element.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Rivets</span>.<span class="title">Binding</span></span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>All information about the binding is passed into the constructor; the DOM
 element, the type of binding, the model object and the keypath at which
-to listen for changes.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">constructor: </span><span class="nf">(@el, @type, @model, @keypath, @options = {}) -&gt;</span>
-    <span class="nx">unless</span> <span class="vi">@binder = </span><span class="nx">Rivets</span><span class="p">.</span><span class="nx">binders</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span>
-      <span class="k">for</span> <span class="nx">identifier</span><span class="p">,</span> <span class="nx">value</span> <span class="k">of</span> <span class="nx">Rivets</span><span class="p">.</span><span class="nx">binders</span>
-        <span class="k">if</span> <span class="nx">identifier</span> <span class="o">isnt</span> <span class="s">&#39;*&#39;</span> <span class="o">and</span> <span class="nx">identifier</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s">&#39;*&#39;</span><span class="p">)</span> <span class="o">isnt</span> <span class="o">-</span><span class="mi">1</span>
-          <span class="nv">regexp = </span><span class="k">new</span> <span class="nb">RegExp</span> <span class="s">&quot;^</span><span class="si">#{</span><span class="nx">identifier</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s">&#39;*&#39;</span><span class="p">,</span> <span class="s">&#39;.+&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">$&quot;</span>
-          <span class="k">if</span> <span class="nx">regexp</span><span class="p">.</span><span class="nx">test</span> <span class="nx">type</span>
-            <span class="vi">@binder = </span><span class="nx">value</span>
-            <span class="vi">@args = </span><span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="s">&quot;^</span><span class="si">#{</span><span class="nx">identifier</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s">&#39;*&#39;</span><span class="p">,</span> <span class="s">&#39;(.+)&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">$&quot;</span><span class="p">).</span><span class="nx">exec</span> <span class="nx">type</span>
-            <span class="nx">@args</span><span class="p">.</span><span class="nx">shift</span><span class="p">()</span>
+to listen for changes.</p>
 
-    <span class="nx">@binder</span> <span class="o">or=</span> <span class="nx">Rivets</span><span class="p">.</span><span class="nx">binders</span><span class="p">[</span><span class="s">&#39;*&#39;</span><span class="p">]</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  constructor: (<span class="property">@el</span>, <span class="property">@type</span>, <span class="property">@model</span>, <span class="property">@keypath</span>, <span class="property">@options</span> = {}) -&gt;
+    <span class="keyword">unless</span> <span class="property">@binder</span> = Rivets.binders[type]
+      <span class="keyword">for</span> identifier, value <span class="keyword">of</span> Rivets.binders
+        <span class="keyword">if</span> identifier <span class="keyword">isnt</span> <span class="string">'*'</span> <span class="keyword">and</span> identifier.indexOf(<span class="string">'*'</span>) <span class="keyword">isnt</span> -<span class="number">1</span>
+          regexp = <span class="keyword">new</span> RegExp <span class="string">"^<span class="subst">#{identifier.replace('*', '.+')}</span>$"</span>
+          <span class="keyword">if</span> regexp.test type
+            <span class="property">@binder</span> = value
+            <span class="property">@args</span> = <span class="keyword">new</span> RegExp(<span class="string">"^<span class="subst">#{identifier.replace('*', '(.+)')}</span>$"</span>).exec type
+            <span class="property">@args</span>.shift()
 
-    <span class="k">if</span> <span class="nx">@binder</span> <span class="k">instanceof</span> <span class="nb">Function</span>
-      <span class="vi">@binder = </span><span class="p">{</span><span class="nv">routine: </span><span class="nx">@binder</span><span class="p">}</span>
+    <span class="property">@binder</span> <span class="keyword">or</span>= Rivets.binders[<span class="string">'*'</span>]
 
-    <span class="vi">@formatters = </span><span class="nx">@options</span><span class="p">.</span><span class="nx">formatters</span> <span class="o">||</span> <span class="p">[]</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Applies all the current formatters to the supplied value and returns the
-formatted value.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">formattedValue: </span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="o">=&gt;</span>
-    <span class="k">for</span> <span class="nx">formatter</span> <span class="k">in</span> <span class="nx">@formatters</span>
-      <span class="nv">args = </span><span class="nx">formatter</span><span class="p">.</span><span class="nx">split</span> <span class="sr">/\s+/</span>
-      <span class="nv">id = </span><span class="nx">args</span><span class="p">.</span><span class="nx">shift</span><span class="p">()</span>
+    <span class="keyword">if</span> <span class="property">@binder</span> <span class="keyword">instanceof</span> Function
+      <span class="property">@binder</span> = {routine: <span class="property">@binder</span>}
 
-      <span class="nv">formatter = </span><span class="k">if</span> <span class="nx">@model</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="k">instanceof</span> <span class="nb">Function</span>
-        <span class="nx">@model</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span>
-      <span class="k">else</span>
-        <span class="nx">Rivets</span><span class="p">.</span><span class="nx">formatters</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span>
+    <span class="property">@formatters</span> = <span class="property">@options</span>.formatters || []</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Applies all the current formatters to the supplied value and returns the
+formatted value.</p>
 
-      <span class="k">if</span> <span class="nx">formatter</span><span class="o">?</span><span class="p">.</span><span class="nx">read</span> <span class="k">instanceof</span> <span class="nb">Function</span>
-        <span class="nv">value = </span><span class="nx">formatter</span><span class="p">.</span><span class="nx">read</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">args</span><span class="p">...</span>
-      <span class="k">else</span> <span class="k">if</span> <span class="nx">formatter</span> <span class="k">instanceof</span> <span class="nb">Function</span>
-        <span class="nv">value = </span><span class="nx">formatter</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">args</span><span class="p">...</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  formattedValue: (value) =&gt;
+    <span class="keyword">for</span> formatter <span class="keyword">in</span> <span class="property">@formatters</span>
+      args = formatter.split <span class="regexp">/\s+/</span>
+      id = args.shift()
 
-    <span class="nx">value</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>Sets the value for the binding. This Basically just runs the binding routine
-with the suplied value formatted.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">set: </span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="o">=&gt;</span>
-    <span class="nv">value = </span><span class="k">if</span> <span class="nx">value</span> <span class="k">instanceof</span> <span class="nb">Function</span> <span class="o">and</span> <span class="o">!</span><span class="nx">@binder</span><span class="p">.</span><span class="nx">function</span>
-      <span class="nx">@formattedValue</span> <span class="nx">value</span><span class="p">.</span><span class="nx">call</span> <span class="nx">@model</span>
-    <span class="k">else</span>
-      <span class="nx">@formattedValue</span> <span class="nx">value</span>
+      formatter = <span class="keyword">if</span> <span class="property">@model</span>[id] <span class="keyword">instanceof</span> Function
+        <span class="property">@model</span>[id]
+      <span class="keyword">else</span>
+        Rivets.formatters[id]
 
-    <span class="nx">@binder</span><span class="p">.</span><span class="nx">routine</span><span class="o">?</span><span class="p">.</span><span class="nx">call</span> <span class="nx">@</span><span class="p">,</span> <span class="nx">@el</span><span class="p">,</span> <span class="nx">value</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>Syncs up the view binding with the model.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">sync: </span><span class="o">=&gt;</span>
-    <span class="nx">@set</span> <span class="k">if</span> <span class="nx">@options</span><span class="p">.</span><span class="nx">bypass</span>
-      <span class="nx">@model</span><span class="p">[</span><span class="nx">@keypath</span><span class="p">]</span>
-    <span class="k">else</span>
-      <span class="nx">Rivets</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">adapter</span><span class="p">.</span><span class="nx">read</span> <span class="nx">@model</span><span class="p">,</span> <span class="nx">@keypath</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>Publishes the value currently set on the input element back to the model.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">publish: </span><span class="o">=&gt;</span> 
-    <span class="nv">value = </span><span class="nx">getInputValue</span> <span class="nx">@el</span>
+      <span class="keyword">if</span> formatter?.read <span class="keyword">instanceof</span> Function
+        value = formatter.read value, args...
+      <span class="keyword">else</span> <span class="keyword">if</span> formatter <span class="keyword">instanceof</span> Function
+        value = formatter value, args...
 
-    <span class="k">for</span> <span class="nx">formatter</span> <span class="k">in</span> <span class="nx">@formatters</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="nx">reverse</span><span class="p">()</span>
-      <span class="nv">args = </span><span class="nx">formatter</span><span class="p">.</span><span class="nx">split</span> <span class="sr">/\s+/</span>
-      <span class="nv">id = </span><span class="nx">args</span><span class="p">.</span><span class="nx">shift</span><span class="p">()</span>
+    value</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Sets the value for the binding. This Basically just runs the binding routine
+with the suplied value formatted.</p>
 
-      <span class="k">if</span> <span class="nx">Rivets</span><span class="p">.</span><span class="nx">formatters</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span><span class="o">?</span><span class="p">.</span><span class="nx">publish</span>
-        <span class="nv">value = </span><span class="nx">Rivets</span><span class="p">.</span><span class="nx">formatters</span><span class="p">[</span><span class="nx">id</span><span class="p">].</span><span class="nx">publish</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">args</span><span class="p">...</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  set: (value) =&gt;
+    value = <span class="keyword">if</span> value <span class="keyword">instanceof</span> Function <span class="keyword">and</span> !<span class="property">@binder</span>.<span class="reserved">function</span>
+      <span class="property">@formattedValue</span> value.call <span class="property">@model</span>
+    <span class="keyword">else</span>
+      <span class="property">@formattedValue</span> value
 
-    <span class="nx">Rivets</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">adapter</span><span class="p">.</span><span class="nx">publish</span> <span class="nx">@model</span><span class="p">,</span> <span class="nx">@keypath</span><span class="p">,</span> <span class="nx">value</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>Subscribes to the model for changes at the specified keypath. Bi-directional
+    <span class="property">@binder</span>.routine?.call @, <span class="property">@el</span>, value</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Syncs up the view binding with the model.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  sync: =&gt;
+    <span class="property">@set</span> <span class="keyword">if</span> <span class="property">@options</span>.bypass
+      <span class="property">@model</span>[<span class="property">@keypath</span>]
+    <span class="keyword">else</span>
+      Rivets.config.adapter.read <span class="property">@model</span>, <span class="property">@keypath</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Publishes the value currently set on the input element back to the model.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  publish: =&gt; 
+    value = getInputValue <span class="property">@el</span>
+
+    <span class="keyword">for</span> formatter <span class="keyword">in</span> <span class="property">@formatters</span>.slice(<span class="number">0</span>).reverse()
+      args = formatter.split <span class="regexp">/\s+/</span>
+      id = args.shift()
+
+      <span class="keyword">if</span> Rivets.formatters[id]?.publish
+        value = Rivets.formatters[id].publish value, args...
+
+    Rivets.config.adapter.publish <span class="property">@model</span>, <span class="property">@keypath</span>, value</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Subscribes to the model for changes at the specified keypath. Bi-directional
 routines will also listen for changes on the element to propagate them back
-to the model.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">bind: </span><span class="o">=&gt;</span>
-    <span class="nx">@binder</span><span class="p">.</span><span class="nx">bind</span><span class="o">?</span><span class="p">.</span><span class="nx">call</span> <span class="nx">@</span><span class="p">,</span> <span class="nx">@el</span>
+to the model.</p>
 
-    <span class="k">if</span> <span class="nx">@options</span><span class="p">.</span><span class="nx">bypass</span>
-      <span class="nx">@sync</span><span class="p">()</span>
-    <span class="k">else</span>
-      <span class="nx">Rivets</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">adapter</span><span class="p">.</span><span class="nx">subscribe</span> <span class="nx">@model</span><span class="p">,</span> <span class="nx">@keypath</span><span class="p">,</span> <span class="nx">@sync</span>
-      <span class="nx">@sync</span><span class="p">()</span> <span class="k">if</span> <span class="nx">Rivets</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">preloadData</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  bind: =&gt;
+    <span class="property">@binder</span>.bind?.call @, <span class="property">@el</span>
 
-    <span class="k">if</span> <span class="nx">@options</span><span class="p">.</span><span class="nx">dependencies</span><span class="o">?</span><span class="p">.</span><span class="nx">length</span>
-      <span class="k">for</span> <span class="nx">dependency</span> <span class="k">in</span> <span class="nx">@options</span><span class="p">.</span><span class="nx">dependencies</span>
-        <span class="k">if</span> <span class="sr">/^\./</span><span class="p">.</span><span class="nx">test</span> <span class="nx">dependency</span>
-          <span class="nv">model = </span><span class="nx">@model</span>
-          <span class="nv">keypath = </span><span class="nx">dependency</span><span class="p">.</span><span class="nx">substr</span> <span class="mi">1</span>
-        <span class="k">else</span>
-          <span class="nv">dependency = </span><span class="nx">dependency</span><span class="p">.</span><span class="nx">split</span> <span class="s">&#39;.&#39;</span>
-          <span class="nv">model = </span><span class="nx">@view</span><span class="p">.</span><span class="nx">models</span><span class="p">[</span><span class="nx">dependency</span><span class="p">.</span><span class="nx">shift</span><span class="p">()]</span>
-          <span class="nv">keypath = </span><span class="nx">dependency</span><span class="p">.</span><span class="nx">join</span> <span class="s">&#39;.&#39;</span>
+    <span class="keyword">if</span> <span class="property">@options</span>.bypass
+      <span class="property">@sync</span>()
+    <span class="keyword">else</span>
+      Rivets.config.adapter.subscribe <span class="property">@model</span>, <span class="property">@keypath</span>, <span class="property">@sync</span>
+      <span class="property">@sync</span>() <span class="keyword">if</span> Rivets.config.preloadData
 
-        <span class="nx">Rivets</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">adapter</span><span class="p">.</span><span class="nx">subscribe</span> <span class="nx">model</span><span class="p">,</span> <span class="nx">keypath</span><span class="p">,</span> <span class="nx">@sync</span></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>Unsubscribes from the model and the element.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">unbind: </span><span class="o">=&gt;</span>
-    <span class="nx">@binder</span><span class="p">.</span><span class="nx">unbind</span><span class="o">?</span><span class="p">.</span><span class="nx">call</span> <span class="nx">@</span><span class="p">,</span> <span class="nx">@el</span>
+    <span class="keyword">if</span> <span class="property">@options</span>.dependencies?.length
+      <span class="keyword">for</span> dependency <span class="keyword">in</span> <span class="property">@options</span>.dependencies
+        <span class="keyword">if</span> <span class="regexp">/^\./</span>.test dependency
+          model = <span class="property">@model</span>
+          keypath = dependency.substr <span class="number">1</span>
+        <span class="keyword">else</span>
+          dependency = dependency.split <span class="string">'.'</span>
+          model = <span class="property">@view</span>.models[dependency.shift()]
+          keypath = dependency.join <span class="string">'.'</span>
 
-    <span class="nx">unless</span> <span class="nx">@options</span><span class="p">.</span><span class="nx">bypass</span>
-      <span class="nx">Rivets</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">adapter</span><span class="p">.</span><span class="nx">unsubscribe</span> <span class="nx">@model</span><span class="p">,</span> <span class="nx">@keypath</span><span class="p">,</span> <span class="nx">@sync</span>
+        Rivets.config.adapter.subscribe model, keypath, <span class="property">@sync</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>Unsubscribes from the model and the element.</p>
 
-    <span class="k">if</span> <span class="nx">@options</span><span class="p">.</span><span class="nx">dependencies</span><span class="o">?</span><span class="p">.</span><span class="nx">length</span>
-      <span class="k">for</span> <span class="nx">dependency</span> <span class="k">in</span> <span class="nx">@options</span><span class="p">.</span><span class="nx">dependencies</span>
-        <span class="k">if</span> <span class="sr">/^\./</span><span class="p">.</span><span class="nx">test</span> <span class="nx">dependency</span>
-          <span class="nv">model = </span><span class="nx">@model</span>
-          <span class="nv">keypath = </span><span class="nx">dependency</span><span class="p">.</span><span class="nx">substr</span> <span class="mi">1</span>
-        <span class="k">else</span>
-          <span class="nv">dependency = </span><span class="nx">dependency</span><span class="p">.</span><span class="nx">split</span> <span class="s">&#39;.&#39;</span>
-          <span class="nv">model = </span><span class="nx">@view</span><span class="p">.</span><span class="nx">models</span><span class="p">[</span><span class="nx">dependency</span><span class="p">.</span><span class="nx">shift</span><span class="p">()]</span>
-          <span class="nv">keypath = </span><span class="nx">dependency</span><span class="p">.</span><span class="nx">join</span> <span class="s">&#39;.&#39;</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  unbind: =&gt;
+    <span class="property">@binder</span>.unbind?.call @, <span class="property">@el</span>
 
-        <span class="nx">Rivets</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">adapter</span><span class="p">.</span><span class="nx">unsubscribe</span> <span class="nx">model</span><span class="p">,</span> <span class="nx">keypath</span><span class="p">,</span> <span class="nx">@sync</span></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <p>A collection of bindings built from a set of parent elements.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">Rivets</span><span class="p">.</span><span class="nx">View</span></pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <p>The DOM elements and the model objects for binding are passed into the
-constructor.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">constructor: </span><span class="nf">(@els, @models) -&gt;</span>
-    <span class="vi">@els = </span><span class="p">[</span><span class="nx">@els</span><span class="p">]</span> <span class="nx">unless</span> <span class="p">(</span><span class="nx">@els</span><span class="p">.</span><span class="nx">jquery</span> <span class="o">||</span> <span class="nx">@els</span> <span class="k">instanceof</span> <span class="nb">Array</span><span class="p">)</span>
-    <span class="nx">@build</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <p>Regular expression used to match binding attributes.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">bindingRegExp: </span><span class="o">=&gt;</span>
-    <span class="nv">prefix = </span><span class="nx">Rivets</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">prefix</span>
-    <span class="k">if</span> <span class="nx">prefix</span> <span class="k">then</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="s">&quot;^data-</span><span class="si">#{</span><span class="nx">prefix</span><span class="si">}</span><span class="s">-&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="sr">/^data-/</span></pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>Parses the DOM tree and builds Rivets.Binding instances for every matched
+    <span class="keyword">unless</span> <span class="property">@options</span>.bypass
+      Rivets.config.adapter.unsubscribe <span class="property">@model</span>, <span class="property">@keypath</span>, <span class="property">@sync</span>
+
+    <span class="keyword">if</span> <span class="property">@options</span>.dependencies?.length
+      <span class="keyword">for</span> dependency <span class="keyword">in</span> <span class="property">@options</span>.dependencies
+        <span class="keyword">if</span> <span class="regexp">/^\./</span>.test dependency
+          model = <span class="property">@model</span>
+          keypath = dependency.substr <span class="number">1</span>
+        <span class="keyword">else</span>
+          dependency = dependency.split <span class="string">'.'</span>
+          model = <span class="property">@view</span>.models[dependency.shift()]
+          keypath = dependency.join <span class="string">'.'</span>
+
+        Rivets.config.adapter.unsubscribe model, keypath, <span class="property">@sync</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>A collection of bindings built from a set of parent elements.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Rivets</span>.<span class="title">View</span></span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>The DOM elements and the model objects for binding are passed into the
+constructor.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  constructor: (<span class="property">@els</span>, <span class="property">@models</span>) -&gt;
+    <span class="property">@els</span> = [<span class="property">@els</span>] <span class="keyword">unless</span> (<span class="property">@els</span>.jquery || <span class="property">@els</span> <span class="keyword">instanceof</span> Array)
+    <span class="property">@build</span>()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>Regular expression used to match binding attributes.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  bindingRegExp: =&gt;
+    prefix = Rivets.config.prefix
+    <span class="keyword">if</span> prefix <span class="keyword">then</span> <span class="keyword">new</span> RegExp(<span class="string">"^data-<span class="subst">#{prefix}</span>-"</span>) <span class="keyword">else</span> <span class="regexp">/^data-/</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>Parses the DOM tree and builds Rivets.Binding instances for every matched
 binding declaration. Subsequent calls to build will replace the previous
-Rivets.Binding instances with new ones, so be sure to unbind them first.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">build: </span><span class="o">=&gt;</span>
-    <span class="vi">@bindings = </span><span class="p">[]</span>
-    <span class="nv">skipNodes = </span><span class="p">[]</span>
-    <span class="nv">bindingRegExp = </span><span class="nx">@bindingRegExp</span><span class="p">()</span>
+Rivets.Binding instances with new ones, so be sure to unbind them first.</p>
 
-    <span class="nv">parse = </span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="o">=&gt;</span>
-      <span class="nx">unless</span> <span class="nx">node</span> <span class="k">in</span> <span class="nx">skipNodes</span>
-        <span class="k">for</span> <span class="nx">attribute</span> <span class="k">in</span> <span class="nx">node</span><span class="p">.</span><span class="nx">attributes</span>
-          <span class="k">if</span> <span class="nx">bindingRegExp</span><span class="p">.</span><span class="nx">test</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">name</span>
-            <span class="nv">type = </span><span class="nx">attribute</span><span class="p">.</span><span class="nx">name</span><span class="p">.</span><span class="nx">replace</span> <span class="nx">bindingRegExp</span><span class="p">,</span> <span class="s">&#39;&#39;</span>
-            <span class="nx">unless</span> <span class="nv">binder = </span><span class="nx">Rivets</span><span class="p">.</span><span class="nx">binders</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span>
-              <span class="k">for</span> <span class="nx">identifier</span><span class="p">,</span> <span class="nx">value</span> <span class="k">of</span> <span class="nx">Rivets</span><span class="p">.</span><span class="nx">binders</span>
-                <span class="k">if</span> <span class="nx">identifier</span> <span class="o">isnt</span> <span class="s">&#39;*&#39;</span> <span class="o">and</span> <span class="nx">identifier</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s">&#39;*&#39;</span><span class="p">)</span> <span class="o">isnt</span> <span class="o">-</span><span class="mi">1</span>
-                  <span class="nv">regexp = </span><span class="k">new</span> <span class="nb">RegExp</span> <span class="s">&quot;^</span><span class="si">#{</span><span class="nx">identifier</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s">&#39;*&#39;</span><span class="p">,</span> <span class="s">&#39;.+&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">$&quot;</span>
-                  <span class="k">if</span> <span class="nx">regexp</span><span class="p">.</span><span class="nx">test</span> <span class="nx">type</span>
-                    <span class="nv">binder = </span><span class="nx">value</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  build: =&gt;
+    <span class="property">@bindings</span> = []
+    skipNodes = []
+    bindingRegExp = <span class="property">@bindingRegExp</span>()
 
-            <span class="nx">binder</span> <span class="o">or=</span> <span class="nx">Rivets</span><span class="p">.</span><span class="nx">binders</span><span class="p">[</span><span class="s">&#39;*&#39;</span><span class="p">]</span>
+    <span class="function"><span class="title">parse</span></span> = (node) =&gt;
+      <span class="keyword">unless</span> node <span class="keyword">in</span> skipNodes
+        <span class="keyword">for</span> attribute <span class="keyword">in</span> node.attributes
+          <span class="keyword">if</span> bindingRegExp.test attribute.name
+            type = attribute.name.replace bindingRegExp, <span class="string">''</span>
+            <span class="keyword">unless</span> binder = Rivets.binders[type]
+              <span class="keyword">for</span> identifier, value <span class="keyword">of</span> Rivets.binders
+                <span class="keyword">if</span> identifier <span class="keyword">isnt</span> <span class="string">'*'</span> <span class="keyword">and</span> identifier.indexOf(<span class="string">'*'</span>) <span class="keyword">isnt</span> -<span class="number">1</span>
+                  regexp = <span class="keyword">new</span> RegExp <span class="string">"^<span class="subst">#{identifier.replace('*', '.+')}</span>$"</span>
+                  <span class="keyword">if</span> regexp.test type
+                    binder = value
 
-            <span class="k">if</span> <span class="nx">binder</span><span class="p">.</span><span class="nx">block</span>
-              <span class="nx">skipNodes</span><span class="p">.</span><span class="nx">push</span> <span class="nx">n</span> <span class="k">for</span> <span class="nx">n</span> <span class="k">in</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getElementsByTagName</span> <span class="s">&#39;*&#39;</span>
-              <span class="nv">attributes = </span><span class="p">[</span><span class="nx">attribute</span><span class="p">]</span>
+            binder <span class="keyword">or</span>= Rivets.binders[<span class="string">'*'</span>]
 
-        <span class="k">for</span> <span class="nx">attribute</span> <span class="k">in</span> <span class="nx">attributes</span> <span class="o">or</span> <span class="nx">node</span><span class="p">.</span><span class="nx">attributes</span>
-          <span class="k">if</span> <span class="nx">bindingRegExp</span><span class="p">.</span><span class="nx">test</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">name</span>
-            <span class="nv">options = </span><span class="p">{}</span>
+            <span class="keyword">if</span> binder.block
+              skipNodes.push n <span class="keyword">for</span> n <span class="keyword">in</span> node.getElementsByTagName <span class="string">'*'</span>
+              attributes = [attribute]
 
-            <span class="nv">type = </span><span class="nx">attribute</span><span class="p">.</span><span class="nx">name</span><span class="p">.</span><span class="nx">replace</span> <span class="nx">bindingRegExp</span><span class="p">,</span> <span class="s">&#39;&#39;</span>
-            <span class="nv">pipes = </span><span class="p">(</span><span class="nx">pipe</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span> <span class="k">for</span> <span class="nx">pipe</span> <span class="k">in</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">split</span> <span class="s">&#39;|&#39;</span><span class="p">)</span>
-            <span class="nv">context = </span><span class="p">(</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span> <span class="k">for</span> <span class="nx">ctx</span> <span class="k">in</span> <span class="nx">pipes</span><span class="p">.</span><span class="nx">shift</span><span class="p">().</span><span class="nx">split</span> <span class="s">&#39;&lt;&#39;</span><span class="p">)</span>
-            <span class="nv">path = </span><span class="nx">context</span><span class="p">.</span><span class="nx">shift</span><span class="p">()</span>
-            <span class="nv">splitPath = </span><span class="nx">path</span><span class="p">.</span><span class="nx">split</span> <span class="sr">/\.|:/</span>
-            <span class="nv">options.formatters = </span><span class="nx">pipes</span>
-            <span class="nv">options.bypass = </span><span class="nx">path</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span>
-            <span class="k">if</span> <span class="nx">splitPath</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-              <span class="nv">model = </span><span class="nx">@models</span><span class="p">[</span><span class="nx">splitPath</span><span class="p">.</span><span class="nx">shift</span><span class="p">()]</span>
-            <span class="k">else</span>
-              <span class="nv">model = </span><span class="nx">@models</span>
-              <span class="nx">splitPath</span><span class="p">.</span><span class="nx">shift</span><span class="p">()</span>
-            <span class="nv">keypath = </span><span class="nx">splitPath</span><span class="p">.</span><span class="nx">join</span> <span class="s">&#39;.&#39;</span>
+        <span class="keyword">for</span> attribute <span class="keyword">in</span> attributes <span class="keyword">or</span> node.attributes
+          <span class="keyword">if</span> bindingRegExp.test attribute.name
+            options = {}
 
-            <span class="k">if</span> <span class="nx">model</span>
-              <span class="k">if</span> <span class="nv">dependencies = </span><span class="nx">context</span><span class="p">.</span><span class="nx">shift</span><span class="p">()</span>
-                <span class="nv">options.dependencies = </span><span class="nx">dependencies</span><span class="p">.</span><span class="nx">split</span> <span class="sr">/\s+/</span>
+            type = attribute.name.replace bindingRegExp, <span class="string">''</span>
+            pipes = (pipe.trim() <span class="keyword">for</span> pipe <span class="keyword">in</span> attribute.value.split <span class="string">'|'</span>)
+            context = (ctx.trim() <span class="keyword">for</span> ctx <span class="keyword">in</span> pipes.shift().split <span class="string">'&lt;'</span>)
+            path = context.shift()
+            splitPath = path.split <span class="regexp">/\.|:/</span>
+            options.formatters = pipes
+            options.bypass = path.indexOf(<span class="string">':'</span>) != -<span class="number">1</span>
+            <span class="keyword">if</span> splitPath[<span class="number">0</span>]
+              model = <span class="property">@models</span>[splitPath.shift()]
+            <span class="keyword">else</span>
+              model = <span class="property">@models</span>
+              splitPath.shift()
+            keypath = splitPath.join <span class="string">'.'</span>
 
-              <span class="nv">binding = </span><span class="k">new</span> <span class="nx">Rivets</span><span class="p">.</span><span class="nx">Binding</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">model</span><span class="p">,</span> <span class="nx">keypath</span><span class="p">,</span> <span class="nx">options</span>
-              <span class="nv">binding.view = </span><span class="nx">@</span>
+            <span class="keyword">if</span> model
+              <span class="keyword">if</span> dependencies = context.shift()
+                options.dependencies = dependencies.split <span class="regexp">/\s+/</span>
 
-              <span class="nx">@bindings</span><span class="p">.</span><span class="nx">push</span> <span class="nx">binding</span>
+              binding = <span class="keyword">new</span> Rivets.Binding node, type, model, keypath, options
+              binding.view = @
 
-        <span class="nv">attributes = </span><span class="kc">null</span> <span class="k">if</span> <span class="nx">attributes</span>
+              <span class="property">@bindings</span>.push binding
 
-      <span class="k">return</span>
+        attributes = <span class="literal">null</span> <span class="keyword">if</span> attributes
 
-    <span class="k">for</span> <span class="nx">el</span> <span class="k">in</span> <span class="nx">@els</span>
-      <span class="nx">parse</span> <span class="nx">el</span>
-      <span class="nx">parse</span> <span class="nx">node</span> <span class="k">for</span> <span class="nx">node</span> <span class="k">in</span> <span class="nx">el</span><span class="p">.</span><span class="nx">getElementsByTagName</span> <span class="s">&#39;*&#39;</span> <span class="k">when</span> <span class="nx">node</span><span class="p">.</span><span class="nx">attributes</span><span class="o">?</span>
+      <span class="keyword">return</span>
 
-    <span class="k">return</span></pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <p>Returns an array of bindings where the supplied function evaluates to true.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">select: </span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="o">=&gt;</span>
-    <span class="nx">binding</span> <span class="k">for</span> <span class="nx">binding</span> <span class="k">in</span> <span class="nx">@bindings</span> <span class="k">when</span> <span class="nx">fn</span> <span class="nx">binding</span></pre></div>             </td>           </tr>                               <tr id="section-17">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-17">&#182;</a>               </div>               <p>Binds all of the current bindings for this view.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">bind: </span><span class="o">=&gt;</span>
-    <span class="nx">binding</span><span class="p">.</span><span class="nx">bind</span><span class="p">()</span> <span class="k">for</span> <span class="nx">binding</span> <span class="k">in</span> <span class="nx">@bindings</span></pre></div>             </td>           </tr>                               <tr id="section-18">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-18">&#182;</a>               </div>               <p>Unbinds all of the current bindings for this view.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">unbind: </span><span class="o">=&gt;</span>
-    <span class="nx">binding</span><span class="p">.</span><span class="nx">unbind</span><span class="p">()</span> <span class="k">for</span> <span class="nx">binding</span> <span class="k">in</span> <span class="nx">@bindings</span></pre></div>             </td>           </tr>                               <tr id="section-19">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-19">&#182;</a>               </div>               <p>Syncs up the view with the model by running the routines on all bindings.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">sync: </span><span class="o">=&gt;</span>
-    <span class="nx">binding</span><span class="p">.</span><span class="nx">sync</span><span class="p">()</span> <span class="k">for</span> <span class="nx">binding</span> <span class="k">in</span> <span class="nx">@bindings</span></pre></div>             </td>           </tr>                               <tr id="section-20">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-20">&#182;</a>               </div>               <p>Publishes the input values from the view back to the model (reverse sync).</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">publish: </span><span class="o">=&gt;</span>
-    <span class="nx">binding</span><span class="p">.</span><span class="nx">publish</span><span class="p">()</span> <span class="k">for</span> <span class="nx">binding</span> <span class="k">in</span> <span class="nx">@select</span> <span class="nf">(b) -&gt;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">binder</span><span class="p">.</span><span class="nx">publishes</span></pre></div>             </td>           </tr>                               <tr id="section-21">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-21">&#182;</a>               </div>               <p>Cross-browser event binding.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">bindEvent = </span><span class="nf">(el, event, handler, context) -&gt;</span>
-  <span class="nv">fn = </span><span class="nf">(e) -&gt;</span> <span class="nx">handler</span><span class="p">.</span><span class="nx">call</span> <span class="nx">context</span><span class="p">,</span> <span class="nx">e</span></pre></div>             </td>           </tr>                               <tr id="section-22">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-22">&#182;</a>               </div>               <p>Check to see if jQuery is loaded.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="k">if</span> <span class="nb">window</span><span class="p">.</span><span class="nx">jQuery</span><span class="o">?</span>
-    <span class="nv">el = </span><span class="nx">jQuery</span> <span class="nx">el</span>
-    <span class="k">if</span> <span class="nx">el</span><span class="p">.</span><span class="kc">on</span><span class="o">?</span> <span class="k">then</span> <span class="nx">el</span><span class="p">.</span><span class="kc">on</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">fn</span> <span class="k">else</span> <span class="nx">el</span><span class="p">.</span><span class="nx">bind</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">fn</span></pre></div>             </td>           </tr>                               <tr id="section-23">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-23">&#182;</a>               </div>               <p>Check to see if addEventListener is available.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="k">else</span> <span class="k">if</span> <span class="nb">window</span><span class="p">.</span><span class="nx">addEventListener</span><span class="o">?</span>
-    <span class="nx">el</span><span class="p">.</span><span class="nx">addEventListener</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="kc">false</span>
-  <span class="k">else</span></pre></div>             </td>           </tr>                               <tr id="section-24">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-24">&#182;</a>               </div>               <p>Assume we are in IE and use attachEvent.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">event = </span><span class="s">&#39;on&#39;</span> <span class="o">+</span> <span class="nx">event</span>
-    <span class="nx">el</span><span class="p">.</span><span class="nx">attachEvent</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">fn</span>
+    <span class="keyword">for</span> el <span class="keyword">in</span> <span class="property">@els</span>
+      parse el
+      parse node <span class="keyword">for</span> node <span class="keyword">in</span> el.getElementsByTagName <span class="string">'*'</span> <span class="keyword">when</span> node.attributes?
 
-  <span class="nx">fn</span></pre></div>             </td>           </tr>                               <tr id="section-25">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-25">&#182;</a>               </div>               <p>Cross-browser event unbinding.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">unbindEvent = </span><span class="nf">(el, event, fn) -&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-26">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-26">&#182;</a>               </div>               <p>Check to see if jQuery is loaded.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="k">if</span> <span class="nb">window</span><span class="p">.</span><span class="nx">jQuery</span><span class="o">?</span>
-    <span class="nv">el = </span><span class="nx">jQuery</span> <span class="nx">el</span>
-    <span class="k">if</span> <span class="nx">el</span><span class="p">.</span><span class="kc">off</span><span class="o">?</span> <span class="k">then</span> <span class="nx">el</span><span class="p">.</span><span class="kc">off</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">fn</span> <span class="k">else</span> <span class="nx">el</span><span class="p">.</span><span class="nx">unbind</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">fn</span></pre></div>             </td>           </tr>                               <tr id="section-27">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-27">&#182;</a>               </div>               <p>Check to see if addEventListener is available.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="k">else</span> <span class="k">if</span> <span class="nb">window</span><span class="p">.</span><span class="nx">removeEventListener</span>
-    <span class="nx">el</span><span class="p">.</span><span class="nx">removeEventListener</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="kc">false</span>
-  <span class="k">else</span></pre></div>             </td>           </tr>                               <tr id="section-28">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-28">&#182;</a>               </div>               <p>Assume we are in IE and use attachEvent.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">event = </span><span class="s">&#39;on&#39;</span> <span class="o">+</span> <span class="nx">event</span>
-    <span class="nx">el</span><span class="p">.</span><span class="nx">detachEvent</span>  <span class="nx">event</span><span class="p">,</span> <span class="nx">fn</span></pre></div>             </td>           </tr>                               <tr id="section-29">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-29">&#182;</a>               </div>               <p>Returns the current input value for the specified element.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">getInputValue = </span><span class="nf">(el) -&gt;</span>
-  <span class="k">switch</span> <span class="nx">el</span><span class="p">.</span><span class="nx">type</span>
-    <span class="k">when</span> <span class="s">&#39;checkbox&#39;</span> <span class="k">then</span> <span class="nx">el</span><span class="p">.</span><span class="nx">checked</span>
-    <span class="k">when</span> <span class="s">&#39;select-multiple&#39;</span> <span class="k">then</span> <span class="nx">o</span><span class="p">.</span><span class="nx">value</span> <span class="k">for</span> <span class="nx">o</span> <span class="k">in</span> <span class="nx">el</span> <span class="k">when</span> <span class="nx">o</span><span class="p">.</span><span class="nx">selected</span>
-    <span class="k">else</span> <span class="nx">el</span><span class="p">.</span><span class="nx">value</span></pre></div>             </td>           </tr>                               <tr id="section-30">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-30">&#182;</a>               </div>               <p>Core binding routines.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">Rivets.binders =</span>
-  <span class="nv">enabled: </span><span class="nf">(el, value) -&gt;</span>
-    <span class="nv">el.disabled = </span><span class="o">!</span><span class="nx">value</span>
+    <span class="keyword">return</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>Returns an array of bindings where the supplied function evaluates to true.</p>
 
-  <span class="nv">disabled: </span><span class="nf">(el, value) -&gt;</span>
-    <span class="nv">el.disabled = </span><span class="o">!!</span><span class="nx">value</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  select: (fn) =&gt;
+    binding <span class="keyword">for</span> binding <span class="keyword">in</span> <span class="property">@bindings</span> <span class="keyword">when</span> fn binding</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>Binds all of the current bindings for this view.</p>
 
-  <span class="nv">checked:</span>
-    <span class="nv">publishes: </span><span class="kc">true</span>
-    <span class="nv">bind: </span><span class="nf">(el) -&gt;</span>
-      <span class="vi">@currentListener = </span><span class="nx">bindEvent</span> <span class="nx">el</span><span class="p">,</span> <span class="s">&#39;change&#39;</span><span class="p">,</span> <span class="nx">@publish</span>
-    <span class="nv">unbind: </span><span class="nf">(el) -&gt;</span>
-      <span class="nx">unbindEvent</span> <span class="nx">el</span><span class="p">,</span> <span class="s">&#39;change&#39;</span><span class="p">,</span> <span class="nx">@currentListener</span>
-    <span class="nv">routine: </span><span class="nf">(el, value) -&gt;</span>
-      <span class="k">if</span> <span class="nx">el</span><span class="p">.</span><span class="nx">type</span> <span class="o">is</span> <span class="s">&#39;radio&#39;</span>
-        <span class="nv">el.checked = </span><span class="nx">el</span><span class="p">.</span><span class="nx">value</span> <span class="o">is</span> <span class="nx">value</span>
-      <span class="k">else</span>
-        <span class="nv">el.checked = </span><span class="o">!!</span><span class="nx">value</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  bind: =&gt;
+    binding.bind() <span class="keyword">for</span> binding <span class="keyword">in</span> <span class="property">@bindings</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>Unbinds all of the current bindings for this view.</p>
 
-  <span class="nv">unchecked:</span>
-    <span class="nv">publishes: </span><span class="kc">true</span>
-    <span class="nv">bind: </span><span class="nf">(el) -&gt;</span>
-      <span class="vi">@currentListener = </span><span class="nx">bindEvent</span> <span class="nx">el</span><span class="p">,</span> <span class="s">&#39;change&#39;</span><span class="p">,</span> <span class="nx">@publish</span>
-    <span class="nv">unbind: </span><span class="nf">(el) -&gt;</span>
-      <span class="nx">unbindEvent</span> <span class="nx">el</span><span class="p">,</span> <span class="s">&#39;change&#39;</span><span class="p">,</span> <span class="nx">@currentListener</span>
-    <span class="nv">routine: </span><span class="nf">(el, value) -&gt;</span>
-      <span class="k">if</span> <span class="nx">el</span><span class="p">.</span><span class="nx">type</span> <span class="o">is</span> <span class="s">&#39;radio&#39;</span>
-        <span class="nv">el.checked = </span><span class="nx">el</span><span class="p">.</span><span class="nx">value</span> <span class="o">isnt</span> <span class="nx">value</span>
-      <span class="k">else</span>
-        <span class="nv">el.checked = </span><span class="o">!</span><span class="nx">value</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  unbind: =&gt;
+    binding.unbind() <span class="keyword">for</span> binding <span class="keyword">in</span> <span class="property">@bindings</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>Syncs up the view with the model by running the routines on all bindings.</p>
 
-  <span class="nv">show: </span><span class="nf">(el, value) -&gt;</span>
-    <span class="nv">el.style.display = </span><span class="k">if</span> <span class="nx">value</span> <span class="k">then</span> <span class="s">&#39;&#39;</span> <span class="k">else</span> <span class="s">&#39;none&#39;</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  sync: =&gt;
+    binding.sync() <span class="keyword">for</span> binding <span class="keyword">in</span> <span class="property">@bindings</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>Publishes the input values from the view back to the model (reverse sync).</p>
 
-  <span class="nv">hide: </span><span class="nf">(el, value) -&gt;</span>
-    <span class="nv">el.style.display = </span><span class="k">if</span> <span class="nx">value</span> <span class="k">then</span> <span class="s">&#39;none&#39;</span> <span class="k">else</span> <span class="s">&#39;&#39;</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  publish: =&gt;
+    binding.publish() <span class="keyword">for</span> binding <span class="keyword">in</span> <span class="property">@select</span> (b) -&gt; b.binder.publishes</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>Cross-browser event binding.</p>
 
-  <span class="nv">html: </span><span class="nf">(el, value) -&gt;</span>
-    <span class="nv">el.innerHTML = </span><span class="k">if</span> <span class="nx">value</span><span class="o">?</span> <span class="k">then</span> <span class="nx">value</span> <span class="k">else</span> <span class="s">&#39;&#39;</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="function"><span class="title">bindEvent</span></span> = (el, event, handler, context) -&gt;
+  <span class="function"><span class="title">fn</span></span> = (e) -&gt; handler.call context, e</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>Check to see if jQuery is loaded.</p>
 
-  <span class="nv">value:</span>
-    <span class="nv">publishes: </span><span class="kc">true</span>
-    <span class="nv">bind: </span><span class="nf">(el) -&gt;</span>
-      <span class="vi">@currentListener = </span><span class="nx">bindEvent</span> <span class="nx">el</span><span class="p">,</span> <span class="s">&#39;change&#39;</span><span class="p">,</span> <span class="nx">@publish</span>
-    <span class="nv">unbind: </span><span class="nf">(el) -&gt;</span>
-      <span class="nx">unbindEvent</span> <span class="nx">el</span><span class="p">,</span> <span class="s">&#39;change&#39;</span><span class="p">,</span> <span class="nx">@currentListener</span>
-    <span class="nv">routine: </span><span class="nf">(el, value) -&gt;</span>
-      <span class="k">if</span> <span class="nx">el</span><span class="p">.</span><span class="nx">type</span> <span class="o">is</span> <span class="s">&#39;select-multiple&#39;</span>
-        <span class="nv">o.selected = </span><span class="nx">o</span><span class="p">.</span><span class="nx">value</span> <span class="k">in</span> <span class="nx">value</span> <span class="k">for</span> <span class="nx">o</span> <span class="k">in</span> <span class="nx">el</span> <span class="k">if</span> <span class="nx">value</span><span class="o">?</span>
-      <span class="k">else</span>
-        <span class="nv">el.value = </span><span class="k">if</span> <span class="nx">value</span><span class="o">?</span> <span class="k">then</span> <span class="nx">value</span> <span class="k">else</span> <span class="s">&#39;&#39;</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">if</span> window.jQuery?
+    el = jQuery el
+    <span class="keyword">if</span> el.<span class="literal">on</span>? <span class="keyword">then</span> el.<span class="literal">on</span> event, fn <span class="keyword">else</span> el.bind event, fn</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>Check to see if addEventListener is available.</p>
 
-  <span class="nv">text: </span><span class="nf">(el, value) -&gt;</span>
-    <span class="k">if</span> <span class="nx">el</span><span class="p">.</span><span class="nx">innerText</span><span class="o">?</span>
-      <span class="nv">el.innerText = </span><span class="k">if</span> <span class="nx">value</span><span class="o">?</span> <span class="k">then</span> <span class="nx">value</span> <span class="k">else</span> <span class="s">&#39;&#39;</span>
-    <span class="k">else</span>
-      <span class="nv">el.textContent = </span><span class="k">if</span> <span class="nx">value</span><span class="o">?</span> <span class="k">then</span> <span class="nx">value</span> <span class="k">else</span> <span class="s">&#39;&#39;</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">else</span> <span class="keyword">if</span> window.addEventListener?
+    el.addEventListener event, fn, <span class="literal">false</span>
+  <span class="keyword">else</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>Assume we are in IE and use attachEvent.</p>
 
-  <span class="s">&quot;on-*&quot;</span><span class="o">:</span>
-    <span class="nv">function: </span><span class="kc">true</span>
-    <span class="nv">routine: </span><span class="nf">(el, value) -&gt;</span>
-      <span class="nx">unbindEvent</span> <span class="nx">el</span><span class="p">,</span> <span class="nx">@args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">@currentListener</span> <span class="k">if</span> <span class="nx">@currentListener</span>
-      <span class="vi">@currentListener = </span><span class="nx">bindEvent</span> <span class="nx">el</span><span class="p">,</span> <span class="nx">@args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">@model</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    event = <span class="string">'on'</span> + event
+    el.attachEvent event, fn
 
-  <span class="s">&quot;each-*&quot;</span><span class="o">:</span>
-    <span class="nv">block: </span><span class="kc">true</span>
-    <span class="nv">bind: </span><span class="nf">(el, collection) -&gt;</span>
-      <span class="nx">el</span><span class="p">.</span><span class="nx">removeAttribute</span> <span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">,</span> <span class="nx">rivets</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">prefix</span><span class="p">,</span> <span class="nx">@type</span><span class="p">].</span><span class="nx">join</span><span class="p">(</span><span class="s">&#39;-&#39;</span><span class="p">).</span><span class="nx">replace</span> <span class="s">&#39;--&#39;</span><span class="p">,</span> <span class="s">&#39;-&#39;</span>
-    <span class="nv">routine: </span><span class="nf">(el, collection) -&gt;</span>
-      <span class="k">if</span> <span class="nx">@iterated</span><span class="o">?</span>
-        <span class="k">for</span> <span class="nx">view</span> <span class="k">in</span> <span class="nx">@iterated</span>
-          <span class="nx">view</span><span class="p">.</span><span class="nx">unbind</span><span class="p">()</span>
-          <span class="nx">e</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">removeChild</span> <span class="nx">e</span> <span class="k">for</span> <span class="nx">e</span> <span class="k">in</span> <span class="nx">view</span><span class="p">.</span><span class="nx">els</span>
-      <span class="k">else</span>
-        <span class="vi">@marker = </span><span class="nb">document</span><span class="p">.</span><span class="nx">createComment</span> <span class="s">&quot; rivets: </span><span class="si">#{</span><span class="nx">@type</span><span class="si">}</span><span class="s"> &quot;</span>
-        <span class="nx">el</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">insertBefore</span> <span class="nx">@marker</span><span class="p">,</span> <span class="nx">el</span>
-        <span class="nx">el</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">removeChild</span> <span class="nx">el</span>
+  fn</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>Cross-browser event unbinding.</p>
 
-      <span class="vi">@iterated = </span><span class="p">[]</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="function"><span class="title">unbindEvent</span></span> = (el, event, fn) -&gt;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>Check to see if jQuery is loaded.</p>
 
-      <span class="k">if</span> <span class="nx">collection</span>
-        <span class="k">for</span> <span class="nx">item</span> <span class="k">in</span> <span class="nx">collection</span>
-          <span class="nv">data = </span><span class="p">{}</span>
-          <span class="nx">data</span><span class="p">[</span><span class="nx">n</span><span class="p">]</span> <span class="o">=</span> <span class="nx">m</span> <span class="k">for</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">m</span> <span class="k">of</span> <span class="nx">@view</span><span class="p">.</span><span class="nx">models</span>
-          <span class="nx">data</span><span class="p">[</span><span class="nx">@args</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">item</span>
-          <span class="nv">itemEl = </span><span class="nx">el</span><span class="p">.</span><span class="nx">cloneNode</span> <span class="kc">true</span>
-          <span class="k">if</span> <span class="nx">@iterated</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span>
-            <span class="nv">previous = </span><span class="nx">@iterated</span><span class="p">[</span><span class="nx">@iterated</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">].</span><span class="nx">els</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-          <span class="k">else</span>
-            <span class="nv">previous = </span><span class="nx">@marker</span>
-          <span class="nx">@marker</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">insertBefore</span> <span class="nx">itemEl</span><span class="p">,</span> <span class="nx">previous</span><span class="p">.</span><span class="nx">nextSibling</span> <span class="o">?</span> <span class="kc">null</span>
-          <span class="nx">@iterated</span><span class="p">.</span><span class="nx">push</span> <span class="nx">rivets</span><span class="p">.</span><span class="nx">bind</span> <span class="nx">itemEl</span><span class="p">,</span> <span class="nx">data</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">if</span> window.jQuery?
+    el = jQuery el
+    <span class="keyword">if</span> el.<span class="literal">off</span>? <span class="keyword">then</span> el.<span class="literal">off</span> event, fn <span class="keyword">else</span> el.unbind event, fn</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>Check to see if addEventListener is available.</p>
 
-  <span class="s">&quot;class-*&quot;</span><span class="o">:</span> <span class="nf">(el, value) -&gt;</span>
-    <span class="nv">elClass = </span><span class="s">&quot; </span><span class="si">#{</span><span class="nx">el</span><span class="p">.</span><span class="nx">className</span><span class="si">}</span><span class="s"> &quot;</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">else</span> <span class="keyword">if</span> window.removeEventListener
+    el.removeEventListener event, fn, <span class="literal">false</span>
+  <span class="keyword">else</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p>Assume we are in IE and use attachEvent.</p>
 
-    <span class="k">if</span> <span class="o">!</span><span class="nx">value</span> <span class="o">is</span> <span class="p">(</span><span class="nx">elClass</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s">&quot; </span><span class="si">#{</span><span class="nx">@args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s"> &quot;</span><span class="p">)</span> <span class="o">isnt</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-      <span class="nv">el.className = </span><span class="k">if</span> <span class="nx">value</span>
-        <span class="s">&quot;</span><span class="si">#{</span><span class="nx">el</span><span class="p">.</span><span class="nx">className</span><span class="si">}</span><span class="s"> </span><span class="si">#{</span><span class="nx">@args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s">&quot;</span>
-      <span class="k">else</span>
-        <span class="nx">elClass</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s">&quot; </span><span class="si">#{</span><span class="nx">@args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s"> &quot;</span><span class="p">,</span> <span class="s">&#39; &#39;</span><span class="p">).</span><span class="nx">trim</span><span class="p">()</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    event = <span class="string">'on'</span> + event
+    el.detachEvent  event, fn</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p>Cross-browser input value getter.</p>
 
-  <span class="s">&quot;*&quot;</span><span class="o">:</span> <span class="nf">(el, value) -&gt;</span>
-    <span class="k">if</span> <span class="nx">value</span>
-      <span class="nx">el</span><span class="p">.</span><span class="nx">setAttribute</span> <span class="nx">@type</span><span class="p">,</span> <span class="nx">value</span>
-    <span class="k">else</span>
-      <span class="nx">el</span><span class="p">.</span><span class="nx">removeAttribute</span> <span class="nx">@type</span></pre></div>             </td>           </tr>                               <tr id="section-31">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-31">&#182;</a>               </div>               <p>Default configuration.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">Rivets.config =</span>
-  <span class="nv">preloadData: </span><span class="kc">true</span></pre></div>             </td>           </tr>                               <tr id="section-32">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-32">&#182;</a>               </div>               <p>Default formatters. There aren't any.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">Rivets.formatters = </span><span class="p">{}</span></pre></div>             </td>           </tr>                               <tr id="section-33">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-33">&#182;</a>               </div>               <p>The rivets module. This is the public interface that gets exported.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">rivets =</span></pre></div>             </td>           </tr>                               <tr id="section-34">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-34">&#182;</a>               </div>               <p>Exposes the core binding routines that can be extended or stripped down.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">binders: </span><span class="nx">Rivets</span><span class="p">.</span><span class="nx">binders</span></pre></div>             </td>           </tr>                               <tr id="section-35">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-35">&#182;</a>               </div>               <p>Exposes the formatters object to be extended.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">formatters: </span><span class="nx">Rivets</span><span class="p">.</span><span class="nx">formatters</span></pre></div>             </td>           </tr>                               <tr id="section-36">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-36">&#182;</a>               </div>               <p>Exposes the rivets configuration options. These can be set manually or from
-rivets.configure with an object literal.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">config: </span><span class="nx">Rivets</span><span class="p">.</span><span class="nx">config</span></pre></div>             </td>           </tr>                               <tr id="section-37">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-37">&#182;</a>               </div>               <p>Sets configuration options by merging an object literal.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">configure: </span><span class="nf">(options={}) -&gt;</span>
-    <span class="k">for</span> <span class="nx">property</span><span class="p">,</span> <span class="nx">value</span> <span class="k">of</span> <span class="nx">options</span>
-      <span class="nx">Rivets</span><span class="p">.</span><span class="nx">config</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span>
-    <span class="k">return</span></pre></div>             </td>           </tr>                               <tr id="section-38">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-38">&#182;</a>               </div>               <p>Binds a set of model objects to a parent DOM element. Returns a Rivets.View
-instance.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">bind: </span><span class="nf">(el, models = {}) -&gt;</span>
-    <span class="nv">view = </span><span class="k">new</span> <span class="nx">Rivets</span><span class="p">.</span><span class="nx">View</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">models</span><span class="p">)</span>
-    <span class="nx">view</span><span class="p">.</span><span class="nx">bind</span><span class="p">()</span>
-    <span class="nx">view</span></pre></div>             </td>           </tr>                               <tr id="section-39">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-39">&#182;</a>               </div>               <p>Exports rivets for both CommonJS and the browser.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="k">if</span> <span class="nx">module</span><span class="o">?</span>
-  <span class="nv">module.exports = </span><span class="nx">rivets</span>
-<span class="k">else</span>
-  <span class="vi">@rivets = </span><span class="nx">rivets</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="function"><span class="title">getInputValue</span></span> = (el) -&gt;
+  <span class="keyword">if</span> window.jQuery?
+    el = jQuery el
 
-</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
+    <span class="keyword">switch</span> el[<span class="number">0</span>].type
+      <span class="keyword">when</span> <span class="string">'checkbox'</span> <span class="keyword">then</span> el.<span class="keyword">is</span> <span class="string">':checked'</span>
+      <span class="keyword">else</span> el.val()
+  <span class="keyword">else</span>
+    <span class="keyword">switch</span> el.type
+      <span class="keyword">when</span> <span class="string">'checkbox'</span> <span class="keyword">then</span> el.checked
+      <span class="keyword">when</span> <span class="string">'select-multiple'</span> <span class="keyword">then</span> o.value <span class="keyword">for</span> o <span class="keyword">in</span> el <span class="keyword">when</span> o.selected
+      <span class="keyword">else</span> el.value</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <p>Core binding routines.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Rivets.binders =
+  enabled: (el, value) -&gt;
+    el.disabled = !value
+
+  disabled: (el, value) -&gt;
+    el.disabled = !!value
+
+  checked:
+    publishes: <span class="literal">true</span>
+    bind: (el) -&gt;
+      <span class="property">@currentListener</span> = bindEvent el, <span class="string">'change'</span>, <span class="property">@publish</span>
+    unbind: (el) -&gt;
+      unbindEvent el, <span class="string">'change'</span>, <span class="property">@currentListener</span>
+    routine: (el, value) -&gt;
+      <span class="keyword">if</span> el.type <span class="keyword">is</span> <span class="string">'radio'</span>
+        el.checked = el.value?.toString() <span class="keyword">is</span> value?.toString()
+      <span class="keyword">else</span>
+        el.checked = !!value
+
+  unchecked:
+    publishes: <span class="literal">true</span>
+    bind: (el) -&gt;
+      <span class="property">@currentListener</span> = bindEvent el, <span class="string">'change'</span>, <span class="property">@publish</span>
+    unbind: (el) -&gt;
+      unbindEvent el, <span class="string">'change'</span>, <span class="property">@currentListener</span>
+    routine: (el, value) -&gt;
+      <span class="keyword">if</span> el.type <span class="keyword">is</span> <span class="string">'radio'</span>
+        el.checked = el.value?.toString() <span class="keyword">isnt</span> value?.toString()
+      <span class="keyword">else</span>
+        el.checked = !value
+
+  show: (el, value) -&gt;
+    el.style.display = <span class="keyword">if</span> value <span class="keyword">then</span> <span class="string">''</span> <span class="keyword">else</span> <span class="string">'none'</span>
+
+  hide: (el, value) -&gt;
+    el.style.display = <span class="keyword">if</span> value <span class="keyword">then</span> <span class="string">'none'</span> <span class="keyword">else</span> <span class="string">''</span>
+
+  html: (el, value) -&gt;
+    el.innerHTML = <span class="keyword">if</span> value? <span class="keyword">then</span> value <span class="keyword">else</span> <span class="string">''</span>
+
+  value:
+    publishes: <span class="literal">true</span>
+    bind: (el) -&gt;
+      <span class="property">@currentListener</span> = bindEvent el, <span class="string">'change'</span>, <span class="property">@publish</span>
+    unbind: (el) -&gt;
+      unbindEvent el, <span class="string">'change'</span>, <span class="property">@currentListener</span>
+    routine: (el, value) -&gt;
+      <span class="keyword">if</span> window.jQuery?
+        el = jQuery el
+
+        <span class="keyword">if</span> value?.toString() <span class="keyword">isnt</span> el.val()?.toString()
+          el.val <span class="keyword">if</span> value? <span class="keyword">then</span> value <span class="keyword">else</span> <span class="string">''</span>
+      <span class="keyword">else</span>
+        <span class="keyword">if</span> el.type <span class="keyword">is</span> <span class="string">'select-multiple'</span>
+          o.selected = o.value <span class="keyword">in</span> value <span class="keyword">for</span> o <span class="keyword">in</span> el <span class="keyword">if</span> value?
+        <span class="keyword">else</span> <span class="keyword">if</span> value?.toString() <span class="keyword">isnt</span> el.value?.toString()
+          el.value = <span class="keyword">if</span> value? <span class="keyword">then</span> value <span class="keyword">else</span> <span class="string">''</span>
+
+  text: (el, value) -&gt;
+    <span class="keyword">if</span> el.innerText?
+      el.innerText = <span class="keyword">if</span> value? <span class="keyword">then</span> value <span class="keyword">else</span> <span class="string">''</span>
+    <span class="keyword">else</span>
+      el.textContent = <span class="keyword">if</span> value? <span class="keyword">then</span> value <span class="keyword">else</span> <span class="string">''</span>
+
+  <span class="string">"on-*"</span>:
+    <span class="reserved">function</span>: <span class="literal">true</span>
+    routine: (el, value) -&gt;
+      unbindEvent el, <span class="property">@args</span>[<span class="number">0</span>], <span class="property">@currentListener</span> <span class="keyword">if</span> <span class="property">@currentListener</span>
+      <span class="property">@currentListener</span> = bindEvent el, <span class="property">@args</span>[<span class="number">0</span>], value, <span class="property">@model</span>
+
+  <span class="string">"each-*"</span>:
+    block: <span class="literal">true</span>
+    bind: (el, collection) -&gt;
+      el.removeAttribute [<span class="string">'data'</span>, rivets.config.prefix, <span class="property">@type</span>].join(<span class="string">'-'</span>).replace <span class="string">'--'</span>, <span class="string">'-'</span>
+    routine: (el, collection) -&gt;
+      <span class="keyword">if</span> <span class="property">@iterated</span>?
+        <span class="keyword">for</span> view <span class="keyword">in</span> <span class="property">@iterated</span>
+          view.unbind()
+          e.parentNode.removeChild e <span class="keyword">for</span> e <span class="keyword">in</span> view.els
+      <span class="keyword">else</span>
+        <span class="property">@marker</span> = document.createComment <span class="string">" rivets: <span class="subst">#{@type}</span> "</span>
+        el.parentNode.insertBefore <span class="property">@marker</span>, el
+        el.parentNode.removeChild el
+
+      <span class="property">@iterated</span> = []
+
+      <span class="keyword">if</span> collection
+        <span class="keyword">for</span> item <span class="keyword">in</span> collection
+          data = {}
+          data[n] = m <span class="keyword">for</span> n, m <span class="keyword">of</span> <span class="property">@view</span>.models
+          data[<span class="property">@args</span>[<span class="number">0</span>]] = item
+          itemEl = el.cloneNode <span class="literal">true</span>
+          <span class="keyword">if</span> <span class="property">@iterated</span>.length &gt; <span class="number">0</span>
+            previous = <span class="property">@iterated</span>[<span class="property">@iterated</span>.length - <span class="number">1</span>].els[<span class="number">0</span>]
+          <span class="keyword">else</span>
+            previous = <span class="property">@marker</span>
+          <span class="property">@marker</span>.parentNode.insertBefore itemEl, previous.nextSibling ? <span class="literal">null</span>
+          <span class="property">@iterated</span>.push rivets.bind itemEl, data
+
+  <span class="string">"class-*"</span>: (el, value) -&gt;
+    elClass = <span class="string">" <span class="subst">#{el.className}</span> "</span>
+
+    <span class="keyword">if</span> !value <span class="keyword">is</span> (elClass.indexOf(<span class="string">" <span class="subst">#{@args[<span class="number">0</span>]}</span> "</span>) <span class="keyword">isnt</span> -<span class="number">1</span>)
+      el.className = <span class="keyword">if</span> value
+        <span class="string">"<span class="subst">#{el.className}</span> <span class="subst">#{@args[<span class="number">0</span>]}</span>"</span>
+      <span class="keyword">else</span>
+        elClass.replace(<span class="string">" <span class="subst">#{@args[<span class="number">0</span>]}</span> "</span>, <span class="string">' '</span>).trim()
+
+  <span class="string">"*"</span>: (el, value) -&gt;
+    <span class="keyword">if</span> value
+      el.setAttribute <span class="property">@type</span>, value
+    <span class="keyword">else</span>
+      el.removeAttribute <span class="property">@type</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-30">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              <p>Default configuration.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Rivets.config =
+  preloadData: <span class="literal">true</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-31">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <p>Default formatters. There aren&#39;t any.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Rivets.formatters = {}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <p>The rivets module. This is the public interface that gets exported.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="function"><span class="title">factory</span></span> = (exports) -&gt;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-33">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
+              <p>Exposes the core binding routines that can be extended or stripped down.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  exports.binders = Rivets.binders</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-34">&#182;</a>
+              </div>
+              <p>Exposes the formatters object to be extended.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  exports.formatters = Rivets.formatters</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-35">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-35">&#182;</a>
+              </div>
+              <p>Exposes the rivets configuration options. These can be set manually or from
+rivets.configure with an object literal.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  exports.config = Rivets.config</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-36">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-36">&#182;</a>
+              </div>
+              <p>Sets configuration options by merging an object literal.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  exports.<span class="function"><span class="title">configure</span></span> = (options={}) -&gt;
+    <span class="keyword">for</span> property, value <span class="keyword">of</span> options
+      Rivets.config[property] = value
+    <span class="keyword">return</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-37">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-37">&#182;</a>
+              </div>
+              <p>Binds a set of model objects to a parent DOM element. Returns a Rivets.View
+instance.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  exports.<span class="function"><span class="title">bind</span></span> = (el, models = {}) -&gt;
+    view = <span class="keyword">new</span> Rivets.View(el, models)
+    view.bind()
+    view</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-38">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-38">&#182;</a>
+              </div>
+              <p>Exports rivets for CommonJS, AMD and the browser.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">if</span> <span class="keyword">typeof</span> exports == <span class="string">'object'</span>
+  factory(exports)
+<span class="keyword">else</span> <span class="keyword">if</span> <span class="keyword">typeof</span> define == <span class="string">'function'</span> &amp;&amp; define.amd
+  define [<span class="string">'exports'</span>], (exports) -&gt;
+    factory(<span class="property">@rivets</span> = exports)
+    <span class="keyword">return</span> exports
+<span class="keyword">else</span>
+  factory(<span class="property">@rivets</span> = {})</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
