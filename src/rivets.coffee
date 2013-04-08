@@ -313,10 +313,16 @@ Rivets.binders =
     unbind: (el) ->
       unbindEvent el, 'change', @currentListener
     routine: (el, value) ->
-      if el.type is 'select-multiple'
-        o.selected = o.value in value for o in el if value?
-      else if value?.toString() isnt el.value?.toString()
-        el.value = if value? then value else ''
+      if window.jQuery?
+        el = jQuery el
+
+        if value?.toString() isnt el.val()?.toString()
+          el.val if value? then value else ''
+      else
+        if el.type is 'select-multiple'
+          o.selected = o.value in value for o in el if value?
+        else if value?.toString() isnt el.value?.toString()
+          el.value = if value? then value else ''
 
   text: (el, value) ->
     if el.innerText?
