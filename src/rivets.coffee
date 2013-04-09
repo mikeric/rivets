@@ -6,6 +6,10 @@
 # The Rivets namespace.
 Rivets = {}
 
+# store reference to local rivets export for internal event handlers
+# @type {Rivets}
+localRivets = undefined
+
 # Polyfill For String::trim.
 unless String::trim then String::trim = -> @replace /^\s+|\s+$/g, ''
 
@@ -339,7 +343,7 @@ Rivets.binders =
   "each-*":
     block: true
     bind: (el, collection) ->
-      el.removeAttribute ['data', rivets.config.prefix, @type].join('-').replace '--', '-'
+      el.removeAttribute ['data', localRivets.config.prefix, @type].join('-').replace '--', '-'
     routine: (el, collection) ->
       if @iterated?
         for view in @iterated
@@ -363,7 +367,7 @@ Rivets.binders =
           else
             previous = @marker
           @marker.parentNode.insertBefore itemEl, previous.nextSibling ? null
-          @iterated.push rivets.bind itemEl, data
+          @iterated.push localRivets.bind itemEl, data
 
   "class-*": (el, value) ->
     elClass = " #{el.className} "
@@ -412,12 +416,15 @@ factory = (exports) ->
     view.bind()
     view
 
+  # store reference to local rivets export for internal event handlers
+  localRivets = exports
+
 # Exports rivets for CommonJS, AMD and the browser.
 if typeof exports == 'object'
   factory(exports)
 else if typeof define == 'function' && define.amd
   define ['exports'], (exports) ->
-    factory(@rivets = exports)
+    factory(exports)
     return exports
 else
   factory(@rivets = {})
