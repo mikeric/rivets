@@ -339,7 +339,7 @@ Rivets.binders =
   "each-*":
     block: true
     bind: (el, collection) ->
-      el.removeAttribute ['data', rivets.config.prefix, @type].join('-').replace '--', '-'
+      el.removeAttribute ['data', Rivets.config.prefix, @type].join('-').replace '--', '-'
     routine: (el, collection) ->
       if @iterated?
         for view in @iterated
@@ -358,12 +358,16 @@ Rivets.binders =
           data[n] = m for n, m of @view.models
           data[@args[0]] = item
           itemEl = el.cloneNode true
-          if @iterated.length > 0
-            previous = @iterated[@iterated.length - 1].els[0]
+
+          previous = if @iterated.length
+            @iterated[@iterated.length - 1].els[0]
           else
-            previous = @marker
+            @marker
+
           @marker.parentNode.insertBefore itemEl, previous.nextSibling ? null
-          @iterated.push rivets.bind itemEl, data
+          view = new Rivets.View(itemEl, data)
+          view.bind()
+          @iterated.push view
 
   "class-*": (el, value) ->
     elClass = " #{el.className} "
