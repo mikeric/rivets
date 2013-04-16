@@ -170,6 +170,52 @@ describe('Functional', function() {
       })
 
     });
+
+    describe('Template', function() {
+      it('can bind recursively', function() {
+        var expected, actual;
+        var treeRoot = new TreeNode({
+          name: 'root',
+          children: [
+            new TreeNode({
+            name: 'child',
+            children: [
+              new TreeNode({
+              name: 'grandchild'
+            })
+            ]
+          })
+          ]
+        });
+        el.setAttribute('data-template', 'root:template');
+        rivets.bind(el, {root: treeRoot});
+        expected = '<span data-text="model.name">root</span>' +
+          '<ul data-show="model.length" style="display: none;">' + 
+            '<!-- rivets: each-child -->' +
+            '<li>' +
+              '<div class="node" data-template="child:template">' +
+                '<span data-text="model.name">child</span>' +
+                '<ul data-show="model.length" style="display: none;">' + 
+                  '<!-- rivets: each-child -->' +
+                  '<li>' +
+                    '<div class="node" data-template="child:template">' +
+                      '<span data-text="model.name">grandchild</span>' +
+                      '<ul data-show="model.length" style="display: none;">' + 
+                        '<!-- rivets: each-child -->' +
+                      '</ul>' +
+                    '</div>' +
+                  '</li>' +
+                '</ul>' +
+              '</div>' +
+            '</li>' +
+          '</ul>';
+        actual = el.innerHTML;
+        // This little hack is needed to make the test pass in phantomjs
+        // since it will put a space after the 'display: none;' string
+        actual = actual.replace(/none;\s"/g, 'none;"');
+        expect(actual).toBe(expected);
+      });
+    });
   });
 
   describe('Updates', function() {

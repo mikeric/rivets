@@ -1,0 +1,88 @@
+<html>
+  <head>
+    <style type="text/css" media="all">
+    .node {
+    float: left;
+    border: 1px solid black;
+    padding: 5px;
+    }
+    li { list-style-type: none; }
+    .buttons { float: left; clear: both; }
+    </style>
+  </head>
+  <body>
+
+    <div id="root" class="node" data-template="model:template"></div>
+
+    <script type="text/rivets-template" id="tree-template">
+        <span data-text="model:name"></span>
+        <ul data-show="model.length">
+            <li data-each-child="model.children">
+              <div class="node" data-template="child:template"></div>
+            </li>
+        </ul>
+        <div class="buttons">
+          <button data-on-click = "model.add"> Add node </button>
+          <button data-on-click="model.clear" data-show="model.length">Clear nodes</button>
+        </div>
+    </script>
+
+    <script src="../lib/rivets.js"></script>
+    <script type="text/javascript">
+      function Node(name) {
+        this.name = name;
+        this.children = [];
+        this.onchange = {
+          length: [],
+          children: []    
+        };
+      }
+      Node.prototype.add = function () {
+        this.children.push(new Node(this.name + '-child-' + this.children.length));
+        this.notify('length');
+        this.notify('children');
+      };
+      Node.prototype.clear = function () {
+        this.children = [];
+        this.notify('length');
+        this.notify('children');
+      };
+      Node.prototype.notify = function (key) {
+        for (var i = 0; i < this.onchange[key].length; i++)
+        this.onchange[key][i](this);
+      };
+      Node.prototype.length = function () {
+        return this.children.length;
+      };
+      Node.prototype.template = document.getElementById('tree-template').innerHTML;
+
+      rivets.configure({
+        adapter: {
+          subscribe: function (obj, keypath, callback) {
+            if (keypath in obj.onchange)
+              obj.onchange[keypath].push(callback);
+          },
+          unsubscribe: function (obj, keypath, callback) {
+            if (keypath in obj.onchange)            
+              for (var i = 0; i < obj.onchange[keypath].length; i++)
+            if (obj.onchange[keypath][i] === callback) {
+              obj.onchange[keypath].splice(i, 1);
+              break;
+            }
+          },
+          read: function (obj, keypath) {          
+            return obj[keypath];
+          },
+          publish: function (obj, keypath, value) {
+            obj[keypath] = value;
+          }
+        }
+      });
+
+      root = new Node('root');
+      root.view = rivets.bind(document.getElementById('root'), { model: root });
+    </script>
+  </body>
+
+</html>
+

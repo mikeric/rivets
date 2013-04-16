@@ -106,6 +106,7 @@ class Rivets.Binding
 
   # Unsubscribes from the model and the element.
   unbind: =>
+
     @binder.unbind?.call @, @el
 
     unless @options.bypass
@@ -335,6 +336,8 @@ Rivets.binders =
     routine: (el, value) ->
       unbindEvent el, @args[0], @currentListener if @currentListener
       @currentListener = bindEvent el, @args[0], value, @model
+    unbind: (el) ->
+      unbindEvent el, @args[0], @currentListener if @currentListener
 
   "each-*":
     block: true
@@ -377,6 +380,32 @@ Rivets.binders =
         "#{el.className} #{@args[0]}"
       else
         elClass.replace(" #{@args[0]} ", ' ').trim()
+
+  template:
+    bind: ->
+      @childViews = []
+    routine: (el, value) ->
+      el.innerHTML = value
+      view.unbind() for view in @childViews
+      data = {}
+      data[n] = m for n, m of @view.models
+      data.model = @model
+      for childNode in el.childNodes when childNode.nodeType is 1
+        @childViews.push rivets.bind(childNode, data)
+    unbind: (el) ->
+      for view in @childViews
+        view.unbind()
+        # this should make things easier for stupid garbage
+        # collectors(eg: IE)
+        for binding in view.bindings
+          binding.model = null
+          binding.el = null
+          binding.options = null
+        view.bindings = null
+        view.models = null
+        view.els = null
+      @childViews = []
+      el.innerHTML = ''
 
   "*": (el, value) ->
     if value
