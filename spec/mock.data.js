@@ -57,4 +57,27 @@ Data.prototype.alertCallbacks = function(key) {
   }
 }
 
+function TreeNode(attributes) {
+  Data.call(this, attributes);
+  if (!this.attributes.children)
+    this.attributes.children = [];
+}
+TreeNode.prototype = new Data();
+
+TreeNode.prototype.length = function () {
+  return this.attributes.children.length;
+};
+
+TreeNode.prototype.template = function() {
+  return (
+    '<span data-text="model.name"></span>' +
+    '<ul data-show="model.length">' + 
+      '<li data-each-child="model.children">' +
+        '<div class="node" data-template="child:template"></div>' +
+      '</li>' +
+    '</ul>'
+  );
+};
+
 window.Data = Data;
+window.TreeNode = TreeNode;
