@@ -1,5 +1,5 @@
 describe('Rivets.Binding', function() {
-  var model, el, view, binding;
+  var model, el, view, binding, opts;
 
   beforeEach(function() {
     rivets.configure({
@@ -13,7 +13,8 @@ describe('Rivets.Binding', function() {
 
     el = document.createElement('div');
     el.setAttribute('data-text', 'obj.name');
-    view = rivets.bind(el, {obj: {}});
+    opts = {};
+    view = rivets.bind(el, {obj: {}}, opts);
     binding = view.bindings[0];
     model = binding.model;
   });
@@ -103,7 +104,7 @@ describe('Rivets.Binding', function() {
       binding.unbind();
       expect(binding.binder.unbind).toHaveBeenCalled();
     });
-    
+
     describe('with the bypass option set to true', function() {
       beforeEach(function() {
         binding.options.bypass = true;
@@ -240,11 +241,11 @@ describe('Rivets.Binding', function() {
 
 
     it("should apply read binders left to right, and write binders right to left", function() {
-      rivets.formatters.totally = { 
+      rivets.formatters.totally = {
         publish: function(value) { return value + ' totally'; },
         read: function(value) { return value + ' totally'; }
       };
-      rivets.formatters.awesome = { 
+      rivets.formatters.awesome = {
         publish: function(value) { return value + ' is awesome'; },
         read: function(value) { return value + ' is awesome'; }
       };
@@ -268,7 +269,7 @@ describe('Rivets.Binding', function() {
     });
 
      it("binders in a chain should be skipped if they're not there", function() {
-      rivets.formatters.totally = { 
+      rivets.formatters.totally = {
         publish: function(value) { return value + ' totally'; },
         read: function(value) { return value + ' totally'; }
       };
@@ -308,6 +309,12 @@ describe('Rivets.Binding', function() {
       model.modelAwesome = function(value) { return 'model awesome ' + value; };
       binding.formatters.push('modelAwesome');
       expect(binding.formattedValue('hat')).toBe('model awesome hat');
+    });
+
+    it('uses formatters from the bind options', function() {
+      opts.formatters = { optAwesome: function(value) { return 'option awesome ' + value; } };
+      binding.formatters.push("optAwesome");
+      expect(binding.formattedValue('hat')).toBe('option awesome hat');
     });
 
     describe('with a multi-argument formatter string', function() {
