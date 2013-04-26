@@ -131,7 +131,7 @@ describe('Rivets.Binding', function() {
     });
 
     it('applies any formatters to the value before performing the routine', function() {
-      rivets.formatters.awesome = function(value) { return 'awesome ' + value; };
+      view.formatters.awesome = function(value) { return 'awesome ' + value; };
       binding.formatters.push('awesome');
       spyOn(binding.binder, 'routine');
       binding.set('sweater');
@@ -167,7 +167,7 @@ describe('Rivets.Binding', function() {
   describe('publishTwoWay()', function() {
 
     it('applies a two-way read formatter to function same as a single-way', function() {
-      rivets.formatters.awesome = {
+      view.formatters.awesome = {
         read: function(value) { return 'awesome ' + value; },
       };
       binding.formatters.push('awesome');
@@ -300,7 +300,7 @@ describe('Rivets.Binding', function() {
 
   describe('formattedValue()', function() {
     it('applies the current formatters on the supplied value', function() {
-      rivets.formatters.awesome = function(value) { return 'awesome ' + value; };
+      view.formatters.awesome = function(value) { return 'awesome ' + value; };
       binding.formatters.push('awesome');
       expect(binding.formattedValue('hat')).toBe('awesome hat');
     });
@@ -311,15 +311,9 @@ describe('Rivets.Binding', function() {
       expect(binding.formattedValue('hat')).toBe('model awesome hat');
     });
 
-    it('uses formatters from the bind options', function() {
-      opts.formatters = { optAwesome: function(value) { return 'option awesome ' + value; } };
-      binding.formatters.push("optAwesome");
-      expect(binding.formattedValue('hat')).toBe('option awesome hat');
-    });
-
     describe('with a multi-argument formatter string', function() {
       beforeEach(function() {
-        rivets.formatters.awesome = function(value, prefix) {
+        view.formatters.awesome = function(value, prefix) {
           return prefix + ' awesome ' + value;
         };
         binding.formatters.push('awesome super');
