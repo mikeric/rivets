@@ -345,6 +345,8 @@ Rivets.binders =
     block: true
     bind: (el, collection) ->
       el.removeAttribute ['data', @view.config.prefix, @type].join('-').replace '--', '-'
+    unbind: (el, collection) ->
+      view.unbind() for view in @iterated if @iterated?
     routine: (el, collection) ->
       if @iterated?
         for view in @iterated
