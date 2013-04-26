@@ -11,12 +11,12 @@ unless String::trim then String::trim = -> @replace /^\s+|\s+$/g, ''
 
 # A single binding between a model attribute and a DOM element.
 class Rivets.Binding
-  # All information about the binding is passed into the constructor; the DOM
-  # element, the type of binding, the model object and the keypath at which
-  # to listen for changes.
-  constructor: (@el, @type, @model, @keypath, @options = {}) ->
-    unless @binder = Rivets.binders[type]
-      for identifier, value of Rivets.binders
+  # All information about the binding is passed into the constructor; the
+  # containing view, the DOM node, the type of binding, the model object and the
+  # keypath at which to listen for changes.
+  constructor: (@view, @el, @type, @model, @keypath, @options = {}) ->
+    unless @binder = @view.binders[type]
+      for identifier, value of @view.binders
         if identifier isnt '*' and identifier.indexOf('*') isnt -1
           regexp = new RegExp "^#{identifier.replace('*', '.+')}$"
           if regexp.test type
@@ -24,7 +24,7 @@ class Rivets.Binding
             @args = new RegExp("^#{identifier.replace('*', '(.+)')}$").exec type
             @args.shift()
 
-    @binder or= Rivets.binders['*']
+    @binder or= @view.binders['*']
 
     if @binder instanceof Function
       @binder = {routine: @binder}
@@ -43,7 +43,7 @@ class Rivets.Binding
       else if @options?.bindingOptions?.formatters?[id] instanceof Function
         @options.bindingOptions.formatters[id]
       else
-        Rivets.formatters[id]
+        @view.formatters[id]
 
       if formatter?.read instanceof Function
         value = formatter.read value, args...
@@ -67,7 +67,7 @@ class Rivets.Binding
     @set if @options.bypass
       @model[@keypath]
     else
-      Rivets.config.adapter.read @model, @keypath
+      @view.config.adapter.read @model, @keypath
 
   # Publishes the value currently set on the input element back to the model.
   publish: =>
@@ -77,10 +77,10 @@ class Rivets.Binding
       args = formatter.split /\s+/
       id = args.shift()
 
-      if Rivets.formatters[id]?.publish
-        value = Rivets.formatters[id].publish value, args...
+      if @view.formatters[id]?.publish
+        value = @view.formatters[id].publish value, args...
 
-    Rivets.config.adapter.publish @model, @keypath, value
+    @view.config.adapter.publish @model, @keypath, value
 
   # Subscribes to the model for changes at the specified keypath. Bi-directional
   # routines will also listen for changes on the element to propagate them back
@@ -91,8 +91,8 @@ class Rivets.Binding
     if @options.bypass
       @sync()
     else
-      Rivets.config.adapter.subscribe @model, @keypath, @sync
-      @sync() if Rivets.config.preloadData
+      @view.config.adapter.subscribe @model, @keypath, @sync
+      @sync() if @view.config.preloadData
 
     if @options.dependencies?.length
       for dependency in @options.dependencies
@@ -104,14 +104,14 @@ class Rivets.Binding
           model = @view.models[dependency.shift()]
           keypath = dependency.join '.'
 
-        Rivets.config.adapter.subscribe model, keypath, @sync
+        @view.config.adapter.subscribe model, keypath, @sync
 
   # Unsubscribes from the model and the element.
   unbind: =>
     @binder.unbind?.call @, @el
 
     unless @options.bypass
-      Rivets.config.adapter.unsubscribe @model, @keypath, @sync
+      @view.config.adapter.unsubscribe @model, @keypath, @sync
 
     if @options.dependencies?.length
       for dependency in @options.dependencies
@@ -123,19 +123,26 @@ class Rivets.Binding
           model = @view.models[dependency.shift()]
           keypath = dependency.join '.'
 
-        Rivets.config.adapter.unsubscribe model, keypath, @sync
+        @view.config.adapter.unsubscribe model, keypath, @sync
 
 # A collection of bindings built from a set of parent elements.
 class Rivets.View
   # The DOM elements and the model objects for binding are passed into the
-  # constructor.
-  constructor: (@els, @models, @options) ->
+  # constructor along with any local options that should be used throughout the
+  # context of the view and it's bindings.
+  constructor: (@els, @models, @options = {}) ->
     @els = [@els] unless (@els.jquery || @els instanceof Array)
+
+    for option in ['config', 'binders', 'formatters']
+      @[option] = {}
+      @[option][k] = v for k, v of @options[option] if @options[option]
+      @[option][k] ?= v for k, v of Rivets[option]
+
     @build()
 
   # Regular expression used to match binding attributes.
   bindingRegExp: =>
-    prefix = Rivets.config.prefix
+    prefix = @config.prefix
     if prefix then new RegExp("^data-#{prefix}-") else /^data-/
 
   # Parses the DOM tree and builds Rivets.Binding instances for every matched
@@ -151,14 +158,14 @@ class Rivets.View
         for attribute in node.attributes
           if bindingRegExp.test attribute.name
             type = attribute.name.replace bindingRegExp, ''
-            unless binder = Rivets.binders[type]
-              for identifier, value of Rivets.binders
+            unless binder = @binders[type]
+              for identifier, value of @binders
                 if identifier isnt '*' and identifier.indexOf('*') isnt -1
                   regexp = new RegExp "^#{identifier.replace('*', '.+')}$"
                   if regexp.test type
                     binder = value
 
-            binder or= Rivets.binders['*']
+            binder or= @binders['*']
 
             if binder.block
               skipNodes.push n for n in node.getElementsByTagName '*'
@@ -167,10 +174,6 @@ class Rivets.View
         for attribute in attributes or node.attributes
           if bindingRegExp.test attribute.name
             options = {}
-
-            if @options? and typeof @options is 'object'
-                options.bindingOptions = @options
-
             type = attribute.name.replace bindingRegExp, ''
             pipes = (pipe.trim() for pipe in attribute.value.split '|')
             context = (ctx.trim() for ctx in pipes.shift().split '<')
@@ -189,10 +192,7 @@ class Rivets.View
               if dependencies = context.shift()
                 options.dependencies = dependencies.split /\s+/
 
-              binding = new Rivets.Binding node, type, model, keypath, options
-              binding.view = @
-
-              @bindings.push binding
+              @bindings.push new Rivets.Binding @, node, type, model, keypath, options
 
         attributes = null if attributes
 
@@ -344,7 +344,7 @@ Rivets.binders =
   "each-*":
     block: true
     bind: (el, collection) ->
-      el.removeAttribute ['data', Rivets.config.prefix, @type].join('-').replace '--', '-'
+      el.removeAttribute ['data', @view.config.prefix, @type].join('-').replace '--', '-'
     unbind: (el, collection) ->
       view.unbind() for view in @iterated if @iterated?
     routine: (el, collection) ->
@@ -372,7 +372,7 @@ Rivets.binders =
             @marker
 
           @marker.parentNode.insertBefore itemEl, previous.nextSibling ? null
-          view = new Rivets.View(itemEl, data)
+          view = new Rivets.View(itemEl, data, @view.options)
           view.bind()
           @iterated.push view
 
