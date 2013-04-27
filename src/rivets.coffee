@@ -14,7 +14,7 @@ class Rivets.Binding
   # All information about the binding is passed into the constructor; the
   # containing view, the DOM node, the type of binding, the model object and the
   # keypath at which to listen for changes.
-  constructor: (@view, @el, @type, @model, @keypath, @options = {}) ->
+  constructor: (@view, @el, @type, @key, @keypath, @options = {}) ->
     unless @binder = @view.binders[type]
       for identifier, value of @view.binders
         if identifier isnt '*' and identifier.indexOf('*') isnt -1
@@ -25,11 +25,9 @@ class Rivets.Binding
             @args.shift()
 
     @binder or= @view.binders['*']
-
-    if @binder instanceof Function
-      @binder = {routine: @binder}
-
+    @binder = {routine: @binder} if @binder instanceof Function
     @formatters = @options.formatters || []
+    @model = @view.models[@key]
 
   # Applies all the current formatters to the supplied value and returns the
   # formatted value.
@@ -182,17 +180,17 @@ class Rivets.View
             options.formatters = pipes
             options.bypass = path.indexOf(':') != -1
             if splitPath[0]
-              model = @models[splitPath.shift()]
+              key = splitPath.shift()
             else
-              model = @models
+              key = null
               splitPath.shift()
             keypath = splitPath.join '.'
 
-            if model
+            if @models[key]?
               if dependencies = context.shift()
                 options.dependencies = dependencies.split /\s+/
 
-              @bindings.push new Rivets.Binding @, node, type, model, keypath, options
+              @bindings.push new Rivets.Binding @, node, type, key, keypath, options
 
         attributes = null if attributes
 
