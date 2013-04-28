@@ -12,25 +12,25 @@ module.exports = (grunt) ->
     coffee:
       all:
         files:
-          'lib/rivets.js': 'src/rivets.coffee'
+          'dist/rivets.js': 'src/rivets.coffee'
 
     concat:
       all:
         options:
           banner: '<%= meta.banner %>'
         files:
-          'lib/rivets.js': 'lib/rivets.js'
+          'dist/rivets.js': 'dist/rivets.js'
 
     uglify:
       all:
         options:
           banner: '<%= meta.banner %>'
         files:
-          'lib/rivets.min.js': 'lib/rivets.js'
+          'dist/rivets.min.js': 'dist/rivets.js'
 
     jasmine:
       all:
-        src: 'lib/rivets.js'
+        src: 'dist/rivets.js'
         options:
           specs: 'spec/rivets/**/*.js'
           helpers: 'spec/lib/**/*.js'
