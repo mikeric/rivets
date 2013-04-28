@@ -25,6 +25,7 @@ module.exports = (grunt) ->
       all:
         options:
           banner: '<%= meta.banner %>'
+          report: 'gzip'
         files:
           'dist/rivets.min.js': 'dist/rivets.js'
 
