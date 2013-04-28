@@ -14,6 +14,13 @@ module.exports = (grunt) ->
         files:
           'lib/rivets.js': 'src/rivets.coffee'
 
+    concat:
+      all:
+        options:
+          banner: '<%= meta.banner %>'
+        files:
+          'lib/rivets.js': 'lib/rivets.js'
+
     uglify:
       all:
         options:
@@ -34,10 +41,11 @@ module.exports = (grunt) ->
         tasks: ['build', 'spec']
 
   grunt.loadNpmTasks 'grunt-contrib-coffee'
+  grunt.loadNpmTasks 'grunt-contrib-concat'
   grunt.loadNpmTasks 'grunt-contrib-uglify'
   grunt.loadNpmTasks 'grunt-contrib-jasmine'
   grunt.loadNpmTasks 'grunt-contrib-watch'
 
   grunt.registerTask 'default', ['watch']
   grunt.registerTask 'spec',    ['jasmine']
-  grunt.registerTask 'build',   ['coffee', 'uglify']
+  grunt.registerTask 'build',   ['coffee', 'concat', 'uglify']
