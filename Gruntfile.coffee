@@ -33,7 +33,7 @@ module.exports = (grunt) ->
         src: 'lib/rivets.js'
         options:
           specs: 'spec/rivets/**/*.js'
-          helpers: ['spec/matchers.js', 'spec/mock.data.js']
+          helpers: 'spec/lib/**/*.js'
 
     watch:
       all:
