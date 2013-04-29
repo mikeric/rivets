@@ -38,8 +38,6 @@ class Rivets.Binding
 
       formatter = if @model[id] instanceof Function
         @model[id]
-      else if @options?.bindingOptions?.formatters?[id] instanceof Function
-        @options.bindingOptions.formatters[id]
       else
         @view.formatters[id]
 
