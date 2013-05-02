@@ -1,4 +1,4 @@
-describe("Rives.binders", function() {
+describe("Rivets.binders", function() {
   var context;
   beforeEach(function() {
     context = {
