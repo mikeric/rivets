@@ -385,6 +385,8 @@ Rivets.binders =
           view.bind()
           @iterated.push view
 
+        binding.sync() for binding in @view.bindings when binding.el is @marker.parentNode and binding.type is 'value' if el.nodeName is 'OPTION'
+
   "class-*": (el, value) ->
     elClass = " #{el.className} "
 
