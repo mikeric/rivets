@@ -1,13 +1,22 @@
-#     rivets.js
-#     version : 0.5.0
-#     author : Michael Richards
-#     license : MIT
+# Rivets.js
+# =========
+
+# > version: 0.5.1
+# > author: Michael Richards
+# > license: MIT
+# >
+# > http://rivetsjs.com/
+
+# ---
 
 # The Rivets namespace.
 Rivets = {}
 
-# Polyfill For String::trim.
+# Polyfill For `String::trim`.
 unless String::trim then String::trim = -> @replace /^\s+|\s+$/g, ''
+
+# Rivets.Binding
+# --------------
 
 # A single binding between a model attribute and a DOM element.
 class Rivets.Binding
@@ -38,8 +47,6 @@ class Rivets.Binding
 
       formatter = if @model[id] instanceof Function
         @model[id]
-      else if @options?.bindingOptions?.formatters?[id] instanceof Function
-        @options.bindingOptions.formatters[id]
       else
         @view.formatters[id]
 
@@ -69,7 +76,7 @@ class Rivets.Binding
 
   # Publishes the value currently set on the input element back to the model.
   publish: =>
-    value = getInputValue @el
+    value = Rivets.Util.getInputValue @el
 
     for formatter in @formatters.slice(0).reverse()
       args = formatter.split /\s+/
@@ -130,7 +137,10 @@ class Rivets.Binding
     @model = @view.models[@key]
     @bind()
 
-# A collection of bindings built from a set of parent elements.
+# Rivets.View
+# -----------
+
+# A collection of bindings built from a set of parent nodes.
 class Rivets.View
   # The DOM elements and the model objects for binding are passed into the
   # constructor along with any local options that should be used throughout the
@@ -150,9 +160,9 @@ class Rivets.View
     prefix = @config.prefix
     if prefix then new RegExp("^data-#{prefix}-") else /^data-/
 
-  # Parses the DOM tree and builds Rivets.Binding instances for every matched
+  # Parses the DOM tree and builds `Rivets.Binding` instances for every matched
   # binding declaration. Subsequent calls to build will replace the previous
-  # Rivets.Binding instances with new ones, so be sure to unbind them first.
+  # `Rivets.Binding` instances with new ones, so be sure to unbind them first.
   build: =>
     @bindings = []
     skipNodes = []
@@ -235,53 +245,57 @@ class Rivets.View
       @models[key] = model
       binding.update() for binding in @select (b) -> b.key is key
 
-# Cross-browser event binding.
-bindEvent = (el, event, handler, context) ->
-  fn = (e) -> handler.call context, e
+# Rivets.Util
+# -----------
 
-  # Check to see if jQuery is loaded.
-  if window.jQuery?
-    el = jQuery el
-    if el.on? then el.on event, fn else el.bind event, fn
-  # Check to see if addEventListener is available.
-  else if window.addEventListener?
-    el.addEventListener event, fn, false
-  else
-    # Assume we are in IE and use attachEvent.
-    event = 'on' + event
-    el.attachEvent event, fn
+# Houses common utility functions used internally by Rivets.js.
+Rivets.Util =
+  # Create a single DOM event binding.
+  bindEvent: (el, event, handler, context) ->
+    fn = (e) -> handler.call context, e
 
-  fn
+    if window.jQuery?
+      el = jQuery el
+      if el.on? then el.on event, fn else el.bind event, fn
+    else if window.addEventListener?
+      el.addEventListener event, fn, false
+    else
+      event = 'on' + event
+      el.attachEvent event, fn
 
-# Cross-browser event unbinding.
-unbindEvent = (el, event, fn) ->
-  # Check to see if jQuery is loaded.
-  if window.jQuery?
-    el = jQuery el
-    if el.off? then el.off event, fn else el.unbind event, fn
-  # Check to see if addEventListener is available.
-  else if window.removeEventListener
-    el.removeEventListener event, fn, false
-  else
-  # Assume we are in IE and use attachEvent.
-    event = 'on' + event
-    el.detachEvent  event, fn
+    fn
 
-# Cross-browser input value getter.
-getInputValue = (el) ->
-  if window.jQuery?
-    el = jQuery el
+  # Remove a single DOM event binding.
+  unbindEvent: (el, event, fn) ->
+    if window.jQuery?
+      el = jQuery el
+      if el.off? then el.off event, fn else el.unbind event, fn
+    else if window.removeEventListener
+      el.removeEventListener event, fn, false
+    else
+      event = 'on' + event
+      el.detachEvent  event, fn
 
-    switch el[0].type
-      when 'checkbox' then el.is ':checked'
-      else el.val()
-  else
-    switch el.type
-      when 'checkbox' then el.checked
-      when 'select-multiple' then o.value for o in el when o.selected
-      else el.value
+  # Get the current value of an input node.
+  getInputValue: (el) ->
+    if window.jQuery?
+      el = jQuery el
 
-# Core binding routines.
+      switch el[0].type
+        when 'checkbox' then el.is ':checked'
+        else el.val()
+    else
+      switch el.type
+        when 'checkbox' then el.checked
+        when 'select-multiple' then o.value for o in el when o.selected
+        else el.value
+
+# Rivets.binders
+# --------------
+
+# Core binders that are included with Rivets.js, publicly available on
+# `module.binders`. Can be overridden globally or local to a `Rivets.View`
+# instance.
 Rivets.binders =
   enabled: (el, value) ->
     el.disabled = !value
@@ -292,9 +306,9 @@ Rivets.binders =
   checked:
     publishes: true
     bind: (el) ->
-      @currentListener = bindEvent el, 'change', @publish
+      @currentListener = Rivets.Util.bindEvent el, 'change', @publish
     unbind: (el) ->
-      unbindEvent el, 'change', @currentListener
+      Rivets.Util.unbindEvent el, 'change', @currentListener
     routine: (el, value) ->
       if el.type is 'radio'
         el.checked = el.value?.toString() is value?.toString()
@@ -304,9 +318,9 @@ Rivets.binders =
   unchecked:
     publishes: true
     bind: (el) ->
-      @currentListener = bindEvent el, 'change', @publish
+      @currentListener = Rivets.Util.bindEvent el, 'change', @publish
     unbind: (el) ->
-      unbindEvent el, 'change', @currentListener
+      Rivets.Util.unbindEvent el, 'change', @currentListener
     routine: (el, value) ->
       if el.type is 'radio'
         el.checked = el.value?.toString() isnt value?.toString()
@@ -325,9 +339,9 @@ Rivets.binders =
   value:
     publishes: true
     bind: (el) ->
-      @currentListener = bindEvent el, 'change', @publish
+      @currentListener = Rivets.Util.bindEvent el, 'change', @publish
     unbind: (el) ->
-      unbindEvent el, 'change', @currentListener
+      Rivets.Util.unbindEvent el, 'change', @currentListener
     routine: (el, value) ->
       if window.jQuery?
         el = jQuery el
@@ -349,8 +363,8 @@ Rivets.binders =
   "on-*":
     function: true
     routine: (el, value) ->
-      unbindEvent el, @args[0], @currentListener if @currentListener
-      @currentListener = bindEvent el, @args[0], value, @model
+      Rivets.Util.unbindEvent el, @args[0], @currentListener if @currentListener
+      @currentListener = Rivets.Util.bindEvent el, @args[0], value, @model
 
   "each-*":
     block: true
@@ -402,15 +416,27 @@ Rivets.binders =
     else
       el.removeAttribute @type
 
-# Default configuration.
+# Rivets.config
+# -------------
+
+# Default configuration, publicly accessible on `module.config`. Can be
+# overridden globally or local to a `Rivets.View` instance.
 Rivets.config =
   preloadData: true
 
-# Default formatters. There aren't any.
+# Rivets.formatters
+# -----------------
+
+# Default formatters (there aren't any), publicly accessible on
+# `module.formatters`. Can be overridden globally or local to a `Rivets.View`
+# instance.
 Rivets.formatters = {}
 
-# The rivets module. This is the public interface that gets exported.
-factory = (exports) ->
+# Rivets.factory
+# --------------
+
+# The Rivets.js module factory.
+Rivets.factory = (exports) ->
   # Exposes the core binding routines that can be extended or stripped down.
   exports.binders = Rivets.binders
 
@@ -427,19 +453,22 @@ factory = (exports) ->
       Rivets.config[property] = value
     return
 
-  # Binds a set of model objects to a parent DOM element. Returns a Rivets.View
-  # instance.
+  # Binds a set of model objects to a parent DOM element and returns a
+  # `Rivets.View` instance.
   exports.bind = (el, models = {}, options = {}) ->
     view = new Rivets.View(el, models, options)
     view.bind()
     view
 
-# Exports rivets for CommonJS, AMD and the browser.
+# Export
+# ------
+
+# Exports Rivets.js for CommonJS, AMD and the browser.
 if typeof exports == 'object'
-  factory(exports)
+  Rivets.factory(exports)
 else if typeof define == 'function' && define.amd
   define ['exports'], (exports) ->
-    factory(@rivets = exports)
+    Rivets.factory(@rivets = exports)
     return exports
 else
-  factory(@rivets = {})
+  Rivets.factory(@rivets = {})

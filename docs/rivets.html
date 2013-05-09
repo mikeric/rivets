@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>rivets.coffee</title>
+  <title>Rivets.js</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -13,29 +13,17 @@
     
     <ul class="sections">
         
-          <li id="title">
-              <div class="annotation">
-                  <h1>rivets.coffee</h1>
-              </div>
-          </li>
-        
         
         
         <li id="section-1">
             <div class="annotation">
               
-              <div class="pilwrap ">
+              <div class="pilwrap for-h1">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <pre><code>rivets.js
-version : 0.5.0
-author : Michael Richards
-license : MIT</code></pre>
-<p>The Rivets namespace.</p>
+              <h1>Rivets.js</h1>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>Rivets = {}</pre></div></div>
             
         </li>
         
@@ -46,11 +34,15 @@ license : MIT</code></pre>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>Polyfill For String::trim.</p>
+              <blockquote>
+<p>version: 0.5.1
+author: Michael Richards
+license: MIT</p>
+<p><a href="http://rivetsjs.com/">http://rivetsjs.com/</a></p>
+</blockquote>
+<hr>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="keyword">unless</span> String::trim <span class="keyword">then</span> String::<span class="function"><span class="title">trim</span></span> = -&gt; <span class="property">@replace</span> <span class="regexp">/^\s+|\s+$/g</span>, <span class="string">''</span></pre></div></div>
             
         </li>
         
@@ -61,11 +53,11 @@ license : MIT</code></pre>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>A single binding between a model attribute and a DOM element.</p>
+              <p>The Rivets namespace.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Rivets</span>.<span class="title">Binding</span></span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>Rivets = {}</pre></div></div>
             
         </li>
         
@@ -75,6 +67,49 @@ license : MIT</code></pre>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Polyfill For <code>String::trim</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">unless</span> String::trim <span class="keyword">then</span> String::<span class="function"><span class="title">trim</span></span> = -&gt; <span class="property">@replace</span> <span class="regexp">/^\s+|\s+$/g</span>, <span class="string">''</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h2">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h2>Rivets.Binding</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>A single binding between a model attribute and a DOM element.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Rivets</span>.<span class="title">Binding</span></span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
               <p>All information about the binding is passed into the constructor; the
 containing view, the DOM node, the type of binding, the model object and the
@@ -100,11 +135,11 @@ keypath at which to listen for changes.</p>
         </li>
         
         
-        <li id="section-5">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <p>Applies all the current formatters to the supplied value and returns the
 formatted value.</p>
@@ -118,8 +153,6 @@ formatted value.</p>
 
       formatter = <span class="keyword">if</span> <span class="property">@model</span>[id] <span class="keyword">instanceof</span> Function
         <span class="property">@model</span>[id]
-      <span class="keyword">else</span> <span class="keyword">if</span> <span class="property">@options</span>?.bindingOptions?.formatters?[id] <span class="keyword">instanceof</span> Function
-        <span class="property">@options</span>.bindingOptions.formatters[id]
       <span class="keyword">else</span>
         <span class="property">@view</span>.formatters[id]
 
@@ -133,11 +166,11 @@ formatted value.</p>
         </li>
         
         
-        <li id="section-6">
+        <li id="section-9">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <p>Sets the value for the binding. This Basically just runs the binding routine
 with the suplied value formatted.</p>
@@ -155,11 +188,11 @@ with the suplied value formatted.</p>
         </li>
         
         
-        <li id="section-7">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <p>Syncs up the view binding with the model.</p>
 
@@ -174,18 +207,18 @@ with the suplied value formatted.</p>
         </li>
         
         
-        <li id="section-8">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p>Publishes the value currently set on the input element back to the model.</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>  publish: =&gt;
-    value = getInputValue <span class="property">@el</span>
+    value = Rivets.Util.getInputValue <span class="property">@el</span>
 
     <span class="keyword">for</span> formatter <span class="keyword">in</span> <span class="property">@formatters</span>.slice(<span class="number">0</span>).reverse()
       args = formatter.split <span class="regexp">/\s+/</span>
@@ -199,11 +232,11 @@ with the suplied value formatted.</p>
         </li>
         
         
-        <li id="section-9">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p>Subscribes to the model for changes at the specified keypath. Bi-directional
 routines will also listen for changes on the element to propagate them back
@@ -235,11 +268,11 @@ to the model.</p>
         </li>
         
         
-        <li id="section-10">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <p>Unsubscribes from the model and the element.</p>
 
@@ -266,11 +299,11 @@ to the model.</p>
         </li>
         
         
-        <li id="section-11">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p>Updates the binding&#39;s model from what is currently set on the view. Unbinds
 the old model first and then re-binds with the new model.</p>
@@ -285,13 +318,26 @@ the old model first and then re-binds with the new model.</p>
         </li>
         
         
-        <li id="section-12">
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h2">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <h2>Rivets.View</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              <p>A collection of bindings built from a set of parent elements.</p>
+              <p>A collection of bindings built from a set of parent nodes.</p>
 
             </div>
             
@@ -300,11 +346,11 @@ the old model first and then re-binds with the new model.</p>
         </li>
         
         
-        <li id="section-13">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p>The DOM elements and the model objects for binding are passed into the
 constructor along with any local options that should be used throughout the
@@ -325,11 +371,11 @@ context of the view and it&#39;s bindings.</p>
         </li>
         
         
-        <li id="section-14">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>Regular expression used to match binding attributes.</p>
 
@@ -342,15 +388,15 @@ context of the view and it&#39;s bindings.</p>
         </li>
         
         
-        <li id="section-15">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
-              <p>Parses the DOM tree and builds Rivets.Binding instances for every matched
+              <p>Parses the DOM tree and builds <code>Rivets.Binding</code> instances for every matched
 binding declaration. Subsequent calls to build will replace the previous
-Rivets.Binding instances with new ones, so be sure to unbind them first.</p>
+<code>Rivets.Binding</code> instances with new ones, so be sure to unbind them first.</p>
 
             </div>
             
@@ -413,11 +459,11 @@ Rivets.Binding instances with new ones, so be sure to unbind them first.</p>
         </li>
         
         
-        <li id="section-16">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p>Returns an array of bindings where the supplied function evaluates to true.</p>
 
@@ -429,11 +475,11 @@ Rivets.Binding instances with new ones, so be sure to unbind them first.</p>
         </li>
         
         
-        <li id="section-17">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p>Binds all of the current bindings for this view.</p>
 
@@ -445,11 +491,11 @@ Rivets.Binding instances with new ones, so be sure to unbind them first.</p>
         </li>
         
         
-        <li id="section-18">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p>Unbinds all of the current bindings for this view.</p>
 
@@ -461,11 +507,11 @@ Rivets.Binding instances with new ones, so be sure to unbind them first.</p>
         </li>
         
         
-        <li id="section-19">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <p>Syncs up the view with the model by running the routines on all bindings.</p>
 
@@ -477,11 +523,11 @@ Rivets.Binding instances with new ones, so be sure to unbind them first.</p>
         </li>
         
         
-        <li id="section-20">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <p>Publishes the input values from the view back to the model (reverse sync).</p>
 
@@ -493,11 +539,11 @@ Rivets.Binding instances with new ones, so be sure to unbind them first.</p>
         </li>
         
         
-        <li id="section-21">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <p>Updates the view&#39;s models along with any affected bindings.</p>
 
@@ -511,85 +557,15 @@ Rivets.Binding instances with new ones, so be sure to unbind them first.</p>
         </li>
         
         
-        <li id="section-22">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
-              </div>
-              <p>Cross-browser event binding.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="function"><span class="title">bindEvent</span></span> = (el, event, handler, context) -&gt;
-  <span class="function"><span class="title">fn</span></span> = (e) -&gt; handler.call context, e</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-23">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
-              </div>
-              <p>Check to see if jQuery is loaded.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  <span class="keyword">if</span> window.jQuery?
-    el = jQuery el
-    <span class="keyword">if</span> el.<span class="literal">on</span>? <span class="keyword">then</span> el.<span class="literal">on</span> event, fn <span class="keyword">else</span> el.bind event, fn</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-24">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
-              </div>
-              <p>Check to see if addEventListener is available.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  <span class="keyword">else</span> <span class="keyword">if</span> window.addEventListener?
-    el.addEventListener event, fn, <span class="literal">false</span>
-  <span class="keyword">else</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-25">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
-              </div>
-              <p>Assume we are in IE and use attachEvent.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    event = <span class="string">'on'</span> + event
-    el.attachEvent event, fn
-
-  fn</pre></div></div>
-            
-        </li>
-        
-        
         <li id="section-26">
             <div class="annotation">
               
-              <div class="pilwrap ">
+              <div class="pilwrap for-h2">
                 <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
-              <p>Cross-browser event unbinding.</p>
+              <h2>Rivets.Util</h2>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="function"><span class="title">unbindEvent</span></span> = (el, event, fn) -&gt;</pre></div></div>
             
         </li>
         
@@ -600,13 +576,11 @@ Rivets.Binding instances with new ones, so be sure to unbind them first.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
-              <p>Check to see if jQuery is loaded.</p>
+              <p>Houses common utility functions used internally by Rivets.js.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="keyword">if</span> window.jQuery?
-    el = jQuery el
-    <span class="keyword">if</span> el.<span class="literal">off</span>? <span class="keyword">then</span> el.<span class="literal">off</span> event, fn <span class="keyword">else</span> el.unbind event, fn</pre></div></div>
+            <div class="content"><div class='highlight'><pre>Rivets.Util =</pre></div></div>
             
         </li>
         
@@ -617,13 +591,23 @@ Rivets.Binding instances with new ones, so be sure to unbind them first.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
-              <p>Check to see if addEventListener is available.</p>
+              <p>Create a single DOM event binding.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="keyword">else</span> <span class="keyword">if</span> window.removeEventListener
-    el.removeEventListener event, fn, <span class="literal">false</span>
-  <span class="keyword">else</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  bindEvent: (el, event, handler, context) -&gt;
+    <span class="function"><span class="title">fn</span></span> = (e) -&gt; handler.call context, e
+
+    <span class="keyword">if</span> window.jQuery?
+      el = jQuery el
+      <span class="keyword">if</span> el.<span class="literal">on</span>? <span class="keyword">then</span> el.<span class="literal">on</span> event, fn <span class="keyword">else</span> el.bind event, fn
+    <span class="keyword">else</span> <span class="keyword">if</span> window.addEventListener?
+      el.addEventListener event, fn, <span class="literal">false</span>
+    <span class="keyword">else</span>
+      event = <span class="string">'on'</span> + event
+      el.attachEvent event, fn
+
+    fn</pre></div></div>
             
         </li>
         
@@ -634,12 +618,19 @@ Rivets.Binding instances with new ones, so be sure to unbind them first.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
-              <p>Assume we are in IE and use attachEvent.</p>
+              <p>Remove a single DOM event binding.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    event = <span class="string">'on'</span> + event
-    el.detachEvent  event, fn</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  unbindEvent: (el, event, fn) -&gt;
+    <span class="keyword">if</span> window.jQuery?
+      el = jQuery el
+      <span class="keyword">if</span> el.<span class="literal">off</span>? <span class="keyword">then</span> el.<span class="literal">off</span> event, fn <span class="keyword">else</span> el.unbind event, fn
+    <span class="keyword">else</span> <span class="keyword">if</span> window.removeEventListener
+      el.removeEventListener event, fn, <span class="literal">false</span>
+    <span class="keyword">else</span>
+      event = <span class="string">'on'</span> + event
+      el.detachEvent  event, fn</pre></div></div>
             
         </li>
         
@@ -650,22 +641,22 @@ Rivets.Binding instances with new ones, so be sure to unbind them first.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
-              <p>Cross-browser input value getter.</p>
+              <p>Get the current value of an input node.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="function"><span class="title">getInputValue</span></span> = (el) -&gt;
-  <span class="keyword">if</span> window.jQuery?
-    el = jQuery el
+            <div class="content"><div class='highlight'><pre>  getInputValue: (el) -&gt;
+    <span class="keyword">if</span> window.jQuery?
+      el = jQuery el
 
-    <span class="keyword">switch</span> el[<span class="number">0</span>].type
-      <span class="keyword">when</span> <span class="string">'checkbox'</span> <span class="keyword">then</span> el.<span class="keyword">is</span> <span class="string">':checked'</span>
-      <span class="keyword">else</span> el.val()
-  <span class="keyword">else</span>
-    <span class="keyword">switch</span> el.type
-      <span class="keyword">when</span> <span class="string">'checkbox'</span> <span class="keyword">then</span> el.checked
-      <span class="keyword">when</span> <span class="string">'select-multiple'</span> <span class="keyword">then</span> o.value <span class="keyword">for</span> o <span class="keyword">in</span> el <span class="keyword">when</span> o.selected
-      <span class="keyword">else</span> el.value</pre></div></div>
+      <span class="keyword">switch</span> el[<span class="number">0</span>].type
+        <span class="keyword">when</span> <span class="string">'checkbox'</span> <span class="keyword">then</span> el.<span class="keyword">is</span> <span class="string">':checked'</span>
+        <span class="keyword">else</span> el.val()
+    <span class="keyword">else</span>
+      <span class="keyword">switch</span> el.type
+        <span class="keyword">when</span> <span class="string">'checkbox'</span> <span class="keyword">then</span> el.checked
+        <span class="keyword">when</span> <span class="string">'select-multiple'</span> <span class="keyword">then</span> o.value <span class="keyword">for</span> o <span class="keyword">in</span> el <span class="keyword">when</span> o.selected
+        <span class="keyword">else</span> el.value</pre></div></div>
             
         </li>
         
@@ -673,10 +664,25 @@ Rivets.Binding instances with new ones, so be sure to unbind them first.</p>
         <li id="section-31">
             <div class="annotation">
               
-              <div class="pilwrap ">
+              <div class="pilwrap for-h2">
                 <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
-              <p>Core binding routines.</p>
+              <h2>Rivets.binders</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <p>Core binders that are included with Rivets.js, publicly available on
+<code>module.binders</code>. Can be overridden globally or local to a <code>Rivets.View</code>
+instance.</p>
 
             </div>
             
@@ -690,9 +696,9 @@ Rivets.Binding instances with new ones, so be sure to unbind them first.</p>
   checked:
     publishes: <span class="literal">true</span>
     bind: (el) -&gt;
-      <span class="property">@currentListener</span> = bindEvent el, <span class="string">'change'</span>, <span class="property">@publish</span>
+      <span class="property">@currentListener</span> = Rivets.Util.bindEvent el, <span class="string">'change'</span>, <span class="property">@publish</span>
     unbind: (el) -&gt;
-      unbindEvent el, <span class="string">'change'</span>, <span class="property">@currentListener</span>
+      Rivets.Util.unbindEvent el, <span class="string">'change'</span>, <span class="property">@currentListener</span>
     routine: (el, value) -&gt;
       <span class="keyword">if</span> el.type <span class="keyword">is</span> <span class="string">'radio'</span>
         el.checked = el.value?.toString() <span class="keyword">is</span> value?.toString()
@@ -702,9 +708,9 @@ Rivets.Binding instances with new ones, so be sure to unbind them first.</p>
   unchecked:
     publishes: <span class="literal">true</span>
     bind: (el) -&gt;
-      <span class="property">@currentListener</span> = bindEvent el, <span class="string">'change'</span>, <span class="property">@publish</span>
+      <span class="property">@currentListener</span> = Rivets.Util.bindEvent el, <span class="string">'change'</span>, <span class="property">@publish</span>
     unbind: (el) -&gt;
-      unbindEvent el, <span class="string">'change'</span>, <span class="property">@currentListener</span>
+      Rivets.Util.unbindEvent el, <span class="string">'change'</span>, <span class="property">@currentListener</span>
     routine: (el, value) -&gt;
       <span class="keyword">if</span> el.type <span class="keyword">is</span> <span class="string">'radio'</span>
         el.checked = el.value?.toString() <span class="keyword">isnt</span> value?.toString()
@@ -723,9 +729,9 @@ Rivets.Binding instances with new ones, so be sure to unbind them first.</p>
   value:
     publishes: <span class="literal">true</span>
     bind: (el) -&gt;
-      <span class="property">@currentListener</span> = bindEvent el, <span class="string">'change'</span>, <span class="property">@publish</span>
+      <span class="property">@currentListener</span> = Rivets.Util.bindEvent el, <span class="string">'change'</span>, <span class="property">@publish</span>
     unbind: (el) -&gt;
-      unbindEvent el, <span class="string">'change'</span>, <span class="property">@currentListener</span>
+      Rivets.Util.unbindEvent el, <span class="string">'change'</span>, <span class="property">@currentListener</span>
     routine: (el, value) -&gt;
       <span class="keyword">if</span> window.jQuery?
         el = jQuery el
@@ -747,8 +753,8 @@ Rivets.Binding instances with new ones, so be sure to unbind them first.</p>
   <span class="string">"on-*"</span>:
     <span class="reserved">function</span>: <span class="literal">true</span>
     routine: (el, value) -&gt;
-      unbindEvent el, <span class="property">@args</span>[<span class="number">0</span>], <span class="property">@currentListener</span> <span class="keyword">if</span> <span class="property">@currentListener</span>
-      <span class="property">@currentListener</span> = bindEvent el, <span class="property">@args</span>[<span class="number">0</span>], value, <span class="property">@model</span>
+      Rivets.Util.unbindEvent el, <span class="property">@args</span>[<span class="number">0</span>], <span class="property">@currentListener</span> <span class="keyword">if</span> <span class="property">@currentListener</span>
+      <span class="property">@currentListener</span> = Rivets.Util.bindEvent el, <span class="property">@args</span>[<span class="number">0</span>], value, <span class="property">@model</span>
 
   <span class="string">"each-*"</span>:
     block: <span class="literal">true</span>
@@ -803,33 +809,15 @@ Rivets.Binding instances with new ones, so be sure to unbind them first.</p>
         </li>
         
         
-        <li id="section-32">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
-              </div>
-              <p>Default configuration.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>Rivets.config =
-  preloadData: <span class="literal">true</span></pre></div></div>
-            
-        </li>
-        
-        
         <li id="section-33">
             <div class="annotation">
               
-              <div class="pilwrap ">
+              <div class="pilwrap for-h2">
                 <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
-              <p>Default formatters. There aren&#39;t any.</p>
+              <h2>Rivets.config</h2>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>Rivets.formatters = {}</pre></div></div>
             
         </li>
         
@@ -840,11 +828,13 @@ Rivets.Binding instances with new ones, so be sure to unbind them first.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
-              <p>The rivets module. This is the public interface that gets exported.</p>
+              <p>Default configuration, publicly accessible on <code>module.config</code>. Can be
+overridden globally or local to a <code>Rivets.View</code> instance.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="function"><span class="title">factory</span></span> = (exports) -&gt;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>Rivets.config =
+  preloadData: <span class="literal">true</span></pre></div></div>
             
         </li>
         
@@ -852,14 +842,12 @@ Rivets.Binding instances with new ones, so be sure to unbind them first.</p>
         <li id="section-35">
             <div class="annotation">
               
-              <div class="pilwrap ">
+              <div class="pilwrap for-h2">
                 <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
-              <p>Exposes the core binding routines that can be extended or stripped down.</p>
+              <h2>Rivets.formatters</h2>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>  exports.binders = Rivets.binders</pre></div></div>
             
         </li>
         
@@ -870,6 +858,66 @@ Rivets.Binding instances with new ones, so be sure to unbind them first.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
+              <p>Default formatters (there aren&#39;t any), publicly accessible on
+<code>module.formatters</code>. Can be overridden globally or local to a <code>Rivets.View</code>
+instance.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Rivets.formatters = {}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-37">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h2">
+                <a class="pilcrow" href="#section-37">&#182;</a>
+              </div>
+              <h2>Rivets.factory</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-38">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-38">&#182;</a>
+              </div>
+              <p>The Rivets.js module factory.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Rivets.<span class="function"><span class="title">factory</span></span> = (exports) -&gt;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-39">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-39">&#182;</a>
+              </div>
+              <p>Exposes the core binding routines that can be extended or stripped down.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  exports.binders = Rivets.binders</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-40">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-40">&#182;</a>
+              </div>
               <p>Exposes the formatters object to be extended.</p>
 
             </div>
@@ -879,11 +927,11 @@ Rivets.Binding instances with new ones, so be sure to unbind them first.</p>
         </li>
         
         
-        <li id="section-37">
+        <li id="section-41">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <p>Exposes the rivets configuration options. These can be set manually or from
 rivets.configure with an object literal.</p>
@@ -895,11 +943,11 @@ rivets.configure with an object literal.</p>
         </li>
         
         
-        <li id="section-38">
+        <li id="section-42">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               <p>Sets configuration options by merging an object literal.</p>
 
@@ -913,14 +961,14 @@ rivets.configure with an object literal.</p>
         </li>
         
         
-        <li id="section-39">
+        <li id="section-43">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
-              <p>Binds a set of model objects to a parent DOM element. Returns a Rivets.View
-instance.</p>
+              <p>Binds a set of model objects to a parent DOM element and returns a
+<code>Rivets.View</code> instance.</p>
 
             </div>
             
@@ -932,24 +980,37 @@ instance.</p>
         </li>
         
         
-        <li id="section-40">
+        <li id="section-44">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h2">
+                <a class="pilcrow" href="#section-44">&#182;</a>
+              </div>
+              <h2>Export</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-45">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-45">&#182;</a>
               </div>
-              <p>Exports rivets for CommonJS, AMD and the browser.</p>
+              <p>Exports Rivets.js for CommonJS, AMD and the browser.</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="keyword">if</span> <span class="keyword">typeof</span> exports == <span class="string">'object'</span>
-  factory(exports)
+  Rivets.factory(exports)
 <span class="keyword">else</span> <span class="keyword">if</span> <span class="keyword">typeof</span> define == <span class="string">'function'</span> &amp;&amp; define.amd
   define [<span class="string">'exports'</span>], (exports) -&gt;
-    factory(<span class="property">@rivets</span> = exports)
+    Rivets.factory(<span class="property">@rivets</span> = exports)
     <span class="keyword">return</span> exports
 <span class="keyword">else</span>
-  factory(<span class="property">@rivets</span> = {})</pre></div></div>
+  Rivets.factory(<span class="property">@rivets</span> = {})</pre></div></div>
             
         </li>
         

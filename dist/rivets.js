@@ -1,9 +1,9 @@
-// rivets.js
-// version: 0.5.0
+// Rivets.js
+// version: 0.5.1
 // author: Michael Richards
 // license: MIT
 (function() {
-  var Rivets, bindEvent, factory, getInputValue, unbindEvent,
+  var Rivets,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __slice = [].slice,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
@@ -58,14 +58,14 @@
     }
 
     Binding.prototype.formattedValue = function(value) {
-      var args, formatter, id, _i, _len, _ref, _ref1, _ref2, _ref3;
+      var args, formatter, id, _i, _len, _ref;
 
       _ref = this.formatters;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         formatter = _ref[_i];
         args = formatter.split(/\s+/);
         id = args.shift();
-        formatter = this.model[id] instanceof Function ? this.model[id] : ((_ref1 = this.options) != null ? (_ref2 = _ref1.bindingOptions) != null ? (_ref3 = _ref2.formatters) != null ? _ref3[id] : void 0 : void 0 : void 0) instanceof Function ? this.options.bindingOptions.formatters[id] : this.view.formatters[id];
+        formatter = this.model[id] instanceof Function ? this.model[id] : this.view.formatters[id];
         if ((formatter != null ? formatter.read : void 0) instanceof Function) {
           value = formatter.read.apply(formatter, [value].concat(__slice.call(args)));
         } else if (formatter instanceof Function) {
@@ -89,7 +89,7 @@
     Binding.prototype.publish = function() {
       var args, formatter, id, value, _i, _len, _ref, _ref1, _ref2;
 
-      value = getInputValue(this.el);
+      value = Rivets.Util.getInputValue(this.el);
       _ref = this.formatters.slice(0).reverse();
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         formatter = _ref[_i];
@@ -424,71 +424,71 @@
 
   })();
 
-  bindEvent = function(el, event, handler, context) {
-    var fn;
+  Rivets.Util = {
+    bindEvent: function(el, event, handler, context) {
+      var fn;
 
-    fn = function(e) {
-      return handler.call(context, e);
-    };
-    if (window.jQuery != null) {
-      el = jQuery(el);
-      if (el.on != null) {
-        el.on(event, fn);
+      fn = function(e) {
+        return handler.call(context, e);
+      };
+      if (window.jQuery != null) {
+        el = jQuery(el);
+        if (el.on != null) {
+          el.on(event, fn);
+        } else {
+          el.bind(event, fn);
+        }
+      } else if (window.addEventListener != null) {
+        el.addEventListener(event, fn, false);
       } else {
-        el.bind(event, fn);
+        event = 'on' + event;
+        el.attachEvent(event, fn);
       }
-    } else if (window.addEventListener != null) {
-      el.addEventListener(event, fn, false);
-    } else {
-      event = 'on' + event;
-      el.attachEvent(event, fn);
-    }
-    return fn;
-  };
-
-  unbindEvent = function(el, event, fn) {
-    if (window.jQuery != null) {
-      el = jQuery(el);
-      if (el.off != null) {
-        return el.off(event, fn);
+      return fn;
+    },
+    unbindEvent: function(el, event, fn) {
+      if (window.jQuery != null) {
+        el = jQuery(el);
+        if (el.off != null) {
+          return el.off(event, fn);
+        } else {
+          return el.unbind(event, fn);
+        }
+      } else if (window.removeEventListener) {
+        return el.removeEventListener(event, fn, false);
       } else {
-        return el.unbind(event, fn);
+        event = 'on' + event;
+        return el.detachEvent(event, fn);
       }
-    } else if (window.removeEventListener) {
-      return el.removeEventListener(event, fn, false);
-    } else {
-      event = 'on' + event;
-      return el.detachEvent(event, fn);
-    }
-  };
+    },
+    getInputValue: function(el) {
+      var o, _i, _len, _results;
 
-  getInputValue = function(el) {
-    var o, _i, _len, _results;
-
-    if (window.jQuery != null) {
-      el = jQuery(el);
-      switch (el[0].type) {
-        case 'checkbox':
-          return el.is(':checked');
-        default:
-          return el.val();
-      }
-    } else {
-      switch (el.type) {
-        case 'checkbox':
-          return el.checked;
-        case 'select-multiple':
-          _results = [];
-          for (_i = 0, _len = el.length; _i < _len; _i++) {
-            o = el[_i];
-            if (o.selected) {
-              _results.push(o.value);
+      if (window.jQuery != null) {
+        el = jQuery(el);
+        switch (el[0].type) {
+          case 'checkbox':
+            return el.is(':checked');
+          default:
+            return el.val();
+        }
+      } else {
+        switch (el.type) {
+          case 'checkbox':
+            return el.checked;
+          case 'select-multiple':
+            _results = [];
+            for (_i = 0, _len = el.length; _i < _len; _i++) {
+              o = el[_i];
+              if (o.selected) {
+                _results.push(o.value);
+              }
             }
-          }
-          return _results;
-          break;
-        default:
-          return el.value;
+            return _results;
+            break;
+          default:
+            return el.value;
+        }
       }
     }
   };
@@ -503,10 +503,10 @@
     checked: {
       publishes: true,
       bind: function(el) {
-        return this.currentListener = bindEvent(el, 'change', this.publish);
+        return this.currentListener = Rivets.Util.bindEvent(el, 'change', this.publish);
       },
       unbind: function(el) {
-        return unbindEvent(el, 'change', this.currentListener);
+        return Rivets.Util.unbindEvent(el, 'change', this.currentListener);
       },
       routine: function(el, value) {
         var _ref;
@@ -521,10 +521,10 @@
     unchecked: {
       publishes: true,
       bind: function(el) {
-        return this.currentListener = bindEvent(el, 'change', this.publish);
+        return this.currentListener = Rivets.Util.bindEvent(el, 'change', this.publish);
       },
       unbind: function(el) {
-        return unbindEvent(el, 'change', this.currentListener);
+        return Rivets.Util.unbindEvent(el, 'change', this.currentListener);
       },
       routine: function(el, value) {
         var _ref;
@@ -548,10 +548,10 @@
     value: {
       publishes: true,
       bind: function(el) {
-        return this.currentListener = bindEvent(el, 'change', this.publish);
+        return this.currentListener = Rivets.Util.bindEvent(el, 'change', this.publish);
       },
       unbind: function(el) {
-        return unbindEvent(el, 'change', this.currentListener);
+        return Rivets.Util.unbindEvent(el, 'change', this.currentListener);
       },
       routine: function(el, value) {
         var o, _i, _len, _ref, _ref1, _ref2, _results;
@@ -588,9 +588,9 @@
       "function": true,
       routine: function(el, value) {
         if (this.currentListener) {
-          unbindEvent(el, this.args[0], this.currentListener);
+          Rivets.Util.unbindEvent(el, this.args[0], this.currentListener);
         }
-        return this.currentListener = bindEvent(el, this.args[0], value, this.model);
+        return this.currentListener = Rivets.Util.bindEvent(el, this.args[0], value, this.model);
       }
     },
     "each-*": {
@@ -676,7 +676,7 @@
 
   Rivets.formatters = {};
 
-  factory = function(exports) {
+  Rivets.factory = function(exports) {
     exports.binders = Rivets.binders;
     exports.formatters = Rivets.formatters;
     exports.config = Rivets.config;
@@ -707,14 +707,14 @@
   };
 
   if (typeof exports === 'object') {
-    factory(exports);
+    Rivets.factory(exports);
   } else if (typeof define === 'function' && define.amd) {
     define(['exports'], function(exports) {
-      factory(this.rivets = exports);
+      Rivets.factory(this.rivets = exports);
       return exports;
     });
   } else {
-    factory(this.rivets = {});
+    Rivets.factory(this.rivets = {});
   }
 
 }).call(this);
