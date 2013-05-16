@@ -397,7 +397,15 @@ Rivets.binders =
             @marker
 
           @marker.parentNode.insertBefore itemEl, previous.nextSibling ? null
-          view = new Rivets.View(itemEl, data, @view.options)
+          options = 
+            binders: @view.options.binders
+            formatters: @view.options.binders
+            config: {}
+          options.config[k] = v for k, v of @view.options.config if @view.options.config
+          # Ensure preloadData is set to true since child elements won't get initiated otherwise until the next change (which might not be the first)
+          options.config.preloadData = true
+
+          view = new Rivets.View(itemEl, data, options)
           view.bind()
           @iterated.push view
 
