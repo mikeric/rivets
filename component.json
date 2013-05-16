@@ -2,7 +2,7 @@
   "name": "rivets",
   "repo": "mikeric/rivets",
   "description": "Declarative data binding facility.",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "keywords": ["data binding", "templating"],
   "scripts": ["dist/rivets.js"],
   "main": "dist/rivets.js",

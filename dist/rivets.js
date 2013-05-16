@@ -1,5 +1,5 @@
 // Rivets.js
-// version: 0.5.1
+// version: 0.5.2
 // author: Michael Richards
 // license: MIT
 (function() {
@@ -425,11 +425,11 @@
   })();
 
   Rivets.Util = {
-    bindEvent: function(el, event, handler, context) {
+    bindEvent: function(el, event, handler, view) {
       var fn;
 
-      fn = function(e) {
-        return handler.call(context, e);
+      fn = function(ev) {
+        return handler.call(this, ev, view);
       };
       if (window.jQuery != null) {
         el = jQuery(el);
@@ -590,7 +590,7 @@
         if (this.currentListener) {
           Rivets.Util.unbindEvent(el, this.args[0], this.currentListener);
         }
-        return this.currentListener = Rivets.Util.bindEvent(el, this.args[0], value, this.model);
+        return this.currentListener = Rivets.Util.bindEvent(el, this.args[0], value, this.view);
       }
     },
     "each-*": {
@@ -612,7 +612,7 @@
         }
       },
       routine: function(el, collection) {
-        var data, e, item, itemEl, m, n, previous, view, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3, _results;
+        var data, e, item, itemEl, k, m, n, options, previous, v, view, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3, _ref4, _results;
 
         if (this.iterated != null) {
           _ref = this.iterated;
@@ -645,7 +645,20 @@
             itemEl = el.cloneNode(true);
             previous = this.iterated.length ? this.iterated[this.iterated.length - 1].els[0] : this.marker;
             this.marker.parentNode.insertBefore(itemEl, (_ref3 = previous.nextSibling) != null ? _ref3 : null);
-            view = new Rivets.View(itemEl, data, this.view.options);
+            options = {
+              binders: this.view.options.binders,
+              formatters: this.view.options.binders,
+              config: {}
+            };
+            if (this.view.options.config) {
+              _ref4 = this.view.options.config;
+              for (k in _ref4) {
+                v = _ref4[k];
+                options.config[k] = v;
+              }
+            }
+            options.config.preloadData = true;
+            view = new Rivets.View(itemEl, data, options);
             view.bind();
             _results.push(this.iterated.push(view));
           }
