@@ -251,8 +251,8 @@ class Rivets.View
 # Houses common utility functions used internally by Rivets.js.
 Rivets.Util =
   # Create a single DOM event binding.
-  bindEvent: (el, event, handler, context) ->
-    fn = (e) -> handler.call context, e
+  bindEvent: (el, event, handler, view) ->
+    fn = (ev) -> handler.call @, ev, view
 
     if window.jQuery?
       el = jQuery el
@@ -364,7 +364,7 @@ Rivets.binders =
     function: true
     routine: (el, value) ->
       Rivets.Util.unbindEvent el, @args[0], @currentListener if @currentListener
-      @currentListener = Rivets.Util.bindEvent el, @args[0], value, @model
+      @currentListener = Rivets.Util.bindEvent el, @args[0], value, @view
 
   "each-*":
     block: true
