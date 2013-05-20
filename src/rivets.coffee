@@ -404,8 +404,16 @@ Rivets.binders =
           else
             @marker
 
+          options =
+            binders: @view.options.binders
+            formatters: @view.options.formatters
+            config: {}
+
+          options.config[k] = v for k, v of @view.options.config
+          options.config.preloadData = true
+
           template = el.cloneNode true
-          @iterated.push rivets.bind template, data
+          @iterated.push rivets.bind template, data, options
           @marker.parentNode.insertBefore template, previous.nextSibling
         else if @iterated[index].models[modelName] isnt model
           @iterated[index].update data
