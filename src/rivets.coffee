@@ -413,7 +413,10 @@ Rivets.binders =
           options.config.preloadData = true
 
           template = el.cloneNode true
-          @iterated.push rivets.bind template, data, options
+          view = new Rivets.View(template, data, options)
+          view.bind()
+          @iterated.push view
+
           @marker.parentNode.insertBefore template, previous.nextSibling
         else if @iterated[index].models[modelName] isnt model
           @iterated[index].update data
