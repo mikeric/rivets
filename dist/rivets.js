@@ -1,5 +1,5 @@
 // Rivets.js
-// version: 0.5.2
+// version: 0.5.3
 // author: Michael Richards
 // license: MIT
 (function() {
@@ -595,10 +595,17 @@
     },
     "each-*": {
       block: true,
-      bind: function(el, collection) {
-        return el.removeAttribute(['data', this.view.config.prefix, this.type].join('-').replace('--', '-'));
+      bind: function(el) {
+        var attr;
+
+        attr = ['data', this.view.config.prefix, this.type].join('-').replace('--', '-');
+        this.marker = document.createComment(" rivets: " + this.type + " ");
+        this.iterated = [];
+        el.removeAttribute(attr);
+        el.parentNode.insertBefore(this.marker, el);
+        return el.parentNode.removeChild(el);
       },
-      unbind: function(el, collection) {
+      unbind: function(el) {
         var view, _i, _len, _ref, _results;
 
         if (this.iterated != null) {
@@ -612,58 +619,52 @@
         }
       },
       routine: function(el, collection) {
-        var data, e, item, itemEl, k, m, n, options, previous, v, view, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3, _ref4, _results;
+        var data, i, index, k, key, model, modelName, options, previous, template, v, view, _i, _j, _len, _len1, _ref, _ref1, _ref2, _results;
 
-        if (this.iterated != null) {
-          _ref = this.iterated;
+        modelName = this.args[0];
+        collection = collection || [];
+        if (this.iterated.length > collection.length) {
+          _ref = Array(this.iterated.length - collection.length);
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            view = _ref[_i];
+            i = _ref[_i];
+            view = this.iterated.pop();
             view.unbind();
-            _ref1 = view.els;
-            for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-              e = _ref1[_j];
-              e.parentNode.removeChild(e);
-            }
+            this.marker.parentNode.removeChild(view.els[0]);
           }
-        } else {
-          this.marker = document.createComment(" rivets: " + this.type + " ");
-          el.parentNode.insertBefore(this.marker, el);
-          el.parentNode.removeChild(el);
         }
-        this.iterated = [];
-        if (collection) {
-          _results = [];
-          for (_k = 0, _len2 = collection.length; _k < _len2; _k++) {
-            item = collection[_k];
-            data = {};
-            _ref2 = this.view.models;
-            for (n in _ref2) {
-              m = _ref2[n];
-              data[n] = m;
+        _results = [];
+        for (index = _j = 0, _len1 = collection.length; _j < _len1; index = ++_j) {
+          model = collection[index];
+          data = {};
+          data[modelName] = model;
+          if (this.iterated[index] == null) {
+            _ref1 = this.view.models;
+            for (key in _ref1) {
+              model = _ref1[key];
+              data[key] = model;
             }
-            data[this.args[0]] = item;
-            itemEl = el.cloneNode(true);
             previous = this.iterated.length ? this.iterated[this.iterated.length - 1].els[0] : this.marker;
-            this.marker.parentNode.insertBefore(itemEl, (_ref3 = previous.nextSibling) != null ? _ref3 : null);
             options = {
               binders: this.view.options.binders,
-              formatters: this.view.options.binders,
+              formatters: this.view.options.formatters,
               config: {}
             };
-            if (this.view.options.config) {
-              _ref4 = this.view.options.config;
-              for (k in _ref4) {
-                v = _ref4[k];
-                options.config[k] = v;
-              }
+            _ref2 = this.view.options.config;
+            for (k in _ref2) {
+              v = _ref2[k];
+              options.config[k] = v;
             }
             options.config.preloadData = true;
-            view = new Rivets.View(itemEl, data, options);
-            view.bind();
-            _results.push(this.iterated.push(view));
+            template = el.cloneNode(true);
+            this.iterated.push(rivets.bind(template, data, options));
+            _results.push(this.marker.parentNode.insertBefore(template, previous.nextSibling));
+          } else if (this.iterated[index].models[modelName] !== model) {
+            _results.push(this.iterated[index].update(data));
+          } else {
+            _results.push(void 0);
           }
-          return _results;
         }
+        return _results;
       }
     },
     "class-*": function(el, value) {
