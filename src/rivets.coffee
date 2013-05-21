@@ -1,7 +1,7 @@
 # Rivets.js
 # =========
 
-# > version: 0.5.1
+# > version: 0.5.3
 # > author: Michael Richards
 # > license: MIT
 # >
@@ -251,8 +251,8 @@ class Rivets.View
 # Houses common utility functions used internally by Rivets.js.
 Rivets.Util =
   # Create a single DOM event binding.
-  bindEvent: (el, event, handler, context) ->
-    fn = (e) -> handler.call context, e
+  bindEvent: (el, event, handler, view) ->
+    fn = (ev) -> handler.call @, ev, view
 
     if window.jQuery?
       el = jQuery el
@@ -364,42 +364,59 @@ Rivets.binders =
     function: true
     routine: (el, value) ->
       Rivets.Util.unbindEvent el, @args[0], @currentListener if @currentListener
-      @currentListener = Rivets.Util.bindEvent el, @args[0], value, @model
+      @currentListener = Rivets.Util.bindEvent el, @args[0], value, @view
 
   "each-*":
     block: true
-    bind: (el, collection) ->
-      el.removeAttribute ['data', @view.config.prefix, @type].join('-').replace '--', '-'
-    unbind: (el, collection) ->
-      view.unbind() for view in @iterated if @iterated?
-    routine: (el, collection) ->
-      if @iterated?
-        for view in @iterated
-          view.unbind()
-          e.parentNode.removeChild e for e in view.els
-      else
-        @marker = document.createComment " rivets: #{@type} "
-        el.parentNode.insertBefore @marker, el
-        el.parentNode.removeChild el
 
+    bind: (el) ->
+      attr = ['data', @view.config.prefix, @type].join('-').replace '--', '-'
+      @marker = document.createComment " rivets: #{@type} "
       @iterated = []
 
-      if collection
-        for item in collection
-          data = {}
-          data[n] = m for n, m of @view.models
-          data[@args[0]] = item
-          itemEl = el.cloneNode true
+      el.removeAttribute attr
+      el.parentNode.insertBefore @marker, el
+      el.parentNode.removeChild el
+
+    unbind: (el) ->
+      view.unbind() for view in @iterated if @iterated?
+
+    routine: (el, collection) ->
+      modelName = @args[0]
+      collection = collection or []
+
+      if @iterated.length > collection.length
+        for i in Array @iterated.length - collection.length
+          view = @iterated.pop()
+          view.unbind()
+          @marker.parentNode.removeChild view.els[0]
+
+      for model, index in collection
+        data = {}
+        data[modelName] = model
+
+        if not @iterated[index]?
+          for key, model of @view.models
+            data[key] = model
 
           previous = if @iterated.length
             @iterated[@iterated.length - 1].els[0]
           else
             @marker
 
-          @marker.parentNode.insertBefore itemEl, previous.nextSibling ? null
-          view = new Rivets.View(itemEl, data, @view.options)
-          view.bind()
-          @iterated.push view
+          options =
+            binders: @view.options.binders
+            formatters: @view.options.formatters
+            config: {}
+
+          options.config[k] = v for k, v of @view.options.config
+          options.config.preloadData = true
+
+          template = el.cloneNode true
+          @iterated.push rivets.bind template, data, options
+          @marker.parentNode.insertBefore template, previous.nextSibling
+        else if @iterated[index].models[modelName] isnt model
+          @iterated[index].update data
 
   "class-*": (el, value) ->
     elClass = " #{el.className} "

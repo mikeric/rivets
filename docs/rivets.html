@@ -35,7 +35,7 @@
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
               <blockquote>
-<p>version: 0.5.1
+<p>version: 0.5.3
 author: Michael Richards
 license: MIT</p>
 <p><a href="http://rivetsjs.com/">http://rivetsjs.com/</a></p>
@@ -595,8 +595,8 @@ binding declaration. Subsequent calls to build will replace the previous
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  bindEvent: (el, event, handler, context) -&gt;
-    <span class="function"><span class="title">fn</span></span> = (e) -&gt; handler.call context, e
+            <div class="content"><div class='highlight'><pre>  bindEvent: (el, event, handler, view) -&gt;
+    <span class="function"><span class="title">fn</span></span> = (ev) -&gt; handler.call @, ev, view
 
     <span class="keyword">if</span> window.jQuery?
       el = jQuery el
@@ -754,42 +754,59 @@ instance.</p>
     <span class="reserved">function</span>: <span class="literal">true</span>
     routine: (el, value) -&gt;
       Rivets.Util.unbindEvent el, <span class="property">@args</span>[<span class="number">0</span>], <span class="property">@currentListener</span> <span class="keyword">if</span> <span class="property">@currentListener</span>
-      <span class="property">@currentListener</span> = Rivets.Util.bindEvent el, <span class="property">@args</span>[<span class="number">0</span>], value, <span class="property">@model</span>
+      <span class="property">@currentListener</span> = Rivets.Util.bindEvent el, <span class="property">@args</span>[<span class="number">0</span>], value, <span class="property">@view</span>
 
   <span class="string">"each-*"</span>:
     block: <span class="literal">true</span>
-    bind: (el, collection) -&gt;
-      el.removeAttribute [<span class="string">'data'</span>, <span class="property">@view</span>.config.prefix, <span class="property">@type</span>].join(<span class="string">'-'</span>).replace <span class="string">'--'</span>, <span class="string">'-'</span>
-    unbind: (el, collection) -&gt;
-      view.unbind() <span class="keyword">for</span> view <span class="keyword">in</span> <span class="property">@iterated</span> <span class="keyword">if</span> <span class="property">@iterated</span>?
-    routine: (el, collection) -&gt;
-      <span class="keyword">if</span> <span class="property">@iterated</span>?
-        <span class="keyword">for</span> view <span class="keyword">in</span> <span class="property">@iterated</span>
-          view.unbind()
-          e.parentNode.removeChild e <span class="keyword">for</span> e <span class="keyword">in</span> view.els
-      <span class="keyword">else</span>
-        <span class="property">@marker</span> = document.createComment <span class="string">" rivets: <span class="subst">#{@type}</span> "</span>
-        el.parentNode.insertBefore <span class="property">@marker</span>, el
-        el.parentNode.removeChild el
 
+    bind: (el) -&gt;
+      attr = [<span class="string">'data'</span>, <span class="property">@view</span>.config.prefix, <span class="property">@type</span>].join(<span class="string">'-'</span>).replace <span class="string">'--'</span>, <span class="string">'-'</span>
+      <span class="property">@marker</span> = document.createComment <span class="string">" rivets: <span class="subst">#{@type}</span> "</span>
       <span class="property">@iterated</span> = []
 
-      <span class="keyword">if</span> collection
-        <span class="keyword">for</span> item <span class="keyword">in</span> collection
-          data = {}
-          data[n] = m <span class="keyword">for</span> n, m <span class="keyword">of</span> <span class="property">@view</span>.models
-          data[<span class="property">@args</span>[<span class="number">0</span>]] = item
-          itemEl = el.cloneNode <span class="literal">true</span>
+      el.removeAttribute attr
+      el.parentNode.insertBefore <span class="property">@marker</span>, el
+      el.parentNode.removeChild el
+
+    unbind: (el) -&gt;
+      view.unbind() <span class="keyword">for</span> view <span class="keyword">in</span> <span class="property">@iterated</span> <span class="keyword">if</span> <span class="property">@iterated</span>?
+
+    routine: (el, collection) -&gt;
+      modelName = <span class="property">@args</span>[<span class="number">0</span>]
+      collection = collection <span class="keyword">or</span> []
+
+      <span class="keyword">if</span> <span class="property">@iterated</span>.length &gt; collection.length
+        <span class="keyword">for</span> i <span class="keyword">in</span> Array <span class="property">@iterated</span>.length - collection.length
+          view = <span class="property">@iterated</span>.pop()
+          view.unbind()
+          <span class="property">@marker</span>.parentNode.removeChild view.els[<span class="number">0</span>]
+
+      <span class="keyword">for</span> model, index <span class="keyword">in</span> collection
+        data = {}
+        data[modelName] = model
+
+        <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@iterated</span>[index]?
+          <span class="keyword">for</span> key, model <span class="keyword">of</span> <span class="property">@view</span>.models
+            data[key] = model
 
           previous = <span class="keyword">if</span> <span class="property">@iterated</span>.length
             <span class="property">@iterated</span>[<span class="property">@iterated</span>.length - <span class="number">1</span>].els[<span class="number">0</span>]
           <span class="keyword">else</span>
             <span class="property">@marker</span>
 
-          <span class="property">@marker</span>.parentNode.insertBefore itemEl, previous.nextSibling ? <span class="literal">null</span>
-          view = <span class="keyword">new</span> Rivets.View(itemEl, data, <span class="property">@view</span>.options)
-          view.bind()
-          <span class="property">@iterated</span>.push view
+          options =
+            binders: <span class="property">@view</span>.options.binders
+            formatters: <span class="property">@view</span>.options.formatters
+            config: {}
+
+          options.config[k] = v <span class="keyword">for</span> k, v <span class="keyword">of</span> <span class="property">@view</span>.options.config
+          options.config.preloadData = <span class="literal">true</span>
+
+          template = el.cloneNode <span class="literal">true</span>
+          <span class="property">@iterated</span>.push rivets.bind template, data, options
+          <span class="property">@marker</span>.parentNode.insertBefore template, previous.nextSibling
+        <span class="keyword">else</span> <span class="keyword">if</span> <span class="property">@iterated</span>[index].models[modelName] <span class="keyword">isnt</span> model
+          <span class="property">@iterated</span>[index].update data
 
   <span class="string">"class-*"</span>: (el, value) -&gt;
     elClass = <span class="string">" <span class="subst">#{el.className}</span> "</span>
