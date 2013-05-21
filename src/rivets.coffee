@@ -368,46 +368,55 @@ Rivets.binders =
 
   "each-*":
     block: true
-    bind: (el, collection) ->
-      el.removeAttribute ['data', @view.config.prefix, @type].join('-').replace '--', '-'
-    unbind: (el, collection) ->
-      view.unbind() for view in @iterated if @iterated?
-    routine: (el, collection) ->
-      if @iterated?
-        for view in @iterated
-          view.unbind()
-          e.parentNode.removeChild e for e in view.els
-      else
-        @marker = document.createComment " rivets: #{@type} "
-        el.parentNode.insertBefore @marker, el
-        el.parentNode.removeChild el
 
+    bind: (el) ->
+      attr = ['data', @view.config.prefix, @type].join('-').replace '--', '-'
+      @marker = document.createComment " rivets: #{@type} "
       @iterated = []
 
-      if collection
-        for item in collection
-          data = {}
-          data[n] = m for n, m of @view.models
-          data[@args[0]] = item
-          itemEl = el.cloneNode true
+      el.removeAttribute attr
+      el.parentNode.insertBefore @marker, el
+      el.parentNode.removeChild el
+
+    unbind: (el) ->
+      view.unbind() for view in @iterated if @iterated?
+
+    routine: (el, collection) ->
+      modelName = @args[0]
+      collection = collection or []
+
+      if @iterated.length > collection.length
+        for i in Array @iterated.length - collection.length
+          view = @iterated.pop()
+          view.unbind()
+          @marker.parentNode.removeChild view.els[0]
+
+      for model, index in collection
+        data = {}
+        data[modelName] = model
+
+        if not @iterated[index]?
+          for key, model of @view.models
+            data[key] = model
 
           previous = if @iterated.length
             @iterated[@iterated.length - 1].els[0]
           else
             @marker
 
-          @marker.parentNode.insertBefore itemEl, previous.nextSibling ? null
-          options = 
+          options =
             binders: @view.options.binders
-            formatters: @view.options.binders
+            formatters: @view.options.formatters
             config: {}
-          options.config[k] = v for k, v of @view.options.config if @view.options.config
-          # Ensure preloadData is set to true since child elements won't get initiated otherwise until the next change (which might not be the first)
+
+          options.config[k] = v for k, v of @view.options.config
           options.config.preloadData = true
 
-          view = new Rivets.View(itemEl, data, options)
-          view.bind()
-          @iterated.push view
+          template = el.cloneNode true
+          @iterated.push rivets.bind template, data, options
+          @marker.parentNode.insertBefore template, previous.nextSibling
+        else if @iterated[index].models[modelName] isnt model
+          @iterated[index].update data
 
   "class-*": (el, value) ->
     elClass = " #{el.className} "
