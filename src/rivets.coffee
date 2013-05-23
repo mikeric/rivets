@@ -441,6 +441,8 @@ Rivets.binders =
 # overridden globally or local to a `Rivets.View` instance.
 Rivets.config =
   preloadData: true
+  handler: (fn, context, ev, binding) ->
+    fn.call context, ev, binding.view.models
 
 # Rivets.formatters
 # -----------------
