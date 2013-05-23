@@ -359,8 +359,10 @@ Rivets.binders =
   "on-*":
     function: true
     routine: (el, value) ->
-      Rivets.Util.unbindEvent el, @args[0], @currentListener if @currentListener
-      @currentListener = Rivets.Util.bindEvent el, @args[0], value, @view
+      binding = this
+      Rivets.Util.unbindEvent el, @args[0], @handler if @handler
+      @handler = (ev) -> binding.view.config.handler value, @, ev, binding
+      Rivets.Util.bindEvent el, @args[0], @handler
 
   "each-*":
     block: true
