@@ -368,13 +368,14 @@ Rivets.binders =
     block: true
 
     bind: (el) ->
-      attr = ['data', @view.config.prefix, @type].join('-').replace '--', '-'
-      @marker = document.createComment " rivets: #{@type} "
-      @iterated = []
+      unless @marker?
+        attr = ['data', @view.config.prefix, @type].join('-').replace '--', '-'
+        @marker = document.createComment " rivets: #{@type} "
+        @iterated = []
 
-      el.removeAttribute attr
-      el.parentNode.insertBefore @marker, el
-      el.parentNode.removeChild el
+        el.removeAttribute attr
+        el.parentNode.insertBefore @marker, el
+        el.parentNode.removeChild el
 
     unbind: (el) ->
       view.unbind() for view in @iterated if @iterated?
