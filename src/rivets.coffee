@@ -251,30 +251,26 @@ class Rivets.View
 # Houses common utility functions used internally by Rivets.js.
 Rivets.Util =
   # Create a single DOM event binding.
-  bindEvent: (el, event, handler, view) ->
-    fn = (ev) -> handler.call @, ev, view
-
+  bindEvent: (el, event, handler) ->
     if window.jQuery?
       el = jQuery el
-      if el.on? then el.on event, fn else el.bind event, fn
+      if el.on? then el.on event, handler else el.bind event, handler
     else if window.addEventListener?
-      el.addEventListener event, fn, false
+      el.addEventListener event, handler, false
     else
       event = 'on' + event
-      el.attachEvent event, fn
-
-    fn
+      el.attachEvent event, handler
 
   # Remove a single DOM event binding.
-  unbindEvent: (el, event, fn) ->
+  unbindEvent: (el, event, handler) ->
     if window.jQuery?
       el = jQuery el
-      if el.off? then el.off event, fn else el.unbind event, fn
-    else if window.removeEventListener
-      el.removeEventListener event, fn, false
+      if el.off? then el.off event, handler else el.unbind event, handler
+    else if window.removeEventListener?
+      el.removeEventListener event, handler, false
     else
       event = 'on' + event
-      el.detachEvent  event, fn
+      el.detachEvent  event, handler
 
   # Get the current value of an input node.
   getInputValue: (el) ->
@@ -306,9 +302,9 @@ Rivets.binders =
   checked:
     publishes: true
     bind: (el) ->
-      @currentListener = Rivets.Util.bindEvent el, 'change', @publish
+      Rivets.Util.bindEvent el, 'change', @publish
     unbind: (el) ->
-      Rivets.Util.unbindEvent el, 'change', @currentListener
+      Rivets.Util.unbindEvent el, 'change', @publish
     routine: (el, value) ->
       if el.type is 'radio'
         el.checked = el.value?.toString() is value?.toString()
@@ -318,9 +314,9 @@ Rivets.binders =
   unchecked:
     publishes: true
     bind: (el) ->
-      @currentListener = Rivets.Util.bindEvent el, 'change', @publish
+      Rivets.Util.bindEvent el, 'change', @publish
     unbind: (el) ->
-      Rivets.Util.unbindEvent el, 'change', @currentListener
+      Rivets.Util.unbindEvent el, 'change', @publish
     routine: (el, value) ->
       if el.type is 'radio'
         el.checked = el.value?.toString() isnt value?.toString()
@@ -339,9 +335,9 @@ Rivets.binders =
   value:
     publishes: true
     bind: (el) ->
-      @currentListener = Rivets.Util.bindEvent el, 'change', @publish
+      Rivets.Util.bindEvent el, 'change', @publish
     unbind: (el) ->
-      Rivets.Util.unbindEvent el, 'change', @currentListener
+      Rivets.Util.unbindEvent el, 'change', @publish
     routine: (el, value) ->
       if window.jQuery?
         el = jQuery el
