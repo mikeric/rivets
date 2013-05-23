@@ -358,6 +358,10 @@ Rivets.binders =
 
   "on-*":
     function: true
+
+    unbind: (el) ->
+      Rivets.Util.unbindEvent el, @args[0], @handler if @handler
+
     routine: (el, value) ->
       binding = this
       Rivets.Util.unbindEvent el, @args[0], @handler if @handler
