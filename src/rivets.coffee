@@ -57,6 +57,11 @@ class Rivets.Binding
 
     value
 
+  # Returns an event handler for the binding around the supplied function.
+  eventHandler: (fn) =>
+    handler = (binding = @).view.config.handler
+    (ev) -> handler.call fn, @, ev, binding
+
   # Sets the value for the binding. This Basically just runs the binding routine
   # with the suplied value formatted.
   set: (value) =>
