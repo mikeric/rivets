@@ -368,10 +368,8 @@ Rivets.binders =
       Rivets.Util.unbindEvent el, @args[0], @handler if @handler
 
     routine: (el, value) ->
-      binding = this
       Rivets.Util.unbindEvent el, @args[0], @handler if @handler
-      @handler = (ev) -> binding.view.config.handler value, @, ev, binding
-      Rivets.Util.bindEvent el, @args[0], @handler
+      Rivets.Util.bindEvent el, @args[0], @handler = @eventHandler value
 
   "each-*":
     block: true
@@ -451,8 +449,8 @@ Rivets.binders =
 # overridden globally or local to a `Rivets.View` instance.
 Rivets.config =
   preloadData: true
-  handler: (fn, context, ev, binding) ->
-    fn.call context, ev, binding.view.models
+  handler: (context, ev, binding) ->
+    @call context, ev, binding.view.models
 
 # Rivets.formatters
 # -----------------
