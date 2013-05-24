@@ -1,7 +1,7 @@
 # Rivets.js
 # =========
 
-# > version: 0.5.3
+# > version: 0.5.4
 # > author: Michael Richards
 # > license: MIT
 # >
@@ -36,7 +36,7 @@ class Rivets.Binding
     @binder or= @view.binders['*']
     @binder = {routine: @binder} if @binder instanceof Function
     @formatters = @options.formatters || []
-    @model = @view.models[@key]
+    @model = if @key then @view.models[@key] else @view.models
 
   # Applies all the current formatters to the supplied value and returns the
   # formatted value.
@@ -56,6 +56,11 @@ class Rivets.Binding
         value = formatter value, args...
 
     value
+
+  # Returns an event handler for the binding around the supplied function.
+  eventHandler: (fn) =>
+    handler = (binding = @).view.config.handler
+    (ev) -> handler.call fn, @, ev, binding
 
   # Sets the value for the binding. This Basically just runs the binding routine
   # with the suplied value formatted.
@@ -134,7 +139,7 @@ class Rivets.Binding
   # the old model first and then re-binds with the new model.
   update: =>
     @unbind()
-    @model = @view.models[@key]
+    @model = if @key then @view.models[@key] else @view.models
     @bind()
 
 # Rivets.View
@@ -203,7 +208,7 @@ class Rivets.View
               splitPath.shift()
             keypath = splitPath.join '.'
 
-            if @models[key]?
+            if not key or @models[key]?
               if dependencies = context.shift()
                 options.dependencies = dependencies.split /\s+/
 
@@ -251,30 +256,26 @@ class Rivets.View
 # Houses common utility functions used internally by Rivets.js.
 Rivets.Util =
   # Create a single DOM event binding.
-  bindEvent: (el, event, handler, view) ->
-    fn = (ev) -> handler.call @, ev, view
-
+  bindEvent: (el, event, handler) ->
     if window.jQuery?
       el = jQuery el
-      if el.on? then el.on event, fn else el.bind event, fn
+      if el.on? then el.on event, handler else el.bind event, handler
     else if window.addEventListener?
-      el.addEventListener event, fn, false
+      el.addEventListener event, handler, false
     else
       event = 'on' + event
-      el.attachEvent event, fn
-
-    fn
+      el.attachEvent event, handler
 
   # Remove a single DOM event binding.
-  unbindEvent: (el, event, fn) ->
+  unbindEvent: (el, event, handler) ->
     if window.jQuery?
       el = jQuery el
-      if el.off? then el.off event, fn else el.unbind event, fn
-    else if window.removeEventListener
-      el.removeEventListener event, fn, false
+      if el.off? then el.off event, handler else el.unbind event, handler
+    else if window.removeEventListener?
+      el.removeEventListener event, handler, false
     else
       event = 'on' + event
-      el.detachEvent  event, fn
+      el.detachEvent  event, handler
 
   # Get the current value of an input node.
   getInputValue: (el) ->
@@ -306,9 +307,9 @@ Rivets.binders =
   checked:
     publishes: true
     bind: (el) ->
-      @currentListener = Rivets.Util.bindEvent el, 'change', @publish
+      Rivets.Util.bindEvent el, 'change', @publish
     unbind: (el) ->
-      Rivets.Util.unbindEvent el, 'change', @currentListener
+      Rivets.Util.unbindEvent el, 'change', @publish
     routine: (el, value) ->
       if el.type is 'radio'
         el.checked = el.value?.toString() is value?.toString()
@@ -318,9 +319,9 @@ Rivets.binders =
   unchecked:
     publishes: true
     bind: (el) ->
-      @currentListener = Rivets.Util.bindEvent el, 'change', @publish
+      Rivets.Util.bindEvent el, 'change', @publish
     unbind: (el) ->
-      Rivets.Util.unbindEvent el, 'change', @currentListener
+      Rivets.Util.unbindEvent el, 'change', @publish
     routine: (el, value) ->
       if el.type is 'radio'
         el.checked = el.value?.toString() isnt value?.toString()
@@ -339,9 +340,9 @@ Rivets.binders =
   value:
     publishes: true
     bind: (el) ->
-      @currentListener = Rivets.Util.bindEvent el, 'change', @publish
+      Rivets.Util.bindEvent el, 'change', @publish
     unbind: (el) ->
-      Rivets.Util.unbindEvent el, 'change', @currentListener
+      Rivets.Util.unbindEvent el, 'change', @publish
     routine: (el, value) ->
       if window.jQuery?
         el = jQuery el
@@ -362,21 +363,26 @@ Rivets.binders =
 
   "on-*":
     function: true
+
+    unbind: (el) ->
+      Rivets.Util.unbindEvent el, @args[0], @handler if @handler
+
     routine: (el, value) ->
-      Rivets.Util.unbindEvent el, @args[0], @currentListener if @currentListener
-      @currentListener = Rivets.Util.bindEvent el, @args[0], value, @view
+      Rivets.Util.unbindEvent el, @args[0], @handler if @handler
+      Rivets.Util.bindEvent el, @args[0], @handler = @eventHandler value
 
   "each-*":
     block: true
 
     bind: (el) ->
-      attr = ['data', @view.config.prefix, @type].join('-').replace '--', '-'
-      @marker = document.createComment " rivets: #{@type} "
-      @iterated = []
+      unless @marker?
+        attr = ['data', @view.config.prefix, @type].join('-').replace '--', '-'
+        @marker = document.createComment " rivets: #{@type} "
+        @iterated = []
 
-      el.removeAttribute attr
-      el.parentNode.insertBefore @marker, el
-      el.parentNode.removeChild el
+        el.removeAttribute attr
+        el.parentNode.insertBefore @marker, el
+        el.parentNode.removeChild el
 
     unbind: (el) ->
       view.unbind() for view in @iterated if @iterated?
@@ -413,7 +419,10 @@ Rivets.binders =
           options.config.preloadData = true
 
           template = el.cloneNode true
-          @iterated.push rivets.bind template, data, options
+          view = new Rivets.View(template, data, options)
+          view.bind()
+          @iterated.push view
+
           @marker.parentNode.insertBefore template, previous.nextSibling
         else if @iterated[index].models[modelName] isnt model
           @iterated[index].update data
@@ -440,6 +449,8 @@ Rivets.binders =
 # overridden globally or local to a `Rivets.View` instance.
 Rivets.config =
   preloadData: true
+  handler: (context, ev, binding) ->
+    @call context, ev, binding.view.models
 
 # Rivets.formatters
 # -----------------
