@@ -208,7 +208,7 @@ class Rivets.View
               splitPath.shift()
             keypath = splitPath.join '.'
 
-            if @models[key]?
+            if not key or @models[key]?
               if dependencies = context.shift()
                 options.dependencies = dependencies.split /\s+/
 
