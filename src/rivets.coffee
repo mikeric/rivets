@@ -36,7 +36,7 @@ class Rivets.Binding
     @binder or= @view.binders['*']
     @binder = {routine: @binder} if @binder instanceof Function
     @formatters = @options.formatters || []
-    @model = @view.models[@key]
+    @model = if @key then @view.models[@key] else @view.models
 
   # Applies all the current formatters to the supplied value and returns the
   # formatted value.
@@ -139,7 +139,7 @@ class Rivets.Binding
   # the old model first and then re-binds with the new model.
   update: =>
     @unbind()
-    @model = @view.models[@key]
+    @model = if @key then @view.models[@key] else @view.models
     @bind()
 
 # Rivets.View
