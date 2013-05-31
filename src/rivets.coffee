@@ -403,7 +403,7 @@ Rivets.binders =
 
         if not @iterated[index]?
           for key, model of @view.models
-            data[key] = model
+            data[key] ?= model
 
           previous = if @iterated.length
             @iterated[@iterated.length - 1].els[0]
