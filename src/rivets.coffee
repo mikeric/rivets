@@ -361,6 +361,53 @@ Rivets.binders =
     else
       el.textContent = if value? then value else ''
 
+  if:
+    block: true
+
+    bind: (el) ->
+      unless @marker?
+        attr = ['data', @view.config.prefix, @type].join('-').replace '--', '-'
+        declaration = el.getAttribute attr
+
+        @marker = document.createComment " rivets: #{@type} #{declaration} "
+
+        el.removeAttribute attr
+        el.parentNode.insertBefore @marker, el
+        el.parentNode.removeChild el
+
+    unbind: ->
+      @nested?.unbind()
+
+    routine: (el, value) ->
+      if value is not @nested?
+        if value
+          models = {}
+          models[key] = model for key, model of @view.models
+
+          options =
+            binders: @view.options.binders
+            formatters: @view.options.formatters
+            config: @view.options.config
+
+          (@nested = new Rivets.View(el, models, options)).bind()
+          @marker.parentNode.insertBefore el, @marker.nextSibling
+        else
+          el.parentNode.removeChild el
+          @nested.unbind()
+          delete @nested
+
+  unless:
+    block: true
+
+    bind: (el) ->
+      rivets.binders.if.bind.call @, el
+
+    unbind: ->
+      rivets.binders.if.unbind.call @
+
+    routine: (el, value) ->
+      rivets.binders.if.routine.call @, el, not value
+
   "on-*":
     function: true
 
