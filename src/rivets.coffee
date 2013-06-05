@@ -1,7 +1,7 @@
 # Rivets.js
 # =========
 
-# > version: 0.5.5
+# > version: 0.5.6
 # > author: Michael Richards
 # > license: MIT
 # >

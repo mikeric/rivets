@@ -1,5 +1,5 @@
 // Rivets.js
-// version: 0.5.5
+// version: 0.5.6
 // author: Michael Richards
 // license: MIT
 (function() {
@@ -586,6 +586,63 @@
         return el.innerText = value != null ? value : '';
       } else {
         return el.textContent = value != null ? value : '';
+      }
+    },
+    "if": {
+      block: true,
+      bind: function(el) {
+        var attr, declaration;
+
+        if (this.marker == null) {
+          attr = ['data', this.view.config.prefix, this.type].join('-').replace('--', '-');
+          declaration = el.getAttribute(attr);
+          this.marker = document.createComment(" rivets: " + this.type + " " + declaration + " ");
+          el.removeAttribute(attr);
+          el.parentNode.insertBefore(this.marker, el);
+          return el.parentNode.removeChild(el);
+        }
+      },
+      unbind: function() {
+        var _ref;
+
+        return (_ref = this.nested) != null ? _ref.unbind() : void 0;
+      },
+      routine: function(el, value) {
+        var key, model, models, options, _ref;
+
+        if (value === (this.nested == null)) {
+          if (value) {
+            models = {};
+            _ref = this.view.models;
+            for (key in _ref) {
+              model = _ref[key];
+              models[key] = model;
+            }
+            options = {
+              binders: this.view.options.binders,
+              formatters: this.view.options.formatters,
+              config: this.view.options.config
+            };
+            (this.nested = new Rivets.View(el, models, options)).bind();
+            return this.marker.parentNode.insertBefore(el, this.marker.nextSibling);
+          } else {
+            el.parentNode.removeChild(el);
+            this.nested.unbind();
+            return delete this.nested;
+          }
+        }
+      }
+    },
+    unless: {
+      block: true,
+      bind: function(el) {
+        return rivets.binders["if"].bind.call(this, el);
+      },
+      unbind: function() {
+        return rivets.binders["if"].unbind.call(this);
+      },
+      routine: function(el, value) {
+        return rivets.binders["if"].routine.call(this, el, !value);
       }
     },
     "on-*": {
