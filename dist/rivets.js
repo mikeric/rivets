@@ -1,5 +1,5 @@
 // Rivets.js
-// version: 0.5.6
+// version: 0.5.7
 // author: Michael Richards
 // license: MIT
 (function() {
@@ -636,13 +636,13 @@
     unless: {
       block: true,
       bind: function(el) {
-        return rivets.binders["if"].bind.call(this, el);
+        return Rivets.binders["if"].bind.call(this, el);
       },
       unbind: function() {
-        return rivets.binders["if"].unbind.call(this);
+        return Rivets.binders["if"].unbind.call(this);
       },
       routine: function(el, value) {
-        return rivets.binders["if"].routine.call(this, el, !value);
+        return Rivets.binders["if"].routine.call(this, el, !value);
       }
     },
     "on-*": {
