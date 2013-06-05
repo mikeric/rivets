@@ -400,13 +400,13 @@ Rivets.binders =
     block: true
 
     bind: (el) ->
-      rivets.binders.if.bind.call @, el
+      Rivets.binders.if.bind.call @, el
 
     unbind: ->
-      rivets.binders.if.unbind.call @
+      Rivets.binders.if.unbind.call @
 
     routine: (el, value) ->
-      rivets.binders.if.routine.call @, el, not value
+      Rivets.binders.if.routine.call @, el, not value
 
   "on-*":
     function: true
