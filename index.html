@@ -2,34 +2,42 @@
 layout: default
 title: A declarative data binding facility
 ---
-<aside>
-  <header>
-    <img src="/img/rivets.png">
-  </header>
 
-  <nav>
-    <ul>
-      <li><a href="/dist/rivets.min.js">Download Rivets.js (0.5.4)</a></li>
-    </ul>
+<header class="row">
+  <div class="container">
+    <div class="col col-lg-3 logo">
+      <img src="/img/rivets.png">
+    </div>
 
-    <ul>
-      <li><a href="https://github.com/mikeric/rivets">Github Repository &rarr;</a></li>
-      <li><a href="/docs/rivets.html">Annotated Source &rarr;</a></li>
-    </ul>
+    <div class="col col-lg-9">
+      <h1 class="blurb">Lightweight and powerful data binding + templating solution for building modern web applications.</h1>
 
-    <ul>
-    {% for post in site.posts %}
-      <li><a href="#{{ post.anchor }}">{{ post.title }}</a></li>
-    {% endfor %}
-    </ul>
-  </nav>
-</aside>
+      <a class="btn btn-primary" href="/dist/rivets.min.js">Download 0.5.7</a>
+      <a class="btn btn-clear" href="http://github.com/mikeric/rivets">GitHub Repository</a>
+      <a class="btn btn-clear" href="/docs/rivets.html">Annotated Source</a>
+    </div>
+  </div>
+</header>
 
-<article>
-  {% for post in site.posts %}
-    <section id="{{ post.anchor }}">
-      <h2>{{ post.title }}</h2>
-      {{ post.content | markdownify }}
-    </section>
-  {% endfor %}
-</article>
+<div class="container">
+  <section class="row">
+    <aside class="col col-lg-3">
+      <nav>
+        <ul>
+          {% for post in site.posts %}
+            <li><a href="#{{ post.anchor }}">{{ post.title }}</a></li>
+          {% endfor %}
+        </ul>
+      </nav>
+    </aside>
+
+    <article class="col col-lg-9">
+      {% for post in site.posts %}
+        <section id="{{ post.anchor }}">
+          <h2>{{ post.title }}</h2>
+          {{ post.content | unindent | markdownify }}
+        </section>
+      {% endfor %}
+    </article>
+  </section>
+</div>
