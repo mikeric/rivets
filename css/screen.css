@@ -2,13 +2,43 @@ body {
   font-family: "Proxima Nova", serif;
   font-size: 15px;
   font-weight: 400;
-  color: #3a4a5e;
+  color: #4a546a;
   background-color: #f6f8f8;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-weight: 500;
+  font-weight: 400;
   margin: 1em 0;
+}
+
+article section {
+  counter-increment: major;
+}
+
+h2:before {
+  content: counter(major) " ";
+}
+
+h4 {
+  counter-increment: minor;
+}
+
+h4:before {
+  content: counter(major) "." counter(minor) " ";
+}
+
+i {
+  font-family: "Entypo";
+  font-style: normal;
+  font-size: 42px;
+  line-height: 0;
+  position: relative;
+  top: 5px;
+  right: 5px;
+}
+
+i.social {
+  font-family: "Entypo Social";
 }
 
 /* HEADER */
@@ -17,7 +47,7 @@ header {
   margin-bottom: 60px;
   padding: 60px 0;
   background-color: white;
-  box-shadow: 0px 0px 10px 2px #e0e4e5;
+  box-shadow: 0px 0px 8px 4px #eaeeee;
 }
 
 header .blurb {
@@ -32,6 +62,7 @@ header .btn + .btn {
 nav {
   margin-left: 20px;
 }
+
 
 article > section:first-child h2 {
   margin-top: 0;
