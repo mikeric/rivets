@@ -3,9 +3,9 @@ title: Configure
 anchor: configure
 ---
 
-Use `rivets.configure` to configure Rivets.js for your app (or you can set configuration options manually on `rivets.config`).
+Use `rivets.configure` to configure Rivets.js for your app, or set the configuration options manually on the `rivets.config` object.
 
-#### Adapter
+### Adapter
 
 Rivets.js is model interface-agnostic, meaning it can work with any event-driven model by way of defining an adapter. This is the only required configuration as it's what Rivet.js uses to observe and interact with your model objects. An adapter is just an object that responds to `subscribe`, `unsubscribe`, `read` and `publish`. Here is a sample configuration with an adapter for using Rivets.js with Backbone.js.
 
@@ -28,9 +28,9 @@ rivets.configure({
 })
 {% endhighlight %}
 
-#### Prefix and data preloading
+### Prefix & Data Preloading
 
-To prevent data attribute collision, you can set the `prefix` option to something like 'rv' or 'bind' so that data attributes are prefixed like `data-rv-text`.
+To prevent data attribute collision, you can set the `prefix` option to something like `rv` so that all Rivets.js specific attributes are accessed as `data-rv-text`.
 
 {% highlight javascript %}
 rivets.configure({

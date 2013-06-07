@@ -19,12 +19,16 @@ h2:before {
   content: counter(major) " ";
 }
 
-h4 {
+h3 {
   counter-increment: minor;
 }
 
-h4:before {
+h3:before {
   content: counter(major) "." counter(minor) " ";
+}
+
+p, pre {
+  margin-bottom: 1em;
 }
 
 i {
@@ -41,13 +45,18 @@ i.social {
   font-family: "Entypo Social";
 }
 
+blockquote {
+  background-color: white;
+  border-color: #e0e4e5;
+}
+
 /* HEADER */
 
 header {
   margin-bottom: 60px;
   padding: 60px 0;
   background-color: white;
-  box-shadow: 0px 0px 8px 4px #eaeeee;
+  box-shadow: 0px 0px 8px 4px #ecefef;
 }
 
 header .blurb {
