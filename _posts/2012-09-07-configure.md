@@ -3,7 +3,7 @@ title: Configure
 anchor: configure
 ---
 
-Use `rivets.configure` to configure Rivets.js for your app, or set the configuration options manually on the `rivets.config` object.
+Use `rivets.configure` to set the following configuration options for your app.
 
 ### Adapter
 

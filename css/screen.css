@@ -21,6 +21,7 @@ h2:before {
 
 h3 {
   counter-increment: minor;
+  font-size: 22px;
 }
 
 h3:before {
