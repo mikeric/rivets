@@ -3,7 +3,7 @@ body {
   font-size: 15px;
   font-weight: 400;
   color: #4a546a;
-  background-color: #f6f8f8;
+  background-color: #f7f7fa;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -57,7 +57,7 @@ header {
   margin-bottom: 60px;
   padding: 60px 0;
   background-color: white;
-  box-shadow: 0px 0px 8px 4px #ecefef;
+  box-shadow: 0px 0px 8px 4px #ececf0;
 }
 
 header .blurb {
