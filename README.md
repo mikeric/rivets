@@ -1,18 +1,6 @@
 # Rivets.js
 
-Rivets.js is a declarative data binding facility that plays well with existing frameworks such as [Backbone.js](http://backbonejs.org), [Spine.js](http://spinejs.com) and [Stapes.js](http://hay.github.com/stapes/). It aims to be lightweight (2.3KB minified and gzipped), extensible, and configurable to work with any event-driven model.
-
----
-
-Rivets.js keeps your UI and model data in sync for you, so you can spend less time manually tying into the DOM and more time on your actual data and application logic.
-
-Out-of-the-box it’s got:
-
-- **One-way** and **two-way** binding to/from DOM elements.
-- **Computed properties** with dependent attributes.
-- **Formatters** to allow mutatating values through piping.
-- **A powerful custom bindings API** for building your own binding routines.
-- **Easy debugging** and manual bidirectional syncing of bindings.
+Rivets.js is a DOM-based templating system that sits ontop of a configurable component architecure. It let’s you build model-driven views (MDV) using declarative two-way data binding. If used properly it can reduce code complexity in your app by elimating the need to manually update the DOM, letting you focus more on your application’s data and domain logic.
 
 ## Getting Started and Documentation
 
