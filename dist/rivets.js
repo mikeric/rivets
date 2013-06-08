@@ -1,5 +1,5 @@
 // Rivets.js
-// version: 0.5.4
+// version: 0.5.7
 // author: Michael Richards
 // license: MIT
 (function() {
@@ -588,6 +588,63 @@
         return el.textContent = value != null ? value : '';
       }
     },
+    "if": {
+      block: true,
+      bind: function(el) {
+        var attr, declaration;
+
+        if (this.marker == null) {
+          attr = ['data', this.view.config.prefix, this.type].join('-').replace('--', '-');
+          declaration = el.getAttribute(attr);
+          this.marker = document.createComment(" rivets: " + this.type + " " + declaration + " ");
+          el.removeAttribute(attr);
+          el.parentNode.insertBefore(this.marker, el);
+          return el.parentNode.removeChild(el);
+        }
+      },
+      unbind: function() {
+        var _ref;
+
+        return (_ref = this.nested) != null ? _ref.unbind() : void 0;
+      },
+      routine: function(el, value) {
+        var key, model, models, options, _ref;
+
+        if (value === (this.nested == null)) {
+          if (value) {
+            models = {};
+            _ref = this.view.models;
+            for (key in _ref) {
+              model = _ref[key];
+              models[key] = model;
+            }
+            options = {
+              binders: this.view.options.binders,
+              formatters: this.view.options.formatters,
+              config: this.view.options.config
+            };
+            (this.nested = new Rivets.View(el, models, options)).bind();
+            return this.marker.parentNode.insertBefore(el, this.marker.nextSibling);
+          } else {
+            el.parentNode.removeChild(el);
+            this.nested.unbind();
+            return delete this.nested;
+          }
+        }
+      }
+    },
+    unless: {
+      block: true,
+      bind: function(el) {
+        return Rivets.binders["if"].bind.call(this, el);
+      },
+      unbind: function() {
+        return Rivets.binders["if"].unbind.call(this);
+      },
+      routine: function(el, value) {
+        return Rivets.binders["if"].routine.call(this, el, !value);
+      }
+    },
     "on-*": {
       "function": true,
       unbind: function(el) {
@@ -630,7 +687,7 @@
         }
       },
       routine: function(el, collection) {
-        var data, i, index, k, key, model, modelName, options, previous, template, v, view, _i, _j, _len, _len1, _ref, _ref1, _ref2, _results;
+        var data, i, index, k, key, model, modelName, options, previous, template, v, view, _i, _j, _len, _len1, _ref, _ref1, _ref2, _ref3, _results;
 
         modelName = this.args[0];
         collection = collection || [];
@@ -652,7 +709,9 @@
             _ref1 = this.view.models;
             for (key in _ref1) {
               model = _ref1[key];
-              data[key] = model;
+              if ((_ref2 = data[key]) == null) {
+                data[key] = model;
+              }
             }
             previous = this.iterated.length ? this.iterated[this.iterated.length - 1].els[0] : this.marker;
             options = {
@@ -660,9 +719,9 @@
               formatters: this.view.options.formatters,
               config: {}
             };
-            _ref2 = this.view.options.config;
-            for (k in _ref2) {
-              v = _ref2[k];
+            _ref3 = this.view.options.config;
+            for (k in _ref3) {
+              v = _ref3[k];
               options.config[k] = v;
             }
             options.config.preloadData = true;

@@ -35,7 +35,7 @@
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
               <blockquote>
-<p>version: 0.5.4
+<p>version: 0.5.7
 author: Michael Richards
 license: MIT</p>
 <p><a href="http://rivetsjs.com/">http://rivetsjs.com/</a></p>
@@ -763,6 +763,53 @@ instance.</p>
     <span class="keyword">else</span>
       el.textContent = <span class="keyword">if</span> value? <span class="keyword">then</span> value <span class="keyword">else</span> <span class="string">''</span>
 
+  <span class="keyword">if</span>:
+    block: <span class="literal">true</span>
+
+    bind: (el) -&gt;
+      <span class="keyword">unless</span> <span class="property">@marker</span>?
+        attr = [<span class="string">'data'</span>, <span class="property">@view</span>.config.prefix, <span class="property">@type</span>].join(<span class="string">'-'</span>).replace <span class="string">'--'</span>, <span class="string">'-'</span>
+        declaration = el.getAttribute attr
+
+        <span class="property">@marker</span> = document.createComment <span class="string">" rivets: <span class="subst">#{@type}</span> <span class="subst">#{declaration}</span> "</span>
+
+        el.removeAttribute attr
+        el.parentNode.insertBefore <span class="property">@marker</span>, el
+        el.parentNode.removeChild el
+
+    unbind: -&gt;
+      <span class="property">@nested</span>?.unbind()
+
+    routine: (el, value) -&gt;
+      <span class="keyword">if</span> value <span class="keyword">is</span> <span class="keyword">not</span> <span class="property">@nested</span>?
+        <span class="keyword">if</span> value
+          models = {}
+          models[key] = model <span class="keyword">for</span> key, model <span class="keyword">of</span> <span class="property">@view</span>.models
+
+          options =
+            binders: <span class="property">@view</span>.options.binders
+            formatters: <span class="property">@view</span>.options.formatters
+            config: <span class="property">@view</span>.options.config
+
+          (<span class="property">@nested</span> = <span class="keyword">new</span> Rivets.View(el, models, options)).bind()
+          <span class="property">@marker</span>.parentNode.insertBefore el, <span class="property">@marker</span>.nextSibling
+        <span class="keyword">else</span>
+          el.parentNode.removeChild el
+          <span class="property">@nested</span>.unbind()
+          <span class="keyword">delete</span> <span class="property">@nested</span>
+
+  <span class="keyword">unless</span>:
+    block: <span class="literal">true</span>
+
+    bind: (el) -&gt;
+      Rivets.binders.<span class="keyword">if</span>.bind.call @, el
+
+    unbind: -&gt;
+      Rivets.binders.<span class="keyword">if</span>.unbind.call @
+
+    routine: (el, value) -&gt;
+      Rivets.binders.<span class="keyword">if</span>.routine.call @, el, <span class="keyword">not</span> value
+
   <span class="string">"on-*"</span>:
     <span class="reserved">function</span>: <span class="literal">true</span>
 
@@ -805,7 +852,7 @@ instance.</p>
 
         <span class="keyword">if</span> <span class="keyword">not</span> <span class="property">@iterated</span>[index]?
           <span class="keyword">for</span> key, model <span class="keyword">of</span> <span class="property">@view</span>.models
-            data[key] = model
+            data[key] ?= model
 
           previous = <span class="keyword">if</span> <span class="property">@iterated</span>.length
             <span class="property">@iterated</span>[<span class="property">@iterated</span>.length - <span class="number">1</span>].els[<span class="number">0</span>]
