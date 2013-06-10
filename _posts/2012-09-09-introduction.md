@@ -33,4 +33,3 @@ DOM manipulation libraries should only be concerned with manipulating the DOM. T
 > A duck can walk, fly and swim, but he can't do any of these things well.
 
 Another reason for not extending an existing library is that the amount of code reused would be so minimal that it doesn't pay-off the flexibility loss. You can use Rivets.js at it's full potential with "any" other library.
-

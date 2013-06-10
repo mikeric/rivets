@@ -20,12 +20,21 @@ h2:before {
 }
 
 h3 {
+  counter-reset: sub;
   counter-increment: minor;
   font-size: 22px;
 }
 
 h3:before {
   content: counter(major) "." counter(minor) " ";
+}
+
+h4 {
+  counter-increment: sub;
+}
+
+h4:before {
+  content: counter(major) "." counter(minor) "." counter(sub) " ";
 }
 
 p, pre {
