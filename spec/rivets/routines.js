@@ -253,4 +253,29 @@ describe('Routines', function() {
       });
     });
   });
+
+  // this is less than ideal, but without being able to access
+  // Rivets.View, it is hard to isolate the options being passed
+  describe('each', function() {
+    var view, models, span;
+
+    beforeEach(function() {
+      span = document.createElement('span');
+      span.setAttribute('data-each-foo', 'obj:foos');
+      el.appendChild(span);
+      models = { obj: { foos: [ {} ] } };
+      opts = {}
+      view = rivets.bind(el, models, opts);
+    });
+
+    it('should use a cloned models object for each view', function() {
+      var iteratedView = view.bindings[0].iterated[0];
+      expect(iteratedView.models).not.toBe(models)
+    })
+
+    it('should retain reference to original models object on each view', function() {
+      var iteratedView = view.bindings[0].iterated[0];
+      expect(iteratedView.modelsRef).toBe(models)
+    })
+  });
 });
