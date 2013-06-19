@@ -152,6 +152,7 @@ class Rivets.View
   # context of the view and it's bindings.
   constructor: (@els, @models, @options = {}) ->
     @els = [@els] unless (@els.jquery || @els instanceof Array)
+    @modelsRef = @options.modelsRef || @models
 
     for option in ['config', 'binders', 'formatters']
       @[option] = {}
@@ -458,6 +459,7 @@ Rivets.binders =
             @marker
 
           options =
+            modelsRef: @view.models
             binders: @view.options.binders
             formatters: @view.options.formatters
             config: {}
