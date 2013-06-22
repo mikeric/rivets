@@ -250,6 +250,54 @@ class Rivets.View
       @models[key] = model
       binding.update() for binding in @select (b) -> b.key is key
 
+# Rivets.TextTemplateParser
+# -------------------------
+
+# Rivets.js text template parser and tokenizer for mustache-style text content
+# binding declarations.
+class Rivets.TextTemplateParser
+  types =
+    text: 0
+    binding: 1
+
+  # Parses the template and returns a set of tokens, separating static portions
+  # of text from binding declarations.
+  @parse: (template) ->
+    tokens = []
+    length = template.length
+    index = 0
+    lastIndex = 0
+
+    while lastIndex < length
+      index = template.indexOf '{{', lastIndex
+
+      if index < 0
+        tokens.push type: types.text, value: template.slice lastIndex
+        break
+      else
+        if index > 0 and lastIndex < index
+          tokens.push type: types.text, value: template.slice lastIndex, index
+
+        lastIndex = index + 2
+        index = template.indexOf '}}', lastIndex
+
+        if index < 0
+          substring = template.slice lastIndex - 2
+          lastToken = tokens[tokens.length - 1]
+
+          if lastToken?.type is types.text
+            lastToken.value += substring
+          else
+            tokens.push type: types.text, value: substring
+
+          break
+
+        value = template.slice(lastIndex, index).trim()
+        tokens.push type: types.binding, value: value
+        lastIndex = index + 2
+
+    tokens
+
 # Rivets.Util
 # -----------
 
