@@ -173,54 +173,71 @@ class Rivets.View
     skipNodes = []
     bindingRegExp = @bindingRegExp()
 
+    buildBinding = (node, type, declaration) =>
+      options = {}
+
+      pipes = (pipe.trim() for pipe in declaration.split '|')
+      context = (ctx.trim() for ctx in pipes.shift().split '<')
+      path = context.shift()
+      splitPath = path.split /\.|:/
+      options.formatters = pipes
+      options.bypass = path.indexOf(':') != -1
+
+      if splitPath[0]
+        key = splitPath.shift()
+      else
+        key = null
+        splitPath.shift()
+
+      keypath = splitPath.join '.'
+
+      if dependencies = context.shift()
+        options.dependencies = dependencies.split /\s+/
+
+      @bindings.push new Rivets.Binding @, node, type, key, keypath, options
+      
     parse = (node) =>
       unless node in skipNodes
-        for attribute in node.attributes
-          if bindingRegExp.test attribute.name
-            type = attribute.name.replace bindingRegExp, ''
-            unless binder = @binders[type]
-              for identifier, value of @binders
-                if identifier isnt '*' and identifier.indexOf('*') isnt -1
-                  regexp = new RegExp "^#{identifier.replace('*', '.+')}$"
-                  if regexp.test type
-                    binder = value
+        if node.nodeType is Node.TEXT_NODE
+          if (tokens = Rivets.TextTemplateParser.parse node.data).length
+            unless tokens.length is 1 and tokens[0].type is 0
+              [startToken, restTokens...] = tokens
 
-            binder or= @binders['*']
+              node.data = startToken.value
 
-            if binder.block
-              skipNodes.push n for n in node.getElementsByTagName '*'
-              attributes = [attribute]
+              switch startToken.type
+                when 0 then node.data = startToken.value
+                when 1 then buildBinding node, 'textNode', startToken.value
 
-        for attribute in attributes or node.attributes
-          if bindingRegExp.test attribute.name
-            options = {}
-            type = attribute.name.replace bindingRegExp, ''
-            pipes = (pipe.trim() for pipe in attribute.value.split '|')
-            context = (ctx.trim() for ctx in pipes.shift().split '<')
-            path = context.shift()
-            splitPath = path.split /\.|:/
-            options.formatters = pipes
-            options.bypass = path.indexOf(':') != -1
-            if splitPath[0]
-              key = splitPath.shift()
-            else
-              key = null
-              splitPath.shift()
-            keypath = splitPath.join '.'
+              for token in restTokens
+                node.parentNode.appendChild (text = document.createTextNode token.value)
+                buildBinding text, 'textNode', token.value if token.type is 1
+              
+        else if node.attributes?
+          for attribute in node.attributes
+            if bindingRegExp.test attribute.name
+              type = attribute.name.replace bindingRegExp, ''
+              unless binder = @binders[type]
+                for identifier, value of @binders
+                  if identifier isnt '*' and identifier.indexOf('*') isnt -1
+                    regexp = new RegExp "^#{identifier.replace('*', '.+')}$"
+                    if regexp.test type
+                      binder = value
 
-            if not key or @models[key]?
-              if dependencies = context.shift()
-                options.dependencies = dependencies.split /\s+/
+              binder or= @binders['*']
 
-              @bindings.push new Rivets.Binding @, node, type, key, keypath, options
+              if binder.block
+                skipNodes.push n for n in node.childNodes
+                attributes = [attribute]
 
-        attributes = null if attributes
+          for attribute in attributes or node.attributes
+            if bindingRegExp.test attribute.name
+              type = attribute.name.replace bindingRegExp, ''
+              buildBinding node, type, attribute.value
 
-      return
+        parse childNode for childNode in node.childNodes
 
-    for el in @els
-      parse el
-      parse node for node in el.getElementsByTagName '*' when node.attributes?
+    parse el for el in @els
 
     return
 
