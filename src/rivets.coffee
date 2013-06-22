@@ -512,6 +512,9 @@ Rivets.formatters = {}
 
 # The Rivets.js module factory.
 Rivets.factory = (exports) ->
+  # Exposes the full Rivets namespace. This is mainly used for isolated testing.
+  exports._ = Rivets
+
   # Exposes the core binding routines that can be extended or stripped down.
   exports.binders = Rivets.binders
 
