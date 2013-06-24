@@ -1,5 +1,5 @@
 // Rivets.js
-// version: 0.5.7
+// version: 0.5.8
 // author: Michael Richards
 // license: MIT
 (function() {
@@ -173,10 +173,31 @@
       }
     };
 
-    Binding.prototype.update = function() {
-      this.unbind();
-      this.model = this.key ? this.view.models[this.key] : this.view.models;
-      return this.bind();
+    Binding.prototype.update = function(models) {
+      var _ref;
+
+      if (models == null) {
+        models = {};
+      }
+      if (this.key) {
+        if (models[this.key]) {
+          if (!this.options.bypass) {
+            this.view.config.adapter.unsubscribe(this.model, this.keypath, this.sync);
+          }
+          this.model = models[this.key];
+          if (this.options.bypass) {
+            this.sync();
+          } else {
+            this.view.config.adapter.subscribe(this.model, this.keypath, this.sync);
+            if (this.view.config.preloadData) {
+              this.sync();
+            }
+          }
+        }
+      } else {
+        this.sync();
+      }
+      return (_ref = this.binder.update) != null ? _ref.call(this, models) : void 0;
     };
 
     return Binding;
@@ -404,28 +425,20 @@
     };
 
     View.prototype.update = function(models) {
-      var binding, key, model, _results;
+      var binding, key, model, _i, _len, _ref, _results;
 
       if (models == null) {
         models = {};
       }
-      _results = [];
       for (key in models) {
         model = models[key];
         this.models[key] = model;
-        _results.push((function() {
-          var _i, _len, _ref, _results1;
-
-          _ref = this.select(function(b) {
-            return b.key === key;
-          });
-          _results1 = [];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            binding = _ref[_i];
-            _results1.push(binding.update());
-          }
-          return _results1;
-        }).call(this));
+      }
+      _ref = this.bindings;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        binding = _ref[_i];
+        _results.push(binding.update(models));
       }
       return _results;
     };
@@ -631,6 +644,9 @@
             return delete this.nested;
           }
         }
+      },
+      update: function(models) {
+        return this.nested.update(models);
       }
     },
     unless: {
@@ -643,6 +659,9 @@
       },
       routine: function(el, value) {
         return Rivets.binders["if"].routine.call(this, el, !value);
+      },
+      update: function(models) {
+        return Rivets.binders["if"].update.call(this, models);
       }
     },
     "on-*": {
@@ -735,6 +754,24 @@
           } else {
             _results.push(void 0);
           }
+        }
+        return _results;
+      },
+      update: function(models) {
+        var data, key, model, view, _i, _len, _ref, _results;
+
+        data = {};
+        for (key in models) {
+          model = models[key];
+          if (key !== this.args[0]) {
+            data[key] = model;
+          }
+        }
+        _ref = this.iterated;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          view = _ref[_i];
+          _results.push(view.update(data));
         }
         return _results;
       }
