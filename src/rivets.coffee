@@ -408,6 +408,9 @@ Rivets.binders =
           @nested.unbind()
           delete @nested
 
+    update: (models) ->
+      @nested.update models
+
   unless:
     block: true
 
@@ -419,6 +422,9 @@ Rivets.binders =
 
     routine: (el, value) ->
       Rivets.binders.if.routine.call @, el, not value
+
+    update: (models) ->
+      Rivets.binders.if.update.call @, models
 
   "on-*":
     function: true
