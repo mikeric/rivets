@@ -212,10 +212,11 @@ class Rivets.View
     parse = (node) =>
       unless node in skipNodes
         if node.nodeType is Node.TEXT_NODE
-          if (tokens = Rivets.TextTemplateParser.parse node.data).length
-            unless tokens.length is 1 and tokens[0].type is 0
-              [startToken, restTokens...] = tokens
+          parser = Rivets.TextTemplateParser
 
+          if (tokens = parser.parse node.data).length
+            unless tokens.length is 1 and tokens[0].type is parser.types.text
+              [startToken, restTokens...] = tokens
               node.data = startToken.value
 
               switch startToken.type
@@ -285,7 +286,7 @@ class Rivets.View
 # Rivets.js text template parser and tokenizer for mustache-style text content
 # binding declarations.
 class Rivets.TextTemplateParser
-  types =
+  @types:
     text: 0
     binding: 1
 
@@ -301,11 +302,11 @@ class Rivets.TextTemplateParser
       index = template.indexOf '{{', lastIndex
 
       if index < 0
-        tokens.push type: types.text, value: template.slice lastIndex
+        tokens.push type: @types.text, value: template.slice lastIndex
         break
       else
         if index > 0 and lastIndex < index
-          tokens.push type: types.text, value: template.slice lastIndex, index
+          tokens.push type: @types.text, value: template.slice lastIndex, index
 
         lastIndex = index + 2
         index = template.indexOf '}}', lastIndex
@@ -314,15 +315,15 @@ class Rivets.TextTemplateParser
           substring = template.slice lastIndex - 2
           lastToken = tokens[tokens.length - 1]
 
-          if lastToken?.type is types.text
+          if lastToken?.type is @types.text
             lastToken.value += substring
           else
-            tokens.push type: types.text, value: substring
+            tokens.push type: @types.text, value: substring
 
           break
 
         value = template.slice(lastIndex, index).trim()
-        tokens.push type: types.binding, value: value
+        tokens.push type: @types.binding, value: value
         lastIndex = index + 2
 
     tokens
