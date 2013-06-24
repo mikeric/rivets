@@ -487,6 +487,14 @@ Rivets.binders =
         else if @iterated[index].models[modelName] isnt model
           @iterated[index].update data
 
+    update: (models) ->
+      data = {}
+      
+      for key, model of models
+        data[key] = model unless key is @args[0]
+
+      view.update data for view in @iterated
+
   "class-*": (el, value) ->
     elClass = " #{el.className} "
 
