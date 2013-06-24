@@ -150,11 +150,10 @@ class Rivets.Binding
         else
           @view.config.adapter.subscribe @model, @keypath, @sync
           @sync() if @view.config.preloadData
-
-        @binder.update?.call @, models
     else
       @sync()
-      @binder.update?.call @, models
+
+    @binder.update?.call @, models
 
 # Rivets.View
 # -----------
