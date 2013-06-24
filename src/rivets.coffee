@@ -1,7 +1,7 @@
 # Rivets.js
 # =========
 
-# > version: 0.5.7
+# > version: 0.5.8
 # > author: Michael Richards
 # > license: MIT
 # >
@@ -137,10 +137,23 @@ class Rivets.Binding
 
   # Updates the binding's model from what is currently set on the view. Unbinds
   # the old model first and then re-binds with the new model.
-  update: =>
-    @unbind()
-    @model = if @key then @view.models[@key] else @view.models
-    @bind()
+  update: (models = {}) =>
+    if @key
+      if models[@key]
+        unless @options.bypass
+          @view.config.adapter.unsubscribe @model, @keypath, @sync
+
+        @model = models[@key]
+
+        if @options.bypass
+          @sync()
+        else
+          @view.config.adapter.subscribe @model, @keypath, @sync
+          @sync() if @view.config.preloadData
+    else
+      @sync()
+
+    @binder.update?.call @, models
 
 # Rivets.View
 # -----------
@@ -246,9 +259,8 @@ class Rivets.View
 
   # Updates the view's models along with any affected bindings.
   update: (models = {}) =>
-    for key, model of models
-      @models[key] = model
-      binding.update() for binding in @select (b) -> b.key is key
+    @models[key] = model for key, model of models
+    binding.update models for binding in @bindings
 
 # Rivets.Util
 # -----------
@@ -396,6 +408,9 @@ Rivets.binders =
           @nested.unbind()
           delete @nested
 
+    update: (models) ->
+      @nested.update models
+
   unless:
     block: true
 
@@ -407,6 +422,9 @@ Rivets.binders =
 
     routine: (el, value) ->
       Rivets.binders.if.routine.call @, el, not value
+
+    update: (models) ->
+      Rivets.binders.if.update.call @, models
 
   "on-*":
     function: true
@@ -473,6 +491,14 @@ Rivets.binders =
           @marker.parentNode.insertBefore template, previous.nextSibling
         else if @iterated[index].models[modelName] isnt model
           @iterated[index].update data
+
+    update: (models) ->
+      data = {}
+      
+      for key, model of models
+        data[key] = model unless key is @args[0]
+
+      view.update data for view in @iterated
 
   "class-*": (el, value) ->
     elClass = " #{el.className} "

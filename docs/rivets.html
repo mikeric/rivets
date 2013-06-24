@@ -35,7 +35,7 @@
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
               <blockquote>
-<p>version: 0.5.7
+<p>version: 0.5.8
 author: Michael Richards
 license: MIT</p>
 <p><a href="http://rivetsjs.com/">http://rivetsjs.com/</a></p>
@@ -327,10 +327,23 @@ the old model first and then re-binds with the new model.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  update: =&gt;
-    <span class="property">@unbind</span>()
-    <span class="property">@model</span> = <span class="keyword">if</span> <span class="property">@key</span> <span class="keyword">then</span> <span class="property">@view</span>.models[<span class="property">@key</span>] <span class="keyword">else</span> <span class="property">@view</span>.models
-    <span class="property">@bind</span>()</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  update: (models = {}) =&gt;
+    <span class="keyword">if</span> <span class="property">@key</span>
+      <span class="keyword">if</span> models[<span class="property">@key</span>]
+        <span class="keyword">unless</span> <span class="property">@options</span>.bypass
+          <span class="property">@view</span>.config.adapter.unsubscribe <span class="property">@model</span>, <span class="property">@keypath</span>, <span class="property">@sync</span>
+
+        <span class="property">@model</span> = models[<span class="property">@key</span>]
+
+        <span class="keyword">if</span> <span class="property">@options</span>.bypass
+          <span class="property">@sync</span>()
+        <span class="keyword">else</span>
+          <span class="property">@view</span>.config.adapter.subscribe <span class="property">@model</span>, <span class="property">@keypath</span>, <span class="property">@sync</span>
+          <span class="property">@sync</span>() <span class="keyword">if</span> <span class="property">@view</span>.config.preloadData
+    <span class="keyword">else</span>
+      <span class="property">@sync</span>()
+
+    <span class="property">@binder</span>.update?.call @, models</pre></div></div>
             
         </li>
         
@@ -567,9 +580,8 @@ binding declaration. Subsequent calls to build will replace the previous
             </div>
             
             <div class="content"><div class='highlight'><pre>  update: (models = {}) =&gt;
-    <span class="keyword">for</span> key, model <span class="keyword">of</span> models
-      <span class="property">@models</span>[key] = model
-      binding.update() <span class="keyword">for</span> binding <span class="keyword">in</span> <span class="property">@select</span> (b) -&gt; b.key <span class="keyword">is</span> key</pre></div></div>
+    <span class="property">@models</span>[key] = model <span class="keyword">for</span> key, model <span class="keyword">of</span> models
+    binding.update models <span class="keyword">for</span> binding <span class="keyword">in</span> <span class="property">@bindings</span></pre></div></div>
             
         </li>
         
@@ -798,6 +810,9 @@ instance.</p>
           <span class="property">@nested</span>.unbind()
           <span class="keyword">delete</span> <span class="property">@nested</span>
 
+    update: (models) -&gt;
+      <span class="property">@nested</span>.update models
+
   <span class="keyword">unless</span>:
     block: <span class="literal">true</span>
 
@@ -809,6 +824,9 @@ instance.</p>
 
     routine: (el, value) -&gt;
       Rivets.binders.<span class="keyword">if</span>.routine.call @, el, <span class="keyword">not</span> value
+
+    update: (models) -&gt;
+      Rivets.binders.<span class="keyword">if</span>.update.call @, models
 
   <span class="string">"on-*"</span>:
     <span class="reserved">function</span>: <span class="literal">true</span>
@@ -875,6 +893,14 @@ instance.</p>
           <span class="property">@marker</span>.parentNode.insertBefore template, previous.nextSibling
         <span class="keyword">else</span> <span class="keyword">if</span> <span class="property">@iterated</span>[index].models[modelName] <span class="keyword">isnt</span> model
           <span class="property">@iterated</span>[index].update data
+
+    update: (models) -&gt;
+      data = {}
+      
+      <span class="keyword">for</span> key, model <span class="keyword">of</span> models
+        data[key] = model <span class="keyword">unless</span> key <span class="keyword">is</span> <span class="property">@args</span>[<span class="number">0</span>]
+
+      view.update data <span class="keyword">for</span> view <span class="keyword">in</span> <span class="property">@iterated</span>
 
   <span class="string">"class-*"</span>: (el, value) -&gt;
     elClass = <span class="string">" <span class="subst">#{el.className}</span> "</span>
