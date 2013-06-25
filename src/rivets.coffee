@@ -598,6 +598,7 @@ Rivets.internalBinders =
 # overridden globally or local to a `Rivets.View` instance.
 Rivets.config =
   preloadData: true
+  templateDelimiters: ['{{', '}}']
   handler: (context, ev, binding) ->
     @call context, ev, binding.view.models
 
