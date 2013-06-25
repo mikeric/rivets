@@ -458,7 +458,7 @@ Rivets.binders =
       @nested?.unbind()
 
     routine: (el, value) ->
-      if value is not @nested?
+      if !!value is not @nested?
         if value
           models = {}
           models[key] = model for key, model of @view.models
