@@ -13,7 +13,7 @@ describe("Rivets.TextTemplateParser", function() {
         {type: 0, value: " unread messages."}
       ]
 
-      results = Rivets.TextTemplateParser.parse(template)
+      results = Rivets.TextTemplateParser.parse(template, ['{{', '}}'])
       expect(results.length).toBe(5)
 
       for (i = 0; i < results.length; i++) {
@@ -27,7 +27,7 @@ describe("Rivets.TextTemplateParser", function() {
         template = "Hello World!"
         expected = [{type: 0, value: "Hello World!"}]
 
-        results = Rivets.TextTemplateParser.parse(template)
+        results = Rivets.TextTemplateParser.parse(template, ['{{', '}}'])
         expect(results.length).toBe(1)
 
         for (i = 0; i < results.length; i++) {
@@ -42,7 +42,7 @@ describe("Rivets.TextTemplateParser", function() {
         template = "{{ user.name }}"
         expected = [{type: 1, value: "user.name"}]
 
-        results = Rivets.TextTemplateParser.parse(template)
+        results = Rivets.TextTemplateParser.parse(template, ['{{', '}}'])
         expect(results.length).toBe(1)
 
         for (i = 0; i < results.length; i++) {
