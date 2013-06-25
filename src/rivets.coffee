@@ -213,20 +213,20 @@ class Rivets.View
       unless node in skipNodes
         if node.nodeType is Node.TEXT_NODE
           parser = Rivets.TextTemplateParser
-          delimiters = @config.templateDelimiters
 
-          if (tokens = parser.parse(node.data, delimiters)).length
-            unless tokens.length is 1 and tokens[0].type is parser.types.text
-              [startToken, restTokens...] = tokens
-              node.data = startToken.value
+          if delimiters = @config.templateDelimiters
+            if (tokens = parser.parse(node.data, delimiters)).length
+              unless tokens.length is 1 and tokens[0].type is parser.types.text
+                [startToken, restTokens...] = tokens
+                node.data = startToken.value
 
-              switch startToken.type
-                when 0 then node.data = startToken.value
-                when 1 then buildBinding node, 'textNode', startToken.value
+                switch startToken.type
+                  when 0 then node.data = startToken.value
+                  when 1 then buildBinding node, 'textNode', startToken.value
 
-              for token in restTokens
-                node.parentNode.appendChild (text = document.createTextNode token.value)
-                buildBinding text, 'textNode', token.value if token.type is 1
+                for token in restTokens
+                  node.parentNode.appendChild (text = document.createTextNode token.value)
+                  buildBinding text, 'textNode', token.value if token.type is 1
               
         else if node.attributes?
           for attribute in node.attributes
