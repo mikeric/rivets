@@ -292,14 +292,14 @@ class Rivets.TextTemplateParser
 
   # Parses the template and returns a set of tokens, separating static portions
   # of text from binding declarations.
-  @parse: (template) ->
+  @parse: (template, delimiters) ->
     tokens = []
     length = template.length
     index = 0
     lastIndex = 0
 
     while lastIndex < length
-      index = template.indexOf '{{', lastIndex
+      index = template.indexOf delimiters[0], lastIndex
 
       if index < 0
         tokens.push type: @types.text, value: template.slice lastIndex
@@ -309,7 +309,7 @@ class Rivets.TextTemplateParser
           tokens.push type: @types.text, value: template.slice lastIndex, index
 
         lastIndex = index + 2
-        index = template.indexOf '}}', lastIndex
+        index = template.indexOf delimiters[1], lastIndex
 
         if index < 0
           substring = template.slice lastIndex - 2
