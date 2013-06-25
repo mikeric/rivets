@@ -213,8 +213,9 @@ class Rivets.View
       unless node in skipNodes
         if node.nodeType is Node.TEXT_NODE
           parser = Rivets.TextTemplateParser
+          delimiters = @config.templateDelimiters
 
-          if (tokens = parser.parse node.data).length
+          if (tokens = parser.parse(node.data, delimiters)).length
             unless tokens.length is 1 and tokens[0].type is parser.types.text
               [startToken, restTokens...] = tokens
               node.data = startToken.value
