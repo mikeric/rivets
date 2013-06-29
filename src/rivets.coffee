@@ -178,6 +178,10 @@ class Rivets.View
     prefix = @config.prefix
     if prefix then new RegExp("^data-#{prefix}-") else /^data-/
 
+  # Regular expression used to match component nodes.
+  componentRegExp: =>
+    new RegExp "^#{@config.prefix?.toUpperCase() ? 'RV'}-"
+
   # Parses the DOM tree and builds `Rivets.Binding` instances for every matched
   # binding declaration. Subsequent calls to build will replace the previous
   # `Rivets.Binding` instances with new ones, so be sure to unbind them first.
@@ -185,6 +189,8 @@ class Rivets.View
     @bindings = []
     skipNodes = []
     bindingRegExp = @bindingRegExp()
+    componentRegExp = @componentRegExp()
+
 
     buildBinding = (node, type, declaration) =>
       options = {}
@@ -208,7 +214,7 @@ class Rivets.View
         options.dependencies = dependencies.split /\s+/
 
       @bindings.push new Rivets.Binding @, node, type, key, keypath, options
-      
+
     parse = (node) =>
       unless node in skipNodes
         if node.nodeType is Node.TEXT_NODE
@@ -227,7 +233,29 @@ class Rivets.View
                 for token in restTokens
                   node.parentNode.appendChild (text = document.createTextNode token.value)
                   buildBinding text, 'textNode', token.value if token.type is 1
-              
+        else if componentRegExp.test node.tagName
+          type = node.tagName.replace(componentRegExp, '').toLowerCase()
+
+          if component = Rivets.components[type]
+            attributes = {}
+            inflections = {}
+
+            for attribute in node.attributes or []
+              if attribute.name in component.attributes
+                attributes[attribute.name] = attribute.value
+              else
+                model = @models
+                model = model[key] for key in attribute.value.split('.')
+                inflections[attribute.name] = model
+
+            el = component.build.call(attributes)
+
+            models = {}
+            models[key] = model for key, model of inflections
+            models[key] ?= model for key, model of @models
+
+            (view = new Rivets.View(el, models, @options)).bind()
+            node.parentNode.replaceChild el, node
         else if node.attributes?
           for attribute in node.attributes
             if bindingRegExp.test attribute.name
@@ -591,6 +619,14 @@ Rivets.internalBinders =
   textNode: (node, value) ->
     node.data = value ? ''
 
+# Rivets.components
+# -----------------
+
+# Default components (there aren't any), publicly accessible on
+# `module.components`. Can be overridden globally or local to a `Rivets.View`
+# instance.
+Rivets.components = {}
+
 # Rivets.config
 # -------------
 
@@ -619,6 +655,9 @@ Rivets.factory = (exports) ->
 
   # Exposes the core binding routines that can be extended or stripped down.
   exports.binders = Rivets.binders
+
+  # Exposes the components object to be extended.
+  exports.components = Rivets.components
 
   # Exposes the formatters object to be extended.
   exports.formatters = Rivets.formatters
