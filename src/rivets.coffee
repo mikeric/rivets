@@ -158,7 +158,7 @@ class Rivets.Binding
 # Rivets.ComponentBinding
 # -----------------------
 
-# A component view encapsulated in a binding within it's parent view.
+# A component view encapsulated as a binding within it's parent view.
 class Rivets.ComponentBinding extends Rivets.Binding
   # Initializes a component binding for the specified view. The raw component
   # element is passed in along with the component type. Attributes and scope
@@ -174,7 +174,7 @@ class Rivets.ComponentBinding extends Rivets.Binding
       else
         @inflections[attribute.name] = attribute.value
 
-  # Intercepts `Rivets.View::sync` since component bindings are not bound to a
+  # Intercepts `Rivets.Binding::sync` since component bindings are not bound to a
   # particular model to update it's value.
   sync: ->
 
@@ -186,12 +186,12 @@ class Rivets.ComponentBinding extends Rivets.Binding
 
     result
 
-  # Intercepts `Rivets.View::update` to be called on `@componentView` with a
+  # Intercepts `Rivets.Binding::update` to be called on `@componentView` with a
   # localized map of the models.
   update: (models) =>
     @componentView?.update @locals models
 
-  # Intercepts `Rivets.View::bind` to build `@componentView` with a localized
+  # Intercepts `Rivets.Binding::bind` to build `@componentView` with a localized
   # map of models from the root view. Bind `@componentView` on subsequent calls.
   bind: =>
     if @componentView?
@@ -201,7 +201,7 @@ class Rivets.ComponentBinding extends Rivets.Binding
       (@componentView = new Rivets.View(el, @locals(), @view.options)).bind()
       @el.parentNode.replaceChild el, @el
 
-  # Intercept `Rivets.View::unbind` to be called on `@componentView`.
+  # Intercept `Rivets.Binding::unbind` to be called on `@componentView`.
   unbind: =>
     @componentView?.unbind()
 
