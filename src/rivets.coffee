@@ -155,6 +155,56 @@ class Rivets.Binding
 
     @binder.update?.call @, models
 
+# Rivets.ComponentBinding
+# -----------------------
+
+# A component view encapsulated in a binding within it's parent view.
+class Rivets.ComponentBinding extends Rivets.Binding
+  # Initializes a component binding for the specified view. The raw component
+  # element is passed in along with the component type. Attributes and scope
+  # inflections are determined based on the components defined attributes.
+  constructor: (@view, @el, @type) ->
+    @component = Rivets.components[@type]
+    @attributes = {}
+    @inflections = {}
+
+    for attribute in @el.attributes or []
+      if attribute.name in @component.attributes
+        @attributes[attribute.name] = attribute.value
+      else
+        @inflections[attribute.name] = attribute.value
+
+  # Intercepts `Rivets.View::sync` since component bindings are not bound to a
+  # particular model to update it's value.
+  sync: ->
+
+  # Returns an object map using the component's scope inflections.
+  locals: (models = @view.models) =>
+    result = {}
+    result[key] = models[inverse] for key, inverse of @inflections
+    result[key] ?= model for key, model of models
+
+    result
+
+  # Intercepts `Rivets.View::update` to be called on `@componentView` with a
+  # localized map of the models.
+  update: (models) =>
+    @componentView?.update @locals models
+
+  # Intercepts `Rivets.View::bind` to build `@componentView` with a localized
+  # map of models from the root view. Bind `@componentView` on subsequent calls.
+  bind: =>
+    if @componentView?
+      @componentView?.bind()
+    else
+      el = @component.build.call @attributes
+      (@componentView = new Rivets.View(el, @locals(), @view.options)).bind()
+      @el.parentNode.replaceChild el, @el
+
+  # Intercept `Rivets.View::unbind` to be called on `@componentView`.
+  unbind: =>
+    @componentView?.unbind()
+
 # Rivets.View
 # -----------
 
@@ -183,8 +233,7 @@ class Rivets.View
     new RegExp "^#{@config.prefix?.toUpperCase() ? 'RV'}-"
 
   # Parses the DOM tree and builds `Rivets.Binding` instances for every matched
-  # binding declaration. Subsequent calls to build will replace the previous
-  # `Rivets.Binding` instances with new ones, so be sure to unbind them first.
+  # binding declaration.
   build: =>
     @bindings = []
     skipNodes = []
@@ -235,27 +284,8 @@ class Rivets.View
                   buildBinding text, 'textNode', token.value if token.type is 1
         else if componentRegExp.test node.tagName
           type = node.tagName.replace(componentRegExp, '').toLowerCase()
+          @bindings.push new Rivets.ComponentBinding @, node, type
 
-          if component = Rivets.components[type]
-            attributes = {}
-            inflections = {}
-
-            for attribute in node.attributes or []
-              if attribute.name in component.attributes
-                attributes[attribute.name] = attribute.value
-              else
-                model = @models
-                model = model[key] for key in attribute.value.split('.')
-                inflections[attribute.name] = model
-
-            el = component.build.call(attributes)
-
-            models = {}
-            models[key] = model for key, model of inflections
-            models[key] ?= model for key, model of @models
-
-            (view = new Rivets.View(el, models, @options)).bind()
-            node.parentNode.replaceChild el, node
         else if node.attributes?
           for attribute in node.attributes
             if bindingRegExp.test attribute.name
