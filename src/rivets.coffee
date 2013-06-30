@@ -1,7 +1,7 @@
 # Rivets.js
 # =========
 
-# > version: 0.5.8
+# > version: 0.5.10
 # > author: Michael Richards
 # > license: MIT
 # >
@@ -24,7 +24,7 @@ class Rivets.Binding
   # containing view, the DOM node, the type of binding, the model object and the
   # keypath at which to listen for changes.
   constructor: (@view, @el, @type, @key, @keypath, @options = {}) ->
-    unless @binder = @view.binders[type]
+    unless @binder = Rivets.internalBinders[@type] or @view.binders[type]
       for identifier, value of @view.binders
         if identifier isnt '*' and identifier.indexOf('*') isnt -1
           regexp = new RegExp "^#{identifier.replace('*', '.+')}$"
@@ -155,6 +155,56 @@ class Rivets.Binding
 
     @binder.update?.call @, models
 
+# Rivets.ComponentBinding
+# -----------------------
+
+# A component view encapsulated as a binding within it's parent view.
+class Rivets.ComponentBinding extends Rivets.Binding
+  # Initializes a component binding for the specified view. The raw component
+  # element is passed in along with the component type. Attributes and scope
+  # inflections are determined based on the components defined attributes.
+  constructor: (@view, @el, @type) ->
+    @component = Rivets.components[@type]
+    @attributes = {}
+    @inflections = {}
+
+    for attribute in @el.attributes or []
+      if attribute.name in @component.attributes
+        @attributes[attribute.name] = attribute.value
+      else
+        @inflections[attribute.name] = attribute.value
+
+  # Intercepts `Rivets.Binding::sync` since component bindings are not bound to a
+  # particular model to update it's value.
+  sync: ->
+
+  # Returns an object map using the component's scope inflections.
+  locals: (models = @view.models) =>
+    result = {}
+    result[key] = models[inverse] for key, inverse of @inflections
+    result[key] ?= model for key, model of models
+
+    result
+
+  # Intercepts `Rivets.Binding::update` to be called on `@componentView` with a
+  # localized map of the models.
+  update: (models) =>
+    @componentView?.update @locals models
+
+  # Intercepts `Rivets.Binding::bind` to build `@componentView` with a localized
+  # map of models from the root view. Bind `@componentView` on subsequent calls.
+  bind: =>
+    if @componentView?
+      @componentView?.bind()
+    else
+      el = @component.build.call @attributes
+      (@componentView = new Rivets.View(el, @locals(), @view.options)).bind()
+      @el.parentNode.replaceChild el, @el
+
+  # Intercept `Rivets.Binding::unbind` to be called on `@componentView`.
+  unbind: =>
+    @componentView?.unbind()
+
 # Rivets.View
 # -----------
 
@@ -178,62 +228,89 @@ class Rivets.View
     prefix = @config.prefix
     if prefix then new RegExp("^data-#{prefix}-") else /^data-/
 
+  # Regular expression used to match component nodes.
+  componentRegExp: =>
+    new RegExp "^#{@config.prefix?.toUpperCase() ? 'RV'}-"
+
   # Parses the DOM tree and builds `Rivets.Binding` instances for every matched
-  # binding declaration. Subsequent calls to build will replace the previous
-  # `Rivets.Binding` instances with new ones, so be sure to unbind them first.
+  # binding declaration.
   build: =>
     @bindings = []
     skipNodes = []
     bindingRegExp = @bindingRegExp()
+    componentRegExp = @componentRegExp()
+
+
+    buildBinding = (node, type, declaration) =>
+      options = {}
+
+      pipes = (pipe.trim() for pipe in declaration.split '|')
+      context = (ctx.trim() for ctx in pipes.shift().split '<')
+      path = context.shift()
+      splitPath = path.split /\.|:/
+      options.formatters = pipes
+      options.bypass = path.indexOf(':') != -1
+
+      if splitPath[0]
+        key = splitPath.shift()
+      else
+        key = null
+        splitPath.shift()
+
+      keypath = splitPath.join '.'
+
+      if dependencies = context.shift()
+        options.dependencies = dependencies.split /\s+/
+
+      @bindings.push new Rivets.Binding @, node, type, key, keypath, options
 
     parse = (node) =>
       unless node in skipNodes
-        for attribute in node.attributes
-          if bindingRegExp.test attribute.name
-            type = attribute.name.replace bindingRegExp, ''
-            unless binder = @binders[type]
-              for identifier, value of @binders
-                if identifier isnt '*' and identifier.indexOf('*') isnt -1
-                  regexp = new RegExp "^#{identifier.replace('*', '.+')}$"
-                  if regexp.test type
-                    binder = value
+        if node.nodeType is Node.TEXT_NODE
+          parser = Rivets.TextTemplateParser
 
-            binder or= @binders['*']
+          if delimiters = @config.templateDelimiters
+            if (tokens = parser.parse(node.data, delimiters)).length
+              unless tokens.length is 1 and tokens[0].type is parser.types.text
+                [startToken, restTokens...] = tokens
+                node.data = startToken.value
 
-            if binder.block
-              skipNodes.push n for n in node.getElementsByTagName '*'
-              attributes = [attribute]
+                switch startToken.type
+                  when 0 then node.data = startToken.value
+                  when 1 then buildBinding node, 'textNode', startToken.value
 
-        for attribute in attributes or node.attributes
-          if bindingRegExp.test attribute.name
-            options = {}
-            type = attribute.name.replace bindingRegExp, ''
-            pipes = (pipe.trim() for pipe in attribute.value.split '|')
-            context = (ctx.trim() for ctx in pipes.shift().split '<')
-            path = context.shift()
-            splitPath = path.split /\.|:/
-            options.formatters = pipes
-            options.bypass = path.indexOf(':') != -1
-            if splitPath[0]
-              key = splitPath.shift()
-            else
-              key = null
-              splitPath.shift()
-            keypath = splitPath.join '.'
+                for token in restTokens
+                  node.parentNode.appendChild (text = document.createTextNode token.value)
+                  buildBinding text, 'textNode', token.value if token.type is 1
+        else if componentRegExp.test node.tagName
+          type = node.tagName.replace(componentRegExp, '').toLowerCase()
+          @bindings.push new Rivets.ComponentBinding @, node, type
 
-            if not key or @models[key]?
-              if dependencies = context.shift()
-                options.dependencies = dependencies.split /\s+/
+        else if node.attributes?
+          for attribute in node.attributes
+            if bindingRegExp.test attribute.name
+              type = attribute.name.replace bindingRegExp, ''
+              unless binder = @binders[type]
+                for identifier, value of @binders
+                  if identifier isnt '*' and identifier.indexOf('*') isnt -1
+                    regexp = new RegExp "^#{identifier.replace('*', '.+')}$"
+                    if regexp.test type
+                      binder = value
 
-              @bindings.push new Rivets.Binding @, node, type, key, keypath, options
+              binder or= @binders['*']
 
-        attributes = null if attributes
+              if binder.block
+                skipNodes.push n for n in node.childNodes
+                attributes = [attribute]
 
-      return
+          for attribute in attributes or node.attributes
+            if bindingRegExp.test attribute.name
+              type = attribute.name.replace bindingRegExp, ''
+              buildBinding node, type, attribute.value
 
-    for el in @els
-      parse el
-      parse node for node in el.getElementsByTagName '*' when node.attributes?
+        parse childNode for childNode in node.childNodes
+
+    parse el for el in @els
 
     return
 
@@ -261,6 +338,54 @@ class Rivets.View
   update: (models = {}) =>
     @models[key] = model for key, model of models
     binding.update models for binding in @bindings
+
+# Rivets.TextTemplateParser
+# -------------------------
+
+# Rivets.js text template parser and tokenizer for mustache-style text content
+# binding declarations.
+class Rivets.TextTemplateParser
+  @types:
+    text: 0
+    binding: 1
+
+  # Parses the template and returns a set of tokens, separating static portions
+  # of text from binding declarations.
+  @parse: (template, delimiters) ->
+    tokens = []
+    length = template.length
+    index = 0
+    lastIndex = 0
+
+    while lastIndex < length
+      index = template.indexOf delimiters[0], lastIndex
+
+      if index < 0
+        tokens.push type: @types.text, value: template.slice lastIndex
+        break
+      else
+        if index > 0 and lastIndex < index
+          tokens.push type: @types.text, value: template.slice lastIndex, index
+
+        lastIndex = index + 2
+        index = template.indexOf delimiters[1], lastIndex
+
+        if index < 0
+          substring = template.slice lastIndex - 2
+          lastToken = tokens[tokens.length - 1]
+
+          if lastToken?.type is @types.text
+            lastToken.value += substring
+          else
+            tokens.push type: @types.text, value: substring
+
+          break
+
+        value = template.slice(lastIndex, index).trim()
+        tokens.push type: @types.binding, value: value
+        lastIndex = index + 2
+
+    tokens
 
 # Rivets.Util
 # -----------
@@ -391,7 +516,7 @@ Rivets.binders =
       @nested?.unbind()
 
     routine: (el, value) ->
-      if value is not @nested?
+      if !!value is not @nested?
         if value
           models = {}
           models[key] = model for key, model of @view.models
@@ -515,6 +640,23 @@ Rivets.binders =
     else
       el.removeAttribute @type
 
+# Rivets.internalBinders
+# ----------------------
+
+# Contextually sensitive binders that are used outside of the standard attribute
+# bindings. Put here for fast lookups and to prevent them from being overridden.
+Rivets.internalBinders =
+  textNode: (node, value) ->
+    node.data = value ? ''
+
+# Rivets.components
+# -----------------
+
+# Default components (there aren't any), publicly accessible on
+# `module.components`. Can be overridden globally or local to a `Rivets.View`
+# instance.
+Rivets.components = {}
+
 # Rivets.config
 # -------------
 
@@ -538,8 +680,14 @@ Rivets.formatters = {}
 
 # The Rivets.js module factory.
 Rivets.factory = (exports) ->
+  # Exposes the full Rivets namespace. This is mainly used for isolated testing.
+  exports._ = Rivets
+
   # Exposes the core binding routines that can be extended or stripped down.
   exports.binders = Rivets.binders
+
+  # Exposes the components object to be extended.
+  exports.components = Rivets.components
 
   # Exposes the formatters object to be extended.
   exports.formatters = Rivets.formatters
