@@ -181,9 +181,11 @@ class Rivets.ComponentBinding extends Rivets.Binding
   # Returns an object map using the component's scope inflections.
   locals: (models = @view.models) =>
     result = {}
-    result[key] = models[inverse] for key, inverse of @inflections
-    result[key] ?= model for key, model of models
 
+    for key, inverse of @inflections
+      result[key] = (result[key] or models)[path] for path in inverse.split '.'
+
+    result[key] ?= model for key, model of models
     result
 
   # Intercepts `Rivets.Binding::update` to be called on `@componentView` with a
