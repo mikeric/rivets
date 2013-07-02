@@ -1,5 +1,5 @@
 // Rivets.js
-// version: 0.5.10
+// version: 0.5.11
 // author: Michael Richards
 // license: MIT
 (function() {
@@ -236,7 +236,7 @@
     ComponentBinding.prototype.sync = function() {};
 
     ComponentBinding.prototype.locals = function(models) {
-      var inverse, key, model, result, _ref, _ref1;
+      var inverse, key, model, path, result, _i, _len, _ref, _ref1, _ref2;
 
       if (models == null) {
         models = this.view.models;
@@ -245,11 +245,15 @@
       _ref = this.inflections;
       for (key in _ref) {
         inverse = _ref[key];
-        result[key] = models[inverse];
+        _ref1 = inverse.split('.');
+        for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+          path = _ref1[_i];
+          result[key] = (result[key] || models)[path];
+        }
       }
       for (key in models) {
         model = models[key];
-        if ((_ref1 = result[key]) == null) {
+        if ((_ref2 = result[key]) == null) {
           result[key] = model;
         }
       }
