@@ -263,7 +263,7 @@ class Rivets.View
     componentRegExp = @componentRegExp()
 
 
-    buildBinding = (node, type, declaration) =>
+    buildBinding = (binding, node, type, declaration) =>
       options = {}
 
       pipes = (pipe.trim() for pipe in declaration.split '|')
@@ -284,7 +284,7 @@ class Rivets.View
       if dependencies = context.shift()
         options.dependencies = dependencies.split /\s+/
 
-      @bindings.push new Rivets.Binding @, node, type, key, keypath, options
+      @bindings.push new Rivets[binding] @, node, type, key, keypath, options
 
     parse = (node) =>
       unless node in skipNodes
@@ -299,11 +299,11 @@ class Rivets.View
 
                 switch startToken.type
                   when 0 then node.data = startToken.value
-                  when 1 then buildBinding node, 'textNode', startToken.value
+                  when 1 then buildBinding 'TextBinding', node, null, startToken.value
 
                 for token in restTokens
                   node.parentNode.appendChild (text = document.createTextNode token.value)
-                  buildBinding text, 'textNode', token.value if token.type is 1
+                  buildBinding 'TextBinding', text, null, token.value if token.type is 1
         else if componentRegExp.test node.tagName
           type = node.tagName.replace(componentRegExp, '').toLowerCase()
           @bindings.push new Rivets.ComponentBinding @, node, type
@@ -328,7 +328,7 @@ class Rivets.View
           for attribute in attributes or node.attributes
             if bindingRegExp.test attribute.name
               type = attribute.name.replace bindingRegExp, ''
-              buildBinding node, type, attribute.value
+              buildBinding 'Binding', node, type, attribute.value
 
         parse childNode for childNode in node.childNodes
 
