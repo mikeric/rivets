@@ -24,7 +24,7 @@ class Rivets.Binding
   # containing view, the DOM node, the type of binding, the model object and the
   # keypath at which to listen for changes.
   constructor: (@view, @el, @type, @key, @keypath, @options = {}) ->
-    unless @binder = Rivets.internalBinders[@type] or @view.binders[type]
+    unless @binder = @view.binders[type]
       for identifier, value of @view.binders
         if identifier isnt '*' and identifier.indexOf('*') isnt -1
           regexp = new RegExp "^#{identifier.replace('*', '.+')}$"
@@ -174,8 +174,8 @@ class Rivets.ComponentBinding extends Rivets.Binding
       else
         @inflections[attribute.name] = attribute.value
 
-  # Intercepts `Rivets.Binding::sync` since component bindings are not bound to a
-  # particular model to update it's value.
+  # Intercepts `Rivets.Binding::sync` since component bindings are not bound to
+  # a particular model to update it's value.
   sync: ->
 
   # Returns an object map using the component's scope inflections.
@@ -206,6 +206,26 @@ class Rivets.ComponentBinding extends Rivets.Binding
   # Intercept `Rivets.Binding::unbind` to be called on `@componentView`.
   unbind: =>
     @componentView?.unbind()
+
+# Rivets.TextBinding
+# -----------------------
+
+# A text node binding, defined internally to deal with text and element node
+# differences while avoiding it being overwritten.
+class Rivets.TextBinding extends Rivets.Binding
+  # Initializes a text binding for the specified view and text node.
+  constructor: (@view, @el, @type, @key, @keypath, @options = {}) ->
+    @formatters = @options.formatters || []
+    @model = if @key then @view.models[@key] else @view.models
+
+  # A standard routine binder used for text node bindings.
+  binder:
+    routine: (node, value) ->
+      node.data = value ? ''
+
+  # Wrap the call to `sync` in fat-arrow to avoid function context issues.
+  sync: =>
+    super
 
 # Rivets.View
 # -----------
@@ -243,7 +263,7 @@ class Rivets.View
     componentRegExp = @componentRegExp()
 
 
-    buildBinding = (node, type, declaration) =>
+    buildBinding = (binding, node, type, declaration) =>
       options = {}
 
       pipes = (pipe.trim() for pipe in declaration.split '|')
@@ -264,7 +284,7 @@ class Rivets.View
       if dependencies = context.shift()
         options.dependencies = dependencies.split /\s+/
 
-      @bindings.push new Rivets.Binding @, node, type, key, keypath, options
+      @bindings.push new Rivets[binding] @, node, type, key, keypath, options
 
     parse = (node) =>
       unless node in skipNodes
@@ -277,13 +297,17 @@ class Rivets.View
                 [startToken, restTokens...] = tokens
                 node.data = startToken.value
 
-                switch startToken.type
-                  when 0 then node.data = startToken.value
-                  when 1 then buildBinding node, 'textNode', startToken.value
+                if startToken.type is 0
+                  node.data = startToken.value
+                else
+                  buildBinding 'TextBinding', node, null, startToken.value
 
                 for token in restTokens
-                  node.parentNode.appendChild (text = document.createTextNode token.value)
-                  buildBinding text, 'textNode', token.value if token.type is 1
+                  text = document.createTextNode token.value
+                  node.parentNode.appendChild text
+
+                  if token.type is 1
+                    buildBinding 'TextBinding', text, null, token.value
         else if componentRegExp.test node.tagName
           type = node.tagName.replace(componentRegExp, '').toLowerCase()
           @bindings.push new Rivets.ComponentBinding @, node, type
@@ -308,7 +332,7 @@ class Rivets.View
           for attribute in attributes or node.attributes
             if bindingRegExp.test attribute.name
               type = attribute.name.replace bindingRegExp, ''
-              buildBinding node, type, attribute.value
+              buildBinding 'Binding', node, type, attribute.value
 
         parse childNode for childNode in node.childNodes
 
@@ -641,15 +665,6 @@ Rivets.binders =
       el.setAttribute @type, value
     else
       el.removeAttribute @type
-
-# Rivets.internalBinders
-# ----------------------
-
-# Contextually sensitive binders that are used outside of the standard attribute
-# bindings. Put here for fast lookups and to prevent them from being overridden.
-Rivets.internalBinders =
-  textNode: (node, value) ->
-    node.data = value ? ''
 
 # Rivets.components
 # -----------------
