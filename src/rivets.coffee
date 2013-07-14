@@ -674,6 +674,14 @@ Rivets.binders =
 # instance.
 Rivets.components = {}
 
+# Rivets.formatters
+# -----------------
+
+# Default formatters (there aren't any), publicly accessible on
+# `module.formatters`. Can be overridden globally or local to a `Rivets.View`
+# instance.
+Rivets.formatters = {}
+
 # Rivets.config
 # -------------
 
@@ -683,14 +691,6 @@ Rivets.config =
   preloadData: true
   handler: (context, ev, binding) ->
     @call context, ev, binding.view.models
-
-# Rivets.formatters
-# -----------------
-
-# Default formatters (there aren't any), publicly accessible on
-# `module.formatters`. Can be overridden globally or local to a `Rivets.View`
-# instance.
-Rivets.formatters = {}
 
 # Rivets.factory
 # --------------
