@@ -174,8 +174,8 @@ class Rivets.ComponentBinding extends Rivets.Binding
       else
         @inflections[attribute.name] = attribute.value
 
-  # Intercepts `Rivets.Binding::sync` since component bindings are not bound to a
-  # particular model to update it's value.
+  # Intercepts `Rivets.Binding::sync` since component bindings are not bound to
+  # a particular model to update it's value.
   sync: ->
 
   # Returns an object map using the component's scope inflections.
@@ -297,13 +297,17 @@ class Rivets.View
                 [startToken, restTokens...] = tokens
                 node.data = startToken.value
 
-                switch startToken.type
-                  when 0 then node.data = startToken.value
-                  when 1 then buildBinding 'TextBinding', node, null, startToken.value
+                if startToken.type is 0
+                  node.data = startToken.value
+                else
+                  buildBinding 'TextBinding', node, null, startToken.value
 
                 for token in restTokens
-                  node.parentNode.appendChild (text = document.createTextNode token.value)
-                  buildBinding 'TextBinding', text, null, token.value if token.type is 1
+                  text = document.createTextNode token.value
+                  node.parentNode.appendChild text
+
+                  if token.type is 1
+                    buildBinding 'TextBinding', text, null, token.value
         else if componentRegExp.test node.tagName
           type = node.tagName.replace(componentRegExp, '').toLowerCase()
           @bindings.push new Rivets.ComponentBinding @, node, type
