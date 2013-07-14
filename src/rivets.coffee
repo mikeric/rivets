@@ -207,6 +207,26 @@ class Rivets.ComponentBinding extends Rivets.Binding
   unbind: =>
     @componentView?.unbind()
 
+# Rivets.TextBinding
+# -----------------------
+
+# A text node binding, defined internally to deal with text and element node
+# differences while avoiding it being overwritten.
+class Rivets.TextBinding extends Rivets.Binding
+  # Initializes a text binding for the specified view and text node.
+  constructor: (@view, @el, @type, @key, @keypath, @options = {}) ->
+    @formatters = @options.formatters || []
+    @model = if @key then @view.models[@key] else @view.models
+
+  # A standard routine binder used for text node bindings.
+  binder:
+    routine: (node, value) ->
+      node.data = value ? ''
+
+  # Wrap the call to `sync` in fat-arrow to avoid function context issues.
+  sync: =>
+    super
+
 # Rivets.View
 # -----------
 
