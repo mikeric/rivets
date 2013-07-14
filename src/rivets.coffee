@@ -24,7 +24,7 @@ class Rivets.Binding
   # containing view, the DOM node, the type of binding, the model object and the
   # keypath at which to listen for changes.
   constructor: (@view, @el, @type, @key, @keypath, @options = {}) ->
-    unless @binder = Rivets.internalBinders[@type] or @view.binders[type]
+    unless @binder = @view.binders[type]
       for identifier, value of @view.binders
         if identifier isnt '*' and identifier.indexOf('*') isnt -1
           regexp = new RegExp "^#{identifier.replace('*', '.+')}$"
@@ -641,15 +641,6 @@ Rivets.binders =
       el.setAttribute @type, value
     else
       el.removeAttribute @type
-
-# Rivets.internalBinders
-# ----------------------
-
-# Contextually sensitive binders that are used outside of the standard attribute
-# bindings. Put here for fast lookups and to prevent them from being overridden.
-Rivets.internalBinders =
-  textNode: (node, value) ->
-    node.data = value ? ''
 
 # Rivets.components
 # -----------------
