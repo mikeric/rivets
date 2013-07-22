@@ -682,6 +682,49 @@ Rivets.components = {}
 # instance.
 Rivets.formatters = {}
 
+# Rivets.adapters
+# -----------------
+
+# Default adapters (`.` for POJSO in ES5 natives), publicly accessible on
+# `module.adapters`. Can be overridden globally or local to a `Rivets.View`
+# instance.
+Rivets.adapters =
+  '.':
+    id: '_rv'
+    counter: 0
+    weakmap: {}
+
+    subscribe: (obj, keypath, callback) ->
+      unless obj[@id]?
+        obj[@id] = @counter++
+        @weakmap[obj[@id]] = {}
+
+      map = @weakmap[obj[@id]]
+
+      unless map[keypath]?
+        map[keypath] = []
+        value = obj[keypath]
+
+        Object.defineProperty obj, keypath,
+          get: -> value
+          set: (newValue) ->
+            if newValue isnt value
+              value = newValue
+              callback() for callback in map[keypath]
+
+      unless callback in map[keypath]
+        map[keypath].push callback
+
+    unsubscribe: (obj, keypath, callback) ->
+      callbacks = @weakmap[obj[@id]][keypath]
+      callbacks.splice callbacks.indexOf(callback), 1
+
+    read: (obj, keypath) ->
+      obj[keypath]
+
+    publish: (obj, keypath, value) ->
+      obj[keypath] = value
+
 # Rivets.config
 # -------------
 
@@ -708,6 +751,9 @@ Rivets.factory = (exports) ->
 
   # Exposes the formatters object to be extended.
   exports.formatters = Rivets.formatters
+
+  # Exposes the adapters object to be extended.
+  exports.adapters = Rivets.adapters
 
   # Exposes the rivets configuration options. These can be set manually or from
   # rivets.configure with an object literal.
