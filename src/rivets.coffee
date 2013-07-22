@@ -543,7 +543,7 @@ Rivets.binders =
           delete @nested
 
     update: (models) ->
-      @nested.update models
+      @nested?.update models
 
   unless:
     block: true
