@@ -74,10 +74,7 @@ class Rivets.Binding
 
   # Syncs up the view binding with the model.
   sync: =>
-    @set if @options.bypass
-      @model[@keypath]
-    else
-      @view.config.adapter.read @model, @keypath
+    @set @view.adapters['.'].read @model, @keypath
 
   # Publishes the value currently set on the input element back to the model.
   publish: =>
@@ -90,19 +87,15 @@ class Rivets.Binding
       if @view.formatters[id]?.publish
         value = @view.formatters[id].publish value, args...
 
-    @view.config.adapter.publish @model, @keypath, value
+    @view.adapters['.'].publish @model, @keypath, value
 
   # Subscribes to the model for changes at the specified keypath. Bi-directional
   # routines will also listen for changes on the element to propagate them back
   # to the model.
   bind: =>
     @binder.bind?.call @, @el
-
-    if @options.bypass
-      @sync()
-    else
-      @view.config.adapter.subscribe @model, @keypath, @sync
-      @sync() if @view.config.preloadData
+    @view.adapters['.'].subscribe @model, @keypath, @sync
+    @sync() if @view.config.preloadData
 
     if @options.dependencies?.length
       for dependency in @options.dependencies
@@ -114,14 +107,12 @@ class Rivets.Binding
           model = @view.models[dependency.shift()]
           keypath = dependency.join '.'
 
-        @view.config.adapter.subscribe model, keypath, @sync
+        @view.adapters['.'].subscribe model, keypath, @sync
 
   # Unsubscribes from the model and the element.
   unbind: =>
     @binder.unbind?.call @, @el
-
-    unless @options.bypass
-      @view.config.adapter.unsubscribe @model, @keypath, @sync
+    @view.adapters['.'].unsubscribe @model, @keypath, @sync
 
     if @options.dependencies?.length
       for dependency in @options.dependencies
@@ -133,23 +124,17 @@ class Rivets.Binding
           model = @view.models[dependency.shift()]
           keypath = dependency.join '.'
 
-        @view.config.adapter.unsubscribe model, keypath, @sync
+        @view.adapters['.'].unsubscribe model, keypath, @sync
 
   # Updates the binding's model from what is currently set on the view. Unbinds
   # the old model first and then re-binds with the new model.
   update: (models = {}) =>
     if @key
       if models[@key]
-        unless @options.bypass
-          @view.config.adapter.unsubscribe @model, @keypath, @sync
-
+        @view.adapters['.'].unsubscribe @model, @keypath, @sync
         @model = models[@key]
-
-        if @options.bypass
-          @sync()
-        else
-          @view.config.adapter.subscribe @model, @keypath, @sync
-          @sync() if @view.config.preloadData
+        @view.adapters['.'].subscribe @model, @keypath, @sync
+        @sync() if @view.config.preloadData
     else
       @sync()
 
@@ -268,9 +253,8 @@ class Rivets.View
       pipes = (pipe.trim() for pipe in declaration.split '|')
       context = (ctx.trim() for ctx in pipes.shift().split '<')
       path = context.shift()
-      splitPath = path.split /\.|:/
+      splitPath = path.split '.'
       options.formatters = pipes
-      options.bypass = path.indexOf(':') != -1
 
       if splitPath[0]
         key = splitPath.shift()
