@@ -238,7 +238,7 @@ class Rivets.View
   constructor: (@els, @models, @options = {}) ->
     @els = [@els] unless (@els.jquery || @els instanceof Array)
 
-    for option in ['config', 'binders', 'formatters']
+    for option in ['config', 'binders', 'formatters', 'adapters']
       @[option] = {}
       @[option][k] = v for k, v of @options[option] if @options[option]
       @[option][k] ?= v for k, v of Rivets[option]
@@ -261,7 +261,6 @@ class Rivets.View
     skipNodes = []
     bindingRegExp = @bindingRegExp()
     componentRegExp = @componentRegExp()
-
 
     buildBinding = (binding, node, type, declaration) =>
       options = {}
