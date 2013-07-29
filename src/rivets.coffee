@@ -348,6 +348,26 @@ class Rivets.View
     @models[key] = model for key, model of models
     binding.update models for binding in @bindings
 
+# Rivets.KeypathParser
+# --------------------
+
+# Parser and tokenizer for keypaths in binding declarations.
+class Rivets.KeypathParser
+  # Parses the keypath and returns a set of adapter interface + path tokens.
+  @parse: (keypath, interfaces, root) ->
+    tokens = []
+    current = {interface: root, path: ''}
+
+    for index, char of keypath
+      if char in interfaces
+        tokens.push current
+        current = {interface: char, path: ''}
+      else
+        current.path += char
+
+    tokens.push current
+    tokens
+
 # Rivets.TextTemplateParser
 # -------------------------
 
