@@ -23,7 +23,12 @@ class Rivets.Binding
   # All information about the binding is passed into the constructor; the
   # containing view, the DOM node, the type of binding, the model object and the
   # keypath at which to listen for changes.
-  constructor: (@view, @el, @type, @key, @keypath, @options = {}) ->
+  constructor: (@view, @el, @type, @keypath, @options = {}) ->
+    @formatters = @options.formatters || []
+    @setBinders()
+    @setModel()
+
+  setBinders: =>
     unless @binder = @view.binders[type]
       for identifier, value of @view.binders
         if identifier isnt '*' and identifier.indexOf('*') isnt -1
@@ -35,8 +40,17 @@ class Rivets.Binding
 
     @binder or= @view.binders['*']
     @binder = {routine: @binder} if @binder instanceof Function
-    @formatters = @options.formatters || []
-    @model = if @key then @view.models[@key] else @view.models
+
+  setModel: =>
+    interfaces = (k for k, v of @view.adapters)
+    tokens = Rivets.KeypathParser.parse @keypath, interfaces, '.'
+
+    @model = @view.models
+    @rootKey = tokens[0]
+    @key = tokens.pop()
+
+    for token, index in tokens
+      @model = @view.adapters[token.interface].read(@model, token.path)
 
   # Applies all the current formatters to the supplied value and returns the
   # formatted value.
@@ -74,7 +88,7 @@ class Rivets.Binding
 
   # Syncs up the view binding with the model.
   sync: =>
-    @set @view.adapters['.'].read @model, @keypath
+    @set @view.adapters[@key.interface].read @model, @key.path
 
   # Publishes the value currently set on the input element back to the model.
   publish: =>
@@ -87,14 +101,14 @@ class Rivets.Binding
       if @view.formatters[id]?.publish
         value = @view.formatters[id].publish value, args...
 
-    @view.adapters['.'].publish @model, @keypath, value
+    @view.adapters[@key.interface].publish @model, @key.path, value
 
   # Subscribes to the model for changes at the specified keypath. Bi-directional
   # routines will also listen for changes on the element to propagate them back
   # to the model.
   bind: =>
     @binder.bind?.call @, @el
-    @view.adapters['.'].subscribe @model, @keypath, @sync
+    @view.adapters[@key.interface].subscribe @model, @key.path, @sync
     @sync() if @view.config.preloadData
 
     if @options.dependencies?.length
@@ -112,7 +126,7 @@ class Rivets.Binding
   # Unsubscribes from the model and the element.
   unbind: =>
     @binder.unbind?.call @, @el
-    @view.adapters['.'].unsubscribe @model, @keypath, @sync
+    @view.adapters[@key.interface].unsubscribe @model, @key.path, @sync
 
     if @options.dependencies?.length
       for dependency in @options.dependencies
@@ -129,13 +143,10 @@ class Rivets.Binding
   # Updates the binding's model from what is currently set on the view. Unbinds
   # the old model first and then re-binds with the new model.
   update: (models = {}) =>
-    if @key
-      if models[@key]
-        @view.adapters['.'].unsubscribe @model, @keypath, @sync
-        @model = models[@key]
-        @view.adapters['.'].subscribe @model, @keypath, @sync
-        @sync() if @view.config.preloadData
-    else
+    if models[@rootKey.path]
+      @view.adapters[@key.interface].unsubscribe @model, @key.path, @sync
+      @setModel()
+      @view.adapters[@key.interface].subscribe @model, @key.path, @sync
       @sync()
 
     @binder.update?.call @, models
@@ -199,9 +210,11 @@ class Rivets.ComponentBinding extends Rivets.Binding
 # differences while avoiding it being overwritten.
 class Rivets.TextBinding extends Rivets.Binding
   # Initializes a text binding for the specified view and text node.
-  constructor: (@view, @el, @type, @key, @keypath, @options = {}) ->
+  constructor: (@view, @el, @type, @keypath, @options = {}) ->
+    interfaces = (k for k, v of @view.adapters)
+    tokens = Rivets.KeypathParser.parse(@keypath, interfaces, '.')
     @formatters = @options.formatters || []
-    @model = if @key then @view.models[@key] else @view.models
+    @setModel()
 
   # A standard routine binder used for text node bindings.
   binder:
@@ -252,22 +265,14 @@ class Rivets.View
 
       pipes = (pipe.trim() for pipe in declaration.split '|')
       context = (ctx.trim() for ctx in pipes.shift().split '<')
-      path = context.shift()
-      splitPath = path.split '.'
+      keypath = context.shift()
+
       options.formatters = pipes
-
-      if splitPath[0]
-        key = splitPath.shift()
-      else
-        key = null
-        splitPath.shift()
-
-      keypath = splitPath.join '.'
 
       if dependencies = context.shift()
         options.dependencies = dependencies.split /\s+/
 
-      @bindings.push new Rivets[binding] @, node, type, key, keypath, options
+      @bindings.push new Rivets[binding] @, node, type, keypath, options
 
     parse = (node) =>
       unless node in skipNodes
@@ -553,6 +558,7 @@ Rivets.binders =
           options =
             binders: @view.options.binders
             formatters: @view.options.formatters
+            adapters: @view.options.adapters
             config: @view.options.config
 
           (@nested = new Rivets.View(el, models, options)).bind()
@@ -632,6 +638,7 @@ Rivets.binders =
           options =
             binders: @view.options.binders
             formatters: @view.options.formatters
+            adapters: @view.options.adapters
             config: {}
 
           options.config[k] = v for k, v of @view.options.config
