@@ -1,5 +1,5 @@
 // Rivets.js
-// version: 0.5.11
+// version: 0.5.12
 // author: Michael Richards
 // license: MIT
 (function() {
@@ -21,7 +21,6 @@
   Rivets.Binding = (function() {
     function Binding(view, el, type, key, keypath, options) {
       var identifier, regexp, value, _ref;
-
       this.view = view;
       this.el = el;
       this.type = type;
@@ -36,7 +35,7 @@
       this.set = __bind(this.set, this);
       this.eventHandler = __bind(this.eventHandler, this);
       this.formattedValue = __bind(this.formattedValue, this);
-      if (!(this.binder = Rivets.internalBinders[this.type] || this.view.binders[type])) {
+      if (!(this.binder = this.view.binders[type])) {
         _ref = this.view.binders;
         for (identifier in _ref) {
           value = _ref[identifier];
@@ -62,7 +61,6 @@
 
     Binding.prototype.formattedValue = function(value) {
       var args, formatter, id, _i, _len, _ref;
-
       _ref = this.formatters;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         formatter = _ref[_i];
@@ -80,7 +78,6 @@
 
     Binding.prototype.eventHandler = function(fn) {
       var binding, handler;
-
       handler = (binding = this).view.config.handler;
       return function(ev) {
         return handler.call(fn, this, ev, binding);
@@ -89,7 +86,6 @@
 
     Binding.prototype.set = function(value) {
       var _ref;
-
       value = value instanceof Function && !this.binder["function"] ? this.formattedValue(value.call(this.model)) : this.formattedValue(value);
       return (_ref = this.binder.routine) != null ? _ref.call(this, this.el, value) : void 0;
     };
@@ -100,7 +96,6 @@
 
     Binding.prototype.publish = function() {
       var args, formatter, id, value, _i, _len, _ref, _ref1, _ref2;
-
       value = Rivets.Util.getInputValue(this.el);
       _ref = this.formatters.slice(0).reverse();
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -116,7 +111,6 @@
 
     Binding.prototype.bind = function() {
       var dependency, keypath, model, _i, _len, _ref, _ref1, _ref2, _results;
-
       if ((_ref = this.binder.bind) != null) {
         _ref.call(this, this.el);
       }
@@ -149,7 +143,6 @@
 
     Binding.prototype.unbind = function() {
       var dependency, keypath, model, _i, _len, _ref, _ref1, _ref2, _results;
-
       if ((_ref = this.binder.unbind) != null) {
         _ref.call(this, this.el);
       }
@@ -177,7 +170,6 @@
 
     Binding.prototype.update = function(models) {
       var _ref;
-
       if (models == null) {
         models = {};
       }
@@ -211,7 +203,6 @@
 
     function ComponentBinding(view, el, type) {
       var attribute, _i, _len, _ref, _ref1;
-
       this.view = view;
       this.el = el;
       this.type = type;
@@ -236,8 +227,7 @@
     ComponentBinding.prototype.sync = function() {};
 
     ComponentBinding.prototype.locals = function(models) {
-      var inverse, key, model, path, result, _i, _len, _ref, _ref1, _ref2;
-
+      var inverse, key, model, path, result, _i, _len, _ref, _ref1;
       if (models == null) {
         models = this.view.models;
       }
@@ -253,7 +243,7 @@
       }
       for (key in models) {
         model = models[key];
-        if ((_ref2 = result[key]) == null) {
+        if (result[key] == null) {
           result[key] = model;
         }
       }
@@ -262,13 +252,11 @@
 
     ComponentBinding.prototype.update = function(models) {
       var _ref;
-
       return (_ref = this.componentView) != null ? _ref.update(this.locals(models)) : void 0;
     };
 
     ComponentBinding.prototype.bind = function() {
       var el, _ref;
-
       if (this.componentView != null) {
         return (_ref = this.componentView) != null ? _ref.bind() : void 0;
       } else {
@@ -280,7 +268,6 @@
 
     ComponentBinding.prototype.unbind = function() {
       var _ref;
-
       return (_ref = this.componentView) != null ? _ref.unbind() : void 0;
     };
 
@@ -288,10 +275,38 @@
 
   })(Rivets.Binding);
 
+  Rivets.TextBinding = (function(_super) {
+    __extends(TextBinding, _super);
+
+    function TextBinding(view, el, type, key, keypath, options) {
+      this.view = view;
+      this.el = el;
+      this.type = type;
+      this.key = key;
+      this.keypath = keypath;
+      this.options = options != null ? options : {};
+      this.sync = __bind(this.sync, this);
+      this.formatters = this.options.formatters || [];
+      this.model = this.key ? this.view.models[this.key] : this.view.models;
+    }
+
+    TextBinding.prototype.binder = {
+      routine: function(node, value) {
+        return node.data = value != null ? value : '';
+      }
+    };
+
+    TextBinding.prototype.sync = function() {
+      return TextBinding.__super__.sync.apply(this, arguments);
+    };
+
+    return TextBinding;
+
+  })(Rivets.Binding);
+
   Rivets.View = (function() {
     function View(els, models, options) {
-      var k, option, v, _base, _i, _len, _ref, _ref1, _ref2, _ref3;
-
+      var k, option, v, _base, _i, _len, _ref, _ref1, _ref2;
       this.els = els;
       this.models = models;
       this.options = options != null ? options : {};
@@ -321,7 +336,7 @@
         _ref2 = Rivets[option];
         for (k in _ref2) {
           v = _ref2[k];
-          if ((_ref3 = (_base = this[option])[k]) == null) {
+          if ((_base = this[option])[k] == null) {
             _base[k] = v;
           }
         }
@@ -331,7 +346,6 @@
 
     View.prototype.bindingRegExp = function() {
       var prefix;
-
       prefix = this.config.prefix;
       if (prefix) {
         return new RegExp("^data-" + prefix + "-");
@@ -342,25 +356,21 @@
 
     View.prototype.componentRegExp = function() {
       var _ref, _ref1;
-
       return new RegExp("^" + ((_ref = (_ref1 = this.config.prefix) != null ? _ref1.toUpperCase() : void 0) != null ? _ref : 'RV') + "-");
     };
 
     View.prototype.build = function() {
       var bindingRegExp, buildBinding, componentRegExp, el, parse, skipNodes, _i, _len, _ref,
         _this = this;
-
       this.bindings = [];
       skipNodes = [];
       bindingRegExp = this.bindingRegExp();
       componentRegExp = this.componentRegExp();
-      buildBinding = function(node, type, declaration) {
+      buildBinding = function(binding, node, type, declaration) {
         var context, ctx, dependencies, key, keypath, options, path, pipe, pipes, splitPath;
-
         options = {};
         pipes = (function() {
           var _i, _len, _ref, _results;
-
           _ref = declaration.split('|');
           _results = [];
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -371,7 +381,6 @@
         })();
         context = (function() {
           var _i, _len, _ref, _results;
-
           _ref = pipes.shift().split('<');
           _results = [];
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -394,11 +403,10 @@
         if (dependencies = context.shift()) {
           options.dependencies = dependencies.split(/\s+/);
         }
-        return _this.bindings.push(new Rivets.Binding(_this, node, type, key, keypath, options));
+        return _this.bindings.push(new Rivets[binding](_this, node, type, key, keypath, options));
       };
       parse = function(node) {
         var attribute, attributes, binder, childNode, delimiters, identifier, n, parser, regexp, restTokens, startToken, text, token, tokens, type, value, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2, _ref3, _ref4, _results;
-
         if (__indexOf.call(skipNodes, node) < 0) {
           if (node.nodeType === Node.TEXT_NODE) {
             parser = Rivets.TextTemplateParser;
@@ -407,18 +415,17 @@
                 if (!(tokens.length === 1 && tokens[0].type === parser.types.text)) {
                   startToken = tokens[0], restTokens = 2 <= tokens.length ? __slice.call(tokens, 1) : [];
                   node.data = startToken.value;
-                  switch (startToken.type) {
-                    case 0:
-                      node.data = startToken.value;
-                      break;
-                    case 1:
-                      buildBinding(node, 'textNode', startToken.value);
+                  if (startToken.type === 0) {
+                    node.data = startToken.value;
+                  } else {
+                    buildBinding('TextBinding', node, null, startToken.value);
                   }
                   for (_i = 0, _len = restTokens.length; _i < _len; _i++) {
                     token = restTokens[_i];
-                    node.parentNode.appendChild((text = document.createTextNode(token.value)));
+                    text = document.createTextNode(token.value);
+                    node.parentNode.appendChild(text);
                     if (token.type === 1) {
-                      buildBinding(text, 'textNode', token.value);
+                      buildBinding('TextBinding', text, null, token.value);
                     }
                   }
                 }
@@ -461,7 +468,7 @@
               attribute = _ref3[_l];
               if (bindingRegExp.test(attribute.name)) {
                 type = attribute.name.replace(bindingRegExp, '');
-                buildBinding(node, type, attribute.value);
+                buildBinding('Binding', node, type, attribute.value);
               }
             }
           }
@@ -483,7 +490,6 @@
 
     View.prototype.select = function(fn) {
       var binding, _i, _len, _ref, _results;
-
       _ref = this.bindings;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -497,7 +503,6 @@
 
     View.prototype.bind = function() {
       var binding, _i, _len, _ref, _results;
-
       _ref = this.bindings;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -509,7 +514,6 @@
 
     View.prototype.unbind = function() {
       var binding, _i, _len, _ref, _results;
-
       _ref = this.bindings;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -521,7 +525,6 @@
 
     View.prototype.sync = function() {
       var binding, _i, _len, _ref, _results;
-
       _ref = this.bindings;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -533,7 +536,6 @@
 
     View.prototype.publish = function() {
       var binding, _i, _len, _ref, _results;
-
       _ref = this.select(function(b) {
         return b.binder.publishes;
       });
@@ -547,7 +549,6 @@
 
     View.prototype.update = function(models) {
       var binding, key, model, _i, _len, _ref, _results;
-
       if (models == null) {
         models = {};
       }
@@ -578,7 +579,6 @@
 
     TextTemplateParser.parse = function(template, delimiters) {
       var index, lastIndex, lastToken, length, substring, tokens, value;
-
       tokens = [];
       length = template.length;
       index = 0;
@@ -661,7 +661,6 @@
     },
     getInputValue: function(el) {
       var o, _i, _len, _results;
-
       if (window.jQuery != null) {
         el = jQuery(el);
         switch (el[0].type) {
@@ -708,7 +707,6 @@
       },
       routine: function(el, value) {
         var _ref;
-
         if (el.type === 'radio') {
           return el.checked = ((_ref = el.value) != null ? _ref.toString() : void 0) === (value != null ? value.toString() : void 0);
         } else {
@@ -726,7 +724,6 @@
       },
       routine: function(el, value) {
         var _ref;
-
         if (el.type === 'radio') {
           return el.checked = ((_ref = el.value) != null ? _ref.toString() : void 0) !== (value != null ? value.toString() : void 0);
         } else {
@@ -753,7 +750,6 @@
       },
       routine: function(el, value) {
         var o, _i, _len, _ref, _ref1, _ref2, _results;
-
         if (window.jQuery != null) {
           el = jQuery(el);
           if ((value != null ? value.toString() : void 0) !== ((_ref = el.val()) != null ? _ref.toString() : void 0)) {
@@ -786,7 +782,6 @@
       block: true,
       bind: function(el) {
         var attr, declaration;
-
         if (this.marker == null) {
           attr = ['data', this.view.config.prefix, this.type].join('-').replace('--', '-');
           declaration = el.getAttribute(attr);
@@ -798,12 +793,10 @@
       },
       unbind: function() {
         var _ref;
-
         return (_ref = this.nested) != null ? _ref.unbind() : void 0;
       },
       routine: function(el, value) {
         var key, model, models, options, _ref;
-
         if (!!value === (this.nested == null)) {
           if (value) {
             models = {};
@@ -827,7 +820,8 @@
         }
       },
       update: function(models) {
-        return this.nested.update(models);
+        var _ref;
+        return (_ref = this.nested) != null ? _ref.update(models) : void 0;
       }
     },
     unless: {
@@ -863,7 +857,6 @@
       block: true,
       bind: function(el) {
         var attr;
-
         if (this.marker == null) {
           attr = ['data', this.view.config.prefix, this.type].join('-').replace('--', '-');
           this.marker = document.createComment(" rivets: " + this.type + " ");
@@ -875,7 +868,6 @@
       },
       unbind: function(el) {
         var view, _i, _len, _ref, _results;
-
         if (this.iterated != null) {
           _ref = this.iterated;
           _results = [];
@@ -887,8 +879,7 @@
         }
       },
       routine: function(el, collection) {
-        var data, i, index, k, key, model, modelName, options, previous, template, v, view, _i, _j, _len, _len1, _ref, _ref1, _ref2, _ref3, _results;
-
+        var data, i, index, k, key, model, modelName, options, previous, template, v, view, _i, _j, _len, _len1, _ref, _ref1, _ref2, _results;
         modelName = this.args[0];
         collection = collection || [];
         if (this.iterated.length > collection.length) {
@@ -909,7 +900,7 @@
             _ref1 = this.view.models;
             for (key in _ref1) {
               model = _ref1[key];
-              if ((_ref2 = data[key]) == null) {
+              if (data[key] == null) {
                 data[key] = model;
               }
             }
@@ -919,9 +910,9 @@
               formatters: this.view.options.formatters,
               config: {}
             };
-            _ref3 = this.view.options.config;
-            for (k in _ref3) {
-              v = _ref3[k];
+            _ref2 = this.view.options.config;
+            for (k in _ref2) {
+              v = _ref2[k];
               options.config[k] = v;
             }
             options.config.preloadData = true;
@@ -940,7 +931,6 @@
       },
       update: function(models) {
         var data, key, model, view, _i, _len, _ref, _results;
-
         data = {};
         for (key in models) {
           model = models[key];
@@ -959,7 +949,6 @@
     },
     "class-*": function(el, value) {
       var elClass;
-
       elClass = " " + el.className + " ";
       if (!value === (elClass.indexOf(" " + this.args[0] + " ") !== -1)) {
         return el.className = value ? "" + el.className + " " + this.args[0] : elClass.replace(" " + this.args[0] + " ", ' ').trim();
@@ -971,12 +960,6 @@
       } else {
         return el.removeAttribute(this.type);
       }
-    }
-  };
-
-  Rivets.internalBinders = {
-    textNode: function(node, value) {
-      return node.data = value != null ? value : '';
     }
   };
 
@@ -999,7 +982,6 @@
     exports.config = Rivets.config;
     exports.configure = function(options) {
       var property, value;
-
       if (options == null) {
         options = {};
       }
@@ -1010,7 +992,6 @@
     };
     return exports.bind = function(el, models, options) {
       var view;
-
       if (models == null) {
         models = {};
       }
