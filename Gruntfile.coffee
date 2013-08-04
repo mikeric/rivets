@@ -11,8 +11,19 @@ module.exports = (grunt) ->
 
     coffee:
       all:
+        options:
+          join: true
         files:
-          'dist/rivets.js': 'src/rivets.coffee'
+          'dist/rivets.js': [
+            'src/rivets.coffee'
+            'src/util.coffee'
+            'src/view.coffee'
+            'src/bindings.coffee'
+            'src/parsers.coffee'
+            'src/binders.coffee'
+            'src/adapters.coffee'
+            'src/export.coffee'
+          ]
 
     concat:
       all:
