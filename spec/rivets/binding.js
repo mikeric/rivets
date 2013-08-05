@@ -2,19 +2,19 @@ describe('Rivets.Binding', function() {
   var model, el, view, binding, opts;
 
   beforeEach(function() {
-    rivets.configure({
-      adapter: {
-        subscribe: function() {},
-        unsubscribe: function() {},
-        read: function() {},
-        publish: function() {}
-      }
-    });
+    adapter = {
+      subscribe: function() {},
+      unsubscribe: function() {},
+      read: function() { return {} },
+      publish: function() {}
+    };
+
+    rivets.adapters['.'] = adapter;
 
     el = document.createElement('div');
     el.setAttribute('data-text', 'obj.name');
-    opts = {};
-    view = rivets.bind(el, {obj: {}}, opts);
+
+    view = rivets.bind(el, {obj: {}});
     binding = view.bindings[0];
     model = binding.model;
   });
@@ -25,9 +25,9 @@ describe('Rivets.Binding', function() {
 
   describe('bind()', function() {
     it('subscribes to the model for changes via the adapter', function() {
-      spyOn(rivets.config.adapter, 'subscribe');
+      spyOn(adapter, 'subscribe');
       binding.bind();
-      expect(rivets.config.adapter.subscribe).toHaveBeenCalledWith(model, 'name', binding.sync);
+      expect(adapter.subscribe).toHaveBeenCalledWith(model, 'name', binding.sync);
     });
 
     it("calls the binder's bind method if one exists", function() {
@@ -48,9 +48,9 @@ describe('Rivets.Binding', function() {
 
       it('sets the initial value via the adapter', function() {
         spyOn(binding, 'set');
-        spyOn(rivets.config.adapter, 'read');
+        spyOn(adapter, 'read');
         binding.bind();
-        expect(rivets.config.adapter.read).toHaveBeenCalledWith(model, 'name');
+        expect(adapter.read).toHaveBeenCalledWith(model, 'name');
         expect(binding.set).toHaveBeenCalled();
       });
     });
@@ -85,10 +85,10 @@ describe('Rivets.Binding', function() {
       });
 
       it('sets up observers on the dependant attributes', function() {
-        spyOn(rivets.config.adapter, 'subscribe');
+        spyOn(adapter, 'subscribe');
         binding.bind();
-        expect(rivets.config.adapter.subscribe).toHaveBeenCalledWith(model, 'fname', binding.sync);
-        expect(rivets.config.adapter.subscribe).toHaveBeenCalledWith(model, 'lname', binding.sync);
+        expect(adapter.subscribe).toHaveBeenCalledWith(model, 'fname', binding.sync);
+        expect(adapter.subscribe).toHaveBeenCalledWith(model, 'lname', binding.sync);
       });
     });
   });
@@ -158,9 +158,9 @@ describe('Rivets.Binding', function() {
 
       numberInput.value = 42;
 
-      spyOn(rivets.config.adapter, 'publish');
+      spyOn(adapter, 'publish');
       binding.publish({target: numberInput});
-      expect(rivets.config.adapter.publish).toHaveBeenCalledWith(model, 'num', '42');
+      expect(adapter.publish).toHaveBeenCalledWith(model, 'num', '42');
     });
   });
 
@@ -191,9 +191,9 @@ describe('Rivets.Binding', function() {
 
       numberInput.value = 42;
 
-      spyOn(rivets.config.adapter, 'publish');
+      spyOn(adapter, 'publish');
       binding.publish({target: numberInput});
-      expect(rivets.config.adapter.publish).toHaveBeenCalledWith(model, 'num', 'awesome 42');
+      expect(adapter.publish).toHaveBeenCalledWith(model, 'num', 'awesome 42');
     });
 
     it("should format a value in both directions", function() {
@@ -209,10 +209,10 @@ describe('Rivets.Binding', function() {
       binding = view.bindings[0];
       model = binding.model;
 
-      spyOn(rivets.config.adapter, 'publish');
+      spyOn(adapter, 'publish');
       valueInput.value = 'charles';
       binding.publish({target: valueInput});
-      expect(rivets.config.adapter.publish).toHaveBeenCalledWith(model, 'name', 'awesome charles');
+      expect(adapter.publish).toHaveBeenCalledWith(model, 'name', 'awesome charles');
 
       spyOn(binding.binder, 'routine');
       binding.set('fred');
@@ -229,10 +229,10 @@ describe('Rivets.Binding', function() {
       binding = view.bindings[0];
       model = binding.model;
 
-      spyOn(rivets.config.adapter, 'publish');
+      spyOn(adapter, 'publish');
       valueInput.value = 'charles';
       binding.publish({target: valueInput});
-      expect(rivets.config.adapter.publish).toHaveBeenCalledWith(model, 'name', 'charles');
+      expect(adapter.publish).toHaveBeenCalledWith(model, 'name', 'charles');
 
       spyOn(binding.binder, 'routine');
       binding.set('fred');
@@ -262,10 +262,10 @@ describe('Rivets.Binding', function() {
       binding.set('fred');
       expect(binding.binder.routine).toHaveBeenCalledWith(valueInput, 'fred is awesome totally');
 
-      spyOn(rivets.config.adapter, 'publish');
+      spyOn(adapter, 'publish');
       valueInput.value = 'fred';
       binding.publish({target: valueInput});
-      expect(rivets.config.adapter.publish).toHaveBeenCalledWith(model, 'name', 'fred totally is awesome');
+      expect(adapter.publish).toHaveBeenCalledWith(model, 'name', 'fred totally is awesome');
     });
 
      it("binders in a chain should be skipped if they're not there", function() {
@@ -290,10 +290,10 @@ describe('Rivets.Binding', function() {
       binding.set('fred');
       expect(binding.binder.routine).toHaveBeenCalledWith(valueInput, 'fred is awesome totally');
 
-      spyOn(rivets.config.adapter, 'publish');
+      spyOn(adapter, 'publish');
       valueInput.value = 'fred';
       binding.publish({target: valueInput});
-      expect(rivets.config.adapter.publish).toHaveBeenCalledWith(model, 'name', 'fred totally is radical');
+      expect(adapter.publish).toHaveBeenCalledWith(model, 'name', 'fred totally is radical');
     });
 
   });
