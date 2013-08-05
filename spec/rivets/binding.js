@@ -55,30 +55,6 @@ describe('Rivets.Binding', function() {
       });
     });
 
-    describe('with the bypass option set to true', function() {
-      beforeEach(function() {
-        binding.options.bypass = true;
-      });
-
-      it('sets the initial value from the model directly', function() {
-        spyOn(binding, 'set');
-        binding.model.name = 'espresso';
-        binding.bind();
-        expect(binding.set).toHaveBeenCalledWith('espresso');
-      });
-
-      it("calls the binder's bind method if one exists", function() {
-        expect(function(){
-          binding.bind();
-        }).not.toThrow(new Error());
-
-        binding.binder.bind = function(){};
-        spyOn(binding.binder, 'bind');
-        binding.bind();
-        expect(binding.binder.bind).toHaveBeenCalled();
-      });
-    });
-
     describe('with dependencies', function() {
       beforeEach(function() {
         binding.options.dependencies = ['.fname', '.lname'];
@@ -103,23 +79,6 @@ describe('Rivets.Binding', function() {
       spyOn(binding.binder, 'unbind');
       binding.unbind();
       expect(binding.binder.unbind).toHaveBeenCalled();
-    });
-
-    describe('with the bypass option set to true', function() {
-      beforeEach(function() {
-        binding.options.bypass = true;
-      });
-
-      it("calls the binder's unbind method if one exists", function() {
-        expect(function(){
-          binding.unbind();
-        }).not.toThrow(new Error());
-
-        binding.binder.unbind = function(){};
-        spyOn(binding.binder, 'unbind');
-        binding.unbind();
-        expect(binding.binder.unbind).toHaveBeenCalled();
-      });
     });
   });
 
