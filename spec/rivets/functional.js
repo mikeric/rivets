@@ -2,34 +2,42 @@ describe('Functional', function() {
   var data, bindData, el, input;
 
   beforeEach(function() {
-    data = new Data({foo: 'bar', items: [{name: 'a'}, {name: 'b'}]});
+    adapter = {
+      subscribe: function(obj, keypath, callback) {
+        obj.on(keypath, callback);
+      },
+      unsubscribe: function(obj, keypath, callback) {
+        obj.off(keypath, callback);
+      },
+      read: function(obj, keypath) {
+        return obj.get(keypath);
+      },
+      publish: function(obj, keypath, value) {
+        attributes = {};
+        attributes[keypath] = value;
+        obj.set(attributes);
+      }
+    };
+
+    rivets.adapters[':'] = adapter;
+    rivets.configure({preloadData: true});
+
+    data = new Data({
+      foo: 'bar',
+      items: [{name: 'a'}, {name: 'b'}]
+    });
+
     bindData = {data: data};
+
     el = document.createElement('div');
     input = document.createElement('input');
     input.setAttribute('type', 'text');
-
-    rivets.configure({
-      preloadData: true,
-      adapter: {
-        subscribe: function(obj, keypath, callback) {
-          obj.on(keypath, callback);
-        },
-        read: function(obj, keypath) {
-          return obj.get(keypath);
-        },
-        publish: function(obj, keypath, value) {
-          attributes = {};
-          attributes[keypath] = value;
-          obj.set(attributes);
-        }
-      }
-    });
   });
 
   describe('Adapter', function() {
     it('should read the initial value', function() {
       spyOn(data, 'get');
-      el.setAttribute('data-text', 'data.foo');
+      el.setAttribute('data-text', 'data:foo');
       rivets.bind(el, bindData);
       expect(data.get).toHaveBeenCalledWith('foo');
     });
@@ -37,14 +45,14 @@ describe('Functional', function() {
     it('should read the initial value unless preloadData is false', function() {
       rivets.configure({preloadData: false});
       spyOn(data, 'get');
-      el.setAttribute('data-value', 'data.foo');
+      el.setAttribute('data-value', 'data:foo');
       rivets.bind(el, bindData);
       expect(data.get).not.toHaveBeenCalled();
     });
 
     it('should subscribe to updates', function() {
       spyOn(data, 'on');
-      el.setAttribute('data-value', 'data.foo');
+      el.setAttribute('data-value', 'data:foo');
       rivets.bind(el, bindData);
       expect(data.on).toHaveBeenCalled();
     });
@@ -53,13 +61,14 @@ describe('Functional', function() {
   describe('Binds', function() {
     describe('Text', function() {
       it('should set the text content of the element', function() {
-        el.setAttribute('data-text', 'data.foo');
+        el.setAttribute('data-text', 'data:foo');
         rivets.bind(el, bindData);
+        debugger
         expect(el.textContent || el.innerText).toBe(data.get('foo'));
       });
 
       it('should correctly handle HTML in the content', function() {
-        el.setAttribute('data-text', 'data.foo');
+        el.setAttribute('data-text', 'data:foo');
         value = '<b>Fail</b>';
         data.set({foo: value});
         rivets.bind(el, bindData);
@@ -69,13 +78,13 @@ describe('Functional', function() {
 
     describe('HTML', function() {
       it('should set the html content of the element', function() {
-        el.setAttribute('data-html', 'data.foo');
+        el.setAttribute('data-html', 'data:foo');
         rivets.bind(el, bindData);
         expect(el).toHaveTheTextContent(data.get('foo'));
       });
 
       it('should correctly handle HTML in the content', function() {
-        el.setAttribute('data-html', 'data.foo');
+        el.setAttribute('data-html', 'data:foo');
         value = '<b>Fail</b>';
         data.set({foo: value});
         rivets.bind(el, bindData);
@@ -85,7 +94,7 @@ describe('Functional', function() {
 
     describe('Value', function() {
       it('should set the value of the element', function() {
-        input.setAttribute('data-value', 'data.foo');
+        input.setAttribute('data-value', 'data:foo');
         rivets.bind(input, bindData);
         expect(input.value).toBe(data.get('foo'));
       });
@@ -93,8 +102,8 @@ describe('Functional', function() {
     
     describe('Multiple', function() {
       it('should bind a list of multiple elements', function() {
-        el.setAttribute('data-html', 'data.foo');
-        input.setAttribute('data-value', 'data.foo');
+        el.setAttribute('data-html', 'data:foo');
+        input.setAttribute('data-value', 'data:foo');
         rivets.bind([el, input], bindData);
         expect(el).toHaveTheTextContent(data.get('foo'));
         expect(input.value).toBe(data.get('foo'));
@@ -106,7 +115,7 @@ describe('Functional', function() {
         list = document.createElement('ul');
         el.appendChild(list);
         listItem = document.createElement('li');
-        listItem.setAttribute('data-each-item', 'data.items');
+        listItem.setAttribute('data-each-item', 'data:items');
         list.appendChild(listItem);
       });
 
@@ -133,9 +142,9 @@ describe('Functional', function() {
 
       it('should allow binding to the iterated item as well as any parent contexts', function() {
         span1 = document.createElement('span');
-        span1.setAttribute('data-text', 'item:name')
+        span1.setAttribute('data-text', 'item.name')
         span2 = document.createElement('span');
-        span2.setAttribute('data-text', 'data.foo')
+        span2.setAttribute('data-text', 'data:foo')
         listItem.appendChild(span1);
         listItem.appendChild(span2);
 
@@ -145,8 +154,8 @@ describe('Functional', function() {
       });
 
       it('should allow binding to the iterated element directly', function() {
-        listItem.setAttribute('data-text', 'item:name');
-        listItem.setAttribute('data-class', 'data.foo');
+        listItem.setAttribute('data-text', 'item.name');
+        listItem.setAttribute('data-class', 'data:foo');
         rivets.bind(el, bindData);
         expect(el.getElementsByTagName('li')[0]).toHaveTheTextContent('a');
         expect(el.getElementsByTagName('li')[0].className).toBe('bar');
@@ -160,7 +169,7 @@ describe('Functional', function() {
         list.appendChild(lastItem);
         list.insertBefore(firstItem, listItem);
 
-        listItem.setAttribute('data-text', 'item:name');
+        listItem.setAttribute('data-text', 'item.name');
 
         rivets.bind(el, bindData);
         expect(el.getElementsByTagName('li')[0]).toHaveTheTextContent('first');
@@ -174,7 +183,7 @@ describe('Functional', function() {
 
   describe('Updates', function() {
     it('should change the value', function() {
-      el.setAttribute('data-text', 'data.foo');
+      el.setAttribute('data-text', 'data:foo');
       rivets.bind(el, bindData);
       data.set({foo: 'some new value'});
       expect(el).toHaveTheTextContent(data.get('foo'));
@@ -183,7 +192,7 @@ describe('Functional', function() {
 
   describe('Input', function() {
     it('should update the model value', function() {
-      input.setAttribute('data-value', 'data.foo');
+      input.setAttribute('data-value', 'data:foo');
       rivets.bind(input, bindData);
       input.value = 'some new value';
       var event = document.createEvent('HTMLEvents')
