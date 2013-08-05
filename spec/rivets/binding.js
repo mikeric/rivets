@@ -2,14 +2,7 @@ describe('Rivets.Binding', function() {
   var model, el, view, binding, opts;
 
   beforeEach(function() {
-    adapter = {
-      subscribe: function() {},
-      unsubscribe: function() {},
-      read: function() { return {} },
-      publish: function() {}
-    };
-
-    rivets.adapters['.'] = adapter;
+    adapter = rivets.adapters['.']
 
     el = document.createElement('div');
     el.setAttribute('data-text', 'obj.name');
