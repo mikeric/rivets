@@ -8,10 +8,10 @@ class Rivets.Binding
   # keypath at which to listen for changes.
   constructor: (@view, @el, @type, @keypath, @options = {}) ->
     @formatters = @options.formatters || []
-    @setBinders()
+    @setBinder()
     @setModel()
 
-  setBinders: =>
+  setBinder: =>
     unless @binder = @view.binders[@type]
       for identifier, value of @view.binders
         if identifier isnt '*' and identifier.indexOf('*') isnt -1
