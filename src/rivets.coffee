@@ -36,7 +36,12 @@ class Rivets.Binding
     @binder or= @view.binders['*']
     @binder = {routine: @binder} if @binder instanceof Function
     @formatters = @options.formatters || []
-    @model = if @key then @view.models[@key] else @view.models
+
+    @model = if @key && @keypath != ''
+      @view.models[@key]
+    else
+      @keypath = @key if @keypath == ''
+      @view.models
 
   # Applies all the current formatters to the supplied value and returns the
   # formatted value.
