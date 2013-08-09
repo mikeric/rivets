@@ -306,7 +306,10 @@ describe('Rivets.Binding', function() {
     });
 
     it('uses formatters on the model', function() {
-      model.modelAwesome = function(value) { return 'model awesome ' + value; };
+      model.modelAwesome = function(value) {
+        expect(this).toBe(model);
+        return 'model awesome ' + value;
+      };
       binding.formatters.push('modelAwesome');
       expect(binding.formattedValue('hat')).toBe('model awesome hat');
     });
