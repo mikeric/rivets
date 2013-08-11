@@ -8,8 +8,15 @@ Rivets.adapters['.'] =
 
   subscribe: (obj, keypath, callback) ->
     unless obj[@id]?
-      obj[@id] = @counter++
-      @weakmap[obj[@id]] = {}
+      id = @counter++
+
+      Object.defineProperty obj, @id,
+        enumerable: false
+        configurable: false
+        writable: false
+        value: id
+
+      @weakmap[id] = {}
 
     map = @weakmap[obj[@id]]
 
