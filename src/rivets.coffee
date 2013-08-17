@@ -15,6 +15,15 @@ Rivets = {}
 # Polyfill For `String::trim`.
 unless String::trim then String::trim = -> @replace /^\s+|\s+$/g, ''
 
+# Support for Node constants in IE < 9
+try
+  if Node.ELEMENT_NODE isnt 1 then throw true
+catch e
+  Node =
+    ELEMENT_NODE:    1,
+    ATTRIBUTE_NODE:  2,
+    TEXT_NODE:       3
+
 # Rivets.Binding
 # --------------
 
@@ -645,7 +654,7 @@ Rivets.binders =
 
     update: (models) ->
       data = {}
-      
+
       for key, model of models
         data[key] = model unless key is @args[0]
 
