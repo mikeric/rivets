@@ -6,22 +6,53 @@ Rivets.adapters['.'] =
   counter: 0
   weakmap: {}
 
-  subscribe: (obj, keypath, callback) ->
+  weakReference: (obj) ->
     unless obj[@id]?
       id = @counter++
 
-      Object.defineProperty obj, @id,
-        enumerable: false
-        configurable: false
-        writable: false
-        value: id
+      @weakmap[id] =
+        callbacks: {}
 
-      @weakmap[id] = {}
+      Object.defineProperty obj, @id, value: id
 
-    map = @weakmap[obj[@id]]
+    @weakmap[obj[@id]]
 
-    unless map[keypath]?
-      map[keypath] = []
+  stubFunction: (obj, fn) ->
+    original = obj[fn]
+    map = @weakReference obj
+    weakmap = @weakmap
+
+    obj[fn] = ->
+      response = original.apply obj, arguments
+
+      for r, k of map.pointers
+        callback() for callback in weakmap[r]?.callbacks[k] ? []
+
+      response
+
+  observeMutations: (obj, ref, keypath) ->
+    if Object.prototype.toString.call(obj) is '[object Array]'
+      map = @weakReference obj
+
+      unless map.pointers?
+        map.pointers = {}
+        functions = ['push', 'pop', 'shift', 'unshift', 'sort', 'reverse', 'splice']
+        @stubFunction obj, fn for fn in functions
+
+      map.pointers[ref] ?= []
+
+      unless keypath in map.pointers[ref]
+        map.pointers[ref].push keypath
+
+  unobserveMutations: (obj, ref, keypath) ->
+    if keyapths = @weakReference(obj).pointers?[ref]
+      keypaths.splice keypaths.indexOf(keypath), 1
+
+  subscribe: (obj, keypath, callback) ->
+    callbacks = @weakReference(obj).callbacks
+
+    unless callbacks[keypath]?
+      callbacks[keypath] = []
       value = obj[keypath]
 
       Object.defineProperty obj, keypath,
@@ -29,14 +60,17 @@ Rivets.adapters['.'] =
         set: (newValue) ->
           if newValue isnt value
             value = newValue
-            callback() for callback in map[keypath]
+            callback() for callback in callbacks[keypath]
 
-    unless callback in map[keypath]
-      map[keypath].push callback
+    unless callback in callbacks[keypath]
+      callbacks[keypath].push callback
+
+    @observeMutations obj[keypath], obj[@id], keypath
 
   unsubscribe: (obj, keypath, callback) ->
-    callbacks = @weakmap[obj[@id]][keypath]
+    callbacks = @weakmap[obj[@id]].callbacks[keypath]
     callbacks.splice callbacks.indexOf(callback), 1
+    @observeMutations obj[keypath], obj[@id], keypath
 
   read: (obj, keypath) ->
     obj[keypath]
