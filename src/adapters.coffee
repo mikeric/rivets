@@ -31,7 +31,7 @@ Rivets.adapters['.'] =
       response
 
   observeMutations: (obj, ref, keypath) ->
-    if Object.prototype.toString.call(obj) is '[object Array]'
+    if Array.isArray obj
       map = @weakReference obj
 
       unless map.pointers?
