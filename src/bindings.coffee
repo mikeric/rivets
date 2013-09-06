@@ -8,6 +8,7 @@ class Rivets.Binding
   # keypath at which to listen for changes.
   constructor: (@view, @el, @type, @keypath, @options = {}) ->
     @formatters = @options.formatters || []
+    @objectPath = []
     @setBinder()
     @setModel()
 
@@ -28,13 +29,32 @@ class Rivets.Binding
     interfaces = (k for k, v of @view.adapters)
     tokens = Rivets.KeypathParser.parse @keypath, interfaces, '.'
 
-    @model = @view.models
-    @rootKey = tokens[0]
+    @rootKey = tokens.shift()
     @key = tokens.pop()
+    @objectPath ?= []
+
+    model = @view.adapters[@rootKey.interface].read @view.models, @rootKey.path
 
     for token, index in tokens
-      @model = @view.adapters[token.interface].read(@model, token.path)
+      current = @view.adapters[token.interface].read model, token.path
 
+      if @objectPath[index]?
+        if current isnt @objectPath[index]
+          @view.adapters[token.interface].unsubscribe model, token.path, @setModel
+          @view.adapters[token.interface].subscribe current, token.path, @setModel
+      else
+        @view.adapters[token.interface].subscribe model, token.path, @setModel
+
+      model = current
+
+    if @model and @model isnt model
+      @view.adapters[@key.interface].unsubscribe @model, @key.path, @sync
+      @view.adapters[@key.interface].subscribe model, @key.path, @sync
+      @model = model
+      @sync()
+    else
+      @model = model
+      
   # Applies all the current formatters to the supplied value and returns the
   # formatted value.
   formattedValue: (value) =>

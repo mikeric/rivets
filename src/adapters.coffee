@@ -57,10 +57,11 @@ Rivets.adapters['.'] =
 
       Object.defineProperty obj, keypath,
         get: -> value
-        set: (newValue) ->
+        set: (newValue) =>
           if newValue isnt value
             value = newValue
             callback() for callback in callbacks[keypath]
+            @observeMutations newValue, obj[@id], keypath
 
     unless callback in callbacks[keypath]
       callbacks[keypath].push callback
