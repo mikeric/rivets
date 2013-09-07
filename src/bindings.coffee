@@ -9,6 +9,7 @@ class Rivets.Binding
   constructor: (@view, @el, @type, @keypath, @options = {}) ->
     @formatters = @options.formatters || []
     @objectPath = []
+    @dependencies = []
     @setBinder()
     @setModel()
 
@@ -116,32 +117,31 @@ class Rivets.Binding
 
     if @options.dependencies?.length
       for dependency in @options.dependencies
-        if /^\./.test dependency
-          model = @model
-          keypath = dependency.substr 1
-        else
-          dependency = dependency.split '.'
-          model = @view.models[dependency.shift()]
-          keypath = dependency.join '.'
+        interfaces = (k for k, v of @view.adapters)
+        prefix = dependency[0] in interfaces
+        root = if prefix then dependency[0] else '.'
+        path = if prefix then dependency.substr(1) else dependency
+        tokens = Rivets.KeypathParser.parse path, interfaces, root
+        key = tokens.pop()
 
-        @view.adapters['.'].subscribe model, keypath, @sync
+        model = @model
+
+        for token in tokens
+          model = @view.adapters[token.interface].read model, token.path
+
+        @view.adapters[key.interface].subscribe model, key.path, @sync
+        @dependencies.push [model, key]
 
   # Unsubscribes from the model and the element.
   unbind: =>
     @binder.unbind?.call @, @el
     @view.adapters[@key.interface].unsubscribe @model, @key.path, @sync
 
-    if @options.dependencies?.length
-      for dependency in @options.dependencies
-        if /^\./.test dependency
-          model = @model
-          keypath = dependency.substr 1
-        else
-          dependency = dependency.split '.'
-          model = @view.models[dependency.shift()]
-          keypath = dependency.join '.'
+    if @dependencies.length
+      for dep in @dependencies
+        @view.adapters[dep[1].interface].unsubscribe dep[0], dep[1].path, @sync
 
-        @view.adapters['.'].unsubscribe model, keypath, @sync
+      @dependencies = []
 
   # Updates the binding's model from what is currently set on the view. Unbinds
   # the old model first and then re-binds with the new model.
