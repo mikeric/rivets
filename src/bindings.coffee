@@ -92,7 +92,10 @@ class Rivets.Binding
 
   # Syncs up the view binding with the model.
   sync: =>
-    @set @view.adapters[@key.interface].read @model, @key.path
+    @set if @key
+      @view.adapters[@key.interface].read @model, @key.path
+    else
+      @model
 
   # Publishes the value currently set on the input element back to the model.
   publish: =>
@@ -112,7 +115,7 @@ class Rivets.Binding
   # to the model.
   bind: =>
     @binder.bind?.call @, @el
-    @view.adapters[@key.interface].subscribe @model, @key.path, @sync
+    @view.adapters[@key.interface].subscribe(@model, @key.path, @sync) if @key
     @sync() if @view.config.preloadData
 
     if @options.dependencies?.length
@@ -135,7 +138,7 @@ class Rivets.Binding
   # Unsubscribes from the model and the element.
   unbind: =>
     @binder.unbind?.call @, @el
-    @view.adapters[@key.interface].unsubscribe @model, @key.path, @sync
+    @view.adapters[@key.interface].unsubscribe(@model, @key.path, @sync) if @key
 
     if @dependencies.length
       for dep in @dependencies
@@ -147,9 +150,9 @@ class Rivets.Binding
   # the old model first and then re-binds with the new model.
   update: (models = {}) =>
     if models[@rootKey.path]
-      @view.adapters[@key.interface].unsubscribe @model, @key.path, @sync
+      @view.adapters[@key.interface].unsubscribe(@model, @key.path, @sync) if @key
       @setModel()
-      @view.adapters[@key.interface].subscribe @model, @key.path, @sync
+      @view.adapters[@key.interface].subscribe(@model, @key.path, @sync) if @key
       @sync()
 
     @binder.update?.call @, models
@@ -214,8 +217,6 @@ class Rivets.ComponentBinding extends Rivets.Binding
 class Rivets.TextBinding extends Rivets.Binding
   # Initializes a text binding for the specified view and text node.
   constructor: (@view, @el, @type, @keypath, @options = {}) ->
-    interfaces = (k for k, v of @view.adapters)
-    tokens = Rivets.KeypathParser.parse(@keypath, interfaces, '.')
     @formatters = @options.formatters || []
     @setModel()
 
