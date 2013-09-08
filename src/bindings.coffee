@@ -218,6 +218,7 @@ class Rivets.TextBinding extends Rivets.Binding
   # Initializes a text binding for the specified view and text node.
   constructor: (@view, @el, @type, @keypath, @options = {}) ->
     @formatters = @options.formatters || []
+    @dependencies = []
     @setModel()
 
   # A standard routine binder used for text node bindings.
