@@ -149,12 +149,7 @@ class Rivets.Binding
   # Updates the binding's model from what is currently set on the view. Unbinds
   # the old model first and then re-binds with the new model.
   update: (models = {}) =>
-    if models[@rootKey.path]
-      @view.adapters[@key.interface].unsubscribe(@model, @key.path, @sync) if @key
-      @setModel()
-      @view.adapters[@key.interface].subscribe(@model, @key.path, @sync) if @key
-      @sync()
-
+    @setModel() if models[@rootKey.path]
     @binder.update?.call @, models
 
 # Rivets.ComponentBinding
