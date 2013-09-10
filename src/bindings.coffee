@@ -49,9 +49,9 @@ class Rivets.Binding
       model = current
 
     if @key and @model and @model isnt model
-      @view.adapters[@key.interface].unsubscribe @model, @key.path, @sync
-      @view.adapters[@key.interface].subscribe model, @key.path, @sync
+      @unbind true
       @model = model
+      @bind true
       @sync()
     else
       @model = model
@@ -113,10 +113,10 @@ class Rivets.Binding
   # Subscribes to the model for changes at the specified keypath. Bi-directional
   # routines will also listen for changes on the element to propagate them back
   # to the model.
-  bind: =>
-    @binder.bind?.call @, @el
+  bind: (silent = false) =>
+    @binder.bind?.call @, @el unless silent
     @view.adapters[@key.interface].subscribe(@model, @key.path, @sync) if @key
-    @sync() if @view.config.preloadData
+    @sync() if @view.config.preloadData unless silent
 
     if @options.dependencies?.length
       for dependency in @options.dependencies
@@ -136,8 +136,8 @@ class Rivets.Binding
         @dependencies.push [model, key]
 
   # Unsubscribes from the model and the element.
-  unbind: =>
-    @binder.unbind?.call @, @el
+  unbind: (silent = false) =>
+    @binder.unbind?.call @, @el unless silent
     @view.adapters[@key.interface].unsubscribe(@model, @key.path, @sync) if @key
 
     if @dependencies.length
