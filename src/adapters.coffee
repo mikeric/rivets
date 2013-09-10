@@ -45,8 +45,9 @@ Rivets.adapters['.'] =
         map.pointers[ref].push keypath
 
   unobserveMutations: (obj, ref, keypath) ->
-    if keyapths = @weakReference(obj).pointers?[ref]
-      keypaths.splice keypaths.indexOf(keypath), 1
+    if Array.isArray obj and obj[@id]?
+      if keypaths = @weakReference(obj).pointers?[ref]
+        keypaths.splice keypaths.indexOf(keypath), 1
 
   subscribe: (obj, keypath, callback) ->
     callbacks = @weakReference(obj).callbacks
@@ -71,7 +72,7 @@ Rivets.adapters['.'] =
   unsubscribe: (obj, keypath, callback) ->
     callbacks = @weakmap[obj[@id]].callbacks[keypath]
     callbacks.splice callbacks.indexOf(callback), 1
-    @observeMutations obj[keypath], obj[@id], keypath
+    @unobserveMutations obj[keypath], obj[@id], keypath
 
   read: (obj, keypath) ->
     obj[keypath]
