@@ -48,7 +48,7 @@ class Rivets.Binding
 
       model = current
 
-    if @model and @model isnt model
+    if @key and @model and @model isnt model
       @view.adapters[@key.interface].unsubscribe @model, @key.path, @sync
       @view.adapters[@key.interface].subscribe model, @key.path, @sync
       @model = model
