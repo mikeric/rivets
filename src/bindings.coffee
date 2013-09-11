@@ -48,14 +48,15 @@ class Rivets.Binding
 
       model = current
 
-    if @key and @model and @model isnt model
-      @unbind true
-      @model = model
-      @bind true
-      @sync()
+    if @model
+      if @model isnt model
+        @unbind true if @key
+        @model = model
+        @bind true if @key
+        @sync()
     else
       @model = model
-      
+
   # Applies all the current formatters to the supplied value and returns the
   # formatted value.
   formattedValue: (value) =>
