@@ -183,6 +183,11 @@ Rivets.binders['each-*'] =
       else if @iterated[index].models[modelName] isnt model
         @iterated[index].update data
 
+    if el.nodeName is 'OPTION'
+      for binding in @view.bindings
+        if binding.el is @marker.parentNode and binding.type is 'value'
+          binding.sync()
+
   update: (models) ->
     data = {}
     
