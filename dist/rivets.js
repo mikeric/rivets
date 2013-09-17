@@ -19,6 +19,14 @@
       return this.replace(/^\s+|\s+$/g, '');
     };
   }
+  
+  if (!Node || !Node.ELEMENT_NODE) {
+    Node = {
+      ELEMENT_NODE: 1,
+      ATTRIBUTE_NODE: 2,
+      TEXT_NODE: 3
+    };
+  }
 
   Rivets.Binding = (function() {
     function Binding(view, el, type, key, keypath, options) {
