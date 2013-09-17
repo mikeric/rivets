@@ -1,9 +1,9 @@
 // Rivets.js
-// version: 0.5.12
+// version: 0.5.13
 // author: Michael Richards
 // license: MIT
 (function() {
-  var Rivets,
+  var Rivets, jQuery,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __slice = [].slice,
     __hasProp = {}.hasOwnProperty,
@@ -11,6 +11,8 @@
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   Rivets = {};
+
+  jQuery = window.jQuery || window.Zepto;
 
   if (!String.prototype.trim) {
     String.prototype.trim = function() {
@@ -319,7 +321,7 @@
       this.build = __bind(this.build, this);
       this.componentRegExp = __bind(this.componentRegExp, this);
       this.bindingRegExp = __bind(this.bindingRegExp, this);
-      if (!(this.els.jquery || this.els instanceof Array)) {
+      if (typeof this.els.length === 'undefined') {
         this.els = [this.els];
       }
       _ref = ['config', 'binders', 'formatters'];
