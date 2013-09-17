@@ -20,7 +20,7 @@
     };
   }
   
-  if (!Node || !Node.ELEMENT_NODE) {
+  if (typeof Node === void 0) {
     Node = {
       ELEMENT_NODE: 1,
       ATTRIBUTE_NODE: 2,
