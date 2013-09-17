@@ -18,6 +18,13 @@ jQuery = window.jQuery or window.Zepto
 # Polyfill For `String::trim`.
 unless String::trim then String::trim = -> @replace /^\s+|\s+$/g, ''
 
+# Polyfill For `Node` in IE <9
+if not Node or not Node.ELEMENT_NODE
+  Node =
+    ELEMENT_NODE: 1
+    ATTRIBUTE_NODE: 2
+    TEXT_NODE: 3
+
 # Rivets.Binding
 # --------------
 
