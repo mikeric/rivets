@@ -49,7 +49,7 @@ class Rivets.Binding
       id = args.shift()
 
       formatter = if @model[id] instanceof Function
-        @model[id]
+        (args...) => @model[id](args...)
       else
         @view.formatters[id]
 
@@ -648,7 +648,7 @@ Rivets.binders =
 
     update: (models) ->
       data = {}
-      
+
       for key, model of models
         data[key] = model unless key is @args[0]
 
