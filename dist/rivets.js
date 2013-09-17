@@ -20,7 +20,7 @@
     };
   }
 
-  if (typeof Node === void 0) {
+  if (typeof Node === 'undefined') {
     Node = {
       ELEMENT_NODE: 1,
       ATTRIBUTE_NODE: 2,

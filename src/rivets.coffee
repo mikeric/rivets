@@ -19,7 +19,7 @@ jQuery = window.jQuery or window.Zepto
 unless String::trim then String::trim = -> @replace /^\s+|\s+$/g, ''
 
 # Polyfill For `Node` in IE <9
-if typeof Node is undefined
+if typeof Node is 'undefined'
   Node =
     ELEMENT_NODE: 1
     ATTRIBUTE_NODE: 2
