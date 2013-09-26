@@ -21,6 +21,8 @@
   }
 
   Rivets.Binding = (function() {
+    var subscribeBinding, unsubscribeBinding;
+
     function Binding(view, el, type, key, keypath, options) {
       var identifier, regexp, value, _ref;
       this.view = view;
@@ -112,62 +114,22 @@
     };
 
     Binding.prototype.bind = function() {
-      var dependency, keypath, model, _i, _len, _ref, _ref1, _ref2, _results;
+      var _ref;
       if ((_ref = this.binder.bind) != null) {
         _ref.call(this, this.el);
       }
-      if (this.options.bypass) {
-        this.sync();
-      } else {
-        this.view.config.adapter.subscribe(this.model, this.keypath, this.sync);
-        if (this.view.config.preloadData) {
-          this.sync();
-        }
-      }
-      if ((_ref1 = this.options.dependencies) != null ? _ref1.length : void 0) {
-        _ref2 = this.options.dependencies;
-        _results = [];
-        for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-          dependency = _ref2[_i];
-          if (/^\./.test(dependency)) {
-            model = this.model;
-            keypath = dependency.substr(1);
-          } else {
-            dependency = dependency.split('.');
-            model = this.view.models[dependency.shift()];
-            keypath = dependency.join('.');
-          }
-          _results.push(this.view.config.adapter.subscribe(model, keypath, this.sync));
-        }
-        return _results;
+      subscribeBinding(this);
+      if (this.options.bypass || this.view.config.preloadData) {
+        return this.sync();
       }
     };
 
     Binding.prototype.unbind = function() {
-      var dependency, keypath, model, _i, _len, _ref, _ref1, _ref2, _results;
+      var _ref;
       if ((_ref = this.binder.unbind) != null) {
         _ref.call(this, this.el);
       }
-      if (!this.options.bypass) {
-        this.view.config.adapter.unsubscribe(this.model, this.keypath, this.sync);
-      }
-      if ((_ref1 = this.options.dependencies) != null ? _ref1.length : void 0) {
-        _ref2 = this.options.dependencies;
-        _results = [];
-        for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-          dependency = _ref2[_i];
-          if (/^\./.test(dependency)) {
-            model = this.model;
-            keypath = dependency.substr(1);
-          } else {
-            dependency = dependency.split('.');
-            model = this.view.models[dependency.shift()];
-            keypath = dependency.join('.');
-          }
-          _results.push(this.view.config.adapter.unsubscribe(model, keypath, this.sync));
-        }
-        return _results;
-      }
+      return unsubscribeBinding(this);
     };
 
     Binding.prototype.update = function(models) {
@@ -177,23 +139,65 @@
       }
       if (this.key) {
         if (models[this.key]) {
-          if (!this.options.bypass) {
-            this.view.config.adapter.unsubscribe(this.model, this.keypath, this.sync);
-          }
+          unsubscribeBinding(this);
           this.model = models[this.key];
-          if (this.options.bypass) {
+          subscribeBinding(this);
+          if (this.options.bypass || this.view.config.preloadData) {
             this.sync();
-          } else {
-            this.view.config.adapter.subscribe(this.model, this.keypath, this.sync);
-            if (this.view.config.preloadData) {
-              this.sync();
-            }
           }
         }
       } else {
         this.sync();
       }
       return (_ref = this.binder.update) != null ? _ref.call(this, models) : void 0;
+    };
+
+    unsubscribeBinding = function(binding) {
+      var dependency, keypath, model, _i, _len, _ref, _ref1, _results;
+      if (!binding.options.bypass) {
+        binding.view.config.adapter.unsubscribe(binding.model, binding.keypath, binding.sync);
+      }
+      if ((_ref = binding.options.dependencies) != null ? _ref.length : void 0) {
+        _ref1 = binding.options.dependencies;
+        _results = [];
+        for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+          dependency = _ref1[_i];
+          if (/^\./.test(dependency)) {
+            model = binding.model;
+            keypath = dependency.substr(1);
+          } else {
+            dependency = dependency.split('.');
+            model = binding.view.models[dependency.shift()];
+            keypath = dependency.join('.');
+          }
+          _results.push(binding.view.config.adapter.unsubscribe(model, keypath, binding.sync));
+        }
+        return _results;
+      }
+    };
+
+    subscribeBinding = function(binding) {
+      var dependency, keypath, model, _i, _len, _ref, _ref1, _results;
+      if (!binding.options.bypass) {
+        binding.view.config.adapter.subscribe(binding.model, binding.keypath, binding.sync);
+      }
+      if ((_ref = binding.options.dependencies) != null ? _ref.length : void 0) {
+        _ref1 = binding.options.dependencies;
+        _results = [];
+        for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+          dependency = _ref1[_i];
+          if (/^\./.test(dependency)) {
+            model = binding.model;
+            keypath = dependency.substr(1);
+          } else {
+            dependency = dependency.split('.');
+            model = binding.view.models[dependency.shift()];
+            keypath = dependency.join('.');
+          }
+          _results.push(binding.view.config.adapter.subscribe(model, keypath, binding.sync));
+        }
+        return _results;
+      }
     };
 
     return Binding;

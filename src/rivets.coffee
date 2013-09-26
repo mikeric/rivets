@@ -101,62 +101,60 @@ class Rivets.Binding
   bind: =>
     @binder.bind?.call @, @el
 
-    if @options.bypass
+    subscribeBinding(@)
+    if @options.bypass ||  @view.config.preloadData
       @sync()
-    else
-      @view.config.adapter.subscribe @model, @keypath, @sync
-      @sync() if @view.config.preloadData
-
-    if @options.dependencies?.length
-      for dependency in @options.dependencies
-        if /^\./.test dependency
-          model = @model
-          keypath = dependency.substr 1
-        else
-          dependency = dependency.split '.'
-          model = @view.models[dependency.shift()]
-          keypath = dependency.join '.'
-
-        @view.config.adapter.subscribe model, keypath, @sync
 
   # Unsubscribes from the model and the element.
   unbind: =>
     @binder.unbind?.call @, @el
-
-    unless @options.bypass
-      @view.config.adapter.unsubscribe @model, @keypath, @sync
-
-    if @options.dependencies?.length
-      for dependency in @options.dependencies
-        if /^\./.test dependency
-          model = @model
-          keypath = dependency.substr 1
-        else
-          dependency = dependency.split '.'
-          model = @view.models[dependency.shift()]
-          keypath = dependency.join '.'
-
-        @view.config.adapter.unsubscribe model, keypath, @sync
+    unsubscribeBinding(@)
 
   # Updates the binding's model from what is currently set on the view. Unbinds
   # the old model first and then re-binds with the new model.
   update: (models = {}) =>
     if @key
       if models[@key]
-        unless @options.bypass
-          @view.config.adapter.unsubscribe @model, @keypath, @sync
+        unsubscribeBinding(@)
 
         @model = models[@key]
 
-        if @options.bypass
+        subscribeBinding(@)
+        if @options.bypass ||  @view.config.preloadData
           @sync()
-        else
-          @view.config.adapter.subscribe @model, @keypath, @sync
-          @sync() if @view.config.preloadData
     else
       @sync()
 
     @binder.update?.call @, models
+
+  unsubscribeBinding = (binding)->
+    unless binding.options.bypass
+      binding.view.config.adapter.unsubscribe binding.model, binding.keypath, binding.sync
+    if binding.options.dependencies?.length
+      for dependency in binding.options.dependencies
+        if /^\./.test dependency
+          model = binding.model
+          keypath = dependency.substr 1
+        else
+          dependency = dependency.split '.'
+          model = binding.view.models[dependency.shift()]
+          keypath = dependency.join '.'
+        binding.view.config.adapter.unsubscribe model, keypath, binding.sync
+
+  subscribeBinding = (binding)->
+    unless binding.options.bypass
+      binding.view.config.adapter.subscribe binding.model, binding.keypath, binding.sync
+    if binding.options.dependencies?.length
+      for dependency in binding.options.dependencies
+        if /^\./.test dependency
+          model = binding.model
+          keypath = dependency.substr 1
+        else
+          dependency = dependency.split '.'
+          model = binding.view.models[dependency.shift()]
+          keypath = dependency.join '.'
+        binding.view.config.adapter.subscribe model, keypath, binding.sync
+
 
 # Rivets.ComponentBinding
 # -----------------------
@@ -648,7 +646,7 @@ Rivets.binders =
 
     update: (models) ->
       data = {}
-      
+
       for key, model of models
         data[key] = model unless key is @args[0]
 

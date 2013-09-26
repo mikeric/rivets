@@ -324,4 +324,125 @@ describe('Rivets.Binding', function() {
       });
     });
   });
+
+  describe('update()', function() {
+    var newModel;
+    beforeEach(function(){
+      newModel = {obj:{}}
+    });
+    it('unsubscribes from the current model via the adapter', function() {
+      spyOn(rivets.config.adapter, 'unsubscribe');
+
+      binding.update(newModel);
+      expect(rivets.config.adapter.unsubscribe).toHaveBeenCalledWith(model, 'name', binding.sync);
+    });
+    it('subscribes to the new model for changes via the adapter:', function() {
+      spyOn(rivets.config.adapter, 'subscribe');
+      binding.update(newModel);
+      expect(rivets.config.adapter.subscribe).toHaveBeenCalledWith(newModel.obj, 'name', binding.sync);
+    });
+    describe('with preloadData set to false', function() {
+      beforeEach(function() {
+        binding.view.config.preloadData = false;
+      });
+      it('does not sync', function() {
+        spyOn(binding, 'sync');
+        binding.update(newModel);
+        expect(binding.sync).not.toHaveBeenCalled();
+      });
+    });
+    describe('with preloadData set to true', function() {
+      beforeEach(function() {
+        binding.view.config.preloadData = true;
+      });
+      it('syncs', function() {
+        spyOn(binding, 'sync');
+        binding.update(newModel);
+        expect(binding.sync).toHaveBeenCalled();
+      });
+    });
+    describe('with bypass set to true', function() {
+      beforeEach(function() {
+        binding.options.bypass = true;
+      });
+      it('doesnt unsubscribe from the current model via the adapter', function() {
+        spyOn(rivets.config.adapter, 'unsubscribe');
+        binding.update(newModel);
+        expect(rivets.config.adapter.unsubscribe).not.toHaveBeenCalled();
+      });
+      it('doesnt subscribe:', function() {
+        spyOn(rivets.config.adapter, 'subscribe');
+        binding.update(newModel);
+        expect(rivets.config.adapter.subscribe).not.toHaveBeenCalled();
+      });
+      it('syncs', function() {
+          spyOn(binding, 'sync');
+          binding.update(newModel);
+          expect(binding.sync).toHaveBeenCalled();
+      });
+    });
+    describe('with dependencies', function() {
+      beforeEach(function() {
+          binding.view.models.not = {};
+          binding.view.models.multiple = {};
+          newModel = {
+            obj:{},
+            dotAtStart:{},
+            not:{
+              dotAtStart:{}
+            },
+            multiple:{}
+          };
+          binding.options.dependencies = [
+            '.dotAtStart',
+            'not.dotAtStart',
+            'multiple.dot.path'
+          ];
+      });
+      it('unsubscribes dependency starting with dot from the current binding model with dependency value as keypath', function() {
+          spyOn(rivets.config.adapter, 'unsubscribe');
+          binding.update(newModel);
+          expect(rivets.config.adapter.unsubscribe).toHaveBeenCalledWith(model, 'dotAtStart', binding.sync);
+      });
+      it('unsubscribes dependency not starting with dot from the view model attribute identified using dependency before first dot and keypath as string after first dot', function() {
+        spyOn(rivets.config.adapter, 'unsubscribe');
+
+        binding.update(newModel);
+        expect(rivets.config.adapter.unsubscribe).toHaveBeenCalledWith(binding.view.models.not, 'dotAtStart', binding.sync);
+      });
+      it('unsubscribes uses full path following first dot regardless of subsequent dots', function() {
+        spyOn(rivets.config.adapter, 'unsubscribe');
+
+        binding.update(newModel);
+        expect(rivets.config.adapter.unsubscribe).toHaveBeenCalledWith(binding.view.models.multiple, 'dot.path', binding.sync);
+      });
+      it('subscribes dependency starting with dot to new binding model with dependency value as keypath', function() {
+        spyOn(rivets.config.adapter, 'subscribe');
+        binding.update(newModel);
+        expect(rivets.config.adapter.subscribe).toHaveBeenCalledWith(model, 'dotAtStart', binding.sync);
+      });
+      it('subscribes dependency not starting with dot onto the view model attribute identified using dependency before first dot and keypath as string after first dot', function() {
+        spyOn(rivets.config.adapter, 'subscribe');
+        binding.update(newModel);
+        expect(rivets.config.adapter.subscribe).toHaveBeenCalledWith(binding.view.models.not, 'dotAtStart', binding.sync);
+      });
+      it('subscribe uses full path following first dot regardless of subsequent dots', function() {
+        spyOn(rivets.config.adapter, 'subscribe');
+        binding.update(newModel);
+        expect(rivets.config.adapter.subscribe).toHaveBeenCalledWith(binding.view.models.multiple, 'dot.path', binding.sync);
+      });
+    });
+
+    describe('binder has update method', function() {
+      beforeEach(function() {
+          binding.binder.update = function(){};
+      });
+      it('calls binder update with new model', function() {
+          spyOn(binding.binder, 'update');
+          binding.update(newModel);
+          expect(binding.binder.update).toHaveBeenCalledWith(newModel);
+      });
+    });
+  })
 });
+
