@@ -38,7 +38,7 @@ module.exports = (grunt) ->
 
     watch:
       all:
-        files: 'src/rivets.coffee'
+        files: ['src/rivets.coffee','spec/rivets/**/*.js','spec/lib/**/*.js' ]
         tasks: ['build', 'spec']
 
   grunt.loadNpmTasks 'grunt-contrib-coffee'
