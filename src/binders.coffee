@@ -67,7 +67,7 @@ Rivets.binders.if =
 
   bind: (el) ->
     unless @marker?
-      attr = ['data', @view.config.prefix, @type].join('-').replace '--', '-'
+      attr = [@view.config.prefix, @type].join('-').replace '--', '-'
       declaration = el.getAttribute attr
 
       @marker = document.createComment " rivets: #{@type} #{declaration} "
@@ -131,7 +131,7 @@ Rivets.binders['each-*'] =
 
   bind: (el) ->
     unless @marker?
-      attr = ['data', @view.config.prefix, @type].join('-').replace '--', '-'
+      attr = [@view.config.prefix, @type].join('-').replace '--', '-'
       @marker = document.createComment " rivets: #{@type} "
       @iterated = []
 

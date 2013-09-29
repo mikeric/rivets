@@ -18,12 +18,11 @@ class Rivets.View
 
   # Regular expression used to match binding attributes.
   bindingRegExp: =>
-    prefix = @config.prefix
-    if prefix then new RegExp("^data-#{prefix}-") else /^data-/
+    new RegExp "^#{@config.prefix}-"
 
   # Regular expression used to match component nodes.
   componentRegExp: =>
-    new RegExp "^#{@config.prefix?.toUpperCase() ? 'RV'}-"
+    new RegExp "^#{@config.prefix.toUpperCase()}-"
 
   # Parses the DOM tree and builds `Rivets.Binding` instances for every matched
   # binding declaration.

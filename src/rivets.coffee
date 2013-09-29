@@ -19,7 +19,9 @@ Rivets =
   # The default configuration, publicly accessible on `module.config`. Can be
   # overridden globally or local to a `Rivets.View` instance.
   config:
-    preloadData: true
+    prefix: 'rv'
     rootInterface: '.'
+    preloadData: true
+
     handler: (context, ev, binding) ->
       @call context, ev, binding.view.models
