@@ -63,11 +63,7 @@ class Rivets.Binding
     for formatter in @formatters
       args = formatter.split /\s+/
       id = args.shift()
-
-      formatter = if @model?[id] instanceof Function
-        @model[id]
-      else
-        @view.formatters[id]
+      formatter = @view.formatters[id]
 
       if formatter?.read instanceof Function
         value = formatter.read value, args...
