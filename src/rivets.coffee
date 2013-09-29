@@ -20,5 +20,6 @@ Rivets =
   # overridden globally or local to a `Rivets.View` instance.
   config:
     preloadData: true
+    rootInterface: '.'
     handler: (context, ev, binding) ->
       @call context, ev, binding.view.models

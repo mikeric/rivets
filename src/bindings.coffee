@@ -28,7 +28,7 @@ class Rivets.Binding
 
   setModel: =>
     interfaces = (k for k, v of @view.adapters)
-    tokens = Rivets.KeypathParser.parse @keypath, interfaces, '.'
+    tokens = Rivets.KeypathParser.parse @keypath, interfaces, @view.config.rootInterface
 
     @rootKey = tokens.shift()
     @key = tokens.pop()
@@ -119,7 +119,7 @@ class Rivets.Binding
       for dependency in @options.dependencies
         interfaces = (k for k, v of @view.adapters)
         prefix = dependency[0] in interfaces
-        root = if prefix then dependency[0] else '.'
+        root = if prefix then dependency[0] else @view.config.rootInterface
         path = if prefix then dependency.substr(1) else dependency
         tokens = Rivets.KeypathParser.parse path, interfaces, root
         key = tokens.pop()
