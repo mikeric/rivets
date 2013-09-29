@@ -27,35 +27,15 @@ class Rivets.Binding
     @binder = {routine: @binder} if @binder instanceof Function
 
   setModel: =>
-    interfaces = (k for k, v of @view.adapters)
-    tokens = Rivets.KeypathParser.parse @keypath, interfaces, @view.config.rootInterface
+    observer = new KeypathObserver @view, @view.models, @keypath, (target) =>
+      @unbind true if @key
+      @model = target
+      @bind true if @key
+      @sync()
 
-    @rootKey = tokens.shift()
-    @key = tokens.pop()
-    @objectPath ?= []
-
-    model = @view.adapters[@rootKey.interface].read @view.models, @rootKey.path
-
-    for token, index in tokens
-      current = @view.adapters[token.interface].read model, token.path
-
-      if @objectPath[index]?
-        if current isnt @objectPath[index]
-          @view.adapters[token.interface].unsubscribe model, token.path, @setModel
-          @view.adapters[token.interface].subscribe current, token.path, @setModel
-      else
-        @view.adapters[token.interface].subscribe model, token.path, @setModel
-
-      model = current
-
-    if @model
-      if @model isnt model
-        @unbind true if @key
-        @model = model
-        @bind true if @key
-        @sync()
-    else
-      @model = model
+    @rootKey = observer.root
+    @key = observer.key
+    @model = observer.target
 
   # Applies all the current formatters to the supplied value and returns the
   # formatted value.
