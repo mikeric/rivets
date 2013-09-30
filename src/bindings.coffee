@@ -10,7 +10,7 @@ class Rivets.Binding
     @formatters = @options.formatters || []
     @dependencies = []
     @setBinder()
-    @setModel()
+    @setObserver()
 
   setBinder: =>
     unless @binder = @view.binders[@type]
@@ -25,16 +25,16 @@ class Rivets.Binding
     @binder or= @view.binders['*']
     @binder = {routine: @binder} if @binder instanceof Function
 
-  setModel: =>
-    observer = new KeypathObserver @view, @view.models, @keypath, (target) =>
+  setObserver: =>
+    @observer = new KeypathObserver @view, @view.models, @keypath, (target) =>
       @unbind true if @key
       @model = target
       @bind true if @key
       @sync()
 
-    @rootKey = observer.root
-    @key = observer.key
-    @model = observer.target
+    @rootKey = @observer.root
+    @key = @observer.key
+    @model = @observer.target
 
   # Applies all the current formatters to the supplied value and returns the
   # formatted value.
@@ -190,7 +190,7 @@ class Rivets.TextBinding extends Rivets.Binding
   constructor: (@view, @el, @type, @keypath, @options = {}) ->
     @formatters = @options.formatters || []
     @dependencies = []
-    @setModel()
+    @setObserver()
 
   # A standard routine binder used for text node bindings.
   binder:
