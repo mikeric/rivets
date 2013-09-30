@@ -15,15 +15,15 @@ class KeypathObserver
     current = @view.adapters[@root.interface].read @view.models, @root.path
 
     for token, index in @tokens
-      next = @view.adapters[token.interface].read current, token.path
-
       if @objectPath[index]?
-        if next isnt @objectPath[index]
-          @view.adapters[token.interface].unsubscribe current, token.path, @update
-          @view.adapters[token.interface].subscribe next, token.path, @update
+        if current isnt prev = @objectPath[index]
+          @view.adapters[token.interface].unsubscribe prev, token.path, @update
+          @view.adapters[token.interface].subscribe current, token.path, @update
+          @objectPath[index] = current
       else
         @view.adapters[token.interface].subscribe current, token.path, @update
+        @objectPath[index] = current
 
-      current = next
+      current = @view.adapters[token.interface].read current, token.path
 
     current
