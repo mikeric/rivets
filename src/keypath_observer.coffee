@@ -12,7 +12,7 @@ class KeypathObserver
       @callback @target = next
 
   realize: =>
-    current = @view.adapters[@root.interface].read @view.models, @root.path
+    current = @model
 
     for token, index in @tokens
       if @objectPath[index]?
