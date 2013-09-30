@@ -1,15 +1,27 @@
 class KeypathObserver
   constructor: (@view, @model, @keypath, @callback) ->
-    @interfaces = (k for k, v of @view.adapters)
+    @parse()
     @objectPath = []
-    @tokens = Rivets.KeypathParser.parse @keypath, @interfaces, @view.config.rootInterface
-    @root = @tokens.shift()
-    @key = @tokens.pop()
     @target = @realize()
+
+  parse: =>
+    interfaces = (k for k, v of @view.adapters)
+
+    if @keypath[0] in interfaces
+      root = @keypath[0]
+      path = @keypath.substr 1
+    else
+      root = @view.config.rootInterface
+      path = @keypath
+
+    @tokens = Rivets.KeypathParser.parse path, interfaces, root
+    @key = @tokens.pop()
 
   update: =>
     unless (next = @realize()) is @target
-      @callback @target = next
+      prev = @target
+      @target = next
+      @callback @, prev
 
   realize: =>
     current = @model
