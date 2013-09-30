@@ -8,7 +8,6 @@ class Rivets.Binding
   # keypath at which to listen for changes.
   constructor: (@view, @el, @type, @keypath, @options = {}) ->
     @formatters = @options.formatters || []
-    @objectPath = []
     @dependencies = []
     @setBinder()
     @setModel()
