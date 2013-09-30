@@ -32,7 +32,6 @@ class Rivets.Binding
       @bind true if @key
       @sync()
 
-    @rootKey = @observer.root
     @key = @observer.key
     @model = @observer.target
 
@@ -125,7 +124,7 @@ class Rivets.Binding
   # Updates the binding's model from what is currently set on the view. Unbinds
   # the old model first and then re-binds with the new model.
   update: (models = {}) =>
-    @observer.update() if models[@rootKey.path]
+    @observer.update() if models[@observer.root.path]
     @binder.update?.call @, models
 
 # Rivets.ComponentBinding
