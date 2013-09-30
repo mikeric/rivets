@@ -26,9 +26,9 @@ class Rivets.Binding
     @binder = {routine: @binder} if @binder instanceof Function
 
   setObserver: =>
-    @observer = new KeypathObserver @view, @view.models, @keypath, (target) =>
+    @observer = new KeypathObserver @view, @view.models, @keypath, (obs) =>
       @unbind true if @key
-      @model = target
+      @model = obs.target
       @bind true if @key
       @sync()
 
