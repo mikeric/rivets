@@ -95,20 +95,15 @@ class Rivets.Binding
 
     if @options.dependencies?.length
       for dependency in @options.dependencies
-        interfaces = (k for k, v of @view.adapters)
-        prefix = dependency[0] in interfaces
-        root = if prefix then dependency[0] else @view.config.rootInterface
-        path = if prefix then dependency.substr(1) else dependency
-        tokens = Rivets.KeypathParser.parse path, interfaces, root
-        key = tokens.pop()
+        observer = new KeypathObserver @view, @model, dependency, (obs, prev) =>
+          key = obs.key
+          @view.adapters[key.interface].unsubscribe prev, key.path, @sync
+          @view.adapters[key.interface].subscribe obs.target, key.path, @sync
+          @sync()
 
-        model = @model
-
-        for token in tokens
-          model = @view.adapters[token.interface].read model, token.path
-
-        @view.adapters[key.interface].subscribe model, key.path, @sync
-        @dependencies.push [model, key]
+        key = observer.key
+        @view.adapters[key.interface].subscribe observer.target, key.path, @sync
+        @dependencies.push observer
 
   # Unsubscribes from the model and the element.
   unbind: (silent = false) =>
@@ -116,15 +111,15 @@ class Rivets.Binding
     @view.adapters[@key.interface].unsubscribe(@model, @key.path, @sync) if @key
 
     if @dependencies.length
-      for dep in @dependencies
-        @view.adapters[dep[1].interface].unsubscribe dep[0], dep[1].path, @sync
+      for obs in @dependencies
+        key = obs.key
+        @view.adapters[key.interface].unsubscribe obs.target, key.path, @sync
 
       @dependencies = []
 
   # Updates the binding's model from what is currently set on the view. Unbinds
   # the old model first and then re-binds with the new model.
   update: (models = {}) =>
-    @observer.update() if models[@observer.root.path]
     @binder.update?.call @, models
 
 # Rivets.ComponentBinding
