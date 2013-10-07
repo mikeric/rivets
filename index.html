@@ -5,14 +5,11 @@ title: Lightweight and powerful data binding + templating solution for building 
 
 <header>
   <div class="container">
-    <div class="col col-lg-3 logo">
-      <img src="/img/rivets.png">
-    </div>
+    <div class="col col-lg-7">
+      <h1 class="brand-heading">Rivets.js</h1>
+      <p class="blurb">Lightweight and powerful data binding + templating solution for building modern web applications.</p>
 
-    <div class="col col-lg-9">
-      <h1 class="blurb">Lightweight and powerful data binding + templating solution for building modern web applications.</h1>
-
-      <a class="btn btn-primary" href="/dist/rivets.min.js">
+      <a class="btn btn-clear" href="/dist/rivets.min.js">
         <i>&#128229;</i>
         Download 0.5.10
       </a>
@@ -27,10 +24,23 @@ title: Lightweight and powerful data binding + templating solution for building 
         Annotated Source
       </a>
     </div>
+
+    <div class="col col-lg-5 graphic">
+      <img src="/img/rv-blueprints.png">
+    </div>
   </div>
 </header>
 
 <div class="container">
+  <article class="col col-lg-9">
+    {% for post in site.posts %}
+      <section id="{{ post.anchor }}">
+        <h2>{{ post.title }}</h2>
+        {{ post.content | unindent | markdownify }}
+      </section>
+    {% endfor %}
+  </article>
+
   <aside class="col col-lg-3">
     <nav>
       <ul>
@@ -40,13 +50,4 @@ title: Lightweight and powerful data binding + templating solution for building 
       </ul>
     </nav>
   </aside>
-
-  <article class="col col-lg-9">
-    {% for post in site.posts %}
-      <section id="{{ post.anchor }}">
-        <h2>{{ post.title }}</h2>
-        {{ post.content | unindent | markdownify }}
-      </section>
-    {% endfor %}
-  </article>
 </div>
