@@ -5,7 +5,7 @@ title: Lightweight and powerful data binding + templating solution for building 
 
 <header>
   <div class="container">
-    <div class="col col-lg-7">
+    <div class="col col-md-7">
       <h1 class="brand-heading">Rivets.js</h1>
       <p class="blurb">Lightweight and powerful data binding + templating solution for building modern web applications.</p>
 
@@ -25,14 +25,14 @@ title: Lightweight and powerful data binding + templating solution for building 
       </a>
     </div>
 
-    <div class="col col-lg-5 graphic">
+    <div class="col col-md-5 graphic hidden-sm hidden-xs">
       <img src="/img/rv-blueprints.png">
     </div>
   </div>
 </header>
 
 <div class="container">
-  <article class="col col-lg-9">
+  <article class="col col-md-9">
     {% for post in site.posts %}
       <section id="{{ post.anchor }}">
         <h2>{{ post.title }}</h2>
@@ -41,13 +41,15 @@ title: Lightweight and powerful data binding + templating solution for building 
     {% endfor %}
   </article>
 
-  <aside class="col col-lg-3">
-    <nav>
-      <ul>
-        {% for post in site.posts %}
-          <li><a href="#{{ post.anchor }}">{{ post.title }}</a></li>
-        {% endfor %}
-      </ul>
-    </nav>
+  <aside class="col col-md-3 hidden-sm hidden-xs">
+    <div class="pull-right">
+      <nav data-spy="affix" data-offset-top="487">
+        <ul>
+          {% for post in site.posts %}
+            <li><a href="#{{ post.anchor }}">{{ post.title }}</a></li>
+          {% endfor %}
+        </ul>
+      </nav>
+    </div>
   </aside>
 </div>

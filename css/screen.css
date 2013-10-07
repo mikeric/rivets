@@ -6,6 +6,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
+  font-family: "Proxima Nova", serif;
   font-weight: 400;
   margin: 1em 0;
   color: #2B3E4E;
@@ -82,8 +83,12 @@ header .btn + .btn {
  padding-top: 20px;
 }
 
-aside {
+nav {
   text-align: right;
+}
+
+nav.affix {
+  top: 20px;
 }
 
 nav ul {
