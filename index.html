@@ -43,8 +43,8 @@ title: Lightweight and powerful data binding + templating solution for building 
 
   <aside class="col col-md-3 hidden-sm hidden-xs">
     <div class="pull-right">
-      <nav data-spy="affix" data-offset-top="487">
-        <ul>
+      <nav id="nav" data-spy="affix" data-offset-top="467">
+        <ul class="nav">
           {% for post in site.posts %}
             <li><a href="#{{ post.anchor }}">{{ post.title }}</a></li>
           {% endfor %}

@@ -8,7 +8,7 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: "Proxima Nova", serif;
   font-weight: 400;
-  margin: 1em 0;
+  margin: 2em 0 1em;
   color: #2B3E4E;
 }
 
@@ -88,7 +88,7 @@ nav {
 }
 
 nav.affix {
-  top: 20px;
+  top: 40px;
 }
 
 nav ul {
@@ -96,13 +96,26 @@ nav ul {
   margin: 0;
 }
 
+.nav > li > a {
+  padding: inherit;
+  display: inline;
+  color: #DADEDF;
+}
+
+.nav > li > a:hover {
+  background-color: inherit;
+}
+
+.nav > li.active a {
+  color: #2B3E4E;
+}
 
 article > section:first-child h2 {
   margin-top: 0;
 }
 
 strong {
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .btn {
@@ -114,12 +127,11 @@ strong {
 .btn-clear {
   background-color: white;
   border-color: #dadedf;
-  color: inherit;
+  color: #2B3E4E;
 }
 
 .btn-clear:hover {
-  border-color: #c0c0c0;
-  color: inherit;
+  border-color: #919E9F;
 }
 
 .btn-clean {
@@ -154,25 +166,30 @@ a:hover {
 }
 
 code {
-  font-size: 12px;
-  background-color: #fff4d4;
-  color: inherit;
+  font-size: 11px;
+  background-color: white;
+  color: #2B3E4E;
 }
 
 pre {
+  font-size: 11px;
+  color: #2B3E4E;
   background-color: white;
-  border: none;
-  box-shadow: 0px 1px 1px 1px #e0e4e5;
+  border-color: #DADEDF;
   padding: 1em 1.25em;
 }
 
 .check-list {
   list-style: none;
-  margin-left: 1em;
+  padding-left: 1em;
 }
 
 .check-list li:before {
   content: "\2713\0020";
   padding-right: 0.5em;
   color: #86baba;
+}
+
+.brand-heading {
+  margin: 1em 0;
 }
