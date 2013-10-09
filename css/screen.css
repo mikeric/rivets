@@ -12,7 +12,7 @@ h1, h2, h3, h4, h5, h6 {
   color: #2B3E4E;
 }
 
-article section {
+article > section {
   counter-increment: major;
 }
 
@@ -20,9 +20,12 @@ h2:before {
   content: counter(major) " ";
 }
 
-h3 {
+article > section > section {
   counter-reset: sub;
   counter-increment: minor;
+}
+
+h3 {
   font-size: 22px;
 }
 
@@ -96,18 +99,35 @@ nav ul {
   margin: 0;
 }
 
-.nav > li > a {
+#nav .nav > li > a {
   padding: inherit;
   display: inline;
   color: #DADEDF;
 }
 
-.nav > li > a:hover {
+#nav > .nav > li > a {
+  color: #2B3E4E;
+}
+
+#nav > .nav > li > ul {
+  display: none;
+}
+
+#nav > .nav > li.active > ul {
+  display: block;
+}
+
+#nav .nav > li > a:hover {
+  text-decoration: underline;
   background-color: inherit;
 }
 
-.nav > li.active a {
-  color: #2B3E4E;
+#nav .nav > li.active > a {
+  color: #259DFF;
+}
+
+#nav .nav {
+  width: 200px;
 }
 
 article > section:first-child h2 {
@@ -158,11 +178,12 @@ strong {
 }
 
 a {
-  color: #96c0c0;
+  color: #259DFF;
 }
 
 a:hover {
-  color: #709090;
+  color: #96c0c0;
+  text-decoration: underline;
 }
 
 code {

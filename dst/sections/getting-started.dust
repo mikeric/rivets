@@ -1,0 +1,7 @@
+<h2>Getting Started</h2>
+
+{#sections}
+  <section id="{anchor}">
+    {>"{ref}"/}
+  </section>
+{/sections}

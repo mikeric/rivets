@@ -1,0 +1,5 @@
+<h3>Download</h3>
+
+<p>You can grab the latest stable release <a href="/dist/rivets.min.js">here</a> or using the JS package manager of your choice.</p>
+
+<pre><code>bower install rivets</code></pre>

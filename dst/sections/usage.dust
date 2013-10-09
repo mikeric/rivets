@@ -1,0 +1,7 @@
+<h2>Usage Notes</h2>
+
+{#sections}
+  <section id="{anchor}">
+    {>"{ref}"/}
+  </section>
+{/sections}
