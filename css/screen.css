@@ -16,7 +16,7 @@ article > section {
   counter-increment: major;
 }
 
-h2:before {
+article h2:before {
   content: counter(major) " ";
 }
 
@@ -29,15 +29,15 @@ h3 {
   font-size: 22px;
 }
 
-h3:before {
+article h3:before {
   content: counter(major) "." counter(minor) " ";
 }
 
-h4 {
+article h4 {
   counter-increment: sub;
 }
 
-h4:before {
+article h4:before {
   content: counter(major) "." counter(minor) "." counter(sub) " ";
 }
 
@@ -102,7 +102,7 @@ nav ul {
 #nav .nav > li > a {
   padding: inherit;
   display: inline;
-  color: #DADEDF;
+  color: #919E9F;
 }
 
 #nav > .nav > li > a {
