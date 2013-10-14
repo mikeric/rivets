@@ -1,0 +1,3 @@
+If your model object encapsulates it's attributes (e.g. `model.attributes` for Backbone.js models) and your adapter conforms to that object specifically, you can still utilize properties defined outside of that object, such as functions or other static values defined on the object root.
+
+Just use `model:property` instead of `model.property` inside your binding declaration and Rivets.js will bypass the adapter completely and access that property as it's defined on the object root. This obviously won't sync any changes, but that is by design in this case as these properties should be mostly static and used in conjunction with other "dynamic" properties.

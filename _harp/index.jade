@@ -1,0 +1,22 @@
+article.col.col-md-9
+  for section, anchor in public.sections.data
+    h2(id= anchor)= section.title
+    != partial('sections/' + anchor)
+
+    for subsection, subanchor in section.sections
+      h3(id= anchor + '-' + subanchor)= subsection.title
+      != partial('sections/' + anchor + '/' + subanchor)
+
+aside.col.col-md-3.hidden-sm.hidden-xs
+  .pull-right
+    nav#nav(data-spy="affix", data-offset-top="467")
+      ul.nav
+        for section, anchor in public.sections.data
+          li
+            a(href= '#' + anchor)
+              strong= section.title
+
+            ul.nav
+              for subsection, subanchor in section.sections
+                li
+                  a(href= '#' + anchor + '-' + subanchor)= subsection.nav || subsection.title

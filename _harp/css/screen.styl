@@ -1,0 +1,176 @@
+body
+  font-family "Proxima Nova", serif
+  font-size 16px
+  font-weight 300
+  color #919E9F
+
+h1, h2, h3, h4, h5, h6
+  font-family "Proxima Nova", serif
+  font-weight 400
+  margin 2em 0 1em
+  color #2B3E4E
+
+article
+  h2
+    counter-reset minor
+    counter-increment major
+
+    &:before
+      content counter(major) " "
+
+    &:first-child
+      margin-top 0
+
+  h3
+    counter-reset sub
+    counter-increment minor
+    font-size 22px
+
+    &:before
+      content counter(major) "." counter(minor) " "
+
+  h4
+    counter-increment sub
+
+    &:before
+      content counter(major) "." counter(minor) "." counter(sub) " "
+
+p, pre
+  margin-bottom 1em
+
+i
+  font-family "Entypo"
+  font-style normal
+  font-size 38px
+  line-height 0
+  position relative
+  top 5px
+  right 5px
+
+  &.social
+    font-family "Entypo Social"
+
+blockquote
+  background-color white
+  border-color #e0e4e5
+
+// HEADER
+
+header
+  margin-bottom 100px
+  padding 80px 0 100px
+  border-bottom 1px solid #dadedf
+
+  .blurb
+    margin -30px 0 15px
+    font-weight 300
+    font-size 22px
+
+  .btn + .btn
+    margin-left 5px
+
+.graphic
+  padding-top 20px
+
+nav
+  text-align right
+
+  &.affix
+    top 40px
+
+  ul
+    list-style none
+    margin 0
+
+#nav
+  .nav
+    width 200px
+
+  a
+    padding inherit
+    display inline
+    color #919E9F
+
+    &:hover
+      text-decoration underline
+      background-color inherit
+
+  > .nav > li
+    > a
+      color #2B3E4E
+
+    ul
+      display none
+
+  li.active
+    ul
+      display block
+
+    > a
+      color #259DFF
+
+strong
+  font-weight 500
+
+.btn
+  padding 1em 1.5em
+  font-weight 400
+  font-size 13px
+
+.btn-clear
+  background-color white
+  border-color #dadedf
+  color #2B3E4E
+
+.btn-clear:hover
+  border-color #919E9F
+
+.btn-clean
+  background-color #eee
+  border-color #eee
+
+.btn-clean:hover
+  background-color #e4e4e4
+  border-color #e4e4e4
+  color inherit
+
+.btn-primary
+  background-color #96c0c0
+  border-color #96c0c0
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active
+  background-color #86baba
+  border-color #86baba
+
+a
+  color #259DFF
+
+a:hover
+  color #96c0c0
+  text-decoration underline
+
+code
+  font-size 11px
+  background-color white
+  color #2B3E4E
+
+pre
+  font-size 11px
+  color #2B3E4E
+  background-color white
+  border-color #DADEDF
+  padding 1em 1.25em
+
+.check-list
+  list-style none
+  padding-left 1em
+
+.check-list li:before
+  content "\2713\0020"
+  padding-right 0.5em
+  color #86baba
+
+.brand-heading
+  margin 1em 0

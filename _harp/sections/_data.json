@@ -1,0 +1,67 @@
+{
+  "intro": {
+    "title": "Introduction",
+    "sections": {
+      "dom-based": {
+        "title": "DOM-Based Templating"
+      },
+      "why-not-plugin": {
+        "title": "Why Isn't It A Plugin For One Of The Famous JavaScript Libraries",
+        "nav": "Why Not A Plugin?"
+      }
+    }
+  },
+  "getting-started": {
+    "title": "Getting Started",
+    "sections": {
+      "download": {
+        "title": "Download"
+      },
+      "include": {
+        "title": "Include"
+      }
+    }
+  },
+  "configure": {
+    "title": "Configure",
+    "sections": {
+      "adapter": {
+        "title": "Adapter"
+      },
+      "event-handlers": {
+        "title": "Event Handlers"
+      },
+      "prefix": {
+        "title": "Prefix & Preloading"
+      }
+    }
+  },
+  "extend": {
+    "title": "Extend",
+    "sections": {
+      "binders": {
+        "title": "Binders"
+      },
+      "formatters": {
+        "title": "Formatters"
+      }
+    }
+  },
+  "usage": {
+    "title": "Usage Notes",
+    "sections": {
+      "view-binding": {
+        "title": "Rivets.View & Rivets.Binding"
+      },
+      "adapter-bypass": { 
+        "title": "Adapter Bypass"
+      },
+      "computed-properties": {
+        "title": "Computed Properties"
+      },
+      "iteration": {
+        "title": "Iteration Binding"
+      }
+    }
+  }
+}
