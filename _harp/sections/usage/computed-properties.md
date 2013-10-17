@@ -3,3 +3,5 @@ Computed properties are functions that get re-evaluated when one or more depende
 ```html
 <span rv-text="event.duration < start end"></span>
 ```
+
+Note that the dependency keypaths stem from the target object, not the view's model context. So for the above declaration, the target is the `event` object, with dependencies on `event.start` and `event.end`.
