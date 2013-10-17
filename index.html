@@ -1,4 +1,4 @@
-<!DOCTYPE html><html><head><title>Rivets.js — Lightweight and powerful data binding + templating solution for building modern web applications</title><link rel="stylesheet" href="/css/bootstrap.css"><link rel="stylesheet" href="/css/type.css"><link rel="stylesheet" href="/css/screen.css"><link rel="stylesheet" href="/css/syntax.css"><link rel="stylesheet" href="/css/responsive.css"><script src="/js/jquery.js"></script><script src="/js/bootstrap.min.js"></script><script src="/js/highlight.js"></script><meta name="viewport" content="width=device-width, initial-scale=1.0"><script>hljs.initHighlightingOnLoad();
+<!DOCTYPE html><html><head><title>Rivets.js &mdash; Lightweight and powerful data binding + templating solution for building modern web applications</title><link rel="stylesheet" href="/css/bootstrap.css"><link rel="stylesheet" href="/css/type.css"><link rel="stylesheet" href="/css/screen.css"><link rel="stylesheet" href="/css/syntax.css"><link rel="stylesheet" href="/css/responsive.css"><script src="/js/jquery.js"></script><script src="/js/bootstrap.min.js"></script><script src="/js/highlight.js"></script><meta name="viewport" content="width=device-width, initial-scale=1.0"><script>hljs.initHighlightingOnLoad();
 
 var _gaq = _gaq || [];
 _gaq.push(['_setAccount', 'UA-6079274-2']);
@@ -21,14 +21,14 @@ _gaq.push(['_trackPageview']);
   <li><strong>Uniform APIs</strong> for easily extending any of the core concepts.</li>
 </ul>
 <h3 id="intro-dom-based">DOM-based templating</h3><p>Instead of parsing and compiling template strings into HTML, Rivets.js wires up your models directly to existing parts of DOM that contain binding declarations and control flow instructions directly on the DOM nodes. You just pass in your models when binding to the parent DOM node and Rivets.js takes care of the rest.</p>
-<p>This way you can think of your HTML as &quot;blueprints&quot; that define a particular piece of UI --- they can be for entire sections of your app or smaller, more reusable views. You can store them in document fragments outside the render tree, clone them and reuse them however you like.</p>
+<p>This way you can think of your HTML as &quot;blueprints&quot; that define a particular piece of UI &mdash; they can be for entire sections of your app or smaller, more reusable views. You can store them in document fragments outside the render tree, clone them and reuse them however you like.</p>
 <h3 id="intro-why-not-plugin">Why isn't it a plugin for one of the famous JavaScript libraries?</h3><p>Extending a library to do things it isn&#39;t supposed to do and that are not directly related with its core goal defeats the Single Responsibility Principle and is considered a bad practice besides its broad use.</p>
 <p>DOM manipulation libraries should only be concerned with manipulating the DOM. Templating libraries should only be concerned with templating.</p>
 <blockquote>
 <p>A duck can walk, fly and swim, but he can&#39;t do any of these things well.</p>
 </blockquote>
 <p>Another reason for not extending an existing library is that the amount of code reused would be so minimal that it doesn&#39;t pay-off the flexibility loss. You can use Rivets.js at it&#39;s full potential with &quot;any&quot; other library.</p>
-<h2 id="getting-started">Getting Started</h2><p>You can grab the latest stable release <a href="/dist/rivets.min.js">here</a> or install using the package manager of your choice — we currently maintain releases on bower, component, npm and jam.</p>
+<h2 id="getting-started">Getting Started</h2><p>You can grab the latest stable release <a href="/dist/rivets.min.js">here</a> or install using the package manager of your choice &mdash; we currently maintain releases on bower, component, npm and jam.</p>
 <pre><code class="language-bash">bower install rivets</code></pre>
 <p>Include Rivets.js in your project. The library unconditionally occupies a <code>rivets</code> global but CommonJS and AMD module loaders such as <a href="http://requirejs.org/">RequireJS</a> and <a href="https://github.com/jrburke/almond">almond</a> are fully supported as well, if that&#39;s your thing.</p>
 <pre><code class="language-html">&lt;script src=&quot;rivets.min.js&quot;&gt;&lt;/script&gt;</code></pre>
@@ -77,7 +77,7 @@ view.unbind()</code></pre>
 })</code></pre>
 <h4>Event handlers</h4>
 <p>Rivets.js comes with an <code>on-*</code> binder for attaching event handlers to DOM nodes on a particular event. Depending on your workflow, you may want to augment how Rivets.js calls your event handlers. The <code>handler</code> function lets you do just that.</p>
-<p>The default event handler behaves like a standard DOM event handler — called in the context of the event target, passing in the event object as the first argument — but with a second argument as the model scope of the view.</p>
+<p>The default event handler behaves like a standard DOM event handler &mdash; called in the context of the event target, passing in the event object as the first argument &mdash; but with a second argument as the model scope of the view.</p>
 <pre><code class="language-javascript">rivets.configure({
   handler: function(target, event, binding) {
     this.call(target, event, binding.view.models)
@@ -148,7 +148,7 @@ view.unbind()</code></pre>
 <h4>binder.block</h4>
 <p>Blocks the current node and child nodes from being parsed (used for iteration binding as well as the if/unless binders).</p>
 <h2 id="formatters">Formatters</h2><p>Formatters are functions that mutate the incoming and/or outgoing value of a binding. You can use them to format dates, numbers, currencies, etc. and because they work in a similar fashion to the Unix pipeline, the output of each feeds directly as input to the next one, so you can stack as many of them together as you like.</p>
-<h3 id="formatters-one-way">One-way formatters</h3><p>This is by far the most common and practical way to use formatters — simple read-only mutations to a value. Taking the dates example from above, we can define a <code>date</code> formatter that returns a human-friendly version of a date value.</p>
+<h3 id="formatters-one-way">One-way formatters</h3><p>This is by far the most common and practical way to use formatters &mdash; simple read-only mutations to a value. Taking the dates example from above, we can define a <code>date</code> formatter that returns a human-friendly version of a date value.</p>
 <pre><code class="language-javascript">rivets.formatters.date = function(value){
   return moment(value).format(&#39;MMM DD, YYYY&#39;)
 }</code></pre>
