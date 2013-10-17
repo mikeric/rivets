@@ -34,7 +34,7 @@ rivets.configure({
 
 Rivets.js comes with an `on-*` binder for attaching event handlers to DOM nodes on a particular event. Depending on your workflow, you may want to augment how Rivets.js calls your event handlers. The `handler` function lets you do just that.
 
-The default event handler behaves like a standard DOM event handler — called in the context of the event target, passing in the event object as the first argument — but with a second argument as the model scope of the view.
+The default event handler behaves like a standard DOM event handler &mdash; called in the context of the event target, passing in the event object as the first argument &mdash; but with a second argument as the model scope of the view.
 
 ```javascript
 rivets.configure({

@@ -1,4 +1,4 @@
-You can grab the latest stable release [here](/dist/rivets.min.js) or install using the package manager of your choice — we currently maintain releases on bower, component, npm and jam.
+You can grab the latest stable release [here](/dist/rivets.min.js) or install using the package manager of your choice &mdash; we currently maintain releases on bower, component, npm and jam.
 
 ```bash
 bower install rivets
