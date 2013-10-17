@@ -1,1 +1,0 @@
-Rivets.js is easily extended by adding your own custom *binders* and *formatters*. They can be added globally so that they are available within any view, or they can be added locally to a particular view.

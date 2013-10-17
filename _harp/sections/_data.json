@@ -3,64 +3,72 @@
     "title": "Introduction",
     "sections": {
       "dom-based": {
-        "title": "DOM-Based Templating"
+        "title": "DOM-based templating"
       },
       "why-not-plugin": {
-        "title": "Why Isn't It A Plugin For One Of The Famous JavaScript Libraries",
-        "nav": "Why Not A Plugin?"
+        "title": "Why isn't it a plugin for one of the famous JavaScript libraries?",
+        "nav": "Why not a plugin?"
       }
     }
   },
   "getting-started": {
     "title": "Getting Started",
     "sections": {
-      "download": {
-        "title": "Download"
+      "creating-views": {
+        "title": "Creating a view"
       },
-      "include": {
-        "title": "Include"
+      "configuring": {
+        "title": "Configuring"
       }
     }
   },
-  "configure": {
-    "title": "Configure",
+  "adapters": {
+    "title": "Adapters",
     "sections": {
-      "adapter": {
-        "title": "Adapter"
+      "default": {
+        "title": "The built-in adapter"
       },
-      "event-handlers": {
-        "title": "Event Handlers"
-      },
-      "prefix": {
-        "title": "Prefix & Preloading"
+      "creating": {
+        "title": "Creating an adapter"
       }
     }
   },
-  "extend": {
-    "title": "Extend",
+  "binders": {
+    "title": "Binders",
     "sections": {
-      "binders": {
-        "title": "Binders"
+      "one-way": {
+        "title": "One-way binders"
       },
-      "formatters": {
-        "title": "Formatters"
+      "two-way": {
+        "title": "Two-way binders"
+      },
+      "api": {
+        "title": "API"
+      }
+    }
+  },
+  "formatters": {
+    "title": "Formatters",
+    "sections": {
+      "one-way": {
+        "title": "One-way formatters"
+      },
+      "two-way": {
+        "title": "Two-way formatters"
+      },
+      "arguments": {
+        "title": "Formatter arguments"
       }
     }
   },
   "usage": {
-    "title": "Usage Notes",
+    "title": "Usage notes",
     "sections": {
-      "view-binding": {
-        "title": "Rivets.View & Rivets.Binding"
-      },
-      "adapter-bypass": { 
-        "title": "Adapter Bypass"
-      },
       "computed-properties": {
-        "title": "Computed Properties"
+        "title": "Computed properties"
       },
       "iteration": {
-        "title": "Iteration Binding"
+        "title": "Iteration binding"
       }
     }
   }

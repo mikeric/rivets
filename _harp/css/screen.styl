@@ -22,21 +22,43 @@ article
       margin-top 0
 
   h3
-    counter-reset sub
     counter-increment minor
     font-size 22px
 
     &:before
       content counter(major) "." counter(minor) " "
 
-  h4
-    counter-increment sub
-
-    &:before
-      content counter(major) "." counter(minor) "." counter(sub) " "
-
 p, pre
-  margin-bottom 1em
+  margin 16px 0
+
+blockquote
+  border none
+  position relative
+
+  &:before
+    content "\201C"
+    font-size 84px
+    color #DADEDF
+    position absolute
+    top -20px
+    left 0
+
+  p
+    margin 0 0 0 1.5em
+    font-size inherit
+
+p > code
+  background-color inherit
+  color #2B3E4E
+
+pre
+  background-color inherit
+  border none
+  font-size 12px
+  padding 2em
+
+code
+  font-size 12px
 
 i
   font-family "Entypo"
@@ -150,18 +172,6 @@ a
 a:hover
   color #96c0c0
   text-decoration underline
-
-code
-  font-size 11px
-  background-color white
-  color #2B3E4E
-
-pre
-  font-size 11px
-  color #2B3E4E
-  background-color white
-  border-color #DADEDF
-  padding 1em 1.25em
 
 .check-list
   list-style none

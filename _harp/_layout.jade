@@ -1,20 +1,23 @@
 !!!
 html
   head
-    title Rivets.js — Lightweight and powerful data binding + templating solution
+    title Rivets.js — Lightweight and powerful data binding + templating solution for building modern web applications
 
     link(rel="stylesheet", href="/css/bootstrap.css")
     link(rel="stylesheet", href="/css/type.css")
     link(rel="stylesheet", href="/css/screen.css")
+    link(rel="stylesheet", href="/css/syntax.css")
     link(rel="stylesheet", href="/css/responsive.css")
 
     script(src="/js/jquery.js")
     script(src="/js/bootstrap.min.js")
-    script(src="/js/index.js")
+    script(src="/js/highlight.js")
 
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
 
     script.
+      hljs.initHighlightingOnLoad();
+
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-6079274-2']);
       _gaq.push(['_trackPageview']);

@@ -1,9 +1,0 @@
-<h2>Extend</h2>
-
-<p>Rivets.js is easily extended by adding your own custom <em>binders</em> and <em>formatters</em>. They can be added globally so that they are available within any view, or they can be added locally to a particular view.</p>
-
-{#sections}
-  <section id="{anchor}">
-    {>"{ref}"/}
-  </section>
-{/sections}
