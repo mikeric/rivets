@@ -20,6 +20,16 @@ rivets.configure({
 })
 ```
 
+#### Template delimiters
+
+Rivets.js allows interpolating text content with bindings. The delimiters around the bindings are configurable by setting the `config.templateDelimiters` option. By default the template delimiters are single curcly-braces, but you can set this to whatever you like. This is also useful if you have another templating system running over your templates before or after Rivets.js that uses the same delimiters. You can tune Rivets.js differently to avoid any conflicts.
+
+```javascript
+rivets.configure({
+  templateDelimiters: ['{', '}']
+})
+```
+
 #### Event handlers
 
 Rivets.js comes with an `on-*` binder for attaching event handlers to DOM nodes on a particular event. Depending on your workflow, you may want to augment how Rivets.js calls your event handlers. The `handler` function lets you do just that.
