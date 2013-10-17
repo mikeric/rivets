@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>view.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="adapters.html">
+                adapters.coffee
+              </a>
+            
+              
+              <a class="source" href="binders.html">
+                binders.coffee
+              </a>
+            
+              
+              <a class="source" href="bindings.html">
+                bindings.coffee
+              </a>
+            
+              
+              <a class="source" href="export.html">
+                export.coffee
+              </a>
+            
+              
+              <a class="source" href="keypath_observer.html">
+                keypath_observer.coffee
+              </a>
+            
+              
+              <a class="source" href="parsers.html">
+                parsers.coffee
+              </a>
+            
+              
+              <a class="source" href="rivets.html">
+                rivets.coffee
+              </a>
+            
+              
+              <a class="source" href="util.html">
+                util.coffee
+              </a>
+            
+              
+              <a class="source" href="view.html">
+                view.coffee
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>view.coffee</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h2">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <h2>Rivets.View</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>A collection of bindings built from a set of parent nodes.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Rivets</span>.<span class="title">View</span></span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>The DOM elements and the model objects for binding are passed into the
+constructor along with any local options that should be used throughout the
+context of the view and it&#39;s bindings.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  constructor: (<span class="property">@els</span>, <span class="property">@models</span>, <span class="property">@options</span> = {}) -&gt;
+    <span class="property">@els</span> = [<span class="property">@els</span>] <span class="keyword">unless</span> (<span class="property">@els</span>.jquery || <span class="property">@els</span> <span class="keyword">instanceof</span> Array)
+
+    <span class="keyword">for</span> option <span class="keyword">in</span> [<span class="string">'config'</span>, <span class="string">'binders'</span>, <span class="string">'formatters'</span>, <span class="string">'adapters'</span>]
+      @[option] = {}
+      @[option][k] = v <span class="keyword">for</span> k, v <span class="keyword">of</span> <span class="property">@options</span>[option] <span class="keyword">if</span> <span class="property">@options</span>[option]
+      @[option][k] ?= v <span class="keyword">for</span> k, v <span class="keyword">of</span> Rivets[option]
+
+    <span class="property">@build</span>()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Regular expression used to match binding attributes.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  bindingRegExp: =&gt;
+    <span class="keyword">new</span> RegExp <span class="string">"^<span class="subst">#{@config.prefix}</span>-"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Regular expression used to match component nodes.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  componentRegExp: =&gt;
+    <span class="keyword">new</span> RegExp <span class="string">"^<span class="subst">#{@config.prefix.toUpperCase()}</span>-"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Parses the DOM tree and builds <code>Rivets.Binding</code> instances for every matched
+binding declaration.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  build: =&gt;
+    <span class="property">@bindings</span> = []
+    skipNodes = []
+    bindingRegExp = <span class="property">@bindingRegExp</span>()
+    componentRegExp = <span class="property">@componentRegExp</span>()
+
+    <span class="function"><span class="title">buildBinding</span></span> = (binding, node, type, declaration) =&gt;
+      options = {}
+
+      pipes = (pipe.trim() <span class="keyword">for</span> pipe <span class="keyword">in</span> declaration.split <span class="string">'|'</span>)
+      context = (ctx.trim() <span class="keyword">for</span> ctx <span class="keyword">in</span> pipes.shift().split <span class="string">'&lt;'</span>)
+      keypath = context.shift()
+
+      options.formatters = pipes
+
+      <span class="keyword">if</span> dependencies = context.shift()
+        options.dependencies = dependencies.split <span class="regexp">/\s+/</span>
+
+      <span class="property">@bindings</span>.push <span class="keyword">new</span> Rivets[binding] @, node, type, keypath, options
+
+    <span class="function"><span class="title">parse</span></span> = (node) =&gt;
+      <span class="keyword">unless</span> node <span class="keyword">in</span> skipNodes
+        <span class="keyword">if</span> node.nodeType <span class="keyword">is</span> Node.TEXT_NODE
+          parser = Rivets.TextTemplateParser
+
+          <span class="keyword">if</span> delimiters = <span class="property">@config</span>.templateDelimiters
+            <span class="keyword">if</span> (tokens = parser.parse(node.data, delimiters)).length
+              <span class="keyword">unless</span> tokens.length <span class="keyword">is</span> <span class="number">1</span> <span class="keyword">and</span> tokens[<span class="number">0</span>].type <span class="keyword">is</span> parser.types.text
+                [startToken, restTokens...] = tokens
+                node.data = startToken.value
+
+                <span class="keyword">if</span> startToken.type <span class="keyword">is</span> <span class="number">0</span>
+                  node.data = startToken.value
+                <span class="keyword">else</span>
+                  buildBinding <span class="string">'TextBinding'</span>, node, <span class="literal">null</span>, startToken.value
+
+                <span class="keyword">for</span> token <span class="keyword">in</span> restTokens
+                  text = document.createTextNode token.value
+                  node.parentNode.appendChild text
+
+                  <span class="keyword">if</span> token.type <span class="keyword">is</span> <span class="number">1</span>
+                    buildBinding <span class="string">'TextBinding'</span>, text, <span class="literal">null</span>, token.value
+        <span class="keyword">else</span> <span class="keyword">if</span> componentRegExp.test node.tagName
+          type = node.tagName.replace(componentRegExp, <span class="string">''</span>).toLowerCase()
+          <span class="property">@bindings</span>.push <span class="keyword">new</span> Rivets.ComponentBinding @, node, type
+
+        <span class="keyword">else</span> <span class="keyword">if</span> node.attributes?
+          <span class="keyword">for</span> attribute <span class="keyword">in</span> node.attributes
+            <span class="keyword">if</span> bindingRegExp.test attribute.name
+              type = attribute.name.replace bindingRegExp, <span class="string">''</span>
+              <span class="keyword">unless</span> binder = <span class="property">@binders</span>[type]
+                <span class="keyword">for</span> identifier, value <span class="keyword">of</span> <span class="property">@binders</span>
+                  <span class="keyword">if</span> identifier <span class="keyword">isnt</span> <span class="string">'*'</span> <span class="keyword">and</span> identifier.indexOf(<span class="string">'*'</span>) <span class="keyword">isnt</span> -<span class="number">1</span>
+                    regexp = <span class="keyword">new</span> RegExp <span class="string">"^<span class="subst">#{identifier.replace('*', '.+')}</span>$"</span>
+                    <span class="keyword">if</span> regexp.test type
+                      binder = value
+
+              binder <span class="keyword">or</span>= <span class="property">@binders</span>[<span class="string">'*'</span>]
+
+              <span class="keyword">if</span> binder.block
+                skipNodes.push n <span class="keyword">for</span> n <span class="keyword">in</span> node.childNodes
+                attributes = [attribute]
+
+          <span class="keyword">for</span> attribute <span class="keyword">in</span> attributes <span class="keyword">or</span> node.attributes
+            <span class="keyword">if</span> bindingRegExp.test attribute.name
+              type = attribute.name.replace bindingRegExp, <span class="string">''</span>
+              buildBinding <span class="string">'Binding'</span>, node, type, attribute.value
+
+        parse childNode <span class="keyword">for</span> childNode <span class="keyword">in</span> node.childNodes
+
+    parse el <span class="keyword">for</span> el <span class="keyword">in</span> <span class="property">@els</span>
+
+    <span class="keyword">return</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Returns an array of bindings where the supplied function evaluates to true.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  select: (fn) =&gt;
+    binding <span class="keyword">for</span> binding <span class="keyword">in</span> <span class="property">@bindings</span> <span class="keyword">when</span> fn binding</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Binds all of the current bindings for this view.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  bind: =&gt;
+    binding.bind() <span class="keyword">for</span> binding <span class="keyword">in</span> <span class="property">@bindings</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Unbinds all of the current bindings for this view.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  unbind: =&gt;
+    binding.unbind() <span class="keyword">for</span> binding <span class="keyword">in</span> <span class="property">@bindings</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>Syncs up the view with the model by running the routines on all bindings.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  sync: =&gt;
+    binding.sync() <span class="keyword">for</span> binding <span class="keyword">in</span> <span class="property">@bindings</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Publishes the input values from the view back to the model (reverse sync).</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  publish: =&gt;
+    binding.publish() <span class="keyword">for</span> binding <span class="keyword">in</span> <span class="property">@select</span> (b) -&gt; b.binder.publishes</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>Updates the view&#39;s models along with any affected bindings.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  update: (models = {}) =&gt;
+    <span class="property">@models</span>[key] = model <span class="keyword">for</span> key, model <span class="keyword">of</span> models
+    binding.update models <span class="keyword">for</span> binding <span class="keyword">in</span> <span class="property">@bindings</span></pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
