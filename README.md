@@ -4,7 +4,7 @@ Rivets.js is a DOM-based templating system that sits ontop of a configurable com
 
 ## Getting Started and Documentation
 
-All documentation for Rivets.js is available on the [homepage](http://rivetsjs.com). See [#configure](http://rivetsjs.com#configure) to learn how to properly configure Rivets.js for your app.
+All documentation for Rivets.js is available on the [homepage](http://rivetsjs.com). See the [Getting started](http://rivetsjs.com#getting-started) section to learn how to create views and properly configure Rivets.js for your app.
 
 ## Building and Testing
 
