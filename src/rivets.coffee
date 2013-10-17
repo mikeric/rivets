@@ -20,6 +20,7 @@ Rivets =
   # overridden globally or local to a `Rivets.View` instance.
   config:
     prefix: 'rv'
+    templateDelimiters: ['{', '}']
     rootInterface: '.'
     preloadData: true
 
