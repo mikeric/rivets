@@ -70,6 +70,11 @@ view.unbind()</code></pre>
 <pre><code class="language-javascript">rivets.configure({
   preloadData: false
 })</code></pre>
+<h4>Template delimiters</h4>
+<p>Rivets.js allows interpolating text content with bindings. The delimiters around the bindings are configurable by setting the <code>config.templateDelimiters</code> option. By default the template delimiters are single curcly-braces, but you can set this to whatever you like. This is also useful if you have another templating system running over your templates before or after Rivets.js that uses the same delimiters. You can tune Rivets.js differently to avoid any conflicts.</p>
+<pre><code class="language-javascript">rivets.configure({
+  templateDelimiters: [&#39;{&#39;, &#39;}&#39;]
+})</code></pre>
 <h4>Event handlers</h4>
 <p>Rivets.js comes with an <code>on-*</code> binder for attaching event handlers to DOM nodes on a particular event. Depending on your workflow, you may want to augment how Rivets.js calls your event handlers. The <code>handler</code> function lets you do just that.</p>
 <p>The default event handler behaves like a standard DOM event handler — called in the context of the event target, passing in the event object as the first argument — but with a second argument as the model scope of the view.</p>
@@ -174,6 +179,7 @@ view.unbind()</code></pre>
 }</code></pre>
 <h2 id="usage">Usage notes</h2><h3 id="usage-computed-properties">Computed properties</h3><p>Computed properties are functions that get re-evaluated when one or more dependent properties change. Declaring computed properties in Rivets.js is simple, just separate the function from it&#39;s dependencies with a <code>&lt;</code>. The following text binding will get re-evaluated with <code>event.duration()</code> when either the event&#39;s <code>start</code> or <code>end</code> attribute changes.</p>
 <pre><code class="language-html">&lt;span rv-text=&quot;event.duration &lt; start end&quot;&gt;&lt;/span&gt;</code></pre>
+<p>Note that the dependency keypaths stem from the target object, not the view&#39;s model context. So for the above declaration, the target is the <code>event</code> object, with dependencies on <code>event.start</code> and <code>event.end</code>.</p>
 <h3 id="usage-iteration">Iteration binding</h3><p>Use the <code>data-each-[item]</code> binding to have Rivets.js automatically loop over items in an array and append bound instances of that element. Within that element you can bind to the iterated item as well as any contexts that are available in the parent view.</p>
 <pre><code class="language-html">&lt;ul&gt;
   &lt;li rv-each-todo=&quot;list.todos&quot;&gt;

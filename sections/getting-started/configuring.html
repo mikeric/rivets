@@ -20,6 +20,11 @@ _gaq.push(['_trackPageview']);
 <pre><code class="language-javascript">rivets.configure({
   preloadData: false
 })</code></pre>
+<h4>Template delimiters</h4>
+<p>Rivets.js allows interpolating text content with bindings. The delimiters around the bindings are configurable by setting the <code>config.templateDelimiters</code> option. By default the template delimiters are single curcly-braces, but you can set this to whatever you like. This is also useful if you have another templating system running over your templates before or after Rivets.js that uses the same delimiters. You can tune Rivets.js differently to avoid any conflicts.</p>
+<pre><code class="language-javascript">rivets.configure({
+  templateDelimiters: [&#39;{&#39;, &#39;}&#39;]
+})</code></pre>
 <h4>Event handlers</h4>
 <p>Rivets.js comes with an <code>on-*</code> binder for attaching event handlers to DOM nodes on a particular event. Depending on your workflow, you may want to augment how Rivets.js calls your event handlers. The <code>handler</code> function lets you do just that.</p>
 <p>The default event handler behaves like a standard DOM event handler — called in the context of the event target, passing in the event object as the first argument — but with a second argument as the model scope of the view.</p>
