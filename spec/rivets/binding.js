@@ -2,6 +2,7 @@ describe('Rivets.Binding', function() {
   var model, el, view, binding, opts;
 
   beforeEach(function() {
+    rivets.config.prefix = 'data'
     adapter = rivets.adapters['.']
 
     el = document.createElement('div');
