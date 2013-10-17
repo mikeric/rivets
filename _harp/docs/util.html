@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>rivets.coffee</title>
+  <title>util.coffee</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -71,7 +71,7 @@
         
           <li id="title">
               <div class="annotation">
-                  <h1>rivets.coffee</h1>
+                  <h1>util.coffee</h1>
               </div>
           </li>
         
@@ -80,14 +80,12 @@
         <li id="section-1">
             <div class="annotation">
               
-              <div class="pilwrap ">
+              <div class="pilwrap for-h2">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <p>The Rivets namespace.</p>
+              <h2>Rivets.Util</h2>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>Rivets =</pre></div></div>
             
         </li>
         
@@ -98,12 +96,11 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>Binder definitions, publicly accessible on <code>module.binders</code>. Can be
-overridden globally or local to a <code>Rivets.View</code> instance.</p>
+              <p>Houses common utility functions used internally by Rivets.js.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  binders: {}</pre></div></div>
+            <div class="content"><div class='highlight'><pre>Rivets.Util =</pre></div></div>
             
         </li>
         
@@ -114,12 +111,19 @@ overridden globally or local to a <code>Rivets.View</code> instance.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>Component definitions, publicly accessible on <code>module.components</code>. Can be
-overridden globally or local to a <code>Rivets.View</code> instance.</p>
+              <p>Create a single DOM event binding.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  components: {}</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  bindEvent: (el, event, handler) -&gt;
+    <span class="keyword">if</span> window.jQuery?
+      el = jQuery el
+      <span class="keyword">if</span> el.<span class="literal">on</span>? <span class="keyword">then</span> el.<span class="literal">on</span> event, handler <span class="keyword">else</span> el.bind event, handler
+    <span class="keyword">else</span> <span class="keyword">if</span> window.addEventListener?
+      el.addEventListener event, handler, <span class="literal">false</span>
+    <span class="keyword">else</span>
+      event = <span class="string">'on'</span> + event
+      el.attachEvent event, handler</pre></div></div>
             
         </li>
         
@@ -130,12 +134,19 @@ overridden globally or local to a <code>Rivets.View</code> instance.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>Formatter definitions, publicly accessible on <code>module.formatters</code>. Can be
-overridden globally or local to a <code>Rivets.View</code> instance.</p>
+              <p>Remove a single DOM event binding.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  formatters: {}</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  unbindEvent: (el, event, handler) -&gt;
+    <span class="keyword">if</span> window.jQuery?
+      el = jQuery el
+      <span class="keyword">if</span> el.<span class="literal">off</span>? <span class="keyword">then</span> el.<span class="literal">off</span> event, handler <span class="keyword">else</span> el.unbind event, handler
+    <span class="keyword">else</span> <span class="keyword">if</span> window.removeEventListener?
+      el.removeEventListener event, handler, <span class="literal">false</span>
+    <span class="keyword">else</span>
+      event = <span class="string">'on'</span> + event
+      el.detachEvent  event, handler</pre></div></div>
             
         </li>
         
@@ -146,35 +157,22 @@ overridden globally or local to a <code>Rivets.View</code> instance.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>Adapter definitions, publicly accessible on <code>module.adapters</code>. Can be
-overridden globally or local to a <code>Rivets.View</code> instance.</p>
+              <p>Get the current value of an input node.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  adapters: {}</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-6">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
-              </div>
-              <p>The default configuration, publicly accessible on <code>module.config</code>. Can be
-overridden globally or local to a <code>Rivets.View</code> instance.</p>
+            <div class="content"><div class='highlight'><pre>  getInputValue: (el) -&gt;
+    <span class="keyword">if</span> window.jQuery?
+      el = jQuery el
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  config:
-    prefix: <span class="string">'rv'</span>
-    templateDelimiters: [<span class="string">'{'</span>, <span class="string">'}'</span>]
-    rootInterface: <span class="string">'.'</span>
-    preloadData: <span class="literal">true</span>
-
-    handler: (context, ev, binding) -&gt;
-      <span class="property">@call</span> context, ev, binding.view.models</pre></div></div>
+      <span class="keyword">switch</span> el[<span class="number">0</span>].type
+        <span class="keyword">when</span> <span class="string">'checkbox'</span> <span class="keyword">then</span> el.<span class="keyword">is</span> <span class="string">':checked'</span>
+        <span class="keyword">else</span> el.val()
+    <span class="keyword">else</span>
+      <span class="keyword">switch</span> el.type
+        <span class="keyword">when</span> <span class="string">'checkbox'</span> <span class="keyword">then</span> el.checked
+        <span class="keyword">when</span> <span class="string">'select-multiple'</span> <span class="keyword">then</span> o.value <span class="keyword">for</span> o <span class="keyword">in</span> el <span class="keyword">when</span> o.selected
+        <span class="keyword">else</span> el.value</pre></div></div>
             
         </li>
         
