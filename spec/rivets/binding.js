@@ -258,12 +258,6 @@ describe('Rivets.Binding', function() {
       expect(binding.formattedValue('hat')).toBe('awesome hat');
     });
 
-    it('uses formatters on the model', function() {
-      model.modelAwesome = function(value) { return 'model awesome ' + value; };
-      binding.formatters.push('modelAwesome');
-      expect(binding.formattedValue('hat')).toBe('model awesome hat');
-    });
-
     describe('with a multi-argument formatter string', function() {
       beforeEach(function() {
         view.formatters.awesome = function(value, prefix) {
