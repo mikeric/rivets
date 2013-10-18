@@ -87,7 +87,7 @@ class Rivets.View
               type = attribute.name.replace bindingRegExp, ''
               buildBinding 'Binding', node, type, attribute.value
 
-        parse childNode for childNode in node.childNodes
+        parse childNode for childNode in (n for n in node.childNodes)
 
     parse el for el in @els
 
