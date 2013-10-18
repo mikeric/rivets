@@ -1,5 +1,5 @@
 // Rivets.js
-// version: 0.6.0
+// version: 0.6.1
 // author: Michael Richards
 // license: MIT
 (function() {
@@ -174,28 +174,22 @@
         return _this.bindings.push(new Rivets[binding](_this, node, type, keypath, options));
       };
       parse = function(node) {
-        var attribute, attributes, binder, childNode, delimiters, identifier, n, parser, regexp, restTokens, startToken, text, token, tokens, type, value, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2, _ref3, _ref4, _results;
+        var attribute, attributes, binder, childNode, delimiters, identifier, n, parser, regexp, text, token, tokens, type, value, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2, _ref3, _ref4, _results;
         if (__indexOf.call(skipNodes, node) < 0) {
           if (node.nodeType === Node.TEXT_NODE) {
             parser = Rivets.TextTemplateParser;
             if (delimiters = _this.config.templateDelimiters) {
               if ((tokens = parser.parse(node.data, delimiters)).length) {
                 if (!(tokens.length === 1 && tokens[0].type === parser.types.text)) {
-                  startToken = tokens[0], restTokens = 2 <= tokens.length ? __slice.call(tokens, 1) : [];
-                  node.data = startToken.value;
-                  if (startToken.type === 0) {
-                    node.data = startToken.value;
-                  } else {
-                    buildBinding('TextBinding', node, null, startToken.value);
-                  }
-                  for (_i = 0, _len = restTokens.length; _i < _len; _i++) {
-                    token = restTokens[_i];
+                  for (_i = 0, _len = tokens.length; _i < _len; _i++) {
+                    token = tokens[_i];
                     text = document.createTextNode(token.value);
-                    node.parentNode.appendChild(text);
+                    node.parentNode.insertBefore(text, node);
                     if (token.type === 1) {
                       buildBinding('TextBinding', text, null, token.value);
                     }
                   }
+                  node.parentNode.removeChild(node);
                 }
               }
             }
@@ -240,7 +234,16 @@
               }
             }
           }
-          _ref4 = node.childNodes;
+          _ref4 = (function() {
+            var _len4, _n, _ref4, _results1;
+            _ref4 = node.childNodes;
+            _results1 = [];
+            for (_n = 0, _len4 = _ref4.length; _n < _len4; _n++) {
+              n = _ref4[_n];
+              _results1.push(n);
+            }
+            return _results1;
+          })();
           _results = [];
           for (_m = 0, _len4 = _ref4.length; _m < _len4; _m++) {
             childNode = _ref4[_m];
@@ -668,9 +671,10 @@
     };
 
     TextTemplateParser.parse = function(template, delimiters) {
-      var index, lastIndex, lastToken, length, substring, tokens, value;
+      var delimiterOffset, index, lastIndex, lastToken, length, substring, tokens, value;
       tokens = [];
       length = template.length;
+      delimiterOffset = delimiters[1].length;
       index = 0;
       lastIndex = 0;
       while (lastIndex < length) {
@@ -708,7 +712,7 @@
             type: this.types.binding,
             value: value
           });
-          lastIndex = index + 2;
+          lastIndex = index + delimiterOffset;
         }
       }
       return tokens;

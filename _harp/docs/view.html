@@ -201,20 +201,13 @@ binding declaration.</p>
           <span class="keyword">if</span> delimiters = <span class="property">@config</span>.templateDelimiters
             <span class="keyword">if</span> (tokens = parser.parse(node.data, delimiters)).length
               <span class="keyword">unless</span> tokens.length <span class="keyword">is</span> <span class="number">1</span> <span class="keyword">and</span> tokens[<span class="number">0</span>].type <span class="keyword">is</span> parser.types.text
-                [startToken, restTokens...] = tokens
-                node.data = startToken.value
-
-                <span class="keyword">if</span> startToken.type <span class="keyword">is</span> <span class="number">0</span>
-                  node.data = startToken.value
-                <span class="keyword">else</span>
-                  buildBinding <span class="string">'TextBinding'</span>, node, <span class="literal">null</span>, startToken.value
-
-                <span class="keyword">for</span> token <span class="keyword">in</span> restTokens
+                <span class="keyword">for</span> token <span class="keyword">in</span> tokens
                   text = document.createTextNode token.value
-                  node.parentNode.appendChild text
+                  node.parentNode.insertBefore text, node
 
                   <span class="keyword">if</span> token.type <span class="keyword">is</span> <span class="number">1</span>
                     buildBinding <span class="string">'TextBinding'</span>, text, <span class="literal">null</span>, token.value
+                node.parentNode.removeChild node
         <span class="keyword">else</span> <span class="keyword">if</span> componentRegExp.test node.tagName
           type = node.tagName.replace(componentRegExp, <span class="string">''</span>).toLowerCase()
           <span class="property">@bindings</span>.push <span class="keyword">new</span> Rivets.ComponentBinding @, node, type
@@ -241,7 +234,7 @@ binding declaration.</p>
               type = attribute.name.replace bindingRegExp, <span class="string">''</span>
               buildBinding <span class="string">'Binding'</span>, node, type, attribute.value
 
-        parse childNode <span class="keyword">for</span> childNode <span class="keyword">in</span> node.childNodes
+        parse childNode <span class="keyword">for</span> childNode <span class="keyword">in</span> (n <span class="keyword">for</span> n <span class="keyword">in</span> node.childNodes)
 
     parse el <span class="keyword">for</span> el <span class="keyword">in</span> <span class="property">@els</span>
 

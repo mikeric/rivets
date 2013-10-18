@@ -178,6 +178,7 @@ of text from binding declarations.</p>
             <div class="content"><div class='highlight'><pre>  <span class="property">@parse</span>: (template, delimiters) -&gt;
     tokens = []
     length = template.length
+    delimiterOffset = delimiters[<span class="number">1</span>].length
     index = <span class="number">0</span>
     lastIndex = <span class="number">0</span>
 
@@ -207,7 +208,7 @@ of text from binding declarations.</p>
 
         value = template.slice(lastIndex, index).trim()
         tokens.push type: <span class="property">@types</span>.binding, value: value
-        lastIndex = index + <span class="number">2</span>
+        lastIndex = index + delimiterOffset
 
     tokens</pre></div></div>
             

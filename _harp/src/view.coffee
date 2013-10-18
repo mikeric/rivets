@@ -54,20 +54,13 @@ class Rivets.View
           if delimiters = @config.templateDelimiters
             if (tokens = parser.parse(node.data, delimiters)).length
               unless tokens.length is 1 and tokens[0].type is parser.types.text
-                [startToken, restTokens...] = tokens
-                node.data = startToken.value
-
-                if startToken.type is 0
-                  node.data = startToken.value
-                else
-                  buildBinding 'TextBinding', node, null, startToken.value
-
-                for token in restTokens
+                for token in tokens
                   text = document.createTextNode token.value
-                  node.parentNode.appendChild text
+                  node.parentNode.insertBefore text, node
 
                   if token.type is 1
                     buildBinding 'TextBinding', text, null, token.value
+                node.parentNode.removeChild node
         else if componentRegExp.test node.tagName
           type = node.tagName.replace(componentRegExp, '').toLowerCase()
           @bindings.push new Rivets.ComponentBinding @, node, type
@@ -94,7 +87,7 @@ class Rivets.View
               type = attribute.name.replace bindingRegExp, ''
               buildBinding 'Binding', node, type, attribute.value
 
-        parse childNode for childNode in node.childNodes
+        parse childNode for childNode in (n for n in node.childNodes)
 
     parse el for el in @els
 
