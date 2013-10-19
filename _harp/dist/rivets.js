@@ -1,5 +1,5 @@
 // Rivets.js
-// version: 0.6.1
+// version: 0.6.2
 // author: Michael Richards
 // license: MIT
 (function() {
@@ -671,10 +671,9 @@
     };
 
     TextTemplateParser.parse = function(template, delimiters) {
-      var delimiterOffset, index, lastIndex, lastToken, length, substring, tokens, value;
+      var index, lastIndex, lastToken, length, substring, tokens, value;
       tokens = [];
       length = template.length;
-      delimiterOffset = delimiters[1].length;
       index = 0;
       lastIndex = 0;
       while (lastIndex < length) {
@@ -692,10 +691,10 @@
               value: template.slice(lastIndex, index)
             });
           }
-          lastIndex = index + 2;
+          lastIndex = index + delimiters[0].length;
           index = template.indexOf(delimiters[1], lastIndex);
           if (index < 0) {
-            substring = template.slice(lastIndex - 2);
+            substring = template.slice(lastIndex - delimiters[1].length);
             lastToken = tokens[tokens.length - 1];
             if ((lastToken != null ? lastToken.type : void 0) === this.types.text) {
               lastToken.value += substring;
@@ -712,7 +711,7 @@
             type: this.types.binding,
             value: value
           });
-          lastIndex = index + delimiterOffset;
+          lastIndex = index + delimiters[1].length;
         }
       }
       return tokens;

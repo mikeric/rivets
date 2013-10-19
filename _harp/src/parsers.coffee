@@ -33,7 +33,6 @@ class Rivets.TextTemplateParser
   @parse: (template, delimiters) ->
     tokens = []
     length = template.length
-    delimiterOffset = delimiters[1].length
     index = 0
     lastIndex = 0
 
@@ -47,11 +46,11 @@ class Rivets.TextTemplateParser
         if index > 0 and lastIndex < index
           tokens.push type: @types.text, value: template.slice lastIndex, index
 
-        lastIndex = index + 2
+        lastIndex = index + delimiters[0].length
         index = template.indexOf delimiters[1], lastIndex
 
         if index < 0
-          substring = template.slice lastIndex - 2
+          substring = template.slice lastIndex - delimiters[1].length
           lastToken = tokens[tokens.length - 1]
 
           if lastToken?.type is @types.text
@@ -63,6 +62,6 @@ class Rivets.TextTemplateParser
 
         value = template.slice(lastIndex, index).trim()
         tokens.push type: @types.binding, value: value
-        lastIndex = index + delimiterOffset
+        lastIndex = index + delimiters[1].length
 
     tokens

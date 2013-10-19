@@ -1,4 +1,4 @@
-First, we need to create a template. Templates describe your UI in plain HTML using special prefixed attributes, DOM elements and basic text interpolation. They can go wherever you like — in the DOM, inside a document fragment, or defined as a template element. Just make sure you have a convenient way to reference them.
+First, we need to create a template. Templates describe your UI in plain HTML using special prefixed attributes, DOM elements and basic text interpolation. They can go wherever you like &mdash; in the DOM, inside a document fragment, or defined as a template element. Just make sure you have a convenient way to reference them.
 
 ```html
 <section id="auction">

@@ -178,7 +178,6 @@ of text from binding declarations.</p>
             <div class="content"><div class='highlight'><pre>  <span class="property">@parse</span>: (template, delimiters) -&gt;
     tokens = []
     length = template.length
-    delimiterOffset = delimiters[<span class="number">1</span>].length
     index = <span class="number">0</span>
     lastIndex = <span class="number">0</span>
 
@@ -192,11 +191,11 @@ of text from binding declarations.</p>
         <span class="keyword">if</span> index &gt; <span class="number">0</span> <span class="keyword">and</span> lastIndex &lt; index
           tokens.push type: <span class="property">@types</span>.text, value: template.slice lastIndex, index
 
-        lastIndex = index + <span class="number">2</span>
+        lastIndex = index + delimiters[<span class="number">0</span>].length
         index = template.indexOf delimiters[<span class="number">1</span>], lastIndex
 
         <span class="keyword">if</span> index &lt; <span class="number">0</span>
-          substring = template.slice lastIndex - <span class="number">2</span>
+          substring = template.slice lastIndex - delimiters[<span class="number">1</span>].length
           lastToken = tokens[tokens.length - <span class="number">1</span>]
 
           <span class="keyword">if</span> lastToken?.type <span class="keyword">is</span> <span class="property">@types</span>.text
@@ -208,7 +207,7 @@ of text from binding declarations.</p>
 
         value = template.slice(lastIndex, index).trim()
         tokens.push type: <span class="property">@types</span>.binding, value: value
-        lastIndex = index + delimiterOffset
+        lastIndex = index + delimiters[<span class="number">1</span>].length
 
     tokens</pre></div></div>
             
