@@ -60,7 +60,7 @@ class Rivets.TextTemplateParser
 
           break
 
-        value = template.slice(lastIndex, index)
+        value = template.slice(lastIndex, index).trim()
         tokens.push type: @types.binding, value: value
         lastIndex = index + delimiters[1].length
 
