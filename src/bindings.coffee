@@ -166,8 +166,9 @@ class Rivets.ComponentBinding extends Rivets.Binding
     if @componentView?
       @componentView?.bind()
     else
-      el = @component.build.call @attributes
-      (@componentView = new Rivets.View(el, @locals(), @view.options)).bind()
+      locals = @locals()
+      el = @component.build.call @attributes, locals
+      (@componentView = new Rivets.View(el, locals, @view.options)).bind()
       @el.parentNode.replaceChild el, @el
 
   # Intercept `Rivets.Binding::unbind` to be called on `@componentView`.
