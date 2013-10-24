@@ -57,10 +57,10 @@ Rivets.binders.value =
         el.value = if value? then value else ''
 
 Rivets.binders.text = (el, value) ->
-  if el.innerText?
-    el.innerText = if value? then value else ''
-  else
+  if el.textContent?
     el.textContent = if value? then value else ''
+  else
+    el.innerText = if value? then value else ''
 
 Rivets.binders.if =
   block: true
