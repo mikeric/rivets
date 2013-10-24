@@ -48,7 +48,7 @@ class Rivets.View
 
     parse = (node) =>
       unless node in skipNodes
-        if node.nodeType is Node.TEXT_NODE
+        if node.nodeType is 3
           parser = Rivets.TextTemplateParser
 
           if delimiters = @config.templateDelimiters
