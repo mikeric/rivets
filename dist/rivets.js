@@ -1,9 +1,9 @@
 // Rivets.js
-// version: 0.6.3
+// version: 0.6.4
 // author: Michael Richards
 // license: MIT
 (function() {
-  var KeypathObserver, Rivets,
+  var Rivets,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __slice = [].slice,
@@ -389,7 +389,7 @@
 
     Binding.prototype.setObserver = function() {
       var _this = this;
-      this.observer = new KeypathObserver(this.view, this.view.models, this.keypath, function(obs) {
+      this.observer = new Rivets.KeypathObserver(this.view, this.view.models, this.keypath, function(obs) {
         if (_this.key) {
           _this.unbind(true);
         }
@@ -475,7 +475,7 @@
         _results = [];
         for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
           dependency = _ref2[_i];
-          observer = new KeypathObserver(this.view, this.model, dependency, function(obs, prev) {
+          observer = new Rivets.KeypathObserver(this.view, this.model, dependency, function(obs, prev) {
             var key;
             key = obs.key;
             _this.view.adapters[key["interface"]].unsubscribe(prev, key.path, _this.sync);
@@ -499,6 +499,7 @@
         if ((_ref = this.binder.unbind) != null) {
           _ref.call(this, this.el);
         }
+        this.observer.unobserve();
       }
       if (this.key) {
         this.view.adapters[this.key["interface"]].unsubscribe(this.model, this.key.path, this.sync);
@@ -721,12 +722,13 @@
 
   })();
 
-  KeypathObserver = (function() {
+  Rivets.KeypathObserver = (function() {
     function KeypathObserver(view, model, keypath, callback) {
       this.view = view;
       this.model = model;
       this.keypath = keypath;
       this.callback = callback;
+      this.unobserve = __bind(this.unobserve, this);
       this.realize = __bind(this.realize, this);
       this.update = __bind(this.update, this);
       this.parse = __bind(this.parse, this);
@@ -788,9 +790,44 @@
       return current;
     };
 
+    KeypathObserver.prototype.unobserve = function() {
+      var index, obj, token, _i, _len, _ref, _results;
+      _ref = this.tokens;
+      _results = [];
+      for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
+        token = _ref[index];
+        if (obj = this.objectPath[index]) {
+          _results.push(this.view.adapters[token["interface"]].unsubscribe(obj, token.path, this.update));
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
     return KeypathObserver;
 
   })();
+
+  Rivets.binders.text = function(el, value) {
+    if (el.textContent != null) {
+      return el.textContent = value != null ? value : '';
+    } else {
+      return el.innerText = value != null ? value : '';
+    }
+  };
+
+  Rivets.binders.html = function(el, value) {
+    return el.innerHTML = value != null ? value : '';
+  };
+
+  Rivets.binders.show = function(el, value) {
+    return el.style.display = value ? '' : 'none';
+  };
+
+  Rivets.binders.hide = function(el, value) {
+    return el.style.display = value ? 'none' : '';
+  };
 
   Rivets.binders.enabled = function(el, value) {
     return el.disabled = !value;
@@ -836,18 +873,6 @@
     }
   };
 
-  Rivets.binders.show = function(el, value) {
-    return el.style.display = value ? '' : 'none';
-  };
-
-  Rivets.binders.hide = function(el, value) {
-    return el.style.display = value ? 'none' : '';
-  };
-
-  Rivets.binders.html = function(el, value) {
-    return el.innerHTML = value != null ? value : '';
-  };
-
   Rivets.binders.value = {
     publishes: true,
     bind: function(el) {
@@ -877,14 +902,6 @@
           return el.value = value != null ? value : '';
         }
       }
-    }
-  };
-
-  Rivets.binders.text = function(el, value) {
-    if (el.textContent != null) {
-      return el.textContent = value != null ? value : '';
-    } else {
-      return el.innerText = value != null ? value : '';
     }
   };
 
