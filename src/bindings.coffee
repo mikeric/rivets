@@ -12,6 +12,7 @@ class Rivets.Binding
     @setBinder()
     @setObserver()
 
+  # Sets the binder to use when binding and syncing.
   setBinder: =>
     unless @binder = @view.binders[@type]
       for identifier, value of @view.binders
@@ -25,8 +26,10 @@ class Rivets.Binding
     @binder or= @view.binders['*']
     @binder = {routine: @binder} if @binder instanceof Function
 
+  # Sets a keypath observer that will notify this binding when any intermediary
+  # keys are changed.
   setObserver: =>
-    @observer = new KeypathObserver @view, @view.models, @keypath, (obs) =>
+    @observer = new Rivets.KeypathObserver @view, @view.models, @keypath, (obs) =>
       @unbind true if @key
       @model = obs.target
       @bind true if @key
@@ -95,7 +98,7 @@ class Rivets.Binding
 
     if @options.dependencies?.length
       for dependency in @options.dependencies
-        observer = new KeypathObserver @view, @model, dependency, (obs, prev) =>
+        observer = new Rivets.KeypathObserver @view, @model, dependency, (obs, prev) =>
           key = obs.key
           @view.adapters[key.interface].unsubscribe prev, key.path, @sync
           @view.adapters[key.interface].subscribe obs.target, key.path, @sync
