@@ -1,26 +1,34 @@
-# Core binders that are included with Rivets.js.
+# Basic set of core binders that are included with Rivets.js.
 
+# Sets the element's text value.
 Rivets.binders.text = (el, value) ->
   if el.textContent?
     el.textContent = if value? then value else ''
   else
     el.innerText = if value? then value else ''
 
+# Sets the element's HTML content.
 Rivets.binders.html = (el, value) ->
   el.innerHTML = if value? then value else ''
 
+# Shows the element when value is true.
 Rivets.binders.show = (el, value) ->
   el.style.display = if value then '' else 'none'
 
+# Hides the element when value is true (negated version of `show` binder).
 Rivets.binders.hide = (el, value) ->
   el.style.display = if value then 'none' else ''
 
+# Enables the element when value is true.
 Rivets.binders.enabled = (el, value) ->
   el.disabled = !value
 
+# Disables the element when value is true (negated version of `enabled` binder).
 Rivets.binders.disabled = (el, value) ->
   el.disabled = !!value
 
+# Checks a checkbox or radio input when the value is true. Also sets the model
+# property when the input is checked or unchecked (two-way binder).
 Rivets.binders.checked =
   publishes: true
   bind: (el) ->
@@ -33,6 +41,9 @@ Rivets.binders.checked =
     else
       el.checked = !!value
 
+# Unchecks a checkbox or radio input when the value is true (negated version of
+# `checked` binder). Also sets the model property when the input is checked or
+# unchecked (two-way binder).
 Rivets.binders.unchecked =
   publishes: true
   bind: (el) ->
@@ -45,6 +56,8 @@ Rivets.binders.unchecked =
     else
       el.checked = !value
 
+# Sets the element's value. Also sets the model property when the input changes
+# (two-way binder).
 Rivets.binders.value =
   publishes: true
   bind: (el) ->
@@ -63,6 +76,7 @@ Rivets.binders.value =
       else if value?.toString() isnt el.value?.toString()
         el.value = if value? then value else ''
 
+# Inserts and binds the element and it's child nodes into the DOM when true.
 Rivets.binders.if =
   block: true
 
@@ -102,6 +116,8 @@ Rivets.binders.if =
   update: (models) ->
     @nested?.update models
 
+# Removes and unbinds the element and it's child nodes into the DOM when true
+# (negated version of `if` binder).
 Rivets.binders.unless =
   block: true
 
@@ -117,6 +133,7 @@ Rivets.binders.unless =
   update: (models) ->
     Rivets.binders.if.update.call @, models
 
+# Binds an event handler on the element.
 Rivets.binders['on-*'] =
   function: true
 
@@ -127,6 +144,7 @@ Rivets.binders['on-*'] =
     Rivets.Util.unbindEvent el, @args[0], @handler if @handler
     Rivets.Util.bindEvent el, @args[0], @handler = @eventHandler value
 
+# Appends bound instances of the element in place for each item in the array.
 Rivets.binders['each-*'] =
   block: true
 
@@ -197,6 +215,7 @@ Rivets.binders['each-*'] =
 
     view.update data for view in @iterated
 
+# Adds or removes the class from the element when value is true or false.
 Rivets.binders['class-*'] = (el, value) ->
   elClass = " #{el.className} "
 
@@ -206,6 +225,8 @@ Rivets.binders['class-*'] = (el, value) ->
     else
       elClass.replace(" #{@args[0]} ", ' ').trim()
 
+# Sets the attribute on the element. If no binder above is matched it will fall
+# back to using this binder.
 Rivets.binders['*'] = (el, value) ->
   if value
     el.setAttribute @type, value
