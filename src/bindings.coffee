@@ -107,7 +107,10 @@ class Rivets.Binding
 
   # Unsubscribes from the model and the element.
   unbind: (silent = false) =>
-    @binder.unbind?.call @, @el unless silent
+    unless silent
+      @binder.unbind?.call @, @el
+      @observer.unobserve()
+
     @view.adapters[@key.interface].unsubscribe(@model, @key.path, @sync) if @key
 
     if @dependencies.length

@@ -39,3 +39,8 @@ class KeypathObserver
       current = @view.adapters[token.interface].read current, token.path
 
     current
+
+  unobserve: =>
+    for token, index in @tokens
+      if obj = @objectPath[index]
+        @view.adapters[token.interface].unsubscribe obj, token.path, @update
