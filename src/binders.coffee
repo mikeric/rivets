@@ -1,4 +1,20 @@
 # Core binders that are included with Rivets.js.
+
+Rivets.binders.text = (el, value) ->
+  if el.textContent?
+    el.textContent = if value? then value else ''
+  else
+    el.innerText = if value? then value else ''
+
+Rivets.binders.html = (el, value) ->
+  el.innerHTML = if value? then value else ''
+
+Rivets.binders.show = (el, value) ->
+  el.style.display = if value then '' else 'none'
+
+Rivets.binders.hide = (el, value) ->
+  el.style.display = if value then 'none' else ''
+
 Rivets.binders.enabled = (el, value) ->
   el.disabled = !value
 
@@ -29,15 +45,6 @@ Rivets.binders.unchecked =
     else
       el.checked = !value
 
-Rivets.binders.show = (el, value) ->
-  el.style.display = if value then '' else 'none'
-
-Rivets.binders.hide = (el, value) ->
-  el.style.display = if value then 'none' else ''
-
-Rivets.binders.html = (el, value) ->
-  el.innerHTML = if value? then value else ''
-
 Rivets.binders.value =
   publishes: true
   bind: (el) ->
@@ -55,12 +62,6 @@ Rivets.binders.value =
         o.selected = o.value in value for o in el if value?
       else if value?.toString() isnt el.value?.toString()
         el.value = if value? then value else ''
-
-Rivets.binders.text = (el, value) ->
-  if el.textContent?
-    el.textContent = if value? then value else ''
-  else
-    el.innerText = if value? then value else ''
 
 Rivets.binders.if =
   block: true
