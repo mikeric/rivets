@@ -6,16 +6,22 @@ class Rivets.KeypathParser
   # Parses the keypath and returns a set of adapter interface + path tokens.
   @parse: (keypath, interfaces, root) ->
     tokens = []
-    current = {interface: root, path: ''}
 
-    for index, char of keypath
-      if char in interfaces
-        tokens.push current
-        current = {interface: char, path: ''}
-      else
-        current.path += char
+    # construct regex from interfaces
+    splitChars = interfaces.join('')
+    splits = '[' + splitChars + ']'
+    word = '[^' + splitChars + "']"
+    path = "(?:'(.+?)'|(" + word + '+))'
+    firstPathRegex = new RegExp('^' + path)
+    subsequentPathRegex = new RegExp("(" + splits + ")" + path, 'g')
 
-    tokens.push current
+    match = firstPathRegex.exec(keypath)
+    if match
+      tokens.push({interface: root, path: match[1] || match[2]})
+
+    while (match = subsequentPathRegex.exec(keypath)) != null
+      tokens.push({interface: match[1], path: match[2] || match[3]})
+
     tokens
 
 # Rivets.TextTemplateParser
