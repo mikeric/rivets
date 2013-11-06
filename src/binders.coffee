@@ -61,9 +61,9 @@ Rivets.binders.unchecked =
 Rivets.binders.value =
   publishes: true
   bind: (el) ->
-    Rivets.Util.bindEvent el, 'change', @publish
+    Rivets.Util.bindEvent el, 'change', @publish unless el.type is 'checkbox' or el.type is 'radio'
   unbind: (el) ->
-    Rivets.Util.unbindEvent el, 'change', @publish
+    Rivets.Util.unbindEvent el, 'change', @publish unless el.type is 'checkbox' or el.type is 'radio'
   routine: (el, value) ->
     if window.jQuery?
       el = jQuery el
