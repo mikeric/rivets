@@ -1,5 +1,5 @@
 // Rivets.js
-// version: 0.6.4
+// version: 0.6.5
 // author: Michael Richards
 // license: MIT
 (function() {
@@ -637,14 +637,14 @@
     function KeypathParser() {}
 
     KeypathParser.parse = function(keypath, interfaces, root) {
-      var char, current, index, tokens;
+      var char, current, tokens, _i, _len;
       tokens = [];
       current = {
         "interface": root,
         path: ''
       };
-      for (index in keypath) {
-        char = keypath[index];
+      for (_i = 0, _len = keypath.length; _i < _len; _i++) {
+        char = keypath[_i];
         if (__indexOf.call(interfaces, char) >= 0) {
           tokens.push(current);
           current = {
