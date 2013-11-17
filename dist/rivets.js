@@ -637,14 +637,14 @@
     function KeypathParser() {}
 
     KeypathParser.parse = function(keypath, interfaces, root) {
-      var char, current, tokens, _i, _len;
+      var char, current, index, tokens;
       tokens = [];
       current = {
         "interface": root,
         path: ''
       };
-      for (_i = 0, _len = keypath.length; _i < _len; _i++) {
-        char = keypath[_i];
+      for (index in keypath) {
+        char = keypath[index];
         if (__indexOf.call(interfaces, char) >= 0) {
           tokens.push(current);
           current = {
