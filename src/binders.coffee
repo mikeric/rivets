@@ -223,7 +223,7 @@ Rivets.binders['class-*'] = (el, value) ->
     el.className = if value
       "#{el.className} #{@args[0]}"
     else
-      elClass.replace(" #{@args[0]} ", ' ').trim()
+      trim elClass.replace(" #{@args[0]} ", ' ')
 
 # Sets the attribute on the element. If no binder above is matched it will fall
 # back to using this binder.

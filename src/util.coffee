@@ -28,3 +28,6 @@ else
       if el.type is 'checkbox' then el.checked
       else if el.type is 'select-multiple' then o.value for o in el when o.selected
       else el.value
+
+# Use this instead of String.prototype.trim() for better compability
+Rivets.Util.trim = trim = (str) -> str.replace /(^ +| +$)/g, ''
