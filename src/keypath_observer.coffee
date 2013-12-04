@@ -49,6 +49,10 @@ class Rivets.Observer
   read: (key, obj) =>
     @adapter(key).read obj, key.path
 
+  publish: (value) =>
+    if @target?
+      @adapter(@key).publish @target, @key.path, value
+
   value: =>
     @read @key, @target if @target?
 

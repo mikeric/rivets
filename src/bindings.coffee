@@ -70,7 +70,7 @@ class Rivets.Binding
       if @view.formatters[id]?.publish
         value = @view.formatters[id].publish value, args...
 
-    @observer.setValue value
+    @observer.publish value
 
   # Subscribes to the model for changes at the specified keypath. Bi-directional
   # routines will also listen for changes on the element to propagate them back
