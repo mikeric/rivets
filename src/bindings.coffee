@@ -10,7 +10,6 @@ class Rivets.Binding
     @formatters = @options.formatters || []
     @dependencies = []
     @setBinder()
-    @setObserver()
 
   # Sets the binder to use when binding and syncing.
   setBinder: =>
@@ -29,14 +28,6 @@ class Rivets.Binding
   # Sets a keypath observer that will notify this binding when any intermediary
   # keys are changed.
   setObserver: =>
-    @observer = new Rivets.KeypathObserver @view, @view.models, @keypath, (obs) =>
-      @unbind true if @key
-      @model = obs.target
-      @bind true if @key
-      @sync()
-
-    @key = @observer.key
-    @model = @observer.target
 
   # Applies all the current formatters to the supplied value and returns the
   # formatted value.
@@ -62,7 +53,7 @@ class Rivets.Binding
   # with the suplied value formatted.
   set: (value) =>
     value = if value instanceof Function and !@binder.function
-      @formattedValue value.call @model
+      @formattedValue value.call @observer.target
     else
       @formattedValue value
 
@@ -70,10 +61,7 @@ class Rivets.Binding
 
   # Syncs up the view binding with the model.
   sync: =>
-    @set if @key
-      @view.adapters[@key.interface].read @model, @key.path
-    else
-      @model
+    @set @observer.value()
 
   # Publishes the value currently set on the input element back to the model.
   publish: =>
@@ -86,42 +74,29 @@ class Rivets.Binding
       if @view.formatters[id]?.publish
         value = @view.formatters[id].publish value, args...
 
-    @view.adapters[@key.interface].publish @model, @key.path, value
+    @observer.setValue value
 
   # Subscribes to the model for changes at the specified keypath. Bi-directional
   # routines will also listen for changes on the element to propagate them back
   # to the model.
-  bind: (silent = false) =>
-    @binder.bind?.call @, @el unless silent
-    @view.adapters[@key.interface].subscribe(@model, @key.path, @sync) if @key
-    @sync() if @view.config.preloadData unless silent
+  bind: =>
+    @binder.bind?.call @, @el
+    @observer = new Rivets.Observer @view, @view.models, @keypath, @sync
 
-    if @options.dependencies?.length
+    if @observer.target? and @options.dependencies?.length
       for dependency in @options.dependencies
-        observer = new Rivets.KeypathObserver @view, @model, dependency, (obs, prev) =>
-          key = obs.key
-          @view.adapters[key.interface].unsubscribe prev, key.path, @sync
-          @view.adapters[key.interface].subscribe obs.target, key.path, @sync
-          @sync()
-
-        key = observer.key
-        @view.adapters[key.interface].subscribe observer.target, key.path, @sync
+        observer = new Rivets.Observer @view, @observer.target, dependency, @sync
         @dependencies.push observer
 
+    @sync() if @view.config.preloadData
+
   # Unsubscribes from the model and the element.
-  unbind: (silent = false) =>
-    unless silent
-      @binder.unbind?.call @, @el
-      @observer.unobserve()
+  unbind: =>
+    @binder.unbind?.call @, @el
+    @observer.unobserve()
 
-    @view.adapters[@key.interface].unsubscribe(@model, @key.path, @sync) if @key
-
-    if @dependencies.length
-      for obs in @dependencies
-        key = obs.key
-        @view.adapters[key.interface].unsubscribe obs.target, key.path, @sync
-
-      @dependencies = []
+    observer.unobserver() for observer in @dependencies
+    @dependencies = []
 
   # Updates the binding's model from what is currently set on the view. Unbinds
   # the old model first and then re-binds with the new model.
