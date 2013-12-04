@@ -25,10 +25,6 @@ class Rivets.Binding
     @binder or= @view.binders['*']
     @binder = {routine: @binder} if @binder instanceof Function
 
-  # Sets a keypath observer that will notify this binding when any intermediary
-  # keys are changed.
-  setObserver: =>
-
   # Applies all the current formatters to the supplied value and returns the
   # formatted value.
   formattedValue: (value) =>
@@ -165,7 +161,6 @@ class Rivets.TextBinding extends Rivets.Binding
   constructor: (@view, @el, @type, @keypath, @options = {}) ->
     @formatters = @options.formatters || []
     @dependencies = []
-    @setObserver()
 
   # A standard routine binder used for text node bindings.
   binder:
