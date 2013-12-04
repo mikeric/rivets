@@ -94,7 +94,7 @@ class Rivets.Binding
     @binder.unbind?.call @, @el
     @observer.unobserve()
 
-    observer.unobserver() for observer in @dependencies
+    observer.unobserve() for observer in @dependencies
     @dependencies = []
 
   # Updates the binding's model from what is currently set on the view. Unbinds
