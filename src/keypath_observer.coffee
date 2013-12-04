@@ -1,14 +1,13 @@
-# Rivets.KeypathObserver
+# Rivets.Observer
 # ----------------------
 
 # Parses and observes a full keypath with the appropriate adapters. Also
 # intelligently re-realizes the keypath when intermediary keys change.
-class Rivets.KeypathObserver
+class Rivets.Observer
   # Performs the initial parse, variable instantiation and keypath realization.
   constructor: (@view, @model, @keypath, @callback) ->
     @parse()
-    @objectPath = []
-    @target = @realize()
+    @initialize()
 
   # Parses the keypath using the interfaces defined on the view. Sets variables
   # for the tokenized keypath, as well as the end key.
@@ -25,34 +24,63 @@ class Rivets.KeypathObserver
     @tokens = Rivets.KeypathParser.parse path, interfaces, root
     @key = @tokens.pop()
 
-  # Updates the keypath. This is called when any intermediate key is changed.
+  initialize: =>
+    @objectPath = []
+    @target = @realize()
+    @set true, @key, @target, @callback if @target?
+
+  # Updates the keypath. This is called when any intermediary key is changed.
   update: =>
     unless (next = @realize()) is @target
-      prev = @target
+      @set false, @key, @target, @callback if @target?
+      @set true, @key, next, @callback if next?
+
+      oldValue = @value()
       @target = next
-      @callback @, prev
+      @callback() unless @value() is oldValue
+
+  adapter: (key) =>
+    @view.adapters[key.interface]
+
+  set: (active, key, obj, callback) =>
+    action = if active then 'subscribe' else 'unsubscribe'
+    @adapter(key)[action] obj, key.path, callback
+
+  read: (key, obj) =>
+    @adapter(key).read obj, key.path
+
+  value: =>
+    @read @key, @target if @target?
 
   # Realizes the full keypath, attaching observers for every key and correcting
   # old observers to any changed objects in the keypath.
   realize: =>
     current = @model
+    unreached = null
 
     for token, index in @tokens
-      if @objectPath[index]?
-        if current isnt prev = @objectPath[index]
-          @view.adapters[token.interface].unsubscribe prev, token.path, @update
-          @view.adapters[token.interface].subscribe current, token.path, @update
+      if current?
+        if @objectPath[index]?
+          if current isnt prev = @objectPath[index]
+            @set false, token, prev, @update
+            @set true, token, current, @update
+            @objectPath[index] = current
+        else
+          @set true, token, current, @update
           @objectPath[index] = current
+        
+        current = @read token, current
       else
-        @view.adapters[token.interface].subscribe current, token.path, @update
-        @objectPath[index] = current
+        unreached ?= index
 
-      current = @view.adapters[token.interface].read current, token.path
+        if prev = @objectPath[index]
+          @set false, token, prev, @update
 
+    @objectPath.splice unreached if unreached?
     current
 
   # Unobserves any current observers set up on the keys.
   unobserve: =>
     for token, index in @tokens
       if obj = @objectPath[index]
-        @view.adapters[token.interface].unsubscribe obj, token.path, @update
+        @set false, token, obj, @update
