@@ -9,6 +9,7 @@ class Rivets.Binding
   constructor: (@view, @el, @type, @keypath, @options = {}) ->
     @formatters = @options.formatters || []
     @dependencies = []
+    @model = undefined
     @setBinder()
 
   # Sets the binder to use when binding and syncing.
@@ -49,7 +50,7 @@ class Rivets.Binding
   # with the suplied value formatted.
   set: (value) =>
     value = if value instanceof Function and !@binder.function
-      @formattedValue value.call @observer.target
+      @formattedValue value.call @model
     else
       @formattedValue value
 
@@ -57,6 +58,7 @@ class Rivets.Binding
 
   # Syncs up the view binding with the model.
   sync: =>
+    @model = @observer.target
     @set @observer.value()
 
   # Publishes the value currently set on the input element back to the model.
@@ -78,10 +80,11 @@ class Rivets.Binding
   bind: =>
     @binder.bind?.call @, @el
     @observer = new Rivets.Observer @view, @view.models, @keypath, @sync
+    @model = @observer.target
 
-    if @observer.target? and @options.dependencies?.length
+    if @model? and @options.dependencies?.length
       for dependency in @options.dependencies
-        observer = new Rivets.Observer @view, @observer.target, dependency, @sync
+        observer = new Rivets.Observer @view, @model, dependency, @sync
         @dependencies.push observer
 
     @sync() if @view.config.preloadData
