@@ -8,7 +8,7 @@ describe('Rivets.Binding', function() {
     el = document.createElement('div');
     el.setAttribute('data-text', 'obj.name');
 
-    view = rivets.bind(el, {obj: {}});
+    view = rivets.bind(el, {obj: {name: 'test'}});
     binding = view.bindings[0];
     model = binding.model;
   });
@@ -40,12 +40,10 @@ describe('Rivets.Binding', function() {
         rivets.config.preloadData = true;
       });
 
-      it('sets the initial value via the adapter', function() {
+      it('sets the initial value', function() {
         spyOn(binding, 'set');
-        spyOn(adapter, 'read');
         binding.bind();
-        expect(adapter.read).toHaveBeenCalledWith(model, 'name');
-        expect(binding.set).toHaveBeenCalled();
+        expect(binding.set).toHaveBeenCalledWith('test');
       });
     });
 
