@@ -68,10 +68,14 @@ class Rivets.Binding
 
     @binder.routine?.call @, @el, value
 
+  # Returns adapter for the interface
+  getAdapter: =>
+    @view.adapters[@key.interface]
+
   # Syncs up the view binding with the model.
   sync: =>
     @set if @key
-      @view.adapters[@key.interface].read @model, @key.path
+      @getAdapter().read @model, @key.path
     else
       @model
 
@@ -86,14 +90,14 @@ class Rivets.Binding
       if @view.formatters[id]?.publish
         value = @view.formatters[id].publish value, args...
 
-    @view.adapters[@key.interface].publish @model, @key.path, value
+    @getAdapter().publish @model, @key.path, value
 
   # Subscribes to the model for changes at the specified keypath. Bi-directional
   # routines will also listen for changes on the element to propagate them back
   # to the model.
   bind: (silent = false) =>
     @binder.bind?.call @, @el unless silent
-    @view.adapters[@key.interface].subscribe(@model, @key.path, @sync) if @key
+    @getAdapter().subscribe(@model, @key.path, @sync) if @key
     @sync() if @view.config.preloadData unless silent
 
     if @options.dependencies?.length
@@ -114,7 +118,7 @@ class Rivets.Binding
       @binder.unbind?.call @, @el
       @observer.unobserve()
 
-    @view.adapters[@key.interface].unsubscribe(@model, @key.path, @sync) if @key
+    @getAdapter().unsubscribe(@model, @key.path, @sync) if @key
 
     if @dependencies.length
       for obs in @dependencies
