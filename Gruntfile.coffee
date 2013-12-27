@@ -2,6 +2,19 @@ module.exports = (grunt) ->
   grunt.initConfig
     pkg: grunt.file.readJSON('package.json')
 
+    config:
+      coffeeFiles: [
+        'src/rivets.coffee'
+        'src/util.coffee'
+        'src/view.coffee'
+        'src/bindings.coffee'
+        'src/parsers.coffee'
+        'src/keypath_observer.coffee'
+        'src/binders.coffee'
+        'src/adapters.coffee'
+        'src/export.coffee'
+      ]
+
     meta:
       banner:
         '// Rivets.js\n' +
@@ -14,17 +27,7 @@ module.exports = (grunt) ->
         options:
           join: true
         files:
-          'dist/rivets.js': [
-            'src/rivets.coffee'
-            'src/util.coffee'
-            'src/view.coffee'
-            'src/bindings.coffee'
-            'src/parsers.coffee'
-            'src/keypath_observer.coffee'
-            'src/binders.coffee'
-            'src/adapters.coffee'
-            'src/export.coffee'
-          ]
+          'dist/rivets.js': '<%= config.coffeeFiles %>'
 
     concat:
       all:
@@ -32,6 +35,9 @@ module.exports = (grunt) ->
           banner: '<%= meta.banner %>'
         files:
           'dist/rivets.js': 'dist/rivets.js'
+      coffee:
+        files:
+          'dist/rivets.coffee': '<%= config.coffeeFiles %>'
 
     uglify:
       all:
@@ -61,4 +67,5 @@ module.exports = (grunt) ->
 
   grunt.registerTask 'default', ['watch']
   grunt.registerTask 'spec',    ['jasmine']
-  grunt.registerTask 'build',   ['coffee', 'concat', 'uglify']
+  grunt.registerTask 'build',   ['coffee', 'concat:all', 'uglify']
+  grunt.registerTask 'build-coffee', ['concat:coffee']
