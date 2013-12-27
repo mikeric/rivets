@@ -84,8 +84,9 @@ Rivets.binders.if =
     unless @marker?
       attr = [@view.config.prefix, @type].join('-').replace '--', '-'
       declaration = el.getAttribute attr
-
-      @marker = document.createComment " rivets: #{@type} #{declaration} "
+      
+      template = Rivets.Util.escapeHTML(Rivets.Util.outerHTML(el))
+      @marker = document.createComment " rivets: #{@type} @#{declaration}@ @#{template}@ "
 
       el.removeAttribute attr
       el.parentNode.insertBefore @marker, el
@@ -115,6 +116,16 @@ Rivets.binders.if =
 
   update: (models) ->
     @nested?.update models
+  
+  revive: (el) ->
+    match = el.data.match(/\s*rivets:\s*if\s+@.*?@\s+@([\s\S]*)@\s*/)
+    if match
+      template = Rivets.Util.unescapeHTML(match[1])
+      revived = Rivets.Util.nodeFromHTML(template)
+      el.parentNode.insertBefore(revived, el.nextSibling)
+      el.parentNode.removeChild(el)
+      return revived
+    return null
 
 # Removes and unbinds the element and it's child nodes into the DOM when true
 # (negated version of `if` binder).
@@ -150,12 +161,18 @@ Rivets.binders['each-*'] =
 
   bind: (el) ->
     unless @marker?
+      console.log('no marker')
       attr = [@view.config.prefix, @type].join('-').replace '--', '-'
-      @marker = document.createComment " rivets: #{@type} "
+      
+      template = Rivets.Util.escapeHTML(Rivets.Util.outerHTML(el))
+      @marker = document.createComment " rivets: @#{@type}@ @#{template}@ "
+      @endMarker = document.createComment " rivets-end "
+      
       @iterated = []
 
       el.removeAttribute attr
       el.parentNode.insertBefore @marker, el
+      el.parentNode.insertBefore @endMarker, @marker.nextSibling
       el.parentNode.removeChild el
 
   unbind: (el) ->
@@ -206,6 +223,26 @@ Rivets.binders['each-*'] =
       for binding in @view.bindings
         if binding.el is @marker.parentNode and binding.type is 'value'
           binding.sync()
+  
+  revive: (el) ->
+    match = el.data.match /\s*rivets:\s*@.*?@\s+@([\s\S]*)@\s*/
+    if match
+      template = Rivets.Util.unescapeHTML(match[1])
+      revived = Rivets.Util.nodeFromHTML(template)
+
+      sibling = el.nextSibling
+      while sibling
+        if sibling.nodeType == 8 and sibling.data.match /\s*rivets-end\s*/
+          el.parentNode.removeChild(sibling)
+          break
+        nextSibling = sibling.nextSibling
+        sibling.parentNode.removeChild(sibling)
+        sibling = nextSibling
+
+      el.parentNode.insertBefore(revived, el.nextSibling)
+      el.parentNode.removeChild(el)
+      return revived
+    return null
 
   update: (models) ->
     data = {}

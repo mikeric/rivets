@@ -48,6 +48,13 @@ class Rivets.View
 
     parse = (node) =>
       unless node in skipNodes
+        if node.nodeType is 8
+          for identifier, value of @binders
+            if value.revive
+              if revived = value.revive(node)
+                node = revived
+                break
+
         if node.nodeType is 3
           parser = Rivets.TextTemplateParser
 
@@ -87,7 +94,10 @@ class Rivets.View
               type = attribute.name.replace bindingRegExp, ''
               buildBinding 'Binding', node, type, attribute.value
 
-        parse childNode for childNode in (n for n in node.childNodes)
+        childNode = node.firstChild
+        while childNode
+          parse childNode
+          childNode = childNode.nextSibling
 
     parse el for el in @els
 
