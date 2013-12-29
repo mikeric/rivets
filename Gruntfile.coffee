@@ -14,6 +14,9 @@ module.exports = (grunt) ->
         'src/adapters.coffee'
         'src/export.coffee'
       ]
+      specFiles: [
+        'spec/**/*.js'
+      ]
 
     meta:
       banner:
@@ -56,7 +59,10 @@ module.exports = (grunt) ->
 
     watch:
       all:
-        files: '<%= config.coffeeFiles %>'
+        files: [
+          '<%= config.coffeeFiles %>',
+          '<%= config.specFiles %>'
+        ]
         tasks: ['build', 'spec']
 
   grunt.loadNpmTasks 'grunt-contrib-coffee'
