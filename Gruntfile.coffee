@@ -2,6 +2,22 @@ module.exports = (grunt) ->
   grunt.initConfig
     pkg: grunt.file.readJSON('package.json')
 
+    config:
+      coffeeFiles: [
+        'src/rivets.coffee'
+        'src/util.coffee'
+        'src/view.coffee'
+        'src/bindings.coffee'
+        'src/parsers.coffee'
+        'src/keypath_observer.coffee'
+        'src/binders.coffee'
+        'src/adapters.coffee'
+        'src/export.coffee'
+      ]
+      specFiles: [
+        'spec/**/*.js'
+      ]
+
     meta:
       banner:
         '// Rivets.js\n' +
@@ -13,18 +29,9 @@ module.exports = (grunt) ->
       all:
         options:
           join: true
+          sourceMap: true
         files:
-          'dist/rivets.js': [
-            'src/rivets.coffee'
-            'src/util.coffee'
-            'src/view.coffee'
-            'src/bindings.coffee'
-            'src/parsers.coffee'
-            'src/keypath_observer.coffee'
-            'src/binders.coffee'
-            'src/adapters.coffee'
-            'src/export.coffee'
-          ]
+          'dist/rivets.js': '<%= config.coffeeFiles %>'
 
     concat:
       all:
@@ -32,6 +39,9 @@ module.exports = (grunt) ->
           banner: '<%= meta.banner %>'
         files:
           'dist/rivets.js': 'dist/rivets.js'
+      coffee:
+        files:
+          'dist/rivets.coffee': '<%= config.coffeeFiles %>'
 
     uglify:
       all:
@@ -47,11 +57,21 @@ module.exports = (grunt) ->
         options:
           specs: 'spec/rivets/**/*.js'
           helpers: 'spec/lib/**/*.js'
+          keepRunner: true
 
     watch:
       all:
-        files: 'src/rivets.coffee'
+        files: [
+          '<%= config.coffeeFiles %>',
+          '<%= config.specFiles %>'
+        ]
         tasks: ['build', 'spec']
+      build:
+        files: [
+          '<%= config.coffeeFiles %>',
+          '<%= config.specFiles %>'
+        ]
+        tasks: ['build']
 
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-contrib-concat'
@@ -59,6 +79,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-jasmine'
   grunt.loadNpmTasks 'grunt-contrib-watch'
 
-  grunt.registerTask 'default', ['watch']
+  grunt.registerTask 'default', ['watch:all']
   grunt.registerTask 'spec',    ['jasmine']
-  grunt.registerTask 'build',   ['coffee', 'concat', 'uglify']
+  grunt.registerTask 'build',   ['coffee', 'concat:all', 'uglify']
+  grunt.registerTask 'build-coffee', ['concat:coffee']
