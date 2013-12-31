@@ -29,6 +29,7 @@ module.exports = (grunt) ->
       all:
         options:
           join: true
+          sourceMap: true
         files:
           'dist/rivets.js': '<%= config.coffeeFiles %>'
 
