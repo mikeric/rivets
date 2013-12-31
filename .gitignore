@@ -3,3 +3,5 @@ _SpecRunner.html
 *.swp
 .grunt/**/*
 node_modules/**/*
+.idea
+*.iml
