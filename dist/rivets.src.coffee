@@ -130,14 +130,19 @@ class Rivets.View
 
       @bindings.push new Rivets[binding] @, node, type, keypath, options
 
+    revive = (node) =>
+      for identifier, value of @binders
+        if value.revive
+          if revived = value.revive(node)
+            return revived
+      if revived = Rivets.TextBinding.prototype.binder.revive(node)
+        return revived
+      return node
+
     parse = (node) =>
       unless node in skipNodes
         if node.nodeType is 8
-          for identifier, value of @binders
-            if value.revive
-              if revived = value.revive(node)
-                node = revived
-                break
+          node = revive(node)
 
         if node.nodeType is 3
           parser = Rivets.TextTemplateParser
@@ -406,10 +411,37 @@ class Rivets.TextBinding extends Rivets.Binding
     @dependencies = []
     @setObserver()
 
+    unless @marker?
+      @marker = document.createComment " rivets: @textbinding@ @" + Rivets.Util.escapeHTML(@keypath) + "@"
+      @endMarker = document.createComment " rivets-end "
+      @el.parentNode.insertBefore @marker, el
+      @el.parentNode.insertBefore @endMarker, el.nextSibling
+
   # A standard routine binder used for text node bindings.
   binder:
     routine: (node, value) ->
       node.data = value ? ''
+
+    # expects a marker comment
+    revive: (el) ->
+      match = el.data.match /\s*rivets:\s*@textbinding@\s+@([\s\S]*)@\s*/
+      if match
+        # search for end comment
+        sibling = el.nextSibling
+        while sibling
+          if sibling.nodeType == 8 and sibling.data.match /\s*rivets-end\s*/
+            el.parentNode.removeChild(sibling)
+            break
+          nextSibling = sibling.nextSibling
+          sibling.parentNode.removeChild(sibling)
+          sibling = nextSibling
+
+        keypath = Rivets.Util.unescapeHTML(match[1])
+        revived = document.createTextNode('{' + keypath + '}')
+        el.parentNode.insertBefore revived, el.nextSibling
+        el.parentNode.removeChild(el)
+        return revived
+      return null
 
   # Wrap the call to `sync` in fat-arrow to avoid function context issues.
   sync: =>
@@ -769,11 +801,12 @@ Rivets.binders['each-*'] =
           binding.sync()
   
   revive: (el) ->
-    match = el.data.match /\s*rivets:\s*@.*?@\s+@([\s\S]*)@\s*/
+    match = el.data.match /\s*rivets:\s*@each-.*?@\s+@([\s\S]*)@\s*/
     if match
       template = Rivets.Util.unescapeHTML(match[1])
       revived = Rivets.Util.nodeFromHTML(template)
 
+      # search for end comment
       sibling = el.nextSibling
       while sibling
         if sibling.nodeType == 8 and sibling.data.match /\s*rivets-end\s*/

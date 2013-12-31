@@ -170,7 +170,7 @@
     };
 
     View.prototype.build = function() {
-      var bindingRegExp, buildBinding, componentRegExp, el, parse, skipNodes, _i, _len, _ref1,
+      var bindingRegExp, buildBinding, componentRegExp, el, parse, revive, skipNodes, _i, _len, _ref1,
         _this = this;
       this.bindings = [];
       skipNodes = [];
@@ -206,20 +206,27 @@
         }
         return _this.bindings.push(new Rivets[binding](_this, node, type, keypath, options));
       };
+      revive = function(node) {
+        var identifier, revived, value, _ref1;
+        _ref1 = _this.binders;
+        for (identifier in _ref1) {
+          value = _ref1[identifier];
+          if (value.revive) {
+            if (revived = value.revive(node)) {
+              return revived;
+            }
+          }
+        }
+        if (revived = Rivets.TextBinding.prototype.binder.revive(node)) {
+          return revived;
+        }
+        return node;
+      };
       parse = function(node) {
-        var attribute, attributes, binder, childNode, delimiters, identifier, n, parser, regexp, revived, text, token, tokens, type, value, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref1, _ref2, _ref3, _ref4, _ref5, _results;
+        var attribute, attributes, binder, childNode, delimiters, identifier, n, parser, regexp, text, token, tokens, type, value, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref1, _ref2, _ref3, _ref4, _results;
         if (__indexOf.call(skipNodes, node) < 0) {
           if (node.nodeType === 8) {
-            _ref1 = _this.binders;
-            for (identifier in _ref1) {
-              value = _ref1[identifier];
-              if (value.revive) {
-                if (revived = value.revive(node)) {
-                  node = revived;
-                  break;
-                }
-              }
-            }
+            node = revive(node);
           }
           if (node.nodeType === 3) {
             parser = Rivets.TextTemplateParser;
@@ -242,15 +249,15 @@
             type = node.tagName.replace(componentRegExp, '').toLowerCase();
             _this.bindings.push(new Rivets.ComponentBinding(_this, node, type));
           } else if (node.attributes != null) {
-            _ref2 = node.attributes;
-            for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-              attribute = _ref2[_j];
+            _ref1 = node.attributes;
+            for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+              attribute = _ref1[_j];
               if (bindingRegExp.test(attribute.name)) {
                 type = attribute.name.replace(bindingRegExp, '');
                 if (!(binder = _this.binders[type])) {
-                  _ref3 = _this.binders;
-                  for (identifier in _ref3) {
-                    value = _ref3[identifier];
+                  _ref2 = _this.binders;
+                  for (identifier in _ref2) {
+                    value = _ref2[identifier];
                     if (identifier !== '*' && identifier.indexOf('*') !== -1) {
                       regexp = new RegExp("^" + (identifier.replace('*', '.+')) + "$");
                       if (regexp.test(type)) {
@@ -261,18 +268,18 @@
                 }
                 binder || (binder = _this.binders['*']);
                 if (binder.block) {
-                  _ref4 = node.childNodes;
-                  for (_k = 0, _len2 = _ref4.length; _k < _len2; _k++) {
-                    n = _ref4[_k];
+                  _ref3 = node.childNodes;
+                  for (_k = 0, _len2 = _ref3.length; _k < _len2; _k++) {
+                    n = _ref3[_k];
                     skipNodes.push(n);
                   }
                   attributes = [attribute];
                 }
               }
             }
-            _ref5 = attributes || node.attributes;
-            for (_l = 0, _len3 = _ref5.length; _l < _len3; _l++) {
-              attribute = _ref5[_l];
+            _ref4 = attributes || node.attributes;
+            for (_l = 0, _len3 = _ref4.length; _l < _len3; _l++) {
+              attribute = _ref4[_l];
               if (bindingRegExp.test(attribute.name)) {
                 type = attribute.name.replace(bindingRegExp, '');
                 buildBinding('Binding', node, type, attribute.value);
@@ -653,11 +660,39 @@
       this.formatters = this.options.formatters || [];
       this.dependencies = [];
       this.setObserver();
+      if (this.marker == null) {
+        this.marker = document.createComment(" rivets: @textbinding@ @" + Rivets.Util.escapeHTML(this.keypath) + "@");
+        this.endMarker = document.createComment(" rivets-end ");
+        this.el.parentNode.insertBefore(this.marker, el);
+        this.el.parentNode.insertBefore(this.endMarker, el.nextSibling);
+      }
     }
 
     TextBinding.prototype.binder = {
       routine: function(node, value) {
         return node.data = value != null ? value : '';
+      },
+      revive: function(el) {
+        var keypath, match, nextSibling, revived, sibling;
+        match = el.data.match(/\s*rivets:\s*@textbinding@\s+@([\s\S]*)@\s*/);
+        if (match) {
+          sibling = el.nextSibling;
+          while (sibling) {
+            if (sibling.nodeType === 8 && sibling.data.match(/\s*rivets-end\s*/)) {
+              el.parentNode.removeChild(sibling);
+              break;
+            }
+            nextSibling = sibling.nextSibling;
+            sibling.parentNode.removeChild(sibling);
+            sibling = nextSibling;
+          }
+          keypath = Rivets.Util.unescapeHTML(match[1]);
+          revived = document.createTextNode('{' + keypath + '}');
+          el.parentNode.insertBefore(revived, el.nextSibling);
+          el.parentNode.removeChild(el);
+          return revived;
+        }
+        return null;
       }
     };
 
@@ -1124,7 +1159,7 @@
     },
     revive: function(el) {
       var match, nextSibling, revived, sibling, template;
-      match = el.data.match(/\s*rivets:\s*@.*?@\s+@([\s\S]*)@\s*/);
+      match = el.data.match(/\s*rivets:\s*@each-.*?@\s+@([\s\S]*)@\s*/);
       if (match) {
         template = Rivets.Util.unescapeHTML(match[1]);
         revived = Rivets.Util.nodeFromHTML(template);
