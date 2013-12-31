@@ -71,9 +71,7 @@ describe('Revival', function() {
 
       // clone the node to simulate unbound HTML from server
       var rendered = el.cloneNode(true);
-      console.log(rendered.cloneNode(true));
       rivets.bind(rendered, bindData);
-      console.log(rendered.cloneNode(true));
       expect(rendered.getElementsByTagName('div').length).toBe(3);
 
     });
