@@ -56,6 +56,7 @@ module.exports = (grunt) ->
         options:
           specs: 'spec/rivets/**/*.js'
           helpers: 'spec/lib/**/*.js'
+          keepRunner: true
 
     watch:
       all:
