@@ -224,11 +224,12 @@ Rivets.binders['each-*'] =
           binding.sync()
   
   revive: (el) ->
-    match = el.data.match /\s*rivets:\s*@.*?@\s+@([\s\S]*)@\s*/
+    match = el.data.match /\s*rivets:\s*@each-.*?@\s+@([\s\S]*)@\s*/
     if match
       template = Rivets.Util.unescapeHTML(match[1])
       revived = Rivets.Util.nodeFromHTML(template)
 
+      # search for end comment
       sibling = el.nextSibling
       while sibling
         if sibling.nodeType == 8 and sibling.data.match /\s*rivets-end\s*/

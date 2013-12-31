@@ -41,6 +41,22 @@ describe('Revival', function() {
     el.appendChild(eachEl);
   });
 
+  describe('Text', function() {
+    it('should revive from rendered', function() {
+
+      var el = document.createElement('div');
+      el.innerHTML = 'Hey, {data:foo}!';
+      rivets.bind(el, bindData);
+      expect(el.innerHTML).toEqual("Hey, <!-- rivets: @textbinding@ @data:foo@-->bar<!-- rivets-end -->!");
+
+      // clone the node to simulate unbound HTML from server
+      var rendered = el.cloneNode(true);
+      rivets.bind(rendered, bindData);
+      data.set({'foo': 'baz'});
+      expect(el.innerHTML).toEqual("Hey, <!-- rivets: @textbinding@ @data:foo@-->baz<!-- rivets-end -->!");
+    });
+  });
+
   describe('If', function() {
     it('should revive from rendered', function() {
 
