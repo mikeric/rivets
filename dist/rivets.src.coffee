@@ -706,7 +706,6 @@ Rivets.binders['each-*'] =
 
   bind: (el) ->
     unless @marker?
-      console.log('no marker')
       attr = [@view.config.prefix, @type].join('-').replace '--', '-'
       
       template = Rivets.Util.escapeHTML(Rivets.Util.outerHTML(el))

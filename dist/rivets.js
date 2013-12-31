@@ -1038,7 +1038,6 @@
     bind: function(el) {
       var attr, template;
       if (this.marker == null) {
-        console.log('no marker');
         attr = [this.view.config.prefix, this.type].join('-').replace('--', '-');
         template = Rivets.Util.escapeHTML(Rivets.Util.outerHTML(el));
         this.marker = document.createComment(" rivets: @" + this.type + "@ @" + template + "@ ");
