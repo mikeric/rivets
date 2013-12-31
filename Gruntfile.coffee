@@ -64,6 +64,12 @@ module.exports = (grunt) ->
           '<%= config.specFiles %>'
         ]
         tasks: ['build', 'spec']
+      build:
+        files: [
+          '<%= config.coffeeFiles %>',
+          '<%= config.specFiles %>'
+        ]
+        tasks: ['build']
 
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-contrib-concat'
@@ -71,7 +77,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-jasmine'
   grunt.loadNpmTasks 'grunt-contrib-watch'
 
-  grunt.registerTask 'default', ['watch']
+  grunt.registerTask 'default', ['watch:all']
   grunt.registerTask 'spec',    ['jasmine']
   grunt.registerTask 'build',   ['coffee', 'concat:all', 'uglify']
   grunt.registerTask 'build-coffee', ['concat:coffee']
