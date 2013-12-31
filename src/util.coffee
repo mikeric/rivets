@@ -12,6 +12,7 @@ if 'jQuery' of window
 
       if $el.attr('type') is 'checkbox' then $el.is ':checked'
       else do $el.val
+
 else
   Rivets.Util =
     bindEvent: do ->
@@ -28,3 +29,26 @@ else
       if el.type is 'checkbox' then el.checked
       else if el.type is 'select-multiple' then o.value for o in el when o.selected
       else el.value
+
+do ->
+  common =
+    outerHTML: (el) ->
+      return el.outerHTML if el.outerHTML?
+      wrap = document.createElement('div')
+      wrap.appendChild(el.cloneNode(true))
+      return wrap.innerHTML
+    escapeHTML: (html) ->
+      return html
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+    unescapeHTML: (html) ->
+      return html
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+    nodeFromHTML: (html) ->
+      wrap = document.createElement('div')
+      wrap.innerHTML = html
+      return wrap.childNodes[0]
+
+  for own key, value of common
+    Rivets.Util[key] = value

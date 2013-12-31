@@ -46,8 +46,20 @@ class Rivets.View
 
       @bindings.push new Rivets[binding] @, node, type, keypath, options
 
+    revive = (node) =>
+      for identifier, value of @binders
+        if value.revive
+          if revived = value.revive(node)
+            return revived
+      if revived = Rivets.TextBinding.prototype.binder.revive(node)
+        return revived
+      return node
+
     parse = (node) =>
       unless node in skipNodes
+        if node.nodeType is 8
+          node = revive(node)
+
         if node.nodeType is 3
           parser = Rivets.TextTemplateParser
 
@@ -87,7 +99,10 @@ class Rivets.View
               type = attribute.name.replace bindingRegExp, ''
               buildBinding 'Binding', node, type, attribute.value
 
-        parse childNode for childNode in (n for n in node.childNodes)
+        childNode = node.firstChild
+        while childNode
+          parse childNode
+          childNode = childNode.nextSibling
 
     parse el for el in @els
 
