@@ -35,8 +35,8 @@ class Rivets.View
     buildBinding = (binding, node, type, declaration) =>
       options = {}
 
-      pipes = (pipe.trim() for pipe in declaration.split '|')
-      context = (ctx.trim() for ctx in pipes.shift().split '<')
+      pipes = (trim(pipe) for pipe in declaration.split '|')
+      context = (trim(ctx) for ctx in pipes.shift().split '<')
       keypath = context.shift()
 
       options.formatters = pipes
