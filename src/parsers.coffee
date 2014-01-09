@@ -9,6 +9,7 @@ class Rivets.KeypathParser
     current = {interface: root, path: ''}
 
     for index in [0...keypath.length] by 1
+      continue unless keypath.hasOwnProperty(index)
       char = keypath.charAt index
       if char in interfaces
         tokens.push current
