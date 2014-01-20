@@ -58,7 +58,15 @@ class Rivets.Binding
 
   # Syncs up the view binding with the model.
   sync: =>
-    @model = @observer.target
+    if @model isnt @observer.target
+      observer.unobserve() for observer in @dependencies
+      @dependencies = []
+
+      if (@model = @observer.target)? and @options.dependencies?.length
+        for dependency in @options.dependencies
+          observer = new Rivets.Observer @view, @model, dependency, @sync
+          @dependencies.push observer
+
     @set @observer.value()
 
   # Publishes the value currently set on the input element back to the model.
