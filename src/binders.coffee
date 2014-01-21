@@ -153,13 +153,29 @@ Rivets.binders['each-*'] =
       attr = [@view.config.prefix, @type].join('-').replace '--', '-'
       @marker = document.createComment " rivets: #{@type} "
       @iterated = []
+      @el = el
+      @attr = attr
+      @declaration = el.getAttribute attr
 
       el.removeAttribute attr
       el.parentNode.insertBefore @marker, el
       el.parentNode.removeChild el
 
   unbind: (el) ->
-    view.unbind() for view in @iterated if @iterated?
+    if @iterated?
+      # Clean up the child views; unbind and remove from DOM
+      for view in @iterated
+        view.unbind()
+        el.parentNode.removeChild(el) for el in view.els
+        delete view.els
+      delete @iterated
+
+    # Undo our modifications to the DOM in #bind()
+    @el.setAttribute @attr, @declaration
+    @marker.parentNode.insertBefore @el, @marker
+    @marker.parentNode.removeChild @marker
+    delete @marker
+    delete @el
 
   routine: (el, collection) ->
     modelName = @args[0]
@@ -209,7 +225,7 @@ Rivets.binders['each-*'] =
 
   update: (models) ->
     data = {}
-    
+
     for key, model of models
       data[key] = model unless key is @args[0]
 
