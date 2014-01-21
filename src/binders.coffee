@@ -166,7 +166,7 @@ Rivets.binders['each-*'] =
       # Clean up the child views; unbind and remove from DOM
       for view in @iterated
         view.unbind()
-        el.parentNode.removeChild(el) for el in view.els
+        el.parentNode?.removeChild(el) for el in view.els
         delete view.els
       delete @iterated
 
