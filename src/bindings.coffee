@@ -9,8 +9,8 @@ class Rivets.Binding
   constructor: (@view, @el, @type, @keypath, @options = {}) ->
     @formatters = @options.formatters || []
     @dependencies = []
+    @model = undefined
     @setBinder()
-    @setObserver()
 
   # Sets the binder to use when binding and syncing.
   setBinder: =>
@@ -25,18 +25,6 @@ class Rivets.Binding
 
     @binder or= @view.binders['*']
     @binder = {routine: @binder} if @binder instanceof Function
-
-  # Sets a keypath observer that will notify this binding when any intermediary
-  # keys are changed.
-  setObserver: =>
-    @observer = new Rivets.KeypathObserver @view, @view.models, @keypath, (obs) =>
-      @unbind true if @key
-      @model = obs.target
-      @bind true if @key
-      @sync()
-
-    @key = @observer.key
-    @model = @observer.target
 
   # Applies all the current formatters to the supplied value and returns the
   # formatted value.
@@ -70,10 +58,16 @@ class Rivets.Binding
 
   # Syncs up the view binding with the model.
   sync: =>
-    @set if @key
-      @view.adapters[@key.interface].read @model, @key.path
-    else
-      @model
+    if @model isnt @observer.target
+      observer.unobserve() for observer in @dependencies
+      @dependencies = []
+
+      if (@model = @observer.target)? and @options.dependencies?.length
+        for dependency in @options.dependencies
+          observer = new Rivets.Observer @view, @model, dependency, @sync
+          @dependencies.push observer
+
+    @set @observer.value()
 
   # Publishes the value currently set on the input element back to the model.
   publish: =>
@@ -86,42 +80,30 @@ class Rivets.Binding
       if @view.formatters[id]?.publish
         value = @view.formatters[id].publish value, args...
 
-    @view.adapters[@key.interface].publish @model, @key.path, value
+    @observer.publish value
 
   # Subscribes to the model for changes at the specified keypath. Bi-directional
   # routines will also listen for changes on the element to propagate them back
   # to the model.
-  bind: (silent = false) =>
-    @binder.bind?.call @, @el unless silent
-    @view.adapters[@key.interface].subscribe(@model, @key.path, @sync) if @key
-    @sync() if @view.config.preloadData unless silent
+  bind: =>
+    @binder.bind?.call @, @el
+    @observer = new Rivets.Observer @view, @view.models, @keypath, @sync
+    @model = @observer.target
 
-    if @options.dependencies?.length
+    if @model? and @options.dependencies?.length
       for dependency in @options.dependencies
-        observer = new Rivets.KeypathObserver @view, @model, dependency, (obs, prev) =>
-          key = obs.key
-          @view.adapters[key.interface].unsubscribe prev, key.path, @sync
-          @view.adapters[key.interface].subscribe obs.target, key.path, @sync
-          @sync()
-
-        key = observer.key
-        @view.adapters[key.interface].subscribe observer.target, key.path, @sync
+        observer = new Rivets.Observer @view, @model, dependency, @sync
         @dependencies.push observer
 
+    @sync() if @view.config.preloadData
+
   # Unsubscribes from the model and the element.
-  unbind: (silent = false) =>
-    unless silent
-      @binder.unbind?.call @, @el
-      @observer.unobserve()
+  unbind: =>
+    @binder.unbind?.call @, @el
+    @observer.unobserve()
 
-    @view.adapters[@key.interface].unsubscribe(@model, @key.path, @sync) if @key
-
-    if @dependencies.length
-      for obs in @dependencies
-        key = obs.key
-        @view.adapters[key.interface].unsubscribe obs.target, key.path, @sync
-
-      @dependencies = []
+    observer.unobserve() for observer in @dependencies
+    @dependencies = []
 
   # Updates the binding's model from what is currently set on the view. Unbinds
   # the old model first and then re-binds with the new model.
@@ -190,7 +172,6 @@ class Rivets.TextBinding extends Rivets.Binding
   constructor: (@view, @el, @type, @keypath, @options = {}) ->
     @formatters = @options.formatters || []
     @dependencies = []
-    @setObserver()
 
   # A standard routine binder used for text node bindings.
   binder:
