@@ -821,18 +821,17 @@
     };
 
     Observer.prototype.unobserve = function() {
-      var index, obj, token, _i, _len, _ref1, _results;
+      var index, obj, token, _i, _len, _ref1;
       _ref1 = this.tokens;
-      _results = [];
       for (index = _i = 0, _len = _ref1.length; _i < _len; index = ++_i) {
         token = _ref1[index];
         if (obj = this.objectPath[index]) {
-          _results.push(this.set(false, token, obj, this.update));
-        } else {
-          _results.push(void 0);
+          this.set(false, token, obj, this.update);
         }
       }
-      return _results;
+      if (this.target != null) {
+        return this.set(false, this.key, this.target, this.callback);
+      }
     };
 
     return Observer;
