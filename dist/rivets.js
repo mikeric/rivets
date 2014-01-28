@@ -830,7 +830,7 @@
         }
       }
       if (this.target != null) {
-        return this.set(false, this.key, this.target, this.update);
+        return this.set(false, this.key, this.target, this.callback);
       }
     };
 
