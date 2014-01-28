@@ -12,7 +12,7 @@ class Rivets.Observer
   # Parses the keypath using the interfaces defined on the view. Sets variables
   # for the tokenized keypath, as well as the end key.
   parse: =>
-    interfaces = (k for k, v of @view.adapters)
+    interfaces = (k for k, v of @view.adapters when v)
 
     if @keypath[0] in interfaces
       root = @keypath[0]
