@@ -178,6 +178,60 @@ describe('Functional', function() {
         expect(el.getElementsByTagName('li')[3]).toHaveTheTextContent('last');
       })
 
+      it('should unbind and remove elements bound to items removed from the collection', function () {
+        listItem.setAttribute('data-text', 'item.name');
+        rivets.bind(el, bindData);
+        expect(el.getElementsByTagName('li').length).toBe(2);
+        var collection = data.get('items').slice();
+        collection.shift();
+        data.set({items: collection});
+        expect(el.getElementsByTagName('li').length).toBe(collection.length);
+        expect(el.getElementsByTagName('li')[0]).toHaveTheTextContent('b');
+      });
+
+      it('should create a new element at the beginning of the container element when a new item is prepended to the collection', function () {
+          listItem.setAttribute('data-text', 'item.name');
+          rivets.bind(el, bindData);
+          expect(el.getElementsByTagName('li')[0]).toHaveTheTextContent('a');
+          var collection = data.get('items').slice();
+          collection.unshift({name: 'start'});
+          data.set({items: collection});
+          expect(el.getElementsByTagName('li')[0]).toHaveTheTextContent('start');
+      });
+
+      it('should create a new element at the end of the container element when a new item is appended to the collection', function () {
+          listItem.setAttribute('data-text', 'item.name');
+          rivets.bind(el, bindData);
+          var collection = data.get('items').slice();
+          collection.push({name: 'end'});
+          data.set({items: collection});
+          expect(el.getElementsByTagName('li').length).toBe(3);
+          expect(el.getElementsByTagName('li')[0]).toHaveTheTextContent('a');
+          expect(el.getElementsByTagName('li')[1]).toHaveTheTextContent('b');
+          expect(el.getElementsByTagName('li')[2]).toHaveTheTextContent('end');
+      });
+
+      it('should sort the bound elements according to order of items in the collection', function () {
+        listItem.setAttribute('data-text', 'item.name');
+        var collection = data.get('items').slice();
+        collection.push({name: 'e'}, {name: 'c'}, {name: 'd'});
+        data.set({items: collection});
+        rivets.bind(el, bindData);
+        expect(el.getElementsByTagName('li').length).toBe(collection.length);
+        expect(el.textContent).toBe('abecd');
+
+        // sort alphabetically
+        collection = collection.slice().sort(function (a, b) {
+            return a.name < b.name ? -1 : 1;
+        });
+        data.set({items: collection});
+        expect(el.textContent).toBe('abcde');
+
+        // reverse order
+        collection = collection.slice().reverse();
+        data.set({items: collection});
+        expect(el.textContent).toBe('edcba');
+      });
     });
   });
 
