@@ -57,6 +57,7 @@ Rivets.adapters['.'] =
       value = obj[keypath]
 
       Object.defineProperty obj, keypath,
+        enumerable: true
         get: -> value
         set: (newValue) =>
           if newValue isnt value
