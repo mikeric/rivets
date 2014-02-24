@@ -1,0 +1,20 @@
+{
+  "name": "rivets",
+  "version": "0.6.6",
+  "homepage": "http://rivetsjs.com",
+  "authors": [
+    "Michael Richards"
+  ],
+  "description": "Declarative data binding + templating solution.",
+  "main": "dist/rivets.js",
+  "keywords": [
+    "data binding",
+    "templating"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "node_modules",
+    "bower_components",
+    "spec",
+  ]
+}
