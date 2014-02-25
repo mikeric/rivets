@@ -172,7 +172,7 @@ Rivets.binders['each-*'] =
         @marker.parentNode.removeChild view.els[0]
 
     for model, index in collection
-      data = {}
+      data = {index}
       data[modelName] = model
 
       if not @iterated[index]?
@@ -209,7 +209,7 @@ Rivets.binders['each-*'] =
 
   update: (models) ->
     data = {}
-    
+
     for key, model of models
       data[key] = model unless key is @args[0]
 
