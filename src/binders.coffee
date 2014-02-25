@@ -228,7 +228,7 @@ Rivets.binders['class-*'] = (el, value) ->
 # Sets the attribute on the element. If no binder above is matched it will fall
 # back to using this binder.
 Rivets.binders['*'] = (el, value) ->
-  if value
+  if value?
     el.setAttribute @type, value
   else
     el.removeAttribute @type
