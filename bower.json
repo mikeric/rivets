@@ -15,6 +15,6 @@
   "ignore": [
     "node_modules",
     "bower_components",
-    "spec",
+    "spec"
   ]
 }
