@@ -164,23 +164,45 @@ Rivets.binders['each-*'] =
   routine: (el, collection) ->
     modelName = @args[0]
     collection = collection or []
-
-    if @iterated.length > collection.length
-      for i in Array @iterated.length - collection.length
-        view = @iterated.pop()
-        view.unbind()
-        @marker.parentNode.removeChild view.els[0]
+    # mirror is a live copy of the list of all `modelName` models bound to this view
+    iterated_mirror = (iter.models[modelName] for iter in @iterated)
+    # copy is just a dummy copy of mirror for keeping track of what's to be removed
+    iterated_copy = iterated_mirror.slice()
 
     for model, index in collection
-      data = {}
-      data[modelName] = model
+      iter_index = iterated_mirror.indexOf model
+      if ~ iter_index
+        iterated_copy.splice iterated_copy.indexOf(model), 1
+        # make sure index == iter_index
+        if iter_index isnt index
+          # get the element to append this view's element after
+          previous = if index and @iterated.length
+            @iterated[index - 1].els[0]
+          else
+            @marker
 
-      if not @iterated[index]?
-        for key, model of @view.models
-          data[key] ?= model
+          # move the view to the right index
+          view = @iterated.splice(iter_index, 1)[0]
+          @iterated.splice index, 0, view
+          # move the view's element to the right position
+          @marker.parentNode.insertBefore view.els[0], previous.nextSibling
 
-        previous = if @iterated.length
-          @iterated[@iterated.length - 1].els[0]
+          # also fix the mirror's order
+          iterated_mirror.splice index, 0, iterated_mirror.splice(iter_index, 1)[0]
+
+      else
+        # it's a new model in the collection, so bind it
+        data = {}
+        data[modelName] = model
+
+        for key, view_model of @view.models
+          data[key] ?= view_model
+
+        previous = if index and @iterated.length
+          if @iterated[index - 1]
+            @iterated[index - 1].els[0]
+          else
+            @iterated[@iterated.length - 1].els[0]
         else
           @marker
 
@@ -196,11 +218,19 @@ Rivets.binders['each-*'] =
         template = el.cloneNode true
         view = new Rivets.View(template, data, options)
         view.bind()
-        @iterated.push view
+        @iterated.splice index, 0, view
 
         @marker.parentNode.insertBefore template, previous.nextSibling
-      else if @iterated[index].models[modelName] isnt model
-        @iterated[index].update data
+
+    # unbind views that no longer exist in collection
+    if iterated_copy.length
+      i = @iterated.length
+      while i--
+        view = @iterated[i]
+        if view and ~ iterated_copy.indexOf view.models[modelName]
+          @iterated.splice i, 1
+          view.unbind()
+          @marker.parentNode.removeChild view.els[0]
 
     if el.nodeName is 'OPTION'
       for binding in @view.bindings
