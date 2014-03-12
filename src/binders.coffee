@@ -199,7 +199,7 @@ Rivets.binders['each-*'] =
           data[key] ?= view_model
 
         previous = if index and @iterated.length
-          if index - 1 in @iterated
+          if @iterated[index - 1]
             @iterated[index - 1].els[0]
           else
             @iterated[@iterated.length - 1].els[0]

@@ -232,6 +232,15 @@ describe('Functional', function() {
         data.set({items: collection});
         expect(el.textContent).toBe('edcba');
       });
+
+      it('should replace all bound elements to match the new collection and sort them according to order of items in the collection', function () {
+        listItem.setAttribute('data-text', 'item.name');
+        rivets.bind(el, bindData);
+        expect(el.textContent).toBe('ab');
+        data.set({items: [{name: 'e'}, {name: 'p'}, {name: 'r'}]});
+        expect(el.getElementsByTagName('li').length).toBe(3);
+        expect(el.textContent).toBe('epr');
+      });
     });
   });
 
