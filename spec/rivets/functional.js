@@ -99,7 +99,7 @@ describe('Functional', function() {
         expect(input.value).toBe(data.get('foo'));
       });
     });
-    
+
     describe('Multiple', function() {
       it('should bind a list of multiple elements', function() {
         el.setAttribute('data-html', 'data:foo');
@@ -176,7 +176,14 @@ describe('Functional', function() {
         expect(el.getElementsByTagName('li')[1]).toHaveTheTextContent('a');
         expect(el.getElementsByTagName('li')[2]).toHaveTheTextContent('b');
         expect(el.getElementsByTagName('li')[3]).toHaveTheTextContent('last');
-      })
+      });
+
+      it('should allow binding to the iterated element index', function() {
+        listItem.setAttribute('data-index', 'index');
+        rivets.bind(el, bindData);
+        expect(el.getElementsByTagName('li')[0].getAttribute('index')).toBe('0')
+        expect(el.getElementsByTagName('li')[1].getAttribute('index')).toBe('1')
+      });
 
     });
   });
