@@ -1,5 +1,5 @@
 // Rivets.js
-// version: 0.6.6
+// version: 0.6.7
 // author: Michael Richards
 // license: MIT
 (function() {
@@ -491,6 +491,7 @@
       if (models == null) {
         models = {};
       }
+      this.model = this.observer.target;
       return (_ref1 = this.binder.update) != null ? _ref1.call(this, models) : void 0;
     };
 
@@ -1054,7 +1055,9 @@
       }
       for (index = _j = 0, _len1 = collection.length; _j < _len1; index = ++_j) {
         model = collection[index];
-        data = {};
+        data = {
+          index: index
+        };
         data[modelName] = model;
         if (this.iterated[index] == null) {
           _ref2 = this.view.models;
@@ -1128,7 +1131,7 @@
   };
 
   Rivets.binders['*'] = function(el, value) {
-    if (value) {
+    if (value != null) {
       return el.setAttribute(this.type, value);
     } else {
       return el.removeAttribute(this.type);
@@ -1208,6 +1211,7 @@
         callbacks[keypath] = [];
         value = obj[keypath];
         Object.defineProperty(obj, keypath, {
+          enumerable: true,
           get: function() {
             return value;
           },
