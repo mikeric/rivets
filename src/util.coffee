@@ -2,7 +2,7 @@
 # -----------
 
 if 'jQuery' of window
-  [bindMethod, unbindMethod] = if 'on' of jQuery then ['on', 'off'] else ['bind', 'unbind']
+  [bindMethod, unbindMethod] = if 'on' of jQuery.prototype then ['on', 'off'] else ['bind', 'unbind']
   
   Rivets.Util =
     bindEvent: (el, event, handler) -> jQuery(el)[bindMethod] event, handler
