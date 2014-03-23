@@ -108,6 +108,7 @@ class Rivets.Binding
   # Updates the binding's model from what is currently set on the view. Unbinds
   # the old model first and then re-binds with the new model.
   update: (models = {}) =>
+    @model = @observer.target
     @binder.update?.call @, models
 
 # Rivets.ComponentBinding
