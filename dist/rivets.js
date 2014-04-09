@@ -27,7 +27,7 @@
   };
 
   if ('jQuery' in window) {
-    _ref = 'on' in jQuery ? ['on', 'off'] : ['bind', 'unbind'], bindMethod = _ref[0], unbindMethod = _ref[1];
+    _ref = 'on' in jQuery.prototype ? ['on', 'off'] : ['bind', 'unbind'], bindMethod = _ref[0], unbindMethod = _ref[1];
     Rivets.Util = {
       bindEvent: function(el, event, handler) {
         return jQuery(el)[bindMethod](event, handler);
@@ -1144,7 +1144,7 @@
     weakmap: {},
     weakReference: function(obj) {
       var id;
-      if (obj[this.id] == null) {
+      if (!obj.hasOwnProperty(this.id)) {
         id = this.counter++;
         this.weakmap[id] = {
           callbacks: {}
