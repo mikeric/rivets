@@ -27,7 +27,7 @@
   };
 
   if ('jQuery' in window) {
-    _ref = 'on' in jQuery ? ['on', 'off'] : ['bind', 'unbind'], bindMethod = _ref[0], unbindMethod = _ref[1];
+    _ref = 'on' in jQuery.prototype ? ['on', 'off'] : ['bind', 'unbind'], bindMethod = _ref[0], unbindMethod = _ref[1];
     Rivets.Util = {
       bindEvent: function(el, event, handler) {
         return jQuery(el)[bindMethod](event, handler);
@@ -1094,7 +1094,7 @@
         _results = [];
         for (_k = 0, _len2 = _ref4.length; _k < _len2; _k++) {
           binding = _ref4[_k];
-          if (binding.el === this.marker.parentNode && binding.type === 'value') {
+          if (binding.el.nodeName === 'SELECT' && binding.el.contains(this.marker) && binding.type === 'value') {
             _results.push(binding.sync());
           } else {
             _results.push(void 0);
