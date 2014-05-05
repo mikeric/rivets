@@ -204,7 +204,7 @@ Rivets.binders['each-*'] =
 
     if el.nodeName is 'OPTION'
       for binding in @view.bindings
-        if binding.el is @marker.parentNode and binding.type is 'value'
+        if binding.el.nodeName is 'SELECT' and binding.el.contains(@marker) and binding.type is 'value'
           binding.sync()
 
   update: (models) ->
