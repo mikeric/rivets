@@ -88,3 +88,5 @@ class Rivets.Observer
     for token, index in @tokens
       if obj = @objectPath[index]
         @set false, token, obj, @update
+
+    @set false, @key, @target, @callback if @target?
