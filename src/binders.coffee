@@ -164,25 +164,51 @@ Rivets.binders['each-*'] =
   routine: (el, collection) ->
     modelName = @args[0]
     collection = collection or []
-
-    if @iterated.length > collection.length
-      for i in Array @iterated.length - collection.length
-        view = @iterated.pop()
-        view.unbind()
-        @marker.parentNode.removeChild view.els[0]
+    # mirror is a live copy of the list of all `modelName` models bound to this view
+    iterated_mirror = (iter.models[modelName] for iter in @iterated)
+    element_list = []
 
     for model, index in collection
-      data = {index}
-      data[modelName] = model
+      iter_model = iterated_mirror[index]
+      # optimize the quickest check
+      if model is iter_model
+        continue
 
-      if not @iterated[index]?
-        for key, model of @view.models
-          data[key] ?= model
+      # see if we can find this model
+      iter_index = iterated_mirror.indexOf model
+      if ~ iter_index
+        # found it
+        # we already know that iter_index isnt index
+        # check if this item in @iterated was removed
+        if !~ collection.indexOf iter_model
+          # this item was removed
+          view = @iterated.splice(index, 1)[0]
+          view.unbind()
+          @marker.parentNode.removeChild view.els[0]
+          # reflect in the mirror
+          iterated_mirror.splice index, 1
+          # correct iter_index if needed
+          if index < iter_index
+            iter_index -= 1
 
-        previous = if @iterated.length
-          @iterated[@iterated.length - 1].els[0]
-        else
-          @marker
+        # check that this index was not corrected by last removal
+        # or was removed itself from the views list
+        if iter_index isnt index and iterated_mirror[iter_index]
+          # move the view to the right index
+          view = @iterated.splice(iter_index, 1)[0]
+          @iterated.splice index, 0, view
+          # remove the view's element and queue it for inserting later
+          element_list.push { el: @marker.parentNode.removeChild(view.els[0]), idx: index }
+          # also fix the mirror's order
+          iterated_mirror.splice(index, 0, iterated_mirror.splice(iter_index, 1)[0])
+
+      else
+        # it's a new model in the collection, so bind it
+        data = {}
+        data[modelName] = model
+
+        for key, view_model of @view.models
+          data[key] ?= view_model
 
         options =
           binders: @view.options.binders
@@ -196,24 +222,79 @@ Rivets.binders['each-*'] =
         template = el.cloneNode true
         view = new Rivets.View(template, data, options)
         view.bind()
-        @iterated.push view
+        @iterated.splice index, 0, view
 
-        @marker.parentNode.insertBefore template, previous.nextSibling
-      else if @iterated[index].models[modelName] isnt model
-        @iterated[index].update data
+        # also add it to the mirror list so it mirrors indices properly
+        iterated_mirror.splice index, 0, model
+
+        element_list.push { el: template, idx: index }
+
+    # unbind views that no longer exist in collection
+    while @iterated.length > collection.length
+      view = @iterated.pop()
+      view.unbind()
+      @marker.parentNode.removeChild view.els[0]
+
+    # if we have elements in queue, put them back into the DOM
+    if element_list.length
+      element_list.sort (a, b) ->
+        if a.idx < b.idx then -1 else 1
+
+      buffers = []
+      last_buffer = null
+      # create buffers
+      for element in element_list
+        if not buffers.length
+          last_buffer = new ElementBuffer(element.el, element.idx)
+          buffers.push last_buffer
+        else
+          if not last_buffer.add element.el, element.idx
+            last_buffer = new ElementBuffer(element.el, element.idx)
+            buffers.push last_buffer
+
+      # insert buffers into DOM
+      for buffer in buffers
+        index = buffer.first_index
+        previous = if index and @iterated[index - 1]
+            @iterated[index - 1].els[0]
+          else
+            @marker
+        @marker.parentNode.insertBefore buffer.fragment, previous.nextSibling
 
     if el.nodeName is 'OPTION'
       for binding in @view.bindings
         if binding.el is @marker.parentNode and binding.type is 'value'
           binding.sync()
 
-  update: (models) ->
-    data = {}
+class ElementBuffer
+  constructor: (element, @last_index) ->
+    @fragment = element
+    @first_index = @last_index
+    @length = 1
 
-    for key, model of models
-      data[key] = model unless key is @args[0]
+  add: (element, index) ->
+    if index is @first_index - 1
+      @insert element, true
+      @first_index = index
+      true
+    else if index is @last_index + 1
+      @insert element
+      @last_index = index
+      true
+    else
+      false
 
-    view.update data for view in @iterated
+  insert: (element, preppend) ->
+    if not @wrapped
+      fragment = document.createDocumentFragment()
+      fragment.appendChild @fragment
+      @fragment = fragment
+      @wrapped = true
+    if preppend
+      @fragment.insertBefore element, @fragment.firstChild
+    else
+      @fragment.appendChild element
+    @length += 1
 
 # Adds or removes the class from the element when value is true or false.
 Rivets.binders['class-*'] = (el, value) ->
