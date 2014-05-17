@@ -7,7 +7,7 @@ Rivets.adapters['.'] =
   weakmap: {}
 
   weakReference: (obj) ->
-    unless obj[@id]?
+    unless obj.hasOwnProperty @id
       id = @counter++
 
       @weakmap[id] =
