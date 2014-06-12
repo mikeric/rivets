@@ -14,7 +14,7 @@ _gaq.push(['_trackPageview']);
 <p>Using the cent value example from above, let&#39;s say we want to store a monetary value as cents but let the user input it in a dollar amount. For this we can define a two-way <code>currency</code> formatter.</p>
 <pre><code class="language-javascript">rivets.formatters.currency = {
   read: function(value) {
-    return (value / Math.pow(10, n)).toFixed(2)
+    return (value / Math.pow(10, 2)).toFixed(2)
   },
   publish: function(value) {
     return Math.round(parseFloat(value) * Math.pow(10, 2))
