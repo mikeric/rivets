@@ -1,7 +1,8 @@
 !!!
+
 html
   head
-    title Rivets.js &mdash; Lightweight and powerful data binding + templating solution for building modern web applications
+    title Rivets.js — Lightweight and powerful data binding + templating solution for building modern web applications
 
     link(rel="stylesheet", href="/css/bootstrap.css")
     link(rel="stylesheet", href="/css/type.css")
@@ -12,6 +13,7 @@ html
     script(src="/js/jquery.js")
     script(src="/js/bootstrap.min.js")
     script(src="/js/highlight.js")
+    script(src="/js/app.js")
 
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
 
@@ -31,25 +33,20 @@ html
   body(data-spy="scroll", data-target="#nav")
     header
       .container
-        .col.col-md-7
-          h1.brand-heading Rivets.js
+        .row
+          .col.col-xs-6
+            h3
+              a(href="/") RIVETS.JS
 
-          p.blurb Lightweight and powerful data binding + templating solution for building modern web applications.
+          .col.col-xs-6.right.visible-xs
+            i#hamburger &#9776;
+          .col.col-sm-6.col-xs-12.right.hidden-xs#menu
+            ul.list-unstyled
+              li
+                a(href="/docs/guide") Guide
+              li
+                a(href="/docs/reference") Binder Reference
+              li
+                a(href="http://github.com/mikeric/rivets") GitHub
 
-          a.btn.btn-clear(href="/dist/rivets.min.js")
-            i &#128229;
-            span Download 0.6.2
-
-          a.btn.btn-clear(href="http://github.com/mikeric/rivets")
-            i.social &#62208;
-            span GitHub Repository
-
-          a.btn.btn-clear(href="/docs/rivets.html")
-            i &#59156;
-            span Annotated Source
-
-        .col.col-md-5.graphic.hidden-sm.hidden-xs
-          img(src="/img/rv-blueprints.png")
-
-    .container
-      != yield
+    != yield

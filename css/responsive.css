@@ -1,6 +1,0 @@
-@media (max-width: 991px){header{text-align:center}
-aside{display:none}
-}@media (max-width: 767px){header .btn{width:50%;margin-bottom:5px}
-header .btn + .btn{margin-left:0}
-}@media (max-width: 480px){header .btn{width:100%}
-}
