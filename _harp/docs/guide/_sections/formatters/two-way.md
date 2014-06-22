@@ -2,15 +2,15 @@ Two-way formatters are useful when you want to store a value in a particular for
 
 Instead of defining the formatter as a single function, you define it as an object containing `read` and `publish` functions. When a formatter is defined as a single function, Rivets assumes it to be in the read direction only. When defined as an object, Rivets uses it's `read` and `publish` functions to effectively serialize and de-serialize the value.
 
-Using the cent value example from above, let's say we want to store a monetary value as cents but let the user input it in a dollar amount. For this we can define a two-way `currency` formatter.
+Using the cent value example from above, let's say we want to store a monetary value as cents but let the user input it in a dollar amount and automatically round to two decimal places when setting the value on the model. For this we can define a two-way `currency` formatter.
 
 ```javascript
 rivets.formatters.currency = {
   read: function(value) {
-    return (value / Math.pow(10, n)).toFixed(2)
+    return (value / 100).toFixed(2)
   },
   publish: function(value) {
-    return Math.round(parseFloat(value) * Math.pow(10, 2))
+    return Math.round(parseFloat(value) * 100)
   }
 }
 ```
