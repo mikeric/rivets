@@ -16,11 +16,19 @@ npm install
 
 #### Building
 
-Rivets.js uses [gulp](http://gulpjs.com/) as it's build tool. Run `gulp build` to compile + minify the source into `dist/`.
+Rivets.js uses [gulp](http://gulpjs.com/) as it's build tool. Run the following task to compile + minify the source into `dist/`.
+
+```
+gulp build
+```
 
 #### Testing
 
-Rivets.js uses [mocha](http://visionmedia.github.io/mocha/) as it's testing framework, alongside [should](https://github.com/visionmedia/should.js/) for expecations and [sinon](http://sinonjs.org/) for spies, stubs and mocks. Run `gulp spec` to run the full test suite.
+Rivets.js uses [mocha](http://visionmedia.github.io/mocha/) as it's testing framework, alongside [should](https://github.com/visionmedia/should.js/) for expecations and [sinon](http://sinonjs.org/) for spies, stubs and mocks. Run the following task to run the full test suite.
+
+```
+gulp spec
+```
 
 ## Contributing
 
