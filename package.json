@@ -16,6 +16,9 @@
     "url": "https://github.com/mikeric/rivets.git"
   },
   "devDependencies": {
+    "mocha": "~1.20.1",
+    "should": "~4.0.4",
+    "sinon": "~1.10.2",
     "gulp": "~3.6.2",
     "gulp-util": "~2.2.14",
     "gulp-coffee": "~1.4.3",
@@ -23,6 +26,6 @@
     "gulp-concat": "~2.2.0",
     "gulp-uglify": "~0.3.0",
     "gulp-insert": "~0.3.0",
-    "gulp-jasmine": "~0.2.0"
+    "gulp-mocha-phantomjs": "~0.2.0"
   }
 }

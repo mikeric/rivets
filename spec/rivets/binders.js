@@ -1,29 +1,33 @@
 describe("Rivets.binders", function() {
-  var context;
+  var context
+
   beforeEach(function() {
     context = {
       publish: function() {}
     }
-  });
+  })
 
   describe("value", function() {
-    var el;
+    var el
+
     beforeEach(function() {
-      el = document.createElement('input');
-    });
+      el = document.createElement('input')
+    })
 
     it("unbinds the same bound function", function() {
-      var boundFn;
-      spyOn(el, 'addEventListener').andCallFake(function(event, fn) {
-        boundFn = fn;
-      });
-      rivets.binders.value.bind.call(context, el);
+      var boundFn
 
-      spyOn(el, 'removeEventListener').andCallFake(function(event, fn) {
-        expect(fn).toBe(boundFn);
-      });
+      sinon.stub(el, 'addEventListener', function(event, fn) {
+        boundFn = fn
+      })
 
-      rivets.binders.value.unbind.call(context, el);
-    });
-  });
-});
+      rivets.binders.value.bind.call(context, el)
+
+      sinon.stub(el, 'removeEventListener', function(event, fn) {
+        fn.should.equal(boundFn)
+      })
+
+      rivets.binders.value.unbind.call(context, el)
+    })
+  })
+})

@@ -6,7 +6,7 @@ header = require('gulp-header')
 concat = require('gulp-concat')
 uglify = require('gulp-uglify')
 insert = require('gulp-insert')
-jasmine = require('gulp-jasmine')
+mocha  = require('gulp-mocha-phantomjs')
 
 banner = function() {
   return [
@@ -35,6 +35,6 @@ gulp.task('build', function() {
 })
 
 gulp.task('spec', function() {
-  gulp.src('spec/rivets/*.js')
-    .pipe(jasmine())
+  gulp.src('spec/runner.html')
+    .pipe(mocha())
 })
