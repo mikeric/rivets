@@ -5,8 +5,19 @@ coffee = require('gulp-coffee')
 header = require('gulp-header')
 concat = require('gulp-concat')
 uglify = require('gulp-uglify')
-insert = require('gulp-insert')
 mocha  = require('gulp-mocha-phantomjs')
+
+source = [
+  'src/rivets.coffee',
+  'src/util.coffee',
+  'src/parsers.coffee',
+  'src/observer.coffee',
+  'src/view.coffee',
+  'src/bindings.coffee',
+  'src/adapters.coffee',
+  'src/binders.coffee',
+  'src/export.coffee'
+]
 
 banner = function() {
   return [
@@ -17,14 +28,10 @@ banner = function() {
   ].join('\n') + '\n'
 }
 
-safety = function() {
-  return insert.wrap('(function() {\n', '}).call(this);')
-}
-
 gulp.task('build', function() {
-  compiled = gulp.src('src/*.coffee')
-    .pipe(coffee({bare: true}).on('error', util.log))
+  compiled = gulp.src(source)
     .pipe(concat('rivets.js'))
+    .pipe(coffee().on('error', util.log))
     .pipe(header(banner()))
     .pipe(gulp.dest('dist'))
 
@@ -36,5 +43,5 @@ gulp.task('build', function() {
 
 gulp.task('spec', function() {
   gulp.src('spec/runner.html')
-    .pipe(mocha())
+    .pipe(mocha({reporter: 'dot'}))
 })
