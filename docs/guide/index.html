@@ -156,13 +156,13 @@ view.unbind()</code></pre>
 <pre><code class="language-html">&lt;span rv-text=&quot;event.startDate | date&quot;&gt;&lt;/span&gt;</code></pre>
 <h3 id="formatters-two-way">Two-way formatters</h3><p>Two-way formatters are useful when you want to store a value in a particular format, such as a unix epoch time or a cent value, but still let the user input the value in a different format.</p>
 <p>Instead of defining the formatter as a single function, you define it as an object containing <code>read</code> and <code>publish</code> functions. When a formatter is defined as a single function, Rivets assumes it to be in the read direction only. When defined as an object, Rivets uses it&#39;s <code>read</code> and <code>publish</code> functions to effectively serialize and de-serialize the value.</p>
-<p>Using the cent value example from above, let&#39;s say we want to store a monetary value as cents but let the user input it in a dollar amount. For this we can define a two-way <code>currency</code> formatter.</p>
+<p>Using the cent value example from above, let&#39;s say we want to store a monetary value as cents but let the user input it in a dollar amount and automatically round to two decimal places when setting the value on the model. For this we can define a two-way <code>currency</code> formatter.</p>
 <pre><code class="language-javascript">rivets.formatters.currency = {
   read: function(value) {
-    return (value / Math.pow(10, n)).toFixed(2)
+    return (value / 100).toFixed(2)
   },
   publish: function(value) {
-    return Math.round(parseFloat(value) * Math.pow(10, 2))
+    return Math.round(parseFloat(value) * 100)
   }
 }</code></pre>
 <p>You can then bind using this formatter with any one-way or two-way binder.</p>
