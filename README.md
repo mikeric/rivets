@@ -4,19 +4,23 @@ Rivets.js is a DOM-based templating system that sits ontop of a configurable com
 
 ## Getting Started and Documentation
 
-All documentation for Rivets.js is available on the [homepage](http://rivetsjs.com). See the [Getting started](http://rivetsjs.com#getting-started) section to learn how to create views and properly configure Rivets.js for your app.
+All documentation for Rivets.js is available on the [homepage](http://rivetsjs.com). See the [Getting started](http://rivetsjs.com/docs/guide/#getting-started) section to learn how to create views and properly configure Rivets.js for your app.
 
 ## Building and Testing
 
-Make sure to run npm install so that you have all the development dependencies. To have the test suite run as part of the build process, you'll also need to have PhantomJS installed.
+First, make sure to install any development dependencies.
+
+```
+npm install
+```
 
 #### Building
 
-Rivets.js uses [grunt](http://gruntjs.com/) as the build tool. Run `grunt build` from within the project root to compile + minify the source into `dist/`, or just run `grunt` to have it watch the source file for changes. It will compile + minify into `dist/` and run the test suite whenever the source file is saved.
+Rivets.js uses [gulp](http://gulpjs.com/) as it's build tool. Run `gulp build` to compile + minify the source into `dist/`.
 
 #### Testing
 
-Rivets.js uses [Jasmine](http://pivotal.github.com/jasmine/) as the testing framework. You can run the test suite with `grunt spec`.
+Rivets.js uses [mocha](http://visionmedia.github.io/mocha/) as it's testing framework, alongside [should](https://github.com/visionmedia/should.js/) for expecations and [sinon](http://sinonjs.org/) for spies, stubs and mocks. Run `gulp spec` to run the full test suite.
 
 ## Contributing
 
@@ -28,7 +32,6 @@ Rivets.js uses [Jasmine](http://pivotal.github.com/jasmine/) as the testing fram
 #### Pull Requests
 
 1. Fork the repository and create a topic branch.
-2. Be sure to associate commits to their corresponding issue using `[#1]` or `[Closes #1]` if the commit resolves the issue.
 3. Make sure not to commit any changes under `dist/` as they will surely cause merge conflicts later. Files under `dist/` are only committed when a new build is released.
-4. Include tests for your changes and make them pass.
-5. Push to your fork and submit a pull-request with an explanation and reference to the issue number(s).
+4. Include tests that cover any changes or additions that you've made.
+5. Push your topic branch to your fork and submit a pull request. Include details about the changes as well as references to any related issues.
