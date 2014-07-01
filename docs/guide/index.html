@@ -34,8 +34,8 @@ _gaq.push(['_trackPageview']);
 <pre><code class="language-html">&lt;script src=&quot;rivets.min.js&quot;&gt;&lt;/script&gt;</code></pre>
 <h3 id="getting-started-creating-views">Creating a view</h3><p>First, we need to create a template. Templates describe your UI in plain HTML using special prefixed attributes, DOM elements and basic text interpolation. They can go wherever you like &mdash; in the DOM, inside a document fragment, or defined as a template element. Just make sure you have a convenient way to reference them.</p>
 <pre><code class="language-html">&lt;section id=&quot;auction&quot;&gt;
-  &lt;h1&gt;{ action.title }&lt;/h1&gt;
-  &lt;img rv-src=&quot;action.image.url&quot;&gt;
+  &lt;h1&gt;{ auction.title }&lt;/h1&gt;
+  &lt;img rv-src=&quot;auction.image.url&quot;&gt;
 
   &lt;aside rv-show=&#39;auction.remaining | lt 120&#39;&gt;
     &lt;h4&gt;Hurry up!&lt;h4&gt;
