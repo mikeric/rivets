@@ -193,6 +193,7 @@ class Rivets.TextBinding extends Rivets.Binding
   constructor: (@view, @el, @type, @keypath, @options = {}) ->
     @formatters = @options.formatters || []
     @dependencies = []
+    @formatterObservers = {}
 
   # A standard routine binder used for text node bindings.
   binder:
