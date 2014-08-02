@@ -2,8 +2,8 @@ First, we need to create a template. Templates describe your UI in plain HTML us
 
 ```html
 <section id="auction">
-  <h1>{ action.title }</h1>
-  <img rv-src="action.image.url">
+  <h1>{ auction.title }</h1>
+  <img rv-src="auction.image.url">
 
   <aside rv-show='auction.remaining | lt 120'>
     <h4>Hurry up!<h4>
