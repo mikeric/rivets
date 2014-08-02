@@ -157,6 +157,10 @@ Rivets.binders['each-*'] =
       el.removeAttribute attr
       el.parentNode.insertBefore @marker, el
       el.parentNode.removeChild el
+    else
+      for view in @iterated
+        view.bind()
+    return;
 
   unbind: (el) ->
     view.unbind() for view in @iterated if @iterated?
