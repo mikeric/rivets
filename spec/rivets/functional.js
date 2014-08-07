@@ -63,7 +63,6 @@ describe('Functional', function() {
       it('should set the text content of the element', function() {
         el.setAttribute('data-text', 'data:foo')
         rivets.bind(el, bindData)
-        debugger
         el.textContent.should.equal(data.get('foo'))
       })
 
@@ -205,6 +204,37 @@ describe('Functional', function() {
       event.initEvent('change', true, true)
       input.dispatchEvent(event)
       input.value.should.equal(data.get('foo'))
+    })
+  })
+
+  describe('Radio button', function() {
+    it('should update the model value', function() {
+      radio1 = document.createElement('input')
+      radio1.setAttribute('type', 'radio')
+      radio1.setAttribute('value', '1')
+      radio1.setAttribute('checked', 'checked')
+      radio1.setAttribute('name', 'test')
+      radio1.setAttribute('data-checked', 'data:foo')
+      radio2 = document.createElement('input')
+      radio2.setAttribute('type', 'radio')
+      radio2.setAttribute('value', '2')
+      radio2.setAttribute('name', 'test')
+      radio2.setAttribute('data-checked', 'data:foo')
+      container = document.createElement('div')
+      container.appendChild(radio1)
+      container.appendChild(radio2)
+      document.body.appendChild(container)
+      var view = rivets.bind(container, bindData)
+      radio2.checked = true
+      var event = document.createEvent('HTMLEvents')
+      event.initEvent('change', true, true)
+      radio2.dispatchEvent(event)
+      radio2.value.should.equal(data.get('foo'))
+      radio1.checked = true
+      event = document.createEvent('HTMLEvents')
+      event.initEvent('change', true, true)
+      radio1.dispatchEvent(event)
+      radio1.value.should.equal(data.get('foo'))
     })
   })
 })
