@@ -110,7 +110,6 @@ Rivets.binders.if =
         @marker.parentNode.insertBefore el, @marker.nextSibling
       else
         el.parentNode.removeChild el
-        @nested.unbind()
         delete @nested
 
   update: (models) ->

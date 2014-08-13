@@ -99,4 +99,77 @@ describe("Rivets.binders", function() {
       Should(fragment.childNodes.length).be.exactly(model.items.length + 1);
     });
   });
+
+  describe("if", function() {
+    var fragment;
+    var el;
+    var model;
+
+    beforeEach(function() {
+      fragment = document.createDocumentFragment();
+      el = document.createElement("div");
+      el.setAttribute("rv-if", "data.show");
+      el.innerHTML = "{ data.count }";
+
+      fragment.appendChild(el);
+
+      model = { data: {
+        show: true,
+        count: 1
+      } };
+    });
+
+    it("shows element with bound key inside if the value is true", function() {
+      var view = rivets.bind(fragment, model);
+
+      // one child for the original div plus 1 for the comment placeholder
+      Should(fragment.childNodes.length).be.exactly(2);
+      Should(fragment.childNodes[1].innerHTML).be.exactly("1");
+    });
+
+    it("hides if the value is false", function() {
+      var view = rivets.bind(fragment, model);
+
+      model.data.show = false;
+
+      // 1 for the comment placeholder
+      Should(fragment.childNodes.length).be.exactly(1);
+    });
+
+    it("keeps binding when element becomes visible again", function() {
+      var view = rivets.bind(fragment, model);
+
+      model.data.show = false;
+      model.data.count = 2;
+      model.data.show = true;
+
+      // one child for the original div plus 1 for the comment placeholder
+      Should(fragment.childNodes.length).be.exactly(2);
+      Should(fragment.childNodes[1].innerHTML).be.exactly("2");
+    });
+
+    it("hides if the value is falsey - zero", function() {
+      var view = rivets.bind(fragment, model);
+
+      model.data.show = 0;
+      // 1 for the comment placeholder
+      Should(fragment.childNodes.length).be.exactly(1);
+    });
+
+    it("hides if the value is falsey - empty string", function() {
+      var view = rivets.bind(fragment, model);
+
+      model.data.show = "";
+      // 1 for the comment placeholder
+      Should(fragment.childNodes.length).be.exactly(1);
+    });
+
+    it("hides if the value is falsey - undefined", function() {
+      var view = rivets.bind(fragment, model);
+
+      model.data.show = undefined;
+      // 1 for the comment placeholder
+      Should(fragment.childNodes.length).be.exactly(1);
+    });
+  });
 });
