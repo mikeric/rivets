@@ -35,16 +35,17 @@ class Rivets.Binding
       id = args.shift()
       formatter = @view.formatters[id]
 
+      args = Rivets.ArgumentParser.parse(args)
       processedArgs = []
 
       for arg, ai in args
-        processedArgs.push if str = arg.match(/^\'(.+)?\'$/)
-          str[1]
+        processedArgs.push if arg.type is 0
+          arg.value
         else
           @formatterObservers[fi] or= {}
 
           unless observer = @formatterObservers[fi][ai]
-            observer = new Rivets.Observer @view, @view.models, arg, @sync
+            observer = new Rivets.Observer @view, @view.models, arg.value, @sync
             @formatterObservers[fi][ai] = observer
 
           observer.value()
