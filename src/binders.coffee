@@ -86,6 +86,7 @@ Rivets.binders.if =
       declaration = el.getAttribute attr
 
       @marker = document.createComment " rivets: #{@type} #{declaration} "
+      @bound = false
 
       el.removeAttribute attr
       el.parentNode.insertBefore @marker, el
@@ -95,7 +96,7 @@ Rivets.binders.if =
     @nested?.unbind()
 
   routine: (el, value) ->
-    if !!value is not @nested?
+    if !!value is not @bound
       if value
         models = {}
         models[key] = model for key, model of @view.models
@@ -106,11 +107,13 @@ Rivets.binders.if =
           adapters: @view.options.adapters
           config: @view.options.config
 
-        (@nested = new Rivets.View(el, models, options)).bind()
+        (@nested or= new Rivets.View(el, models, options)).bind()
         @marker.parentNode.insertBefore el, @marker.nextSibling
+        @bound = true
       else
         el.parentNode.removeChild el
-        delete @nested
+        @nested.unbind()
+        @bound = false
 
   update: (models) ->
     @nested?.update models
