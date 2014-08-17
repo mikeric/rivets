@@ -202,7 +202,7 @@ describe('Functional', function() {
       rivets.bind(input, bindData)
       input.value = 'some new value'
       var event = document.createEvent('HTMLEvents')
-      event.initEvent('change', true, true)
+      event.initEvent('input', true, true)
       input.dispatchEvent(event)
       input.value.should.equal(data.get('foo'))
     })
