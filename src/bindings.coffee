@@ -9,6 +9,7 @@ class Rivets.Binding
   constructor: (@view, @el, @type, @keypath, @options = {}) ->
     @formatters = @options.formatters || []
     @dependencies = []
+    @formatterObservers = {}
     @model = undefined
     @setBinder()
 
@@ -29,15 +30,30 @@ class Rivets.Binding
   # Applies all the current formatters to the supplied value and returns the
   # formatted value.
   formattedValue: (value) =>
-    for formatter in @formatters
-      args = formatter.split /\s+/
+    for formatter, fi in @formatters
+      args = formatter.match /[^\s']+|'[^']+'/g
       id = args.shift()
       formatter = @view.formatters[id]
 
+      args = Rivets.ArgumentParser.parse(args)
+      processedArgs = []
+
+      for arg, ai in args
+        processedArgs.push if arg.type is 0
+          arg.value
+        else
+          @formatterObservers[fi] or= {}
+
+          unless observer = @formatterObservers[fi][ai]
+            observer = new Rivets.Observer @view, @view.models, arg.value, @sync
+            @formatterObservers[fi][ai] = observer
+
+          observer.value()
+
       if formatter?.read instanceof Function
-        value = formatter.read value, args...
+        value = formatter.read value, processedArgs...
       else if formatter instanceof Function
-        value = formatter value, args...
+        value = formatter value, processedArgs...
 
     value
 
@@ -104,6 +120,11 @@ class Rivets.Binding
 
     observer.unobserve() for observer in @dependencies
     @dependencies = []
+
+    for fi, args of @formatterObservers
+      observer.unobserve() for ai, observer of args
+
+    @formatterObservers = {}
 
   # Updates the binding's model from what is currently set on the view. Unbinds
   # the old model first and then re-binds with the new model.
@@ -175,6 +196,7 @@ class Rivets.TextBinding extends Rivets.Binding
   constructor: (@view, @el, @type, @keypath, @options = {}) ->
     @formatters = @options.formatters || []
     @dependencies = []
+    @formatterObservers = {}
 
   # A standard routine binder used for text node bindings.
   binder:

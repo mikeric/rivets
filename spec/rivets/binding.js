@@ -252,7 +252,7 @@ describe('Rivets.Binding', function() {
           return prefix + ' awesome ' + value
         }
 
-        binding.formatters.push('awesome super')
+        binding.formatters.push("awesome 'super'")
       })
 
       it('applies the formatter with arguments', function() {

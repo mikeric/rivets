@@ -19,6 +19,43 @@ class Rivets.KeypathParser
     tokens.push current
     tokens
 
+# Rivets.ArgumentParser
+# ---------------------
+
+# Parser and tokenizer for arguments within binding declarations.
+class Rivets.ArgumentParser
+  @types:
+    primitive: 0
+    keypath: 1
+
+  @parse: (args) ->
+    tokens = []
+
+    for arg in args
+      tokens.push if /^'.*'$/.test arg
+        type: @types.primitive
+        value: arg.slice 1, -1
+      else if arg is 'true'
+        type: @types.primitive
+        value: true
+      else if arg is 'false'
+        type: @types.primitive
+        value: false
+      else if arg is 'null'
+        type: @types.primitive
+        value: null
+      else if arg is 'undefined'
+        type: @types.primitive
+        value: undefined
+      else if isNaN(Number(arg)) is false
+        type: @types.primitive
+        value: Number arg
+      else
+        type: @types.keypath
+        value: arg
+
+    tokens
+
 # Rivets.TextTemplateParser
 # -------------------------
 
