@@ -130,7 +130,9 @@ class Rivets.Binding
   # the old model first and then re-binds with the new model.
   update: (models = {}) =>
     @model = @observer.target
+    @unbind()
     @binder.update?.call @, models
+    @bind()
 
 # Rivets.ComponentBinding
 # -----------------------
