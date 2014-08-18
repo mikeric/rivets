@@ -37,7 +37,10 @@ class Rivets.View
 
       pipes = (pipe.trim() for pipe in declaration.split '|')
       context = (ctx.trim() for ctx in pipes.shift().split '<')
-      keypath = context.shift()
+      keypath = context.shift().replace(/(?:--(\w+)(?:\s(\w+))?)/g, (str, optName, optValue = true) =>
+        options[optName] = optValue
+        return ""
+      ).trim()
 
       options.formatters = pipes
 

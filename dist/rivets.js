@@ -402,7 +402,13 @@
             }
             return _results;
           })();
-          keypath = context.shift();
+          keypath = context.shift().replace(/(?:--(\w+)(?:\s(\w+))?)/g, function(str, optName, optValue) {
+            if (optValue == null) {
+              optValue = true;
+            }
+            options[optName] = optValue;
+            return "";
+          }).trim();
           options.formatters = pipes;
           if (dependencies = context.shift()) {
             options.dependencies = dependencies.split(/\s+/);

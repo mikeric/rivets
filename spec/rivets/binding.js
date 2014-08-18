@@ -33,6 +33,19 @@ describe('Rivets.Binding', function() {
       binding.binder.bind.called.should.be.true
     })
 
+    describe('parsing options', function () {
+      beforeEach(function () {
+        el.setAttribute('data-text', 'obj.name --theOption 42 --anotherOption')
+        view = rivets.bind(el, {obj: {name: 'test'}})
+        binding = view.bindings[0]
+      })
+      it("parses options in unix shell style", function () {
+        binding.options.theOption.should.be.equal('42')
+        binding.options.anotherOption.should.be.equal(true)
+      })
+    })
+
+
     describe('with preloadData set to true', function() {
       beforeEach(function() {
         rivets.config.preloadData = true
