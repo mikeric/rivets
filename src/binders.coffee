@@ -60,10 +60,14 @@ Rivets.binders.unchecked =
 # (two-way binder).
 Rivets.binders.value =
   publishes: true
+
   bind: (el) ->
-    Rivets.Util.bindEvent el, 'change', @publish
+    @event = if el.tagName is 'SELECT' then 'change' else 'input'
+    Rivets.Util.bindEvent el, @event, @publish
+
   unbind: (el) ->
-    Rivets.Util.unbindEvent el, 'change', @publish
+    Rivets.Util.unbindEvent el, @event, @publish
+
   routine: (el, value) ->
     if window.jQuery?
       el = jQuery el
