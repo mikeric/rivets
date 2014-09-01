@@ -14,8 +14,8 @@ source = [
   'src/observer.coffee',
   'src/view.coffee',
   'src/bindings.coffee',
-  'src/adapters.coffee',
   'src/binders.coffee',
+  'src/adapter.coffee',
   'src/export.coffee'
 ]
 
