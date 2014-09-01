@@ -14,14 +14,14 @@ source = [
   'src/observer.coffee',
   'src/view.coffee',
   'src/bindings.coffee',
-  'src/adapters.coffee',
   'src/binders.coffee',
+  'src/adapter.coffee',
   'src/export.coffee'
 ]
 
-banner = function() {
+banner = function(bundled) {
   return [
-    '// Rivets.js',
+    '// Rivets.js' + (bundled ? ' + Sightglass.js' : ''),
     '// version: ' + pkg.version,
     '// author: ' + pkg.author,
     '// license: ' + pkg.licenses[0].type
@@ -29,16 +29,27 @@ banner = function() {
 }
 
 gulp.task('build', function() {
-  compiled = gulp.src(source)
+  rivets = gulp.src(source)
     .pipe(concat('rivets.js'))
     .pipe(coffee().on('error', util.log))
     .pipe(header(banner()))
     .pipe(gulp.dest('dist'))
 
-  compiled.pipe(concat('rivets.min.js'))
+  rivetsMin = rivets.pipe(concat('rivets.min.js'))
     .pipe(uglify())
     .pipe(header(banner()))
     .pipe(gulp.dest('dist'))
+
+  rivets.on('end', function() {
+    sightglass = 'node_modules/sightglass/index.js'
+    rivets = 'dist/rivets.js'
+
+    gulp.src([sightglass, rivets])
+      .pipe(uglify())
+      .pipe(concat('rivets.bundled.min.js'))
+      .pipe(header(banner(true)))
+      .pipe(gulp.dest('dist'))
+  })
 })
 
 gulp.task('spec', function() {

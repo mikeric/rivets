@@ -27,6 +27,11 @@ class Rivets.Binding
     @binder or= @view.binders['*']
     @binder = {routine: @binder} if @binder instanceof Function
 
+  observe: (obj, keypath, callback) =>
+    Rivets.sightglass obj, keypath, callback,
+      root: @view.rootInterface
+      adapters: @view.adapters
+
   # Applies all the current formatters to the supplied value and returns the
   # formatted value.
   formattedValue: (value) =>
@@ -45,7 +50,7 @@ class Rivets.Binding
           @formatterObservers[fi] or= {}
 
           unless observer = @formatterObservers[fi][ai]
-            observer = new Rivets.Observer @view, @view.models, arg.value, @sync
+            observer = @observe @view.models, arg.value, @sync
             @formatterObservers[fi][ai] = observer
 
           observer.value()
@@ -59,7 +64,7 @@ class Rivets.Binding
 
   # Returns an event handler for the binding around the supplied function.
   eventHandler: (fn) =>
-    handler = (binding = @).view.config.handler
+    handler = (binding = @).view.handler
     (ev) -> handler.call fn, @, ev, binding
 
   # Sets the value for the binding. This Basically just runs the binding routine
@@ -80,7 +85,7 @@ class Rivets.Binding
 
       if (@model = @observer.target)? and @options.dependencies?.length
         for dependency in @options.dependencies
-          observer = new Rivets.Observer @view, @model, dependency, @sync
+          observer = @observe @model, dependency, @sync
           @dependencies.push observer
 
     @set @observer.value()
@@ -96,22 +101,22 @@ class Rivets.Binding
       if @view.formatters[id]?.publish
         value = @view.formatters[id].publish value, args...
 
-    @observer.publish value
+    @observer.setValue value
 
   # Subscribes to the model for changes at the specified keypath. Bi-directional
   # routines will also listen for changes on the element to propagate them back
   # to the model.
   bind: =>
     @binder.bind?.call @, @el
-    @observer = new Rivets.Observer @view, @view.models, @keypath, @sync
+    @observer = @observe @view.models, @keypath, @sync
     @model = @observer.target
 
     if @model? and @options.dependencies?.length
       for dependency in @options.dependencies
-        observer = new Rivets.Observer @view, @model, dependency, @sync
+        observer = @observe @model, dependency, @sync
         @dependencies.push observer
 
-    @sync() if @view.config.preloadData
+    @sync() if @view.preloadData
 
   # Unsubscribes from the model and the element.
   unbind: =>
@@ -143,7 +148,7 @@ class Rivets.ComponentBinding extends Rivets.Binding
   # element is passed in along with the component type. Attributes and scope
   # inflections are determined based on the components defined attributes.
   constructor: (@view, @el, @type) ->
-    @component = Rivets.components[@type]
+    @component = @view.components[@type]
     @attributes = {}
     @inflections = {}
 

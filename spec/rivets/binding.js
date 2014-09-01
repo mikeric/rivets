@@ -2,7 +2,7 @@ describe('Rivets.Binding', function() {
   var model, el, view, binding, opts
 
   beforeEach(function() {
-    rivets.config.prefix = 'data'
+    rivets.prefix = 'data'
     adapter = rivets.adapters['.']
 
     el = document.createElement('div')
@@ -19,9 +19,9 @@ describe('Rivets.Binding', function() {
 
   describe('bind()', function() {
     it('subscribes to the model for changes via the adapter', function() {
-      sinon.spy(adapter, 'subscribe')
+      sinon.spy(adapter, 'observe')
       binding.bind()
-      adapter.subscribe.calledWith(model, 'name', binding.sync).should.be.true
+      adapter.observe.calledWith(model, 'name', binding.sync).should.be.true
     })
 
     it("calls the binder's bind method if one exists", function() {
@@ -35,7 +35,7 @@ describe('Rivets.Binding', function() {
 
     describe('with preloadData set to true', function() {
       beforeEach(function() {
-        rivets.config.preloadData = true
+        rivets.preloadData = true
       })
 
       it('sets the initial value', function() {
@@ -52,8 +52,8 @@ describe('Rivets.Binding', function() {
 
       it('sets up observers on the dependant attributes', function() {
         binding.bind()
-        adapter.subscribe.calledWith(model, 'fname', binding.sync).should.be.true
-        adapter.subscribe.calledWith(model, 'lname', binding.sync).should.be.true
+        adapter.observe.calledWith(model, 'fname', binding.sync).should.be.true
+        adapter.observe.calledWith(model, 'lname', binding.sync).should.be.true
       })
     })
   })
@@ -105,9 +105,9 @@ describe('Rivets.Binding', function() {
 
       numberInput.value = 42
 
-      sinon.spy(adapter, 'publish')
+      sinon.spy(adapter, 'set')
       binding.publish({target: numberInput})
-      adapter.publish.calledWith(model, 'num', '42').should.be.true
+      adapter.set.calledWith(model, 'num', '42').should.be.true
     })
   })
 
@@ -139,7 +139,7 @@ describe('Rivets.Binding', function() {
       numberInput.value = 42
 
       binding.publish({target: numberInput})
-      adapter.publish.calledWith(model, 'num', 'awesome 42').should.be.true
+      adapter.set.calledWith(model, 'num', 'awesome 42').should.be.true
     })
 
     it("should format a value in both directions", function() {
@@ -158,7 +158,7 @@ describe('Rivets.Binding', function() {
 
       valueInput.value = 'charles'
       binding.publish({target: valueInput})
-      adapter.publish.calledWith(model, 'name', 'awesome charles').should.be.true
+      adapter.set.calledWith(model, 'name', 'awesome charles').should.be.true
 
       sinon.spy(binding.binder, 'routine')
       binding.set('fred')
@@ -177,7 +177,7 @@ describe('Rivets.Binding', function() {
 
       valueInput.value = 'charles'
       binding.publish({target: valueInput})
-      adapter.publish.calledWith(model, 'name', 'charles').should.be.true
+      adapter.set.calledWith(model, 'name', 'charles').should.be.true
 
       binding.set('fred')
       binding.binder.routine.calledWith(valueInput, 'fred').should.be.true
@@ -207,7 +207,7 @@ describe('Rivets.Binding', function() {
 
       valueInput.value = 'fred'
       binding.publish({target: valueInput})
-      adapter.publish.calledWith(model, 'name', 'fred totally is awesome').should.be.true
+      adapter.set.calledWith(model, 'name', 'fred totally is awesome').should.be.true
     })
 
     it("binders in a chain should be skipped if they're not there", function() {
@@ -235,7 +235,7 @@ describe('Rivets.Binding', function() {
 
       valueInput.value = 'fred'
       binding.publish({target: valueInput})
-      adapter.publish.calledWith(model, 'name', 'fred totally is radical').should.be.true
+      adapter.set.calledWith(model, 'name', 'fred totally is radical').should.be.true
     })
   })
 
