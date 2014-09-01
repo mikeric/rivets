@@ -1,28 +1,64 @@
 # The Rivets namespace.
 Rivets =
-  # Binder definitions, publicly accessible on `module.binders`. Can be
-  # overridden globally or local to a `Rivets.View` instance.
-  binders: {}
+  options: [
+    'prefix'
+    'templateDelimiters'
+    'rootInterface'
+    'preloadData'
+    'handler'
+  ]
 
-  # Component definitions, publicly accessible on `module.components`. Can be
-  # overridden globally or local to a `Rivets.View` instance.
-  components: {}
+  extensions: [
+    'binders'
+    'formatters'
+    'components'
+    'adapters'
+  ]
 
-  # Formatter definitions, publicly accessible on `module.formatters`. Can be
-  # overridden globally or local to a `Rivets.View` instance.
-  formatters: {}
+  # The public interface (this is the exported module object).
+  public:
+    # Global binders.
+    binders: {}
 
-  # Adapter definitions, publicly accessible on `module.adapters`. Can be
-  # overridden globally or local to a `Rivets.View` instance.
-  adapters: {}
+    # Global components.
+    components: {}
 
-  # The default configuration, publicly accessible on `module.config`. Can be
-  # overridden globally or local to a `Rivets.View` instance.
-  config:
+    # Global formatters.
+    formatters: {}
+
+    # Global sightglass adapters.
+    adapters: {}
+
+    # Default attribute prefix.
     prefix: 'rv'
+
+    # Default template delimiters.
     templateDelimiters: ['{', '}']
+
+    # Default sightglass root interface.
     rootInterface: '.'
+
+    # Preload data by default.
     preloadData: true
 
+    # Default event handler.
     handler: (context, ev, binding) ->
       @call context, ev, binding.view.models
+
+    # Merges an object literal into the corresponding global options.
+    configure: (options = {}) ->
+      for option, value of options
+        if option in ['binders', 'components', 'formatters', 'adapters']
+          for key, descriptor of value
+            Rivets[option][key] = descriptor
+        else
+          Rivets.public[option] = value
+
+      return
+
+    # Binds a set of model objects to a parent DOM element and returns a
+    # `Rivets.View` instance.
+    bind: (el, models = {}, options = {}) ->
+      view = new Rivets.View(el, models, options)
+      view.bind()
+      view
