@@ -28,7 +28,6 @@ class Rivets.Binding
     @binder = {routine: @binder} if @binder instanceof Function
 
   observe: (obj, keypath, callback) =>
-    Rivets.sightglass.root = '.'
     Rivets.sightglass obj, keypath, callback,
       root: @view.rootInterface
       adapters: @view.adapters
