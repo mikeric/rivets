@@ -3,23 +3,23 @@ describe('Functional', function() {
 
   beforeEach(function() {
     adapter = {
-      subscribe: function(obj, keypath, callback) {
+      observe: function(obj, keypath, callback) {
         obj.on(keypath, callback)
       },
-      unsubscribe: function(obj, keypath, callback) {
+      unobserve: function(obj, keypath, callback) {
         obj.off(keypath, callback)
       },
-      read: function(obj, keypath) {
+      get: function(obj, keypath) {
         return obj.get(keypath)
       },
-      publish: function(obj, keypath, value) {
+      set: function(obj, keypath, value) {
         attributes = {}
         attributes[keypath] = value
         obj.set(attributes)
       }
     }
 
-    rivets.adapters[':'] = adapter
+    sightglass.adapters[':'] = adapter
     rivets.configure({preloadData: true})
 
     data = new Data({
