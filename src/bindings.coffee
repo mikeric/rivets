@@ -121,7 +121,8 @@ class Rivets.Binding
   # Unsubscribes from the model and the element.
   unbind: =>
     @binder.unbind?.call @, @el
-    @observer.unobserve()
+    if @observer
+      @observer.unobserve()
 
     observer.unobserve() for observer in @dependencies
     @dependencies = []
