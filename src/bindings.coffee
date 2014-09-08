@@ -71,7 +71,7 @@ class Rivets.Binding
   # with the suplied value formatted.
   set: (value) =>
     value = if value instanceof Function and !@binder.function
-      @formattedValue value.call @model
+      @formattedValue value.call @model, @
     else
       @formattedValue value
 
