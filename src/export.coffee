@@ -2,44 +2,21 @@
 # --------------
 
 # Rivets.js module factory.
-Rivets.factory = (exports) ->
-  # Exposes the full Rivets namespace. This is mainly used for isolated testing.
-  exports._ = Rivets
+Rivets.factory = (sightglass) ->
+  # Integrate sightglass.
+  Rivets.sightglass = sightglass
 
-  # Exposes the binders object.
-  exports.binders = Rivets.binders
+  # Allow access to private members (for testing).
+  Rivets.public._ = Rivets
 
-  # Exposes the components object.
-  exports.components = Rivets.components
-
-  # Exposes the formatters object.
-  exports.formatters = Rivets.formatters
-
-  # Exposes the adapters object.
-  exports.adapters = Rivets.adapters
-
-  # Exposes the config object.
-  exports.config = Rivets.config
-
-  # Merges an object literal onto the config object.
-  exports.configure = (options={}) ->
-    for property, value of options
-      Rivets.config[property] = value
-    return
-
-  # Binds a set of model objects to a parent DOM element and returns a
-  # `Rivets.View` instance.
-  exports.bind = (el, models = {}, options = {}) ->
-    view = new Rivets.View(el, models, options)
-    view.bind()
-    view
+  # Return the public interface.
+  Rivets.public
 
 # Exports Rivets.js for CommonJS, AMD and the browser.
-if typeof exports == 'object'
-  Rivets.factory(exports)
-else if typeof define == 'function' && define.amd
-  define ['exports'], (exports) ->
-    Rivets.factory(@rivets = exports)
-    return exports
+if typeof module?.exports is 'object'
+  module.exports = Rivets.factory require('sightglass')
+else if typeof define is 'function' and define.amd
+  define ['sightglass'], (sightglass) ->
+    @rivets = Rivets.factory sightglass
 else
-  Rivets.factory(@rivets = {})
+  @rivets = Rivets.factory sightglass

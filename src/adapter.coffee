@@ -1,7 +1,7 @@
 # The default `.` adapter thats comes with Rivets.js. Allows subscribing to
 # properties on POJSOs, implemented in ES5 natives using
 # `Object.defineProperty`.
-Rivets.adapters['.'] =
+Rivets.public.adapters['.'] =
   id: '_rv'
   counter: 0
   weakmap: {}
@@ -51,7 +51,7 @@ Rivets.adapters['.'] =
         if idx >= 0
           keypaths.splice idx, 1
 
-  subscribe: (obj, keypath, callback) ->
+  observe: (obj, keypath, callback) ->
     callbacks = @weakReference(obj).callbacks
 
     unless callbacks[keypath]?
@@ -72,7 +72,7 @@ Rivets.adapters['.'] =
 
     @observeMutations obj[keypath], obj[@id], keypath
 
-  unsubscribe: (obj, keypath, callback) ->
+  unobserve: (obj, keypath, callback) ->
     callbacks = @weakmap[obj[@id]].callbacks[keypath]
 
     idx = callbacks.indexOf(callback);
@@ -80,8 +80,8 @@ Rivets.adapters['.'] =
       callbacks.splice idx, 1
     @unobserveMutations obj[keypath], obj[@id], keypath
 
-  read: (obj, keypath) ->
+  get: (obj, keypath) ->
     obj[keypath]
 
-  publish: (obj, keypath, value) ->
+  set: (obj, keypath, value) ->
     obj[keypath] = value
