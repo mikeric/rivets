@@ -57,8 +57,6 @@ class Rivets.View
       @bindings.push new Rivets[binding] @, node, type, keypath, options
 
     parse = (node) =>
-      block = false
-
       if node.nodeType is 3
         parser = Rivets.TextTemplateParser
 
@@ -72,32 +70,34 @@ class Rivets.View
                 if token.type is 1
                   buildBinding 'TextBinding', text, null, token.value
               node.parentNode.removeChild node
-      else if componentRegExp.test node.tagName
-        type = node.tagName.replace(componentRegExp, '').toLowerCase()
-        @bindings.push new Rivets.ComponentBinding @, node, type
+      else if node.nodeType is 1
+        if componentRegExp.test node.nodeName
+          type = node.nodeName.replace(componentRegExp, '').toLowerCase()
+          @bindings.push new Rivets.ComponentBinding @, node, type
+        else
+          block = node.nodeName is 'SCRIPT' or node.nodeName is 'STYLE'
 
-      else if node.attributes?
-        for attribute in node.attributes
-          if bindingRegExp.test attribute.name
-            type = attribute.name.replace bindingRegExp, ''
+          for attribute in node.attributes
+            if bindingRegExp.test attribute.name
+              type = attribute.name.replace bindingRegExp, ''
 
-            unless binder = @binders[type]
-              for identifier, value of @binders
-                if identifier isnt '*' and identifier.indexOf('*') isnt -1
-                  regexp = new RegExp "^#{identifier.replace('*', '.+')}$"
-                  if regexp.test type
-                    binder = value
+              unless binder = @binders[type]
+                for identifier, value of @binders
+                  if identifier isnt '*' and identifier.indexOf('*') isnt -1
+                    regexp = new RegExp "^#{identifier.replace('*', '.+')}$"
+                    if regexp.test type
+                      binder = value
 
-            binder or= @binders['*']
+              binder or= @binders['*']
 
-            if binder.block
-              block = true
-              attributes = [attribute]
+              if binder.block
+                block = true
+                attributes = [attribute]
 
-        for attribute in attributes or node.attributes
-          if bindingRegExp.test attribute.name
-            type = attribute.name.replace bindingRegExp, ''
-            buildBinding 'Binding', node, type, attribute.value
+          for attribute in attributes or node.attributes
+            if bindingRegExp.test attribute.name
+              type = attribute.name.replace bindingRegExp, ''
+              buildBinding 'Binding', node, type, attribute.value
 
       unless block
         parse childNode for childNode in (n for n in node.childNodes)
