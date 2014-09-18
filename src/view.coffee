@@ -39,7 +39,6 @@ class Rivets.View
   # binding declaration.
   build: =>
     @bindings = []
-    skipNodes = []
     bindingRegExp = @bindingRegExp()
     componentRegExp = @componentRegExp()
 
@@ -58,28 +57,30 @@ class Rivets.View
       @bindings.push new Rivets[binding] @, node, type, keypath, options
 
     parse = (node) =>
-      unless node in skipNodes
-        if node.nodeType is 3
-          parser = Rivets.TextTemplateParser
+      if node.nodeType is 3
+        parser = Rivets.TextTemplateParser
 
-          if delimiters = @templateDelimiters
-            if (tokens = parser.parse(node.data, delimiters)).length
-              unless tokens.length is 1 and tokens[0].type is parser.types.text
-                for token in tokens
-                  text = document.createTextNode token.value
-                  node.parentNode.insertBefore text, node
+        if delimiters = @templateDelimiters
+          if (tokens = parser.parse(node.data, delimiters)).length
+            unless tokens.length is 1 and tokens[0].type is parser.types.text
+              for token in tokens
+                text = document.createTextNode token.value
+                node.parentNode.insertBefore text, node
 
-                  if token.type is 1
-                    buildBinding 'TextBinding', text, null, token.value
-                node.parentNode.removeChild node
-        else if componentRegExp.test node.tagName
-          type = node.tagName.replace(componentRegExp, '').toLowerCase()
+                if token.type is 1
+                  buildBinding 'TextBinding', text, null, token.value
+              node.parentNode.removeChild node
+      else if node.nodeType is 1
+        if componentRegExp.test node.nodeName
+          type = node.nodeName.replace(componentRegExp, '').toLowerCase()
           @bindings.push new Rivets.ComponentBinding @, node, type
+        else
+          block = node.nodeName is 'SCRIPT' or node.nodeName is 'STYLE'
 
-        else if node.attributes?
           for attribute in node.attributes
             if bindingRegExp.test attribute.name
               type = attribute.name.replace bindingRegExp, ''
+
               unless binder = @binders[type]
                 for identifier, value of @binders
                   if identifier isnt '*' and identifier.indexOf('*') isnt -1
@@ -90,7 +91,7 @@ class Rivets.View
               binder or= @binders['*']
 
               if binder.block
-                skipNodes.push n for n in node.childNodes
+                block = true
                 attributes = [attribute]
 
           for attribute in attributes or node.attributes
@@ -98,6 +99,7 @@ class Rivets.View
               type = attribute.name.replace bindingRegExp, ''
               buildBinding 'Binding', node, type, attribute.value
 
+      unless block
         parse childNode for childNode in (n for n in node.childNodes)
 
     parse el for el in @els
