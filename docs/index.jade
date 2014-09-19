@@ -1,0 +1,88 @@
+section.intro
+  .container
+    .row
+      .col.col-sm-12
+        p.blurb Lightweight and powerful data binding + templating solution for building modern web applications.
+
+        a.btn.btn-clear(href="https://raw.githubusercontent.com/mikeric/rivets/v0.6.9/dist/rivets.min.js")
+          i &#128229;
+          span Download 0.6.9
+
+        p 3.4kb minified and gzipped
+
+section.agnostic
+  .container
+    .row
+      .col.col-sm-12
+        .separator
+          h5 WHY RIVETS.JS?
+    .row
+      .col.col-md-6
+        h3 Agnostic by design
+        p Rivets.js is completely agnostic about your model / controller layer and works well with existing libraries that employ an event-driven model such as <a href="http://backbonejs.org/">Backbone.js</a> and <a href="http://hay.github.io/stapes/">Stapes.js</a>. It ships with a built-in adapter for subscribing to plain JS objects using ES5 natives, however this can be replaced with a <a href="https://github.com/melanke/Watch.JS">Watch.JS</a> adapter or an <a href="http://wiki.ecmascript.org/doku.php?id=harmony:observe">Object.observe</a> adapter.
+      .col.col-md-6
+        h3 Highly configurable
+        p From the event handlers to the template delimiters, the attribute prefixes to the preloading of data. It's all configurable and tunable at the application level as well as locally to individual views.
+
+section.highlights
+  .container
+    .row
+      .col.col-sm-12
+        .separator
+          h5 MOVING PARTS
+    .row
+      .col.col-sm-6
+        h3 Binders
+        span
+          = '<input rv-'
+          span.highlighted value
+          = '="item.summary">'
+        p Describe how your underlying data is reflected in the DOM and vice-versa. All binders create a binding that is automatically updated when model data changes or when the user interacts with the DOM.
+      .col.col-sm-6
+        h3 Components
+        span
+          = '<rv-'
+          span.highlighted toggle
+          = ' on="item.complete">'
+        p Define reusable subviews, instantiable as a custom element. Each component gets its own augmentable view and scope.
+    .row
+      .col.col-sm-6
+        h3 Formatters
+        span
+          = '{ item.due | '
+          span.highlighted fromNow
+          = ' | '
+          span.highlighted duration
+          = ' }'
+        p Format dates, numbers, currencies and implement logic gates and conversions. Formatters work in a similar fashion to the Unix pipeline, so you can stack as many of them together as you like.
+      .col.col-sm-6
+        h3 Adapters
+        span
+          = '<dd rv-text="user'
+          span.highlighted= '.'
+          = 'address'
+          span.highlighted= ':'
+          = 'city">'
+        p Teach Rivets.js how to observe and interact with different objects. Use <code>.</code> for plain object proterties and define a <code>:</code> adapter for Backbone model attributes. It's up to you. Adapters take care of observing and reading each key in a keypath.
+
+section.author
+  .container
+    .row
+      .col.col-md-6.col-md-offset-3.col-sm-8.col-sm-offset-2
+        h2 Author
+        p Michael Richards is a Ruby/JavaScript developer, residing in beautiful Vancouver, British Columbia.
+
+        img(src="/img/mikeric.jpg")
+
+    .row
+      .col.col-md-12
+        a(href="http://github.com/mikeric")
+          i.social &#62208;
+        a(href="http://twitter.com/mikeric")
+          i.social &#62217;
+        a(href="http://linkedin.com/in/mikeric")
+          i.social &#62232;
+        a(href="http://instagram.com/mikeric")
+          i.social &#62253;
+        a(href="http://rdio.com/people/mikeric")
+          i.social &#62244;

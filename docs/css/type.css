@@ -1,0 +1,104 @@
+/* Proxima Nova */
+
+@font-face {
+  font-family: 'Proxima Nova';
+  src: url('/fonts/proxima-nova/ProximaNova-Thin-webfont.eot');
+  src: url('/fonts/proxima-nova/ProximaNova-Thin-webfont.eot?#iefix') format('embedded-opentype'),
+       url('/fonts/proxima-nova/ProximaNova-Thin-webfont.woff') format('woff'),
+       url('/fonts/proxima-nova/ProximaNova-Thin-webfont.ttf') format('truetype'),
+       url('/fonts/proxima-nova/ProximaNova-Thin-webfont.svg#ywftsvg') format('svg');
+  font-weight: 200;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Proxima Nova';
+  src: url('/fonts/proxima-nova/ProximaNova-Light-webfont.eot');
+  src: url('/fonts/proxima-nova/ProximaNova-Light-webfont.eot?#iefix') format('embedded-opentype'),
+       url('/fonts/proxima-nova/ProximaNova-Light-webfont.woff') format('woff'),
+       url('/fonts/proxima-nova/ProximaNova-Light-webfont.ttf') format('truetype'),
+       url('/fonts/proxima-nova/ProximaNova-Light-webfont.svg#ywftsvg') format('svg');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Proxima Nova';
+  src: url('/fonts/proxima-nova/ProximaNova-Reg-webfont.eot');
+  src: url('/fonts/proxima-nova/ProximaNova-Reg-webfont.eot?#iefix') format('embedded-opentype'),
+       url('/fonts/proxima-nova/ProximaNova-Reg-webfont.woff') format('woff'),
+       url('/fonts/proxima-nova/ProximaNova-Reg-webfont.ttf') format('truetype'),
+       url('/fonts/proxima-nova/ProximaNova-Reg-webfont.svg#ywftsvg') format('svg');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Proxima Nova';
+  src: url('/fonts/proxima-nova/ProximaNova-Sbold-webfont.eot');
+  src: url('/fonts/proxima-nova/ProximaNova-Sbold-webfont.eot?#iefix') format('embedded-opentype'),
+       url('/fonts/proxima-nova/ProximaNova-Sbold-webfont.woff') format('woff'),
+       url('/fonts/proxima-nova/ProximaNova-Sbold-webfont.ttf') format('truetype'),
+       url('/fonts/proxima-nova/ProximaNova-Sbold-webfont.svg#ywftsvg') format('svg');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Proxima Nova';
+  src: url('/fonts/proxima-nova/ProximaNova-Bold-webfont.eot');
+  src: url('/fonts/proxima-nova/ProximaNova-Bold-webfont.eot?#iefix') format('embedded-opentype'),
+       url('/fonts/proxima-nova/ProximaNova-Bold-webfont.woff') format('woff'),
+       url('/fonts/proxima-nova/ProximaNova-Bold-webfont.ttf') format('truetype'),
+       url('/fonts/proxima-nova/ProximaNova-Bold-webfont.svg#ywftsvg') format('svg');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Proxima Nova';
+  src: url('/fonts/proxima-nova/ProximaNova-Xbold-webfont.eot');
+  src: url('/fonts/proxima-nova/ProximaNova-Xbold-webfont.eot?#iefix') format('embedded-opentype'),
+       url('/fonts/proxima-nova/ProximaNova-Xbold-webfont.woff') format('woff'),
+       url('/fonts/proxima-nova/ProximaNova-Xbold-webfont.ttf') format('truetype'),
+       url('/fonts/proxima-nova/ProximaNova-Xbold-webfont.svg#ywftsvg') format('svg');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Proxima Nova';
+  src: url('/fonts/proxima-nova/ProximaNova-Black-webfont.eot');
+  src: url('/fonts/proxima-nova/ProximaNova-Black-webfont.eot?#iefix') format('embedded-opentype'),
+       url('/fonts/proxima-nova/ProximaNova-Black-webfont.woff') format('woff'),
+       url('/fonts/proxima-nova/ProximaNova-Black-webfont.ttf') format('truetype'),
+       url('/fonts/proxima-nova/ProximaNova-Black-webfont.svg#ywftsvg') format('svg');
+  font-weight: 800;
+  font-style: normal;
+}
+
+/* Entypo */
+
+@font-face {
+  font-family: 'Entypo';
+  src: url('/fonts/entypo/entypo.eot');
+  src: url('/fonts/entypo/entypo.eot?#iefix') format('embedded-opentype'),
+       url('/fonts/entypo/entypo.woff') format('woff'),
+       url('/fonts/entypo/entypo.ttf') format('truetype'),
+       url('/fonts/entypo/entypo.svg#ywftsvg') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Entypo Social */
+
+@font-face {
+  font-family: 'Entypo Social';
+  src: url('/fonts/entypo-social/entypo-social.eot');
+  src: url('/fonts/entypo-social/entypo-social.eot?#iefix') format('embedded-opentype'),
+       url('/fonts/entypo-social/entypo-social.woff') format('woff'),
+       url('/fonts/entypo-social/entypo-social.ttf') format('truetype'),
+       url('/fonts/entypo-social/entypo-social.svg#ywftsvg') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
