@@ -33,9 +33,9 @@ echo "updating documentation"
 rm -rf _harp
 mv docs _harp
 echo "recompiling"
-harp compile _harp .
+harp compile _harp docs
 
-"committing changes"
+echo "committing changes"
 git add -A
 git commit -a -m "generated documentation for $RIVETS_VERSION"
 echo "When you are ready to publish:"
