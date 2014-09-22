@@ -9,12 +9,12 @@ class Rivets.KeypathParser
     current = {interface: root, path: ''}
 
     for index in [0...keypath.length] by 1
-      char = keypath.charAt index
-      if char in interfaces
+      chr = keypath.charAt index
+      if chr in interfaces
         tokens.push current
-        current = {interface: char, path: ''}
+        current = {interface: chr, path: ''}
       else
-        current.path += char
+        current.path += chr
 
     tokens.push current
     tokens
