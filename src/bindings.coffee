@@ -18,10 +18,10 @@ class Rivets.Binding
     unless @binder = @view.binders[@type]
       for identifier, value of @view.binders
         if identifier isnt '*' and identifier.indexOf('*') isnt -1
-          regexp = new RegExp "^#{identifier.replace('*', '.+')}$"
+          regexp = new RegExp "^#{identifier.replace(/\*/g, '.+')}$"
           if regexp.test @type
             @binder = value
-            @args = new RegExp("^#{identifier.replace('*', '(.+)')}$").exec @type
+            @args = new RegExp("^#{identifier.replace(/\*/g, '(.+)')}$").exec @type
             @args.shift()
 
     @binder or= @view.binders['*']

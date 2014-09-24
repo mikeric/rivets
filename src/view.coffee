@@ -84,7 +84,7 @@ class Rivets.View
               unless binder = @binders[type]
                 for identifier, value of @binders
                   if identifier isnt '*' and identifier.indexOf('*') isnt -1
-                    regexp = new RegExp "^#{identifier.replace('*', '.+')}$"
+                    regexp = new RegExp "^#{identifier.replace(/\*/g, '.+')}$"
                     if regexp.test type
                       binder = value
 
