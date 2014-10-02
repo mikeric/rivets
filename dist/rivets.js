@@ -40,6 +40,8 @@
         $el = jQuery(el);
         if ($el.attr('type') === 'checkbox') {
           return $el.is(':checked');
+        } else if ($el.attr('type') === 'radio') {
+          return jQuery('[name="' + $el.attr('name') + '"]:checked').val();
         } else {
           return $el.val();
         }
@@ -68,9 +70,12 @@
         };
       })(),
       getInputValue: function(el) {
-        var o, _i, _len, _results;
+        var o, r, _i, _len, _results;
         if (el.type === 'checkbox') {
           return el.checked;
+        } else if (el.type === 'radio') {
+          r = document.querySelector('[name="' + el.name + '"]:checked');
+          return r.value;
         } else if (el.type === 'select-multiple') {
           _results = [];
           for (_i = 0, _len = el.length; _i < _len; _i++) {
