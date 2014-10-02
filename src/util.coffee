@@ -3,7 +3,7 @@
 
 if 'jQuery' of window
   [bindMethod, unbindMethod] = if 'on' of jQuery.prototype then ['on', 'off'] else ['bind', 'unbind']
-  
+
   Rivets.Util =
     bindEvent: (el, event, handler) -> jQuery(el)[bindMethod] event, handler
     unbindEvent: (el, event, handler) -> jQuery(el)[unbindMethod] event, handler
@@ -11,6 +11,7 @@ if 'jQuery' of window
       $el = jQuery el
 
       if $el.attr('type') is 'checkbox' then $el.is ':checked'
+      else if $el.attr('type') is 'radio' then do jQuery('[name="' + $el.attr('name') + '"]:checked').val
       else do $el.val
 else
   Rivets.Util =
@@ -22,9 +23,12 @@ else
     unbindEvent: do ->
       if 'removeEventListener' of window then return (el, event, handler) ->
         el.removeEventListener event, handler, false
-      
+
       (el, event, handler) -> el.detachEvent 'on' + event, handler
     getInputValue: (el) ->
       if el.type is 'checkbox' then el.checked
+      else if el.type is 'radio'
+        r = document.querySelector('[name="' + el.name + '"]:checked')
+        r.value
       else if el.type is 'select-multiple' then o.value for o in el when o.selected
       else el.value
