@@ -1,0 +1,75 @@
+{
+  "intro": {
+    "title": "Introduction",
+    "sections": {
+      "dom-based": {
+        "title": "DOM-based templating"
+      },
+      "why-not-plugin": {
+        "title": "Why isn't it a plugin for one of the famous JavaScript libraries?",
+        "nav": "Why not a plugin?"
+      }
+    }
+  },
+  "getting-started": {
+    "title": "Getting Started",
+    "sections": {
+      "creating-views": {
+        "title": "Creating a view"
+      },
+      "configuring": {
+        "title": "Configuring"
+      }
+    }
+  },
+  "adapters": {
+    "title": "Adapters",
+    "sections": {
+      "default": {
+        "title": "The built-in adapter"
+      },
+      "creating": {
+        "title": "Creating an adapter"
+      }
+    }
+  },
+  "binders": {
+    "title": "Binders",
+    "sections": {
+      "one-way": {
+        "title": "One-way binders"
+      },
+      "two-way": {
+        "title": "Two-way binders"
+      },
+      "api": {
+        "title": "API"
+      }
+    }
+  },
+  "formatters": {
+    "title": "Formatters",
+    "sections": {
+      "one-way": {
+        "title": "One-way formatters"
+      },
+      "two-way": {
+        "title": "Two-way formatters"
+      },
+      "arguments": {
+        "title": "Formatter arguments"
+      }
+    }
+  },
+  "usage": {
+    "title": "Usage notes",
+    "sections": {
+      "computed-properties": {
+        "title": "Computed properties"
+      },
+      "iteration": {
+        "title": "Iteration binding"
+      }
+    }
+  }
+}

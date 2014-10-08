@@ -1,0 +1,25 @@
+section.docs
+  .container
+    .row
+      article.guide.col.col-md-9
+        for section, anchor in public.docs.guide._data
+          h2(id= anchor)= section.title
+          != partial('_sections/' + anchor)
+
+          for subsection, subanchor in section.sections
+            h3(id= anchor + '-' + subanchor)= subsection.title
+            != partial('_sections/' + anchor + '/' + subanchor)
+
+      aside.col.col-md-3.hidden-sm.hidden-xs
+        .pull-right
+          nav#nav(data-spy="affix", data-offset-top="145")
+            ul.nav
+              for section, anchor in public.docs.guide._data
+                li
+                  a(href= '#' + anchor)
+                    strong= section.title
+
+                  ul.nav
+                    for subsection, subanchor in section.sections
+                      li
+                        a(href= '#' + anchor + '-' + subanchor)= subsection.nav || subsection.title

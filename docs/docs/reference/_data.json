@@ -1,0 +1,17 @@
+[
+  "text",
+  "html",
+  "show",
+  "hide",
+  "enabled",
+  "disabled",
+  "if",
+  "unless",
+  "value",
+  "checked",
+  "unchecked",
+  "on-[event]",
+  "each-[item]",
+  "class-[classname]",
+  "[attribute]"
+]

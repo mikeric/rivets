@@ -1,0 +1,16 @@
+section.docs
+  .container
+    .row
+      article.col.col-md-9
+        for binder in public.docs.reference._data
+          h2(id= binder)= binder
+          != partial('_binders/' + binder)
+
+      aside.col.col-md-3.hidden-sm.hidden-xs
+        .pull-right
+          nav#nav(data-spy="affix", data-offset-top="145")
+            ul.nav
+              for binder in public.docs.reference._data
+                li
+                  a(href= '#' + binder)
+                    strong= binder
