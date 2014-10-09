@@ -11,7 +11,7 @@ class Rivets.ArgumentParser
     tokens = []
 
     for arg in args
-      tokens.push if /^'.*'$/.test arg
+      tokens.push if /^'.*'$|^".*"$/.test arg
         type: @types.primitive
         value: arg.slice 1, -1
       else if arg is 'true'

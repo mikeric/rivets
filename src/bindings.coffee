@@ -36,7 +36,7 @@ class Rivets.Binding
   # formatted value.
   formattedValue: (value) =>
     for formatter, fi in @formatters
-      args = formatter.match /[^\s']+|'[^']+'/g
+      args = formatter.match /[^\s']+|'([^']|'[^\s])*'|"([^"]|"[^\s])*"/g
       id = args.shift()
       formatter = @view.formatters[id]
 
