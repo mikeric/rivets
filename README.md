@@ -24,10 +24,10 @@ gulp build
 
 #### Testing
 
-Rivets.js uses [mocha](http://visionmedia.github.io/mocha/) as it's testing framework, alongside [should](https://github.com/visionmedia/should.js/) for expecations and [sinon](http://sinonjs.org/) for spies, stubs and mocks. Run the following task to run the full test suite.
+Rivets.js uses [mocha](http://visionmedia.github.io/mocha/) as it's testing framework, alongside [should](https://github.com/visionmedia/should.js/) for expectations and [sinon](http://sinonjs.org/) for spies, stubs and mocks. Run the following to run the full test suite.
 
 ```
-gulp spec
+npm test
 ```
 
 ## Contributing
