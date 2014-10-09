@@ -19,7 +19,8 @@
     "sightglass": "~0.2.1"
   },
   "scripts": {
-    "test": "gulp spec"
+    "test": "gulp spec",
+    "build": "gulp build"
   },
   "devDependencies": {
     "mocha": "~1.20.1",
