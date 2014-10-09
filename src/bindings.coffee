@@ -40,7 +40,7 @@ class Rivets.Binding
       id = args.shift()
       formatter = @view.formatters[id]
 
-      args = Rivets.ArgumentParser.parse(args)
+      args = (Rivets.TypeParser.parse(arg) for arg in args)
       processedArgs = []
 
       for arg, ai in args
