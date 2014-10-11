@@ -32,6 +32,15 @@ class Rivets.Binding
       root: @view.rootInterface
       adapters: @view.adapters
 
+  parseTarget: =>
+    token = Rivets.TypeParser.parse @keypath
+
+    if token.type is 0
+      @value = token.value
+    else
+      @observer = @observe @view.models, @keypath, @sync
+      @model = @observer.target
+
   # Applies all the current formatters to the supplied value and returns the
   # formatted value.
   formattedValue: (value) =>
@@ -40,7 +49,7 @@ class Rivets.Binding
       id = args.shift()
       formatter = @view.formatters[id]
 
-      args = Rivets.ArgumentParser.parse(args)
+      args = (Rivets.TypeParser.parse(arg) for arg in args)
       processedArgs = []
 
       for arg, ai in args
@@ -79,37 +88,40 @@ class Rivets.Binding
 
   # Syncs up the view binding with the model.
   sync: =>
-    if @model isnt @observer.target
-      observer.unobserve() for observer in @dependencies
-      @dependencies = []
+    @set if @observer
+      if @model isnt @observer.target
+        observer.unobserve() for observer in @dependencies
+        @dependencies = []
 
-      if (@model = @observer.target)? and @options.dependencies?.length
-        for dependency in @options.dependencies
-          observer = @observe @model, dependency, @sync
-          @dependencies.push observer
+        if (@model = @observer.target)? and @options.dependencies?.length
+          for dependency in @options.dependencies
+            observer = @observe @model, dependency, @sync
+            @dependencies.push observer
 
-    @set @observer.value()
+      @observer.value()
+    else
+      @value
 
   # Publishes the value currently set on the input element back to the model.
   publish: =>
-    value = Rivets.Util.getInputValue @el
+    if @observer
+      value = Rivets.Util.getInputValue @el
 
-    for formatter in @formatters.slice(0).reverse()
-      args = formatter.split /\s+/
-      id = args.shift()
+      for formatter in @formatters.slice(0).reverse()
+        args = formatter.split /\s+/
+        id = args.shift()
 
-      if @view.formatters[id]?.publish
-        value = @view.formatters[id].publish value, args...
+        if @view.formatters[id]?.publish
+          value = @view.formatters[id].publish value, args...
 
-    @observer.setValue value
+      @observer.setValue value
 
   # Subscribes to the model for changes at the specified keypath. Bi-directional
   # routines will also listen for changes on the element to propagate them back
   # to the model.
   bind: =>
     @binder.bind?.call @, @el
-    @observer = @observe @view.models, @keypath, @sync
-    @model = @observer.target
+    @parseTarget()
 
     if @model? and @options.dependencies?.length
       for dependency in @options.dependencies
@@ -121,7 +133,7 @@ class Rivets.Binding
   # Unsubscribes from the model and the element.
   unbind: =>
     @binder.unbind?.call @, @el
-    @observer.unobserve()
+    @observer?.unobserve()
 
     observer.unobserve() for observer in @dependencies
     @dependencies = []
@@ -134,7 +146,7 @@ class Rivets.Binding
   # Updates the binding's model from what is currently set on the view. Unbinds
   # the old model first and then re-binds with the new model.
   update: (models = {}) =>
-    @model = @observer.target
+    @model = @observer?.target
     @unbind()
     @binder.update?.call @, models
     @bind()
