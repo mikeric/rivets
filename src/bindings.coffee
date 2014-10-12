@@ -120,8 +120,8 @@ class Rivets.Binding
   # routines will also listen for changes on the element to propagate them back
   # to the model.
   bind: =>
-    @binder.bind?.call @, @el
     @parseTarget()
+    @binder.bind?.call @, @el
 
     if @model? and @options.dependencies?.length
       for dependency in @options.dependencies
