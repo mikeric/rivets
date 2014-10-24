@@ -153,7 +153,10 @@ class Rivets.Binding
     
   # Returns elements value
   getValue: (el) =>
-    (@binder.getValue.bind(@) or Rivets.Util.getInputValue) el
+    if @binder.getValue
+      @binder.getValue.call @, el
+      
+    Rivets.Util.getInputValue el
 
 # Rivets.ComponentBinding
 # -----------------------
