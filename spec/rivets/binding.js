@@ -260,4 +260,23 @@ describe('Rivets.Binding', function() {
       })
     })
   })
+
+  describe('getValue()', function() {
+    it('should use binder.getValue() if present', function() {
+      binding.binder.getValue = function(el) {
+        return 'foo'
+      }
+
+      binding.getValue(el).should.equal('foo')
+    })
+
+    it('binder.getValue() should have access to passed element', function() {
+      binding.binder.getValue = function(el) {
+        return el.dataset.foo
+      }
+
+      el.dataset.foo = 'bar'
+      binding.getValue(el).should.equal('bar')
+    })
+  })
 })
