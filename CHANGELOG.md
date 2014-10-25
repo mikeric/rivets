@@ -24,17 +24,20 @@
 - The `Observer` class has been abstracted out into a new lib as a dependency. See [Sightglass](https://github.com/mikeric/sightglass).
 - The built-in `value` binder now listens on the `input` event instead of `change`, so updates will propogate immediately instead of on blur.
 - There is no more `rivets.config` object. All of the previous configuration options are defined on the module directly.
-- If you template includes `<script>` elements, they will now be ignored when the template is parsed.
+- If a template includes `<script>` elements, they will now be ignored when the template is parsed.
 
 ### Upgrading from 0.6
 
 - Make sure you include the sightglass lib in your project. Just include `sightglass.js` before `rivets.js`. Alternatively you can just include `rivets.bundled.min.js` once (contains both libraries).
 
 - Change all of your existing formatter arguments to be wrapped in quotes. This is because arguments are evaluated as keypaths by default (unless they are wrapped in quotes).
+
     - For example, if you were previously had `{ item.enabled | switch green red }`, you will need to change it to `{ item.enabled | switch 'green' 'red' }`.
+
     - Note that if your keypath argument was a number, `true`, `false`, `null` or `undefined`, then you can leave them without quotes, but they will be passed to the formatter as the actual primitive value instead of a string.
 
 - If you ever set properties directly on the `rivets.config` object, you will need to change those to the `rivets` object itself.
+
     - For example, if you were previously doing this:
 
         ```javascript
@@ -46,6 +49,7 @@
         ```javascript
         rivets.templateDelimiters = ['{{', '}}']
         ```
+
     - Note that if you were only using `rivets.configure({})` then no changes are needed (`rivets.configure` functions the same as before).
 
 # 0.6
