@@ -2,13 +2,13 @@
 
 ### Changes
 
-- Support for data-bound keypaths are formatter arguments.
+- **Support for data-bound keypaths are formatter arguments.**
 
     ```
     { item.price | lte user.balance }
     ```
 
-- Support for primitives in binding declarations.
+- **Support for primitives in binding declarations.**
 
     This includes `String`, `Number`, `Boolean`, `Null` and `Undefined`.
 
@@ -22,23 +22,23 @@
     { 'i18n.errors.' | append error | translate }
     ```
 
-- Support for multiple binder arguments (wildcard matches). See [#383](https://github.com/mikeric/rivets/pull/383).
+- **Support for multiple binder arguments (wildcard matches). See [#383](https://github.com/mikeric/rivets/pull/383).**
 
-- `Observer` has been abstracted out into a new dependency, [Sightglass](https://github.com/mikeric/sightglass).
+- **`Observer` has been abstracted out into a new dependency, [Sightglass](https://github.com/mikeric/sightglass).**
 
-- The built-in `value` binder now listens on the `input` event instead of `change`, so updates will propogate immediately instead of on blur.
+- **The built-in `value` binder now listens on the `input` event instead of `change`, so updates will propogate immediately instead of on blur.**
 
-- There is no more `rivets.config` object. All of the previous configuration options are defined on the module directly.
+- **There is no more `rivets.config` object. All of the previous configuration options are defined on the module directly.**
 
-- If you template includes `<script>` elements, they will now be ignored when the template is parsed.
+- **If your template includes `<script>` elements, they will now be ignored when the template is parsed.**
 
 ### Upgrading from 0.6
 
-- Make sure you include the sightglass lib in your project.
+- **Make sure you include the sightglass lib in your project.**
 
     Include `sightglass.js` before `rivets.js`. Alternatively you can just include `rivets.bundled.min.js` once (contains both libraries).
 
-- Change all of your existing formatter arguments to be wrapped in quotes.
+- **Change all of your existing formatter arguments to be wrapped in quotes.**
 
     For example, if you were previously doing this:
 
@@ -56,7 +56,7 @@
 
     Note that if your keypath argument was a number, `true`, `false`, `null` or `undefined`, then you can leave them without quotes, but they will be passed to the formatter as the actual primitive value instead of a string.
 
-- If you ever set properties directly on the `rivets.config` object, you will need to change those to the `rivets` object itself.
+- **If you ever set properties directly on the `rivets.config` object, you will need to change those to the `rivets` object itself.**
 
     For example, if you were previously doing this:
 
