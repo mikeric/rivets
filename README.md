@@ -1,33 +1,50 @@
 # Rivets.js
 
-Rivets.js is a DOM-based templating system that sits ontop of a configurable component architecure. It lets you build model-driven views (MDV) using declarative two-way data binding. If used properly it can reduce code complexity in your app by elimating the need to manually update the DOM, letting you focus more on your application’s data and domain logic.
+Rivets.js is a lightweight data binding and templating system that facilitates building data-driven views. It is agnostic about every aspect of a front-end MV(C|VM|P) stack, so you can easily introduce Rivets.js into your current workflow or use it as part of a custom frameowork comprised of other libraries.
+
+## Usage
+
+```html
+<section id="auction">
+  <h3>{ auction.product.name }</h3>
+  <p>Current bid: { auction.currentBid | money }</p>
+
+  <aside rv-if="auction.timeLeft | lt 120">
+    Hurry up! There is { auction.timeLeft | time } left.
+  </aside>
+</section>
+```
+
+```javascript
+rivets.bind($('#auction'), {auction: auction})
+```
 
 ## Getting Started and Documentation
 
-All documentation for Rivets.js is available on the [homepage](http://rivetsjs.com). See the [Getting started](http://rivetsjs.com/docs/guide/#getting-started) section to learn how to create views and properly configure Rivets.js for your app.
+Documentation is available on the [homepage](http://rivetsjs.com). Learn by reading the [Guide](http://rivetsjs.com/docs/guide/) and refer to the [Binder Reference](http://rivetsjs.com/docs/reference/) to see what binders are available to you out-of-the-box.
 
 ## Building and Testing
 
-First, make sure to install any development dependencies.
+First install any development dependencies.
 
-```
-npm install
+```bash
+$ npm install
 ```
 
 #### Building
 
 Rivets.js uses [gulp](http://gulpjs.com/) as it's build tool. Run the following task to compile + minify the source into `dist/`.
 
-```
-gulp build
+```bash
+$ gulp build
 ```
 
 #### Testing
 
 Rivets.js uses [mocha](http://visionmedia.github.io/mocha/) as it's testing framework, alongside [should](https://github.com/visionmedia/should.js/) for expectations and [sinon](http://sinonjs.org/) for spies, stubs and mocks. Run the following to run the full test suite.
 
-```
-npm test
+```bash
+$ npm test
 ```
 
 ## Contributing
@@ -40,6 +57,6 @@ npm test
 #### Pull Requests
 
 1. Fork the repository and create a topic branch.
-3. Make sure not to commit any changes under `dist/` as they will surely cause merge conflicts later. Files under `dist/` are only committed when a new build is released.
+3. Make sure not to commit any changes under `dist/` as they will surely cause conflicts for others later. Files under `dist/` are only committed when a new build is released.
 4. Include tests that cover any changes or additions that you've made.
-5. Push your topic branch to your fork and submit a pull request. Include details about the changes as well as references to any related issues.
+5. Push your topic branch to your fork and submit a pull request. Include details about the changes as well as a reference to related issue(s).
