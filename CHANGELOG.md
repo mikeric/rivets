@@ -21,9 +21,13 @@
     ```
 
 - Support for multiple binder arguments (wildcard matches). See [#383](https://github.com/mikeric/rivets/pull/383).
+
 - The `Observer` class has been abstracted out into a new lib as a dependency. See [Sightglass](https://github.com/mikeric/sightglass).
+
 - The built-in `value` binder now listens on the `input` event instead of `change`, so updates will propogate immediately instead of on blur.
+
 - There is no more `rivets.config` object. All of the previous configuration options are defined on the module directly.
+
 - If a template includes `<script>` elements, they will now be ignored when the template is parsed.
 
 ### Upgrading from 0.6
@@ -32,19 +36,29 @@
 
 - Change all of your existing formatter arguments to be wrapped in quotes. This is because arguments are evaluated as keypaths by default (unless they are wrapped in quotes).
 
-    - For example, if you were previously had `{ item.enabled | switch green red }`, you will need to change it to `{ item.enabled | switch 'green' 'red' }`.
+    - For example, if you were previously doing the following:
+
+        ```html
+        <p>{ item.enabled | switch green red }</p>
+        ```
+
+        You will need to change it to:
+
+        ```html
+        <p>{ item.enabled | switch 'green' 'red' }</p>
+        ```
 
     - Note that if your keypath argument was a number, `true`, `false`, `null` or `undefined`, then you can leave them without quotes, but they will be passed to the formatter as the actual primitive value instead of a string.
 
 - If you ever set properties directly on the `rivets.config` object, you will need to change those to the `rivets` object itself.
 
-    - For example, if you were previously doing this:
+    - For example, if you were previously doing the following:
 
         ```javascript
         rivets.config.templateDelimiters = ['{{', '}}']
         ```
 
-        You will need to change it to the following:
+        You will need to change it to:
 
         ```javascript
         rivets.templateDelimiters = ['{{', '}}']
