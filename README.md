@@ -1,6 +1,6 @@
 # Rivets.js
 
-Rivets.js is a lightweight data binding and templating system that facilitates building data-driven views. It is agnostic about every aspect of a front-end MV(C|VM|P) stack, so you can easily introduce Rivets.js into your current workflow or use it as part of a custom frameowork comprised of other libraries.
+Rivets.js is a lightweight data binding and templating system that facilitates building data-driven views. It is agnostic about every aspect of a front-end MV(C|VM|P) stack, making it easy to introduce it into your current workflow or to use it as part of your own custom front-end stack comprised of other libraries.
 
 ## Usage
 
