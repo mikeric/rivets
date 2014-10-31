@@ -31,10 +31,14 @@ Rivets.public.binders.disabled = (el, value) ->
 # property when the input is checked or unchecked (two-way binder).
 Rivets.public.binders.checked =
   publishes: true
+  priority: 2000
+
   bind: (el) ->
     Rivets.Util.bindEvent el, 'change', @publish
+
   unbind: (el) ->
     Rivets.Util.unbindEvent el, 'change', @publish
+
   routine: (el, value) ->
     if el.type is 'radio'
       el.checked = el.value?.toString() is value?.toString()
@@ -46,10 +50,14 @@ Rivets.public.binders.checked =
 # unchecked (two-way binder).
 Rivets.public.binders.unchecked =
   publishes: true
+  priority: 2000
+
   bind: (el) ->
     Rivets.Util.bindEvent el, 'change', @publish
+
   unbind: (el) ->
     Rivets.Util.unbindEvent el, 'change', @publish
+
   routine: (el, value) ->
     if el.type is 'radio'
       el.checked = el.value?.toString() isnt value?.toString()
@@ -60,6 +68,7 @@ Rivets.public.binders.unchecked =
 # (two-way binder).
 Rivets.public.binders.value =
   publishes: true
+  priority: 2000
 
   bind: (el) ->
     @event = if el.tagName is 'SELECT' then 'change' else 'input'
@@ -83,6 +92,7 @@ Rivets.public.binders.value =
 # Inserts and binds the element and it's child nodes into the DOM when true.
 Rivets.public.binders.if =
   block: true
+  priority: 3000
 
   bind: (el) ->
     unless @marker?
@@ -120,6 +130,7 @@ Rivets.public.binders.if =
 # (negated version of `if` binder).
 Rivets.public.binders.unless =
   block: true
+  priority: 3000
 
   bind: (el) ->
     Rivets.public.binders.if.bind.call @, el
@@ -136,6 +147,7 @@ Rivets.public.binders.unless =
 # Binds an event handler on the element.
 Rivets.public.binders['on-*'] =
   function: true
+  priority: 1000
 
   unbind: (el) ->
     Rivets.Util.unbindEvent el, @args[0], @handler if @handler
@@ -147,6 +159,7 @@ Rivets.public.binders['on-*'] =
 # Appends bound instances of the element in place for each item in the array.
 Rivets.public.binders['each-*'] =
   block: true
+  priority: 3000
 
   bind: (el) ->
     unless @marker?
