@@ -110,6 +110,54 @@ describe('Functional', function() {
       })
     })
 
+    describe('Priority', function() {
+      beforeEach(function() {
+        rivets.binders.a = {bind: function(){}}
+        rivets.binders.b = {bind: function(){}}
+
+        sinon.spy(rivets.binders.a, 'bind')
+        sinon.spy(rivets.binders.b, 'bind')
+
+        el.setAttribute('data-a', 'data:foo')
+        el.setAttribute('data-b', 'data:foo')
+      })
+
+      describe('a:10, b:30', function() {
+        beforeEach(function() {
+          rivets.binders.a.priority = 10
+          rivets.binders.b.priority = 30
+          rivets.bind(el, bindData)
+        })
+
+        it('should bind b before a', function() {
+          rivets.binders.b.bind.calledBefore(rivets.binders.a.bind).should.be.true
+        })
+      })
+
+      describe('a:5, b:2', function() {
+        beforeEach(function() {
+          rivets.binders.a.priority = 5
+          rivets.binders.b.priority = 2
+          rivets.bind(el, bindData)
+        })
+
+        it('should bind a before b', function() {
+          rivets.binders.a.bind.calledBefore(rivets.binders.b.bind).should.be.true
+        })
+      })
+
+      describe('a:undefined, b:1', function() {
+        beforeEach(function() {
+          rivets.binders.b.priority = 1
+          rivets.bind(el, bindData)
+        })
+
+        it('should bind b before a', function() {
+          rivets.binders.b.bind.calledBefore(rivets.binders.a.bind).should.be.true
+        })
+      })
+    })
+
     describe('Iteration', function() {
       beforeEach(function(){
         list = document.createElement('ul')
