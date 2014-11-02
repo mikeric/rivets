@@ -1,3 +1,0 @@
-Instead of parsing and compiling template strings into HTML, Rivets.js wires up your models directly to existing parts of DOM that contain binding declarations and control flow instructions directly on the DOM nodes. You just pass in your models when binding to the parent DOM node and Rivets.js takes care of the rest.
-
-This way you can think of your HTML as "blueprints" that define a particular piece of UI &mdash; they can be for entire sections of your app or smaller, more reusable views. You can store them in document fragments outside the render tree, clone them and reuse them however you like.

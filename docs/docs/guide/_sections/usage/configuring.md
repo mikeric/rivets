@@ -6,7 +6,7 @@ To prevent attribute collision, Rivets.js scopes attributes that are prefixed wi
 
 ```javascript
 rivets.configure({
-  prefix: 'special'
+  prefix: 'data'
 })
 ```
 

@@ -1,16 +1,13 @@
-Need to pass arguments to your formatter? Not a problem.
+Formatters can accept any number of arguments in the form of keypaths or primitives. Keypath arguments get observed and will recompute the binding when any intermediary key changes. A primitive can be a string, number, boolean, null or undefined.
 
 ```html
-<span rv-text="billing.cardNumber | mask 4 4 ********"></span>
+<span>{ alarm.time | time user.timezone 'hh:mm' }</span>
 ```
 
-Note that all arguments are passed in as strings, so you will need to do your own type conversions to primitives if necessary.
+The value of each argument in the binding declaration will be evaluated and passed into the formatter function as an additional argument.
 
 ```javascript
-rivets.formatters.mask = function(value, left, right, mask) {
-  formatted = value.substring(0, left)
-  formatted + mask
-  formatted += value.substring(value.length - right)
-  return formatted
+rivets.formatters.time = function(value, timezone, format) {
+  return moment(value).tz(timezone).format(format)
 }
 ```

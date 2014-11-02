@@ -1,35 +1,19 @@
 {
-  "intro": {
-    "title": "Introduction",
-    "sections": {
-      "dom-based": {
-        "title": "DOM-based templating"
-      },
-      "why-not-plugin": {
-        "title": "Why isn't it a plugin for one of the famous JavaScript libraries?",
-        "nav": "Why not a plugin?"
-      }
-    }
+  "install": {
+    "title": "Installation",
+    "sections": {}
   },
-  "getting-started": {
-    "title": "Getting Started",
+  "usage": {
+    "title": "Usage",
     "sections": {
-      "creating-views": {
-        "title": "Creating a view"
+      "templates": {
+        "title": "Templates"
+      },
+      "binding": {
+        "title": "Binding"
       },
       "configuring": {
         "title": "Configuring"
-      }
-    }
-  },
-  "adapters": {
-    "title": "Adapters",
-    "sections": {
-      "default": {
-        "title": "The built-in adapter"
-      },
-      "creating": {
-        "title": "Creating an adapter"
       }
     }
   },
@@ -61,7 +45,18 @@
       }
     }
   },
-  "usage": {
+  "adapters": {
+    "title": "Adapters",
+    "sections": {
+      "default": {
+        "title": "The built-in adapter"
+      },
+      "creating": {
+        "title": "Creating an adapter"
+      }
+    }
+  },
+  "notes": {
     "title": "Usage notes",
     "sections": {
       "computed-properties": {

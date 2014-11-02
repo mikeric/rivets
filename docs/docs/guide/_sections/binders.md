@@ -1,3 +1,3 @@
-Binders are the sets of instructions that tell Rivets.js how to update the DOM when a particular model property changes. Rivets.js comes bundled with many commonly-used binders for conveneience, but it is encouraged to extend Rivets.js with your own binders that are specific to your application.
+Binders are the sets of instructions that tell Rivets.js how to update the DOM when an observed property changes. Rivets.js comes bundled with a handful commonly-used binders for your conveneience. See the [Binder Reference](/docs/reference/) to learn more about the built-in binders that are available out of the box.
 
-For example, you may be creating a progress bar and need to bind a percentage value to the element's width, or you may be using a third-party library for a toggle switch and would like to use Rivets.js to bind it to model property. For these scenarios, you would create a one-way `width` binder and a two-way `toggle` binder, respectively.
+While you can accomplish most UI tasks with the built-in binders, it is highly encouraged to extend Rivets.js with your own binders that are specific to the needs of your application.
