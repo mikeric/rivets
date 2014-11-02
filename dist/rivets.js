@@ -1,5 +1,5 @@
 // Rivets.js
-// version: 0.7.0-rc2
+// version: 0.7.0-rc3
 // author: Michael Richards
 // license: MIT
 (function() {
@@ -417,6 +417,9 @@
         el = _ref1[_i];
         parse(el);
       }
+      this.bindings.sort(function(a, b) {
+        return (b.binder.priority || 0) - (a.binder.priority || 0);
+      });
     };
 
     View.prototype.select = function(fn) {
@@ -507,6 +510,7 @@
       this.type = type;
       this.keypath = keypath;
       this.options = options != null ? options : {};
+      this.getValue = __bind(this.getValue, this);
       this.update = __bind(this.update, this);
       this.unbind = __bind(this.unbind, this);
       this.bind = __bind(this.bind, this);
@@ -643,7 +647,7 @@
     Binding.prototype.publish = function() {
       var args, formatter, id, value, _i, _len, _ref1, _ref2, _ref3;
       if (this.observer) {
-        value = Rivets.Util.getInputValue(this.el);
+        value = this.getValue(this.el);
         _ref1 = this.formatters.slice(0).reverse();
         for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
           formatter = _ref1[_i];
@@ -659,10 +663,10 @@
 
     Binding.prototype.bind = function() {
       var dependency, observer, _i, _len, _ref1, _ref2, _ref3;
+      this.parseTarget();
       if ((_ref1 = this.binder.bind) != null) {
         _ref1.call(this, this.el);
       }
-      this.parseTarget();
       if ((this.model != null) && ((_ref2 = this.options.dependencies) != null ? _ref2.length : void 0)) {
         _ref3 = this.options.dependencies;
         for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
@@ -712,6 +716,10 @@
         _ref2.call(this, models);
       }
       return this.bind();
+    };
+
+    Binding.prototype.getValue = function(el) {
+      return (this.binder.getValue || Rivets.Util.getInputValue)(el);
     };
 
     return Binding;
@@ -854,6 +862,7 @@
 
   Rivets["public"].binders.checked = {
     publishes: true,
+    priority: 2000,
     bind: function(el) {
       return Rivets.Util.bindEvent(el, 'change', this.publish);
     },
@@ -872,6 +881,7 @@
 
   Rivets["public"].binders.unchecked = {
     publishes: true,
+    priority: 2000,
     bind: function(el) {
       return Rivets.Util.bindEvent(el, 'change', this.publish);
     },
@@ -890,6 +900,7 @@
 
   Rivets["public"].binders.value = {
     publishes: true,
+    priority: 2000,
     bind: function(el) {
       this.event = el.tagName === 'SELECT' ? 'change' : 'input';
       return Rivets.Util.bindEvent(el, this.event, this.publish);
@@ -923,6 +934,7 @@
 
   Rivets["public"].binders["if"] = {
     block: true,
+    priority: 3000,
     bind: function(el) {
       var attr, declaration;
       if (this.marker == null) {
@@ -967,6 +979,7 @@
 
   Rivets["public"].binders.unless = {
     block: true,
+    priority: 3000,
     bind: function(el) {
       return Rivets["public"].binders["if"].bind.call(this, el);
     },
@@ -983,6 +996,7 @@
 
   Rivets["public"].binders['on-*'] = {
     "function": true,
+    priority: 1000,
     unbind: function(el) {
       if (this.handler) {
         return Rivets.Util.unbindEvent(el, this.args[0], this.handler);
@@ -998,6 +1012,7 @@
 
   Rivets["public"].binders['each-*'] = {
     block: true,
+    priority: 3000,
     bind: function(el) {
       var attr, view, _i, _len, _ref1;
       if (this.marker == null) {
