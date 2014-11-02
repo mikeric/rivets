@@ -42,7 +42,7 @@ harp compile _harp .
 git add -A 2>/dev/null 1>/dev/null
 
 set +e
-git commit -a -m "generated documentation for v$RIVETS_VERSION" 2>/dev/null 1>/dev/null
+git commit -a -m "Generate documentation for v$RIVETS_VERSION" 2>/dev/null 1>/dev/null
 
 if [ $? -eq 0 ]
 then
