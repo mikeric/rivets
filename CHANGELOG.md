@@ -34,6 +34,13 @@
 
 - Make sure you include the sightglass lib in your project. Just include `sightglass.js` before `rivets.js`. Alternatively you can just include `rivets.bundled.min.js` once (contains both libraries).
 
+- If you have defined any custom adapters, they will need to be updated from the old property names to the new property names.
+
+    - `adapter.subscribe` is now `adapter.observe`.
+    - `adapter.unsubscribe` is now `adapter.unobserve`.
+    - `adapter.read` is now `adapter.get`.
+    - `adapter.publish` is now `adapter.set`.
+
 - Change all of your existing formatter arguments to be wrapped in quotes. This is because arguments are evaluated as keypaths by default (unless they are wrapped in quotes).
 
     - For example, if you were previously doing the following:
