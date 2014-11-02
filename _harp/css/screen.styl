@@ -1,35 +1,28 @@
-$color = #3a8aea
+$color = #3f86e4
 
 body
   font-family "Proxima Nova", serif
   font-size 16px
-  font-weight 300
+  font-weight 400
   line-height 1.5
   text-rendering optimizeLegibility
-  color #646a6e
+  color #747a7e
 
 h1, h2, h3, h4, h5, h6
   font-family "Proxima Nova", serif
   font-weight 400
+  color #545a5e
   margin 2em 0 1em
 
-article.guide
+article
   h2
-    counter-reset minor
-    counter-increment major
-
-    &:before
-      content counter(major) " "
+    font-size 38px
 
     &:first-child
       margin-top 0
 
   h3
-    counter-increment minor
     font-size 22px
-
-    &:before
-      content counter(major) "." counter(minor) " "
 
 p, pre
   margin 16px 0
@@ -56,6 +49,7 @@ p > code, em > code
 
 pre
   border none
+  border-radius 0
   font-size 13px
   padding 2em
 
@@ -69,12 +63,15 @@ i
   &.social
     font-family "Entypo Social"
 
-.btn i
-  font-size 38px
-  line-height 0
-  position relative
-  top 4px
-  right 10px
+.btn
+  border-radius 0
+
+  i
+    font-size 38px
+    line-height 0
+    position relative
+    top 4px
+    right 10px
 
 blockquote
   background-color white
@@ -82,6 +79,28 @@ blockquote
 
 img.graphic
   opacity 0.1
+
+.logotype
+  display inline-block
+  color inherit
+  letter-spacing 3px
+  font-weight 400
+  border 2px solid
+  padding 10px 9px 8px 11px
+
+  &.sg
+    font-size 11px
+    font-weight 500
+    padding 8px 6px 6px 8px
+    position relative
+    top -2px
+    margin-left 8px
+    color #89a
+
+  a, a:hover
+    color inherit
+    text-decoration none
+
 
 // HEADER
 
@@ -91,18 +110,12 @@ header
 
   img
     height 50px
-    margin: 20px 0
+    margin 20px 0
     float left
 
-  h3
-    margin 40px 0 38px
-    color inherit
-    letter-spacing 2px
-    font-weight 500
-
-    a, a:hover
-      color white
-      text-decoration none
+  .logotype
+    font-size 16px
+    margin 30px 0
 
   .center
     text-align center
@@ -146,25 +159,20 @@ section.intro
 section.highlights
   padding: 40px 0 60px
 
-  h3
-    font-weight 300
-
   span
     font-family monospace
     font-size: 14px
 
     .highlighted
-      background-color $color
-      color white
-      border-radius 3px
-      padding 0 4px 3px
+      background-color #F0F2F5
+      padding 2px 6px 3px
 
 section.author
   text-align center
   background-color #f0f2f5
 
   h2
-    font-weight 200
+    font-weight 300
     font-size 36px
 
   img
@@ -191,18 +199,17 @@ section.docs
 section
   .separator
     text-align center
-    border-top 1px solid #ddd
+    border-top 2px solid #eee
     margin 40px 0 -30px
     letter-spacing 1px
 
     h5
       position relative
-      top -35px
+      top -36px
       display inline-block
       padding 0 1em
       background-color white
-      color #bbb
-      font-weight 400
+      font-weight 500
 
 nav
   text-align right

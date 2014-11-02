@@ -1,4 +1,4 @@
-Rivets.js is agnostic about the objects that it can subscribe to. This makes it very flexible as it can adapt to work with virtually any library or framework, but it also means that you need to tell Rivets.js *how* to subscribe to those objects. This is where adapters come in to play.
+Rivets.js is agnostic about the objects that it can subscribe to. This makes it very flexible as it can adapt to work with virtually any library or framework, but it also means that you need to tell Rivets.js *how* to subscribe to those objects. This is where adapters come in to play. This feature is driven by the [Sightglass](https://github.com/mikeric/sightglass) library.
 
 Each adapter is defined to a unique interface (a single character) which is used to separate the keys in a keypath. The interfaces used in a keypath determine which adapter to use for each intermediary key.
 

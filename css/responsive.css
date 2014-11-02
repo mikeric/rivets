@@ -1,5 +1,1 @@
-@media (min-width: 1200px){.container{width:970px}
-}@media (max-width: 991px){aside{display:none}
-}@media (max-width: 767px){header #menu ul li{margin:0 0 .5em;display:block}
-section.intro .blurb{font-size:28px}
-}
+@media( min-width: 1200px){.container{width:970px}}@media( max-width: 991px){aside{display:none}}@media( max-width: 767px){header #menu ul li{margin:0 0 .5em;display:block}section.intro .blurb{font-size:28px}}
