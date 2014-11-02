@@ -56,15 +56,12 @@
       }
     }
   },
-  "notes": {
-    "title": "Usage notes",
-    "sections": {
-      "computed-properties": {
-        "title": "Computed properties"
-      },
-      "iteration": {
-        "title": "Iteration binding"
-      }
-    }
+  "computed-properties": {
+    "title": "Computed Properties",
+    "sections": {}
+  },
+  "iteration": {
+    "title": "Iteration binding",
+    "sections": {}
   }
 }
