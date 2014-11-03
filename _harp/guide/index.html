@@ -9,104 +9,54 @@ _gaq.push(['_trackPageview']);
   ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 })();
-</script></head><body data-spy="scroll" data-target="#nav"><header><div class="container"><div class="row"><div class="col col-xs-6"><h3><a href="/">RIVETS.JS</a></h3></div><div class="col col-xs-6 right visible-xs"><i id="hamburger">&#9776;</i></div><div id="menu" class="col col-sm-6 col-xs-12 right hidden-xs"><ul class="list-unstyled"><li><a href="/docs/guide">Guide</a></li><li><a href="/docs/reference">Binder Reference</a></li><li><a href="http://github.com/mikeric/rivets">GitHub</a></li></ul></div></div></div></header><section class="docs"><div class="container"><div class="row"><article class="guide col col-md-9"><h2 id="intro">Introduction</h2><p>Rivets.js is a DOM-based templating system that sits ontop of a configurable component architecure. It let&#39;s you build model-driven views (MDV) using declarative two-way data binding. If used properly it can reduce code complexity in your app by elimating the need to manually update the DOM, letting you focus more on your application&#39;s data and domain logic.</p>
-<p>It&#39;s completely agnostic about your model / controller layer and works well with existing libraries that employ an event-driven model such as <a href="http://backbonejs.org/">Backbone.js</a> and <a href="http://hay.github.com/stapes/">Stapes.js</a>. It also works equally well with POJSOs using <a href="https://github.com/melanke/Watch.JS">Watch.JS</a> or an <a href="https://github.com/KapIT/observe-shim">Object.observe shim</a>.</p>
-<p>Some of the features you get out-of-the-box with Rivets.js.</p>
-<ul class="check-list">
-  <li><strong>Bi-directional data binding</strong> to and from DOM nodes.</li>
-  <li><strong>Computed properties</strong> through dependency mapping.</li>
-  <li><strong>Formatters</strong> to allow mutating values through piping.</li>
-  <li><strong>Iteration binding</strong> for binding items in an array.</li>
-  <li><strong>Custom event handlers</strong> to fit your ideal workflow.</li>
-  <li><strong>Uniform APIs</strong> for easily extending any of the core concepts.</li>
-</ul>
-<h3 id="intro-dom-based">DOM-based templating</h3><p>Instead of parsing and compiling template strings into HTML, Rivets.js wires up your models directly to existing parts of DOM that contain binding declarations and control flow instructions directly on the DOM nodes. You just pass in your models when binding to the parent DOM node and Rivets.js takes care of the rest.</p>
-<p>This way you can think of your HTML as &quot;blueprints&quot; that define a particular piece of UI &mdash; they can be for entire sections of your app or smaller, more reusable views. You can store them in document fragments outside the render tree, clone them and reuse them however you like.</p>
-<h3 id="intro-why-not-plugin">Why isn't it a plugin for one of the famous JavaScript libraries?</h3><p>Extending a library to do things it isn&#39;t supposed to do and that are not directly related with its core goal defeats the Single Responsibility Principle and is considered a bad practice besides its broad use.</p>
-<p>DOM manipulation libraries should only be concerned with manipulating the DOM. Templating libraries should only be concerned with templating.</p>
-<blockquote>
-<p>A duck can walk, fly and swim, but he can&#39;t do any of these things well.</p>
-</blockquote>
-<p>Another reason for not extending an existing library is that the amount of code reused would be so minimal that it doesn&#39;t pay-off the flexibility loss. You can use Rivets.js at it&#39;s full potential with &quot;any&quot; other library.</p>
-<h2 id="getting-started">Getting Started</h2><p>You can grab the latest stable release <a href="/dist/rivets.min.js">here</a> or install using the package manager of your choice &mdash; we currently maintain releases on bower, component, npm and jam.</p>
+</script></head><body data-spy="scroll" data-target="#nav"><header><div class="container"><div class="row"><div class="col col-xs-6"><h3 class="logotype"><a href="/">RIVETS</a></h3></div><div class="col col-xs-6 right visible-xs"><i id="hamburger">&#9776;</i></div><div id="menu" class="col col-sm-6 col-xs-12 right hidden-xs"><ul class="list-unstyled"><li><a href="/docs/guide">Guide</a></li><li><a href="/docs/reference">Binder Reference</a></li><li><a href="http://github.com/mikeric/rivets">GitHub</a></li></ul></div></div></div></header><section class="docs"><div class="container"><div class="row"><article class="guide col col-md-9"><h2 id="install">Installation</h2><p>You can grab the latest stable release <a href="/dist/rivets.min.js">here</a> or install using the package manager of your choice. We currently maintain releases on npm, component, jam and bower (recommended).</p>
 <pre><code class="language-bash">bower install rivets</code></pre>
-<p>Include Rivets.js in your project. The library unconditionally occupies a <code>rivets</code> global but CommonJS and AMD module loaders such as <a href="http://requirejs.org/">RequireJS</a> and <a href="https://github.com/jrburke/almond">almond</a> are fully supported as well, if that&#39;s your thing.</p>
-<pre><code class="language-html">&lt;script src=&quot;rivets.min.js&quot;&gt;&lt;/script&gt;</code></pre>
-<h3 id="getting-started-creating-views">Creating a view</h3><p>First, we need to create a template. Templates describe your UI in plain HTML using special prefixed attributes, DOM elements and basic text interpolation. They can go wherever you like &mdash; in the DOM, inside a document fragment, or defined as a template element. Just make sure you have a convenient way to reference them.</p>
+<p>Rivets&#39; only hard dependency is <a href="https://github.com/mikeric/sightglass">Sightglass</a>. If you wish to include Sightglass separately, just make sure to include it first.</p>
+<pre><code class="language-html">&lt;script src=&quot;bower_components/sightglass/index.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;bower_components/rivets/dist/rivets.min.js&quot;&gt;&lt;/script&gt;</code></pre>
+<p>Alternatively you can just include the bundled distribution if Rivets, which contains both libraries.</p>
+<pre><code class="language-html">&lt;script src=&quot;bower_components/rivets/dist/rivets.bundled.min.js&quot;&gt;&lt;/script&gt;</code></pre>
+<p><em>Note that Rivets unconditionally occupies a <code>rivets</code> global but CommonJS and AMD module loaders such as <a href="http://requirejs.org/">RequireJS</a> and <a href="https://github.com/jrburke/almond">almond</a> are fully supported as well, if that&#39;s your thing.</em></p>
+<h2 id="usage">Usage</h2><h3 id="usage-templates">Templates</h3><p>Templates describe your UI in plain HTML. You can define them directly in the document, use template elements or store and load them however you like. Just make sure you have a convenient way to reference your templates when you want to bind some data to them.</p>
 <pre><code class="language-html">&lt;section id=&quot;auction&quot;&gt;
-  &lt;h1&gt;{ auction.title }&lt;/h1&gt;
-  &lt;img rv-src=&quot;auction.image.url&quot;&gt;
+  &lt;h3&gt;{ auction.product.name }&lt;/h3&gt;
+  &lt;p&gt;Current bid: { auction.currentBid | money }&lt;/p&gt;
 
-  &lt;aside rv-show=&#39;auction.remaining | lt 120&#39;&gt;
-    &lt;h4&gt;Hurry up!&lt;h4&gt;
-    &lt;p&gt;This auction is ending in { auction.remaining | time }.&lt;/p&gt;
+  &lt;aside rv-if=&quot;auction.timeLeft | lt 120&quot;&gt;
+    Hurry up! There is { auction.timeLeft | time } left.
   &lt;/aside&gt;
-
-  &lt;button rv-on-click=&quot;controller.bid&quot;&gt;Place a bid&lt;/button&gt;
 &lt;/section&gt;</code></pre>
-<h4>Binding the view</h4>
-<p>To create a view using the above template, simply bind some data to it. The <code>rivets.bind</code> method accepts the template element, the model data, as well as any options you wish to override from the main <code>rivets</code> object (optional).</p>
-<pre><code class="language-javascript">rivets.bind($(&#39;#auction&#39;), {
-  auction: auctionModel,
-  controller: controllerObject
-})</code></pre>
-<h4>Lifecycle and unbinding</h4>
-<p>Every call to <code>rivets.bind</code> returns a bound <code>Rivets.View</code> instance that you should hold on to for later. You&#39;ll need it in order to unbind it&#39;s listeners using <code>view.unbind()</code> as shown below.</p>
-<pre><code class="language-javascript">view = rivets.bind($(&#39;#auction&#39;), {
-  auction: auctionModel,
-  controller: controllerObject
-})
+<p>The important parts to note here are the attributes prefixed with <code>rv-</code> and portions of text wrapped in <code>{ ... }</code>. These are binding declarations and they are the sole way that Rivets.js ties data to your templates. The values of these declarations all follow the same minimal and expressive syntax.</p>
+<pre><code>(keypath | primitive) [formatters...]</code></pre>
+<p>Keypaths get observed and will recompute the binding when any intermediary key changes. A primitive can be a string, number, boolean, null or undefined.</p>
+<p><a href="#formatters">Formatters</a> can be piped to values using <code>|</code> and they follow a similarly minimal yet expressive syntax. <a href="#formatters-arguments">Formatter arguments</a> can be keypaths or primitives. Keypath arguments get observed and will recompute the binding when any intermediary key changes.</p>
+<pre><code>(formatter) [keypath | primitive...]</code></pre>
+<h3 id="usage-binding">Binding</h3><p>Simply call <code>rivets.bind</code> on a template element with some data that you would like to bind.</p>
+<pre><code class="language-javascript">rivets.bind($(&#39;#auction&#39;), {auction: auction})</code></pre>
+<p><em>Every call to <code>rivets.bind</code> returns a fully data-bound view that you should hold on to for later. You&#39;ll need it in order to unbind it&#39;s listeners using <code>view.unbind()</code>.</em></p>
+<h3 id="usage-configuring">Configuring</h3><p>Use <code>rivets.configure</code> to set the following configuration options for your app. Note that all configuration options can be overridden locally to a particular view if needed.</p>
+<pre><code class="language-javascript">rivets.configure({
 
-view.unbind()</code></pre>
-<p>You can also access the individual <code>Rivets.Binding</code> instances on <code>view.bindings</code> or query them using <code>view.select</code>. This is mainly useful for debugging purposes or manually interfacing with bindings.</p>
-<h3 id="getting-started-configuring">Configuring</h3><p>Use <code>rivets.configure</code> to set the following configuration options for your app. Note that all configuration options can be overridden locally to a particular view if needed.</p>
-<h4>Prefix</h4>
-<p>To prevent attribute collision, Rivets.js scopes attributes that are prefixed with the value set on <code>config.prefix</code>. By default it is set to <code>rv</code> so that binding declarations are written as <code>rv-value</code>, but you can set this to whatever you like.</p>
-<pre><code class="language-javascript">rivets.configure({
-  prefix: &#39;special&#39;
-})</code></pre>
-<h4>Data preloading</h4>
-<p>Set the <code>preloadData</code> option to <code>false</code> if you don&#39;t want your bindings to be bootstrapped with the current model values immediately on bind. This option is set to <code>true</code> by default.</p>
-<pre><code class="language-javascript">rivets.configure({
-  preloadData: false
-})</code></pre>
-<h4>Template delimiters</h4>
-<p>Rivets.js allows interpolating text content with bindings. The delimiters around the bindings are configurable by setting the <code>config.templateDelimiters</code> option. By default the template delimiters are single curly-braces, but you can set this to whatever you like. This is also useful if you have another templating system running over your templates before or after Rivets.js that uses the same delimiters. You can tune Rivets.js differently to avoid any conflicts.</p>
-<pre><code class="language-javascript">rivets.configure({
-  templateDelimiters: [&#39;{&#39;, &#39;}&#39;]
-})</code></pre>
-<h4>Event handlers</h4>
-<p>Rivets.js comes with an <code>on-*</code> binder for attaching event handlers to DOM nodes on a particular event. Depending on your workflow, you may want to augment how Rivets.js calls your event handlers. The <code>handler</code> function lets you do just that.</p>
-<p>The default event handler behaves like a standard DOM event handler &mdash; called in the context of the event target, passing in the event object as the first argument &mdash; but with a second argument as the model scope of the view.</p>
-<pre><code class="language-javascript">rivets.configure({
+  // Attribute prefix in templates
+  prefix: &#39;rv&#39;,
+
+  // Preload templates with initial data on bind
+  preloadData: true,
+
+  // Toot sightglas interface for keypaths
+  rootInterface: &#39;.&#39;,
+
+  // Template delimiters for text bindings
+  templateDelimiters: [&#39;{&#39;, &#39;}&#39;],
+
+  // Augment the event handler of the on-* binder
   handler: function(target, event, binding) {
     this.call(target, event, binding.view.models)
   }
+
 })</code></pre>
-<p>The <code>config.handler</code> function is called in the context of the original event handler, passed in the event target (<code>target</code>), event object (<code>event</code>), and the <code>Rivets.Binding</code> instance (<code>binding</code>). Using these objects, you can augment the call to the original handler function however you like.</p>
-<h2 id="adapters">Adapters</h2><p>Rivets.js is agnostic about the objects that it can subscribe to. This makes it very flexible as it can adapt to work with virtually any library or framework, but it also means that you need to tell Rivets.js <em>how</em> to subscribe to those objects. This is where adapters come in to play.</p>
-<p>Each adapter is defined to a unique interface (a single character) which is used to separate the keys in a keypath. The interfaces used in a keypath determine which adapter to use for each intermediary key.</p>
-<pre><code>user.address:city</code></pre>
-<p>The above keypath will use the <code>.</code> adapter to access the <code>address</code> key on the <code>user</code> object, and the <code>:</code> adapter to access the <code>city</code> key on the <code>address</code> object. If you can imagine for a second that <code>address</code> is just a normal property on the user object pointing to a Backbone model, but <code>city</code> is actually an attribute on that Backbone model, you can see how this kind of notation is actually very succint and expressive.</p>
-<h3 id="adapters-default">The built-in adapter</h3><p>Rivets.js ships with a <code>.</code> adapter for subscribing to properties on plain JavaScript objects. The adapter is self-implemented using ES5 natives such as <code>Object.defineProperty</code>. In the future, this adapter will be implemented purely using <code>Object.observe</code> as soon as browser support permits.</p>
-<p>If you need to support non-ES5 browsers (&lt; IE 9), you can replace this adapter to use polyfills or with a third-party library that has the browser support you need. If you&#39;re only targetting Chrome Canary, feel free to replace it with an <code>Object.observe</code> adapter now and enter data binding bliss.</p>
-<h3 id="adapters-creating">Creating an adapter</h3><p>Adapters are defined on <code>rivets.adapters</code> with the interface as the property name and the adapter object as the value. An adapter is just an object that responds to <code>subscribe</code>, <code>unsubscribe</code>, <code>read</code> and <code>publish</code>. The following <code>:</code> adapter works sufficiently for Backbone.js models / Stapes.js modules.</p>
-<pre><code class="language-javascript">rivets.adapters[&#39;:&#39;] = {
-  subscribe: function(obj, keypath, callback) {
-    obj.on(&#39;change:&#39; + keypath, callback)
-  },
-  unsubscribe: function(obj, keypath, callback) {
-    obj.off(&#39;change:&#39; + keypath, callback)
-  },
-  read: function(obj, keypath) {
-    return obj.get(keypath)
-  },
-  publish: function(obj, keypath, value) {
-    obj.set(keypath, value)
-  }
-}</code></pre>
-<h2 id="binders">Binders</h2><p>Binders are the sets of instructions that tell Rivets.js how to update the DOM when a particular model property changes. Rivets.js comes bundled with many commonly-used binders for conveneience, but it is encouraged to extend Rivets.js with your own binders that are specific to your application.</p>
-<p>For example, you may be creating a progress bar and need to bind a percentage value to the element&#39;s width, or you may be using a third-party library for a toggle switch and would like to use Rivets.js to bind it to model property. For these scenarios, you would create a one-way <code>width</code> binder and a two-way <code>toggle</code> binder, respectively.</p>
+<h2 id="binders">Binders</h2><p>Binders are the sets of instructions that tell Rivets.js how to update the DOM when an observed property changes. Rivets.js comes bundled with a handful commonly-used binders for your conveneience. See the <a href="/docs/reference/">Binder Reference</a> to learn more about the built-in binders that are available out of the box.</p>
+<p>While you can accomplish most UI tasks with the built-in binders, it is highly encouraged to extend Rivets.js with your own binders that are specific to the needs of your application.</p>
 <h3 id="binders-one-way">One-way binders</h3><p>One-way binders simply update the DOM when a model property changes (model-to-view only). Let&#39;s say we want a simple binder that updates an element&#39;s color when the model property changes. Here we can define a one-way <code>color</code> binder as a single function. This function takes the element and the current value of the model property, which we will use to updates the element&#39;s color.</p>
 <pre><code class="language-javascript">rivets.binders.color = function(el, value) {
   el.style.color = value
@@ -168,27 +118,42 @@ view.unbind()</code></pre>
 <p>You can then bind using this formatter with any one-way or two-way binder.</p>
 <pre><code class="language-html">&lt;input rv-value=&quot;item.price | currency&quot;&gt;</code></pre>
 <p>Note that you can also chain bidirectional formatters with any other formatters, and in any order. They read from left to right, and publish from right to left, skipping any read-only formatters when publishing the value back to the model.</p>
-<h3 id="formatters-arguments">Formatter arguments</h3><p>Need to pass arguments to your formatter? Not a problem.</p>
-<pre><code class="language-html">&lt;span rv-text=&quot;billing.cardNumber | mask 4 4 ********&quot;&gt;&lt;/span&gt;</code></pre>
-<p>Note that all arguments are passed in as strings, so you will need to do your own type conversions to primitives if necessary.</p>
-<pre><code class="language-javascript">rivets.formatters.mask = function(value, left, right, mask) {
-  formatted = value.substring(0, left)
-  formatted + mask
-  formatted += value.substring(value.length - right)
-  return formatted
+<h3 id="formatters-arguments">Formatter arguments</h3><p>Formatters can accept any number of arguments in the form of keypaths or primitives. Keypath arguments get observed and will recompute the binding when any intermediary key changes. A primitive can be a string, number, boolean, null or undefined.</p>
+<pre><code class="language-html">&lt;span&gt;{ alarm.time | time user.timezone &#39;hh:mm&#39; }&lt;/span&gt;</code></pre>
+<p>The value of each argument in the binding declaration will be evaluated and passed into the formatter function as an additional argument.</p>
+<pre><code class="language-javascript">rivets.formatters.time = function(value, timezone, format) {
+  return moment(value).tz(timezone).format(format)
 }</code></pre>
-<h2 id="usage">Usage notes</h2><h3 id="usage-computed-properties">Computed properties</h3><p>Computed properties are functions that get re-evaluated when one or more dependent properties change. Declaring computed properties in Rivets.js is simple, just separate the function from it&#39;s dependencies with a <code>&lt;</code>. The following text binding will get re-evaluated with <code>event.duration()</code> when either the event&#39;s <code>start</code> or <code>end</code> attribute changes.</p>
+<h2 id="adapters">Adapters</h2><p>Rivets.js is agnostic about the objects that it can subscribe to. This makes it very flexible as it can adapt to work with virtually any library or framework, but it also means that you need to tell Rivets.js <em>how</em> to subscribe to those objects. This is where adapters come in to play. This feature is driven by the <a href="https://github.com/mikeric/sightglass">Sightglass</a> library.</p>
+<p>Each adapter is defined to a unique interface (a single character) which is used to separate the keys in a keypath. The interfaces used in a keypath determine which adapter to use for each intermediary key.</p>
+<pre><code>user.address:city</code></pre>
+<p>The above keypath will use the <code>.</code> adapter to access the <code>address</code> key on the <code>user</code> object, and the <code>:</code> adapter to access the <code>city</code> key on the <code>address</code> object. If you can imagine for a second that <code>address</code> is just a normal property on the user object pointing to a Backbone model, but <code>city</code> is actually an attribute on that Backbone model, you can see how this kind of notation is actually very succint and expressive.</p>
+<h3 id="adapters-default">The built-in adapter</h3><p>Rivets.js ships with a <code>.</code> adapter for subscribing to properties on plain JavaScript objects. The adapter is self-implemented using ES5 natives such as <code>Object.defineProperty</code>. In the future, this adapter will be implemented purely using <code>Object.observe</code> as soon as browser support permits.</p>
+<p>If you need to support non-ES5 browsers (&lt; IE 9), you can replace this adapter to use polyfills or with a third-party library that has the browser support you need. If you&#39;re only targetting Chrome Canary, feel free to replace it with an <code>Object.observe</code> adapter now and enter data binding bliss.</p>
+<h3 id="adapters-creating">Creating an adapter</h3><p>Adapters are defined on <code>rivets.adapters</code> with the interface as the property name and the adapter object as the value. An adapter is just an object that responds to <code>observe</code>, <code>unobserve</code>, <code>get</code> and <code>set</code>.</p>
+<p>The following <code>:</code> adapter works for Backbone.js models / Stapes.js modules.</p>
+<pre><code class="language-javascript">rivets.adapters[&#39;:&#39;] = {
+  observe: function(obj, keypath, callback) {
+    obj.on(&#39;change:&#39; + keypath, callback)
+  },
+  unobserve: function(obj, keypath, callback) {
+    obj.off(&#39;change:&#39; + keypath, callback)
+  },
+  get: function(obj, keypath) {
+    return obj.get(keypath)
+  },
+  set: function(obj, keypath, value) {
+    obj.set(keypath, value)
+  }
+}</code></pre>
+<h2 id="computed-properties">Computed Properties</h2><p>Computed properties are functions that get re-evaluated when one or more dependent properties change. Declaring computed properties in Rivets.js is simple, just separate the function from its dependencies with a <code>&lt;</code>. The following text binding will get re-evaluated with <code>event.duration()</code> when either the event&#39;s <code>start</code> or <code>end</code> attribute changes.</p>
 <pre><code class="language-html">&lt;span rv-text=&quot;event.duration &lt; start end&quot;&gt;&lt;/span&gt;</code></pre>
 <p>Note that the dependency keypaths stem from the target object, not the view&#39;s model context. So for the above declaration, the target is the <code>event</code> object, with dependencies on <code>event.start</code> and <code>event.end</code>.</p>
-<h3 id="usage-iteration">Iteration binding</h3><p>Use the <code>data-each-[item]</code> binding to have Rivets.js automatically loop over items in an array and append bound instances of that element. Within that element you can bind to the iterated item as well as any contexts that are available in the parent view.</p>
+<h2 id="iteration">Iteration binding</h2><p>Use the <code>rv-each-[item]</code> binder to have Rivets.js automatically loop over items in an array and append bound instances of that element. Within that element you can bind to the iterated item as well as any contexts that are available in the parent view.</p>
 <pre><code class="language-html">&lt;ul&gt;
   &lt;li rv-each-todo=&quot;list.todos&quot;&gt;
     &lt;input type=&quot;checkbox&quot; rv-checked=&quot;todo.done&quot;&gt;
     &lt;span&gt;{ todo.summary }&lt;/span&gt;
   &lt;/li&gt;
 &lt;ul&gt;</code></pre>
-<p>Also note that you may bind to the iterated item directly on the parent element.</p>
-<pre><code class="language-html">&lt;ul&gt;
-  &lt;li rv-each-tag=&quot;item.tags&quot; rv-text=&quot;tag:name&quot;&gt;&lt;/li&gt;
-&lt;/ul&gt;</code></pre>
-</article><aside class="col col-md-3 hidden-sm hidden-xs"><div class="pull-right"><nav id="nav" data-spy="affix" data-offset-top="145"><ul class="nav"><li><a href="#intro"><strong>Introduction</strong></a><ul class="nav"><li><a href="#intro-dom-based">DOM-based templating</a></li><li><a href="#intro-why-not-plugin">Why not a plugin?</a></li></ul></li><li><a href="#getting-started"><strong>Getting Started</strong></a><ul class="nav"><li><a href="#getting-started-creating-views">Creating a view</a></li><li><a href="#getting-started-configuring">Configuring</a></li></ul></li><li><a href="#adapters"><strong>Adapters</strong></a><ul class="nav"><li><a href="#adapters-default">The built-in adapter</a></li><li><a href="#adapters-creating">Creating an adapter</a></li></ul></li><li><a href="#binders"><strong>Binders</strong></a><ul class="nav"><li><a href="#binders-one-way">One-way binders</a></li><li><a href="#binders-two-way">Two-way binders</a></li><li><a href="#binders-api">API</a></li></ul></li><li><a href="#formatters"><strong>Formatters</strong></a><ul class="nav"><li><a href="#formatters-one-way">One-way formatters</a></li><li><a href="#formatters-two-way">Two-way formatters</a></li><li><a href="#formatters-arguments">Formatter arguments</a></li></ul></li><li><a href="#usage"><strong>Usage notes</strong></a><ul class="nav"><li><a href="#usage-computed-properties">Computed properties</a></li><li><a href="#usage-iteration">Iteration binding</a></li></ul></li></ul></nav></div></aside></div></div></section></body></html>
+</article><aside class="col col-md-3 hidden-sm hidden-xs"><div class="pull-right"><nav id="nav" data-spy="affix" data-offset-top="145"><ul class="nav"><li><a href="#install"><strong>Installation</strong></a><ul class="nav"></ul></li><li><a href="#usage"><strong>Usage</strong></a><ul class="nav"><li><a href="#usage-templates">Templates</a></li><li><a href="#usage-binding">Binding</a></li><li><a href="#usage-configuring">Configuring</a></li></ul></li><li><a href="#binders"><strong>Binders</strong></a><ul class="nav"><li><a href="#binders-one-way">One-way binders</a></li><li><a href="#binders-two-way">Two-way binders</a></li><li><a href="#binders-api">API</a></li></ul></li><li><a href="#formatters"><strong>Formatters</strong></a><ul class="nav"><li><a href="#formatters-one-way">One-way formatters</a></li><li><a href="#formatters-two-way">Two-way formatters</a></li><li><a href="#formatters-arguments">Formatter arguments</a></li></ul></li><li><a href="#adapters"><strong>Adapters</strong></a><ul class="nav"><li><a href="#adapters-default">The built-in adapter</a></li><li><a href="#adapters-creating">Creating an adapter</a></li></ul></li><li><a href="#computed-properties"><strong>Computed Properties</strong></a><ul class="nav"></ul></li><li><a href="#iteration"><strong>Iteration binding</strong></a><ul class="nav"></ul></li></ul></nav></div></aside></div></div></section></body></html>
