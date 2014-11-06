@@ -105,7 +105,7 @@ class Rivets.View
     parse el for el in @els
 
     @bindings.sort (a, b) ->
-      (b.binder.priority or 0) - (a.binder.priority or 0)
+      (b.binder?.priority or 0) - (a.binder?.priority or 0)
 
     return
 
