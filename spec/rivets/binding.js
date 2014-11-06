@@ -278,5 +278,14 @@ describe('Rivets.Binding', function() {
       el.dataset.foo = 'bar'
       binding.getValue(el).should.equal('bar')
     })
+
+    it('binder.getValue() should have access to binding', function() {
+      binding.binder.getValue = function(el) {
+        return this.foo
+      }
+
+      binding.foo = 'bar'
+      binding.getValue(el).should.equal('bar')
+    })
   })
 })
