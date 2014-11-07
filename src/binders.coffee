@@ -189,12 +189,11 @@ Rivets.public.binders['each-*'] =
         @marker.parentNode.removeChild view.els[0]
 
     for model, index in collection
-      data = {index}
+      data = Object.create @view.models
+      data.index = index
       data[modelName] = model
 
       if not @iterated[index]?
-        for key, model of @view.models
-          data[key] ?= model
 
         previous = if @iterated.length
           @iterated[@iterated.length - 1].els[0]
