@@ -1,5 +1,5 @@
 // Rivets.js
-// version: 0.7.0
+// version: 0.7.1
 // author: Michael Richards
 // license: MIT
 (function() {
@@ -418,7 +418,8 @@
         parse(el);
       }
       this.bindings.sort(function(a, b) {
-        return (b.binder.priority || 0) - (a.binder.priority || 0);
+        var _ref2, _ref3;
+        return (((_ref2 = b.binder) != null ? _ref2.priority : void 0) || 0) - (((_ref3 = a.binder) != null ? _ref3.priority : void 0) || 0);
       });
     };
 
@@ -719,7 +720,11 @@
     };
 
     Binding.prototype.getValue = function(el) {
-      return (this.binder.getValue || Rivets.Util.getInputValue)(el);
+      if (this.binder && (this.binder.getValue != null)) {
+        return this.binder.getValue.call(this, el);
+      } else {
+        return Rivets.Util.getInputValue(el);
+      }
     };
 
     return Binding;
