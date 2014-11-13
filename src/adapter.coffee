@@ -15,7 +15,7 @@ Rivets.public.adapters['.'] =
 
   cleanupWeakReference: (ref, id) ->
     unless Object.keys(ref.callbacks).length
-      unless Object.keys(ref.pointers).length
+      unless ref.pointers and Object.keys(ref.pointers).length
         delete @weakmap[id]
 
   stubFunction: (obj, fn) ->
