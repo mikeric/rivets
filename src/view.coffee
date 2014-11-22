@@ -7,7 +7,7 @@ class Rivets.View
   # constructor along with any local options that should be used throughout the
   # context of the view and it's bindings.
   constructor: (@els, @models, options = {}) ->
-    @els = [@els] unless (@els.jquery || @els instanceof Array)
+    @els = [@els] unless (@els.jquery or @els instanceof Array)
 
     for option in Rivets.extensions
       @[option] = {}
@@ -15,7 +15,7 @@ class Rivets.View
       @[option][k] ?= v for k, v of Rivets.public[option]
 
     for option in Rivets.options
-      @[option] = options[option] || Rivets.public[option]
+      @[option] = options[option] ? Rivets.public[option]
 
     @build()
 
