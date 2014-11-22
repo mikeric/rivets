@@ -7,7 +7,7 @@ class Rivets.Binding
   # containing view, the DOM node, the type of binding, the model object and the
   # keypath at which to listen for changes.
   constructor: (@view, @el, @type, @keypath, @options = {}) ->
-    @formatters = @options.formatters || []
+    @formatters = @options.formatters or []
     @dependencies = []
     @formatterObservers = {}
     @model = undefined
@@ -218,7 +218,7 @@ class Rivets.ComponentBinding extends Rivets.Binding
 class Rivets.TextBinding extends Rivets.Binding
   # Initializes a text binding for the specified view and text node.
   constructor: (@view, @el, @type, @keypath, @options = {}) ->
-    @formatters = @options.formatters || []
+    @formatters = @options.formatters or []
     @dependencies = []
     @formatterObservers = {}
 
