@@ -15,7 +15,7 @@ class Rivets.View
       @[option][k] ?= v for k, v of Rivets.public[option]
 
     for option in Rivets.options
-      @[option] = options[option] || Rivets.public[option]
+      @[option] = options[option] ? Rivets.public[option]
 
     @build()
 
