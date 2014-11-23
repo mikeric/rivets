@@ -59,13 +59,27 @@ describe('Rivets.Binding', function() {
   })
 
   describe('unbind()', function() {
-    it("calls the binder's unbind method if one exists", function() {
-      binding.unbind.should.not.throw()
+    describe('without a binder.unbind defined', function() {
+      it('should not throw an error', function() {
+        binding.unbind.should.not.throw()
+      })
+    })
 
-      binding.binder.unbind = function(){}
-      sinon.spy(binding.binder, 'unbind')
-      binding.unbind()
-      binding.binder.unbind.called.should.be.true
+    describe('with a binder.unbind defined', function() {
+      beforeEach(function() {
+        binding.binder.unbind = function(){}
+      
+      })
+
+      it('should not throw an error', function() {
+        binding.unbind.should.not.throw()
+      })
+
+      it("calls the binder's unbind method", function() {
+        sinon.spy(binding.binder, 'unbind')
+        binding.unbind()
+        binding.binder.unbind.called.should.be.true
+      })
     })
   })
 
