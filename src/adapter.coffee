@@ -70,7 +70,9 @@ Rivets.public.adapters['.'] =
           if newValue isnt value
             @unobserveMutations value, obj[@id], keypath
             value = newValue
-            callback() for callback in callbacks[keypath].slice() when callback in callbacks[keypath]
+
+            if callbacks[keypath]
+              callback() for callback in callbacks[keypath].slice() when callback in callbacks[keypath]
             @observeMutations newValue, obj[@id], keypath
 
     unless callback in callbacks[keypath]
