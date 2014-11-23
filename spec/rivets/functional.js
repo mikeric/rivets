@@ -63,7 +63,6 @@ describe('Functional', function() {
       it('should set the text content of the element', function() {
         el.setAttribute('data-text', 'data:foo')
         rivets.bind(el, bindData)
-        debugger
         el.textContent.should.equal(data.get('foo'))
       })
 
