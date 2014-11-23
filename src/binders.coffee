@@ -68,7 +68,7 @@ Rivets.public.binders.unchecked =
 # (two-way binder).
 Rivets.public.binders.value =
   publishes: true
-  priority: 2000
+  priority: 3000
 
   bind: (el) ->
     unless el.tagName is 'INPUT' and el.type is 'radio'
@@ -96,7 +96,7 @@ Rivets.public.binders.value =
 # Inserts and binds the element and it's child nodes into the DOM when true.
 Rivets.public.binders.if =
   block: true
-  priority: 3000
+  priority: 4000
 
   bind: (el) ->
     unless @marker?
@@ -134,7 +134,7 @@ Rivets.public.binders.if =
 # (negated version of `if` binder).
 Rivets.public.binders.unless =
   block: true
-  priority: 3000
+  priority: 4000
 
   bind: (el) ->
     Rivets.public.binders.if.bind.call @, el
@@ -163,7 +163,7 @@ Rivets.public.binders['on-*'] =
 # Appends bound instances of the element in place for each item in the array.
 Rivets.public.binders['each-*'] =
   block: true
-  priority: 3000
+  priority: 4000
 
   bind: (el) ->
     unless @marker?
