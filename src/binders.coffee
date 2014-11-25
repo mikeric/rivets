@@ -68,17 +68,21 @@ Rivets.public.binders.unchecked =
 # (two-way binder).
 Rivets.public.binders.value =
   publishes: true
-  priority: 2000
+  priority: 3000
 
   bind: (el) ->
-    @event = if el.tagName is 'SELECT' then 'change' else 'input'
-    Rivets.Util.bindEvent el, @event, @publish
+    unless el.tagName is 'INPUT' and el.type is 'radio'
+      @event = if el.tagName is 'SELECT' then 'change' else 'input'
+      Rivets.Util.bindEvent el, @event, @publish
 
   unbind: (el) ->
-    Rivets.Util.unbindEvent el, @event, @publish
+    unless el.tagName is 'INPUT' and el.type is 'radio'
+      Rivets.Util.unbindEvent el, @event, @publish
 
   routine: (el, value) ->
-    if window.jQuery?
+    if el.tagName is 'INPUT' and el.type is 'radio'
+      el.setAttribute 'value', value
+    else if window.jQuery?
       el = jQuery el
 
       if value?.toString() isnt el.val()?.toString()
@@ -92,7 +96,7 @@ Rivets.public.binders.value =
 # Inserts and binds the element and it's child nodes into the DOM when true.
 Rivets.public.binders.if =
   block: true
-  priority: 3000
+  priority: 4000
 
   bind: (el) ->
     unless @marker?
@@ -130,7 +134,7 @@ Rivets.public.binders.if =
 # (negated version of `if` binder).
 Rivets.public.binders.unless =
   block: true
-  priority: 3000
+  priority: 4000
 
   bind: (el) ->
     Rivets.public.binders.if.bind.call @, el
@@ -159,7 +163,7 @@ Rivets.public.binders['on-*'] =
 # Appends bound instances of the element in place for each item in the array.
 Rivets.public.binders['each-*'] =
   block: true
-  priority: 3000
+  priority: 4000
 
   bind: (el) ->
     unless @marker?
