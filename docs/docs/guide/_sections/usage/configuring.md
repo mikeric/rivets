@@ -9,7 +9,7 @@ rivets.configure({
   // Preload templates with initial data on bind
   preloadData: true,
 
-  // Toot sightglas interface for keypaths
+  // Root sightglass interface for keypaths
   rootInterface: '.',
 
   // Template delimiters for text bindings
