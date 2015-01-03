@@ -1,5 +1,5 @@
 // Rivets.js
-// version: 0.7.1
+// version: 0.7.2
 // author: Michael Richards
 // license: MIT
 (function() {
@@ -230,7 +230,7 @@
 
   Rivets.View = (function() {
     function View(els, models, options) {
-      var k, option, v, _base, _i, _j, _len, _len1, _ref1, _ref2, _ref3, _ref4;
+      var k, option, v, _base, _i, _j, _len, _len1, _ref1, _ref2, _ref3, _ref4, _ref5;
       this.els = els;
       this.models = models;
       if (options == null) {
@@ -271,7 +271,7 @@
       _ref4 = Rivets.options;
       for (_j = 0, _len1 = _ref4.length; _j < _len1; _j++) {
         option = _ref4[_j];
-        this[option] = options[option] || Rivets["public"][option];
+        this[option] = (_ref5 = options[option]) != null ? _ref5 : Rivets["public"][option];
       }
       this.build();
     }
@@ -905,17 +905,23 @@
 
   Rivets["public"].binders.value = {
     publishes: true,
-    priority: 2000,
+    priority: 3000,
     bind: function(el) {
-      this.event = el.tagName === 'SELECT' ? 'change' : 'input';
-      return Rivets.Util.bindEvent(el, this.event, this.publish);
+      if (!(el.tagName === 'INPUT' && el.type === 'radio')) {
+        this.event = el.tagName === 'SELECT' ? 'change' : 'input';
+        return Rivets.Util.bindEvent(el, this.event, this.publish);
+      }
     },
     unbind: function(el) {
-      return Rivets.Util.unbindEvent(el, this.event, this.publish);
+      if (!(el.tagName === 'INPUT' && el.type === 'radio')) {
+        return Rivets.Util.unbindEvent(el, this.event, this.publish);
+      }
     },
     routine: function(el, value) {
       var o, _i, _len, _ref1, _ref2, _ref3, _results;
-      if (window.jQuery != null) {
+      if (el.tagName === 'INPUT' && el.type === 'radio') {
+        return el.setAttribute('value', value);
+      } else if (window.jQuery != null) {
         el = jQuery(el);
         if ((value != null ? value.toString() : void 0) !== ((_ref1 = el.val()) != null ? _ref1.toString() : void 0)) {
           return el.val(value != null ? value : '');
@@ -939,7 +945,7 @@
 
   Rivets["public"].binders["if"] = {
     block: true,
-    priority: 3000,
+    priority: 4000,
     bind: function(el) {
       var attr, declaration;
       if (this.marker == null) {
@@ -984,7 +990,7 @@
 
   Rivets["public"].binders.unless = {
     block: true,
-    priority: 3000,
+    priority: 4000,
     bind: function(el) {
       return Rivets["public"].binders["if"].bind.call(this, el);
     },
@@ -1017,7 +1023,7 @@
 
   Rivets["public"].binders['each-*'] = {
     block: true,
-    priority: 3000,
+    priority: 4000,
     bind: function(el) {
       var attr, view, _i, _len, _ref1;
       if (this.marker == null) {
@@ -1140,17 +1146,23 @@
     counter: 0,
     weakmap: {},
     weakReference: function(obj) {
-      var id;
+      var id, _base, _name;
       if (!obj.hasOwnProperty(this.id)) {
         id = this.counter++;
-        this.weakmap[id] = {
-          callbacks: {}
-        };
         Object.defineProperty(obj, this.id, {
           value: id
         });
       }
-      return this.weakmap[obj[this.id]];
+      return (_base = this.weakmap)[_name = obj[this.id]] || (_base[_name] = {
+        callbacks: {}
+      });
+    },
+    cleanupWeakReference: function(ref, id) {
+      if (!Object.keys(ref.callbacks).length) {
+        if (!(ref.pointers && Object.keys(ref.pointers).length)) {
+          return delete this.weakmap[id];
+        }
+      }
     },
     stubFunction: function(obj, fn) {
       var map, original, weakmap;
@@ -1193,14 +1205,17 @@
       }
     },
     unobserveMutations: function(obj, ref, keypath) {
-      var idx, keypaths, _ref1;
-      if (Array.isArray(obj && (obj[this.id] != null))) {
-        if (keypaths = (_ref1 = this.weakReference(obj).pointers) != null ? _ref1[ref] : void 0) {
-          idx = keypaths.indexOf(keypath);
-          if (idx >= 0) {
-            return keypaths.splice(idx, 1);
-          }
+      var idx, map, pointers;
+      if (Array.isArray(obj) && (obj[this.id] != null)) {
+        map = this.weakReference(obj);
+        pointers = map.pointers[ref];
+        if ((idx = pointers.indexOf(keypath)) >= 0) {
+          pointers.splice(idx, 1);
         }
+        if (!pointers.length) {
+          delete map.pointers[ref];
+        }
+        return this.cleanupWeakReference(map, obj[this.id]);
       }
     },
     observe: function(obj, keypath, callback) {
@@ -1218,12 +1233,15 @@
             return function(newValue) {
               var _i, _len, _ref1;
               if (newValue !== value) {
+                _this.unobserveMutations(value, obj[_this.id], keypath);
                 value = newValue;
-                _ref1 = callbacks[keypath].slice();
-                for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-                  callback = _ref1[_i];
-                  if (__indexOf.call(callbacks[keypath], callback) >= 0) {
-                    callback();
+                if (callbacks[keypath]) {
+                  _ref1 = callbacks[keypath].slice();
+                  for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+                    callback = _ref1[_i];
+                    if (__indexOf.call(callbacks[keypath], callback) >= 0) {
+                      callback();
+                    }
                   }
                 }
                 return _this.observeMutations(newValue, obj[_this.id], keypath);
@@ -1238,13 +1256,17 @@
       return this.observeMutations(obj[keypath], obj[this.id], keypath);
     },
     unobserve: function(obj, keypath, callback) {
-      var callbacks, idx;
-      callbacks = this.weakmap[obj[this.id]].callbacks[keypath];
-      idx = callbacks.indexOf(callback);
-      if (idx >= 0) {
+      var callbacks, idx, map;
+      map = this.weakmap[obj[this.id]];
+      callbacks = map.callbacks[keypath];
+      if ((idx = callbacks.indexOf(callback)) >= 0) {
         callbacks.splice(idx, 1);
+        if (!callbacks.length) {
+          delete map.callbacks[keypath];
+        }
       }
-      return this.unobserveMutations(obj[keypath], obj[this.id], keypath);
+      this.unobserveMutations(obj[keypath], obj[this.id], keypath);
+      return this.cleanupWeakReference(map, obj[this.id]);
     },
     get: function(obj, keypath) {
       return obj[keypath];
