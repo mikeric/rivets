@@ -202,7 +202,7 @@ class Rivets.ComponentBinding extends Rivets.Binding
     if @componentView?
       @componentView?.bind()
     else
-      el = @component.build.call @attributes
+      el = @component.build.call @attributes @el
       (@componentView = new Rivets.View(el, @locals(), @view.options)).bind()
       @el.parentNode.replaceChild el, @el
 
