@@ -56,9 +56,20 @@ Rivets =
 
       return
 
-    # Binds a set of model objects to a parent DOM element and returns a
-    # `Rivets.View` instance.
+    # Binds some data to a template / element. Returns a Rivets.View instance.
     bind: (el, models = {}, options = {}) ->
       view = new Rivets.View(el, models, options)
+      view.bind()
+      view
+
+    # Initializes a new instance of a component on the specified element and
+    # returns a Rivets.View instance.
+    init: (component, el, data = {}) ->
+      el ?= document.createElement 'div'
+      component = Rivets.public.components[component]
+      el.innerHTML = component.template.call @, el
+      scope = component.initialize.call @, el, data
+
+      view = new Rivets.View(el, scope)
       view.bind()
       view
