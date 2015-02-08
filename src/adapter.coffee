@@ -47,14 +47,13 @@ Rivets.public.adapters['.'] =
 
   unobserveMutations: (obj, ref, keypath) ->
     if Array.isArray(obj) and obj[@id]?
-      map = @weakReference obj
-      pointers = map.pointers[ref]
+      if map = @weakmap[obj[@id]]
+        if pointers = map.pointers[ref]
+          if (idx = pointers.indexOf(keypath)) >= 0
+            pointers.splice idx, 1
 
-      if (idx = pointers.indexOf(keypath)) >= 0
-        pointers.splice idx, 1
-
-      delete map.pointers[ref] unless pointers.length
-      @cleanupWeakReference map, obj[@id]
+          delete map.pointers[ref] unless pointers.length
+          @cleanupWeakReference map, obj[@id]
 
   observe: (obj, keypath, callback) ->
     callbacks = @weakReference(obj).callbacks
