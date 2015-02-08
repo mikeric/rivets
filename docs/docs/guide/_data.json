@@ -45,6 +45,10 @@
       }
     }
   },
+  "components": {
+    "title": "Components",
+    "sections": {}
+  },
   "adapters": {
     "title": "Adapters",
     "sections": {
