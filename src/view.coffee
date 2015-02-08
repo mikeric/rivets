@@ -31,30 +31,24 @@ class Rivets.View
   bindingRegExp: =>
     new RegExp "^#{@prefix}-"
 
-  # Regular expression used to match component nodes.
-  componentRegExp: =>
-    new RegExp "^#{@prefix.toUpperCase()}-"
+  buildBinding: (binding, node, type, declaration) =>
+    options = {}
+
+    pipes = (pipe.trim() for pipe in declaration.split '|')
+    context = (ctx.trim() for ctx in pipes.shift().split '<')
+    keypath = context.shift()
+
+    options.formatters = pipes
+
+    if dependencies = context.shift()
+      options.dependencies = dependencies.split /\s+/
+
+    @bindings.push new Rivets[binding] @, node, type, keypath, options
 
   # Parses the DOM tree and builds `Rivets.Binding` instances for every matched
   # binding declaration.
   build: =>
     @bindings = []
-    bindingRegExp = @bindingRegExp()
-    componentRegExp = @componentRegExp()
-
-    buildBinding = (binding, node, type, declaration) =>
-      options = {}
-
-      pipes = (pipe.trim() for pipe in declaration.split '|')
-      context = (ctx.trim() for ctx in pipes.shift().split '<')
-      keypath = context.shift()
-
-      options.formatters = pipes
-
-      if dependencies = context.shift()
-        options.dependencies = dependencies.split /\s+/
-
-      @bindings.push new Rivets[binding] @, node, type, keypath, options
 
     parse = (node) =>
       if node.nodeType is 3
@@ -68,36 +62,28 @@ class Rivets.View
                 node.parentNode.insertBefore text, node
 
                 if token.type is 1
-                  buildBinding 'TextBinding', text, null, token.value
+                  @buildBinding 'TextBinding', text, null, token.value
               node.parentNode.removeChild node
       else if node.nodeType is 1
-        if componentRegExp.test node.nodeName
-          type = node.nodeName.replace(componentRegExp, '').toLowerCase()
-          @bindings.push new Rivets.ComponentBinding @, node, type
-        else
-          block = node.nodeName is 'SCRIPT' or node.nodeName is 'STYLE'
+        type = node.nodeName.toLowerCase()
 
+        if @components[type] and not node._bound
+          bindingRegExp = @bindingRegExp()
+
+          iterated = false
+          
           for attribute in node.attributes
-            if bindingRegExp.test attribute.name
-              type = attribute.name.replace bindingRegExp, ''
+            iteratorRegExp = new RegExp "^#{@prefix}-each-.+$"
 
-              unless binder = @binders[type]
-                for identifier, value of @binders
-                  if identifier isnt '*' and identifier.indexOf('*') isnt -1
-                    regexp = new RegExp "^#{identifier.replace(/\*/g, '.+')}$"
-                    if regexp.test type
-                      binder = value
+            if iteratorRegExp.test attribute.name
+              iterated = true
 
-              binder or= @binders['*']
-
-              if binder.block
-                block = true
-                attributes = [attribute]
-
-          for attribute in attributes or node.attributes
-            if bindingRegExp.test attribute.name
-              type = attribute.name.replace bindingRegExp, ''
-              buildBinding 'Binding', node, type, attribute.value
+          if iterated
+            block = @traverse node
+          else
+            @bindings.push new Rivets.ComponentBinding @, node, type
+        else
+          block = @traverse node
 
       unless block
         parse childNode for childNode in (n for n in node.childNodes)
@@ -108,6 +94,34 @@ class Rivets.View
       (b.binder?.priority or 0) - (a.binder?.priority or 0)
 
     return
+
+  traverse: (node) =>
+    bindingRegExp = @bindingRegExp()
+    block = node.nodeName is 'SCRIPT' or node.nodeName is 'STYLE'
+
+    for attribute in node.attributes
+      if bindingRegExp.test attribute.name
+        type = attribute.name.replace bindingRegExp, ''
+
+        unless binder = @binders[type]
+          for identifier, value of @binders
+            if identifier isnt '*' and identifier.indexOf('*') isnt -1
+              regexp = new RegExp "^#{identifier.replace(/\*/g, '.+')}$"
+              if regexp.test type
+                binder = value
+
+        binder or= @binders['*']
+
+        if binder.block
+          block = true
+          attributes = [attribute]
+
+    for attribute in attributes or node.attributes
+      if bindingRegExp.test attribute.name
+        type = attribute.name.replace bindingRegExp, ''
+        @buildBinding 'Binding', node, type, attribute.value
+
+    block
 
   # Returns an array of bindings where the supplied function evaluates to true.
   select: (fn) =>
