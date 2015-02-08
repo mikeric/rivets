@@ -27,3 +27,16 @@ And to use the component in your templates, add an element with the same name as
 ```
 
 These keypaths will also be observed in both directions so that the component will update if the value changes from the outside and it will set the value if the component changes it from the inside.
+
+If you want certain attributes to be static instead of an observed keypath, you can list out these attributes as an array on the component's `static` property.
+
+```javascript
+rivets.components['todo-item'] = {
+  static: ['list-style'],
+  …
+}
+```
+
+```html
+<todo-item item="myItem" list-style="condensed"></todo-item>
+```
