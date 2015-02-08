@@ -168,47 +168,84 @@ class Rivets.ComponentBinding extends Rivets.Binding
   # inflections are determined based on the components defined attributes.
   constructor: (@view, @el, @type) ->
     @component = @view.components[@type]
-    @attributes = {}
-    @inflections = {}
+    @static = {}
+    @observers = {}
+    @upstreamObservers = {}
 
     for attribute in @el.attributes or []
-      if attribute.name in @component.attributes
-        @attributes[attribute.name] = attribute.value
+      propertyName = @camelCase attribute.name
+
+      if propertyName in (@component.static ? [])
+        @static[propertyName] = attribute.value
       else
-        @inflections[attribute.name] = attribute.value
+        @observers[propertyName] = attribute.value
 
   # Intercepts `Rivets.Binding::sync` since component bindings are not bound to
   # a particular model to update it's value.
   sync: ->
 
   # Returns an object map using the component's scope inflections.
-  locals: (models = @view.models) =>
+  locals: =>
     result = {}
 
-    for key, inverse of @inflections
-      result[key] = (result[key] or models)[path] for path in inverse.split '.'
+    for key, value of @static
+      result[key] = value
 
-    result[key] ?= model for key, model of models
+    for key, observer of @observers
+      result[key] = observer.value()
+
     result
 
-  # Intercepts `Rivets.Binding::update` to be called on `@componentView` with a
-  # localized map of the models.
-  update: (models) =>
-    @componentView?.update @locals models
+  # Returns a camel-cased version of the string. Used when translating an
+  # element's attribute name into a property name for the component's scope.
+  camelCase: (string) ->
+    string.replace /-([a-z])/g, (grouped) ->
+      grouped[1].toUpperCase()
 
   # Intercepts `Rivets.Binding::bind` to build `@componentView` with a localized
   # map of models from the root view. Bind `@componentView` on subsequent calls.
   bind: =>
+    unless @bound
+      for key, keypath of @observers
+        @observers[key] = @observe @view.models, keypath, =>
+          @componentView.models[key] = @observers[key].value()
+
+      @bound = true
+
     if @componentView?
-      @componentView?.bind()
+      @componentView.bind()
     else
-      el = @component.build.call @attributes
-      (@componentView = new Rivets.View(el, @locals(), @view.options)).bind()
-      @el.parentNode.replaceChild el, @el
+      @el.innerHTML = @component.template.call this
+      scope = @component.initialize.call @, @el, @locals()
+      @el._bound = true
+
+      options = {}
+
+      for option in Rivets.extensions
+        options[option] = {}
+        options[option][k] = v for k, v of @component[option] if @component[option]
+        options[option][k] ?= v for k, v of @view[option]
+
+      for option in Rivets.options
+        options[option] = @component[option] ? @view[option]
+
+      @componentView = new Rivets.View(@el, scope, options)
+
+      @componentView.bind()
+
+      for key, observer of @observers
+        @upstreamObservers[key] = @observe @componentView.models, key, =>
+          observer.setValue @componentView.models[key]
 
   # Intercept `Rivets.Binding::unbind` to be called on `@componentView`.
   unbind: =>
-    @componentView?.unbind()
+    for key, observer of @upstreamObservers
+      observer.unobserve()
+
+    for key, observer of @observers
+      observer.unobserve()
+
+    @componentView?.unbind.call @
 
 # Rivets.TextBinding
 # -----------------------
