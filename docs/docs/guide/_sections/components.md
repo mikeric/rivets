@@ -40,3 +40,13 @@ rivets.components['todo-item'] = {
 ```html
 <todo-item item="myItem" list-style="condensed"></todo-item>
 ```
+
+Components can also be initialized on their own, outside of a template. This is useful when you want to insert a new view into the DOM yourself, such as the entry point to your entire application or the content of a modal. The API is similar to `rivets.bind`, except that instead of passing it an actual template / element, you just pass it the name of the component and the root element you want the component to render in.
+
+```
+rivets.init('my-app', $('body'), {user: user})
+```
+
+```
+rivets.init('todo-item', $('#modal-content'), {item: myItem})
+```
