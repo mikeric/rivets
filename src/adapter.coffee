@@ -1,5 +1,5 @@
 # The default `.` adapter thats comes with Rivets.js. Allows subscribing to
-# properties on POJSOs, implemented in ES5 natives using
+# properties on plain objects, implemented in ES5 natives using
 # `Object.defineProperty`.
 Rivets.public.adapters['.'] =
   id: '_rv'
@@ -60,19 +60,22 @@ Rivets.public.adapters['.'] =
 
     unless callbacks[keypath]?
       callbacks[keypath] = []
-      value = obj[keypath]
+      desc = Object.getOwnPropertyDescriptor obj, keypath
 
-      Object.defineProperty obj, keypath,
-        enumerable: true
-        get: -> value
-        set: (newValue) =>
-          if newValue isnt value
-            @unobserveMutations value, obj[@id], keypath
-            value = newValue
+      unless desc?.get or desc?.set
+        value = obj[keypath]
 
-            if callbacks[keypath]
-              callback() for callback in callbacks[keypath].slice() when callback in callbacks[keypath]
-            @observeMutations newValue, obj[@id], keypath
+        Object.defineProperty obj, keypath,
+          enumerable: true
+          get: -> value
+          set: (newValue) =>
+            if newValue isnt value
+              @unobserveMutations value, obj[@id], keypath
+              value = newValue
+
+              if callbacks[keypath]
+                callback() for callback in callbacks[keypath].slice() when callback in callbacks[keypath]
+              @observeMutations newValue, obj[@id], keypath
 
     unless callback in callbacks[keypath]
       callbacks[keypath].push callback
@@ -80,17 +83,16 @@ Rivets.public.adapters['.'] =
     @observeMutations obj[keypath], obj[@id], keypath
 
   unobserve: (obj, keypath, callback) ->
-    map = @weakmap[obj[@id]]
-    callbacks = map.callbacks[keypath]
+    if map = @weakmap[obj[@id]]
+      if callbacks = map.callbacks[keypath]
+        if (idx = callbacks.indexOf(callback)) >= 0
+          callbacks.splice idx, 1
 
-    if (idx = callbacks.indexOf(callback)) >= 0
-      callbacks.splice idx, 1
+          unless callbacks.length
+            delete map.callbacks[keypath]
 
-      unless callbacks.length
-        delete map.callbacks[keypath]
-
-    @unobserveMutations obj[keypath], obj[@id], keypath
-    @cleanupWeakReference map, obj[@id]
+        @unobserveMutations obj[keypath], obj[@id], keypath
+        @cleanupWeakReference map, obj[@id]
 
   get: (obj, keypath) ->
     obj[keypath]
