@@ -81,16 +81,17 @@ Rivets.public.adapters['.'] =
 
   unobserve: (obj, keypath, callback) ->
     map = @weakmap[obj[@id]]
-    callbacks = map.callbacks[keypath]
+    if (map)
+      callbacks = map.callbacks[keypath]
 
-    if (idx = callbacks.indexOf(callback)) >= 0
-      callbacks.splice idx, 1
+      if (idx = callbacks.indexOf(callback)) >= 0
+        callbacks.splice idx, 1
 
-      unless callbacks.length
-        delete map.callbacks[keypath]
+        unless callbacks.length
+          delete map.callbacks[keypath]
 
-    @unobserveMutations obj[keypath], obj[@id], keypath
-    @cleanupWeakReference map, obj[@id]
+      @unobserveMutations obj[keypath], obj[@id], keypath
+      @cleanupWeakReference map, obj[@id]
 
   get: (obj, keypath) ->
     obj[keypath]
