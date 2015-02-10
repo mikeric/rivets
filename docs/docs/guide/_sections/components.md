@@ -20,7 +20,7 @@ rivets.components['todo-item'] = {
 }
 ```
 
-To use the component define above in your templates, simply use an element with the same name as the component's key. All attributes on the element will get evaluated as keypaths before being passed into the component's `initialize` function.
+To use the component inside of a template, simply use an element with the same tag name as the component's key. All attributes on the element will get evaluated as keypaths before being passed into the component's `initialize` function.
 
 ```html
 <todo-item item="myItem"></todo-item>
