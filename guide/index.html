@@ -43,7 +43,7 @@ _gaq.push(['_trackPageview']);
   // Preload templates with initial data on bind
   preloadData: true,
 
-  // Toot sightglas interface for keypaths
+  // Root sightglass interface for keypaths
   rootInterface: &#39;.&#39;,
 
   // Template delimiters for text bindings
@@ -124,6 +124,35 @@ _gaq.push(['_trackPageview']);
 <pre><code class="language-javascript">rivets.formatters.time = function(value, timezone, format) {
   return moment(value).tz(timezone).format(format)
 }</code></pre>
+<h2 id="components">Components</h2><p>Components let you define reusable views that can be used within any of your templates. For some perspective on where components fit into your templates in relation to binders; binders define custom attributes, while components define custom elements.</p>
+<p>A component object must define a <code>template</code> function, which returns a the template for the component (can be an HTML string or an actual element). As well it must define an <code>initialize</code> function, which returns the scope object to bind the view with (this will likely be a controller / viewmodel / presenter).</p>
+<pre><code class="language-javascript">rivets.components[&#39;todo-item&#39;] = {
+  // Return the template for the component.
+  template: function() {
+    return JST[&#39;todos/todo-item&#39;]
+  },
+
+  // Takes the original element and the data that was passed into the
+  // component (either from rivets.init or the attributes on the component
+  // element in the template).
+  initialize: function(el, data) {
+    return new ItemController({
+      item: data.item
+    })
+  }
+}</code></pre>
+<p>To use the component define above in your templates, simply use an element with the same name as the component&#39;s key. All attributes on the element will get evaluated as keypaths before being passed into the component&#39;s <code>initialize</code> function.</p>
+<pre><code class="language-html">&lt;todo-item item=&quot;myItem&quot;&gt;&lt;/todo-item&gt;</code></pre>
+<p>These keypaths will also be observed in both directions so that the component will update if the value changes from the outside and it will set the value if the component changes it from the inside.</p>
+<p>Additionally, if you want certain attributes to be static instead of an observed keypath, you can list them out on the <code>static</code> property fo your components.</p>
+<pre><code class="language-javascript">rivets.components[&#39;todo-item&#39;] = {
+  static: [&#39;list-style&#39;],
+  …
+}</code></pre>
+<pre><code class="language-html">&lt;todo-item item=&quot;myItem&quot; list-style=&quot;condensed&quot;&gt;&lt;/todo-item&gt;</code></pre>
+<p>Components can also be initialized on their own, outside of a template. This is useful when you want to insert a new view into the DOM yourself, such as the entry point to your entire application or the content of a modal. The API is similar to <code>rivets.bind</code>, except that instead of passing it an actual template / element, you just pass it the name of the component and the root element you want the component to render in.</p>
+<pre><code>rivets.init(&#39;my-app&#39;, $(&#39;body&#39;), {user: user})</code></pre>
+<pre><code>rivets.init(&#39;todo-item&#39;, $(&#39;#modal-content&#39;), {item: myItem})</code></pre>
 <h2 id="adapters">Adapters</h2><p>Rivets.js is agnostic about the objects that it can subscribe to. This makes it very flexible as it can adapt to work with virtually any library or framework, but it also means that you need to tell Rivets.js <em>how</em> to subscribe to those objects. This is where adapters come in to play. This feature is driven by the <a href="https://github.com/mikeric/sightglass">Sightglass</a> library.</p>
 <p>Each adapter is defined to a unique interface (a single character) which is used to separate the keys in a keypath. The interfaces used in a keypath determine which adapter to use for each intermediary key.</p>
 <pre><code>user.address:city</code></pre>
@@ -156,4 +185,4 @@ _gaq.push(['_trackPageview']);
     &lt;span&gt;{ todo.summary }&lt;/span&gt;
   &lt;/li&gt;
 &lt;ul&gt;</code></pre>
-</article><aside class="col col-md-3 hidden-sm hidden-xs"><div class="pull-right"><nav id="nav" data-spy="affix" data-offset-top="145"><ul class="nav"><li><a href="#install"><strong>Installation</strong></a><ul class="nav"></ul></li><li><a href="#usage"><strong>Usage</strong></a><ul class="nav"><li><a href="#usage-templates">Templates</a></li><li><a href="#usage-binding">Binding</a></li><li><a href="#usage-configuring">Configuring</a></li></ul></li><li><a href="#binders"><strong>Binders</strong></a><ul class="nav"><li><a href="#binders-one-way">One-way binders</a></li><li><a href="#binders-two-way">Two-way binders</a></li><li><a href="#binders-api">API</a></li></ul></li><li><a href="#formatters"><strong>Formatters</strong></a><ul class="nav"><li><a href="#formatters-one-way">One-way formatters</a></li><li><a href="#formatters-two-way">Two-way formatters</a></li><li><a href="#formatters-arguments">Formatter arguments</a></li></ul></li><li><a href="#adapters"><strong>Adapters</strong></a><ul class="nav"><li><a href="#adapters-default">The built-in adapter</a></li><li><a href="#adapters-creating">Creating an adapter</a></li></ul></li><li><a href="#computed-properties"><strong>Computed Properties</strong></a><ul class="nav"></ul></li><li><a href="#iteration"><strong>Iteration binding</strong></a><ul class="nav"></ul></li></ul></nav></div></aside></div></div></section></body></html>
+</article><aside class="col col-md-3 hidden-sm hidden-xs"><div class="pull-right"><nav id="nav" data-spy="affix" data-offset-top="145"><ul class="nav"><li><a href="#install"><strong>Installation</strong></a><ul class="nav"></ul></li><li><a href="#usage"><strong>Usage</strong></a><ul class="nav"><li><a href="#usage-templates">Templates</a></li><li><a href="#usage-binding">Binding</a></li><li><a href="#usage-configuring">Configuring</a></li></ul></li><li><a href="#binders"><strong>Binders</strong></a><ul class="nav"><li><a href="#binders-one-way">One-way binders</a></li><li><a href="#binders-two-way">Two-way binders</a></li><li><a href="#binders-api">API</a></li></ul></li><li><a href="#formatters"><strong>Formatters</strong></a><ul class="nav"><li><a href="#formatters-one-way">One-way formatters</a></li><li><a href="#formatters-two-way">Two-way formatters</a></li><li><a href="#formatters-arguments">Formatter arguments</a></li></ul></li><li><a href="#components"><strong>Components</strong></a><ul class="nav"></ul></li><li><a href="#adapters"><strong>Adapters</strong></a><ul class="nav"><li><a href="#adapters-default">The built-in adapter</a></li><li><a href="#adapters-creating">Creating an adapter</a></li></ul></li><li><a href="#computed-properties"><strong>Computed Properties</strong></a><ul class="nav"></ul></li><li><a href="#iteration"><strong>Iteration binding</strong></a><ul class="nav"></ul></li></ul></nav></div></aside></div></div></section></body></html>
