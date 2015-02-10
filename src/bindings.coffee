@@ -74,7 +74,7 @@ class Rivets.Binding
   # Returns an event handler for the binding around the supplied function.
   eventHandler: (fn) =>
     handler = (binding = @).view.handler
-    (ev) -> handler.call fn, @, ev, binding
+    (ev) -> handler.call fn, binding.model, ev, binding
 
   # Sets the value for the binding. This Basically just runs the binding routine
   # with the suplied value formatted.
