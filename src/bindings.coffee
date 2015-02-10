@@ -170,13 +170,16 @@ class Rivets.ComponentBinding extends Rivets.Binding
     @observers = {}
     @upstreamObservers = {}
 
-    for attribute in @el.attributes or []
-      propertyName = @camelCase attribute.name
+    bindingRegExp = view.bindingRegExp()
 
-      if propertyName in (@component.static ? [])
-        @static[propertyName] = attribute.value
-      else
-        @observers[propertyName] = attribute.value
+    for attribute in @el.attributes or []
+      unless bindingRegExp.test attribute.name
+        propertyName = @camelCase attribute.name
+
+        if propertyName in (@component.static ? [])
+          @static[propertyName] = attribute.value
+        else
+          @observers[propertyName] = attribute.value
 
   # Intercepts `Rivets.Binding::sync` since component bindings are not bound to
   # a particular model to update it's value.

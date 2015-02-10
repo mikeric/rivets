@@ -65,25 +65,7 @@ class Rivets.View
                   @buildBinding 'TextBinding', text, null, token.value
               node.parentNode.removeChild node
       else if node.nodeType is 1
-        type = node.nodeName.toLowerCase()
-
-        if @components[type] and not node._bound
-          bindingRegExp = @bindingRegExp()
-
-          iterated = false
-          
-          for attribute in node.attributes
-            iteratorRegExp = new RegExp "^#{@prefix}-each-.+$"
-
-            if iteratorRegExp.test attribute.name
-              iterated = true
-
-          if iterated
-            block = @traverse node
-          else
-            @bindings.push new Rivets.ComponentBinding @, node, type
-        else
-          block = @traverse node
+        block = @traverse node
 
       unless block
         parse childNode for childNode in (n for n in node.childNodes)
@@ -120,6 +102,13 @@ class Rivets.View
       if bindingRegExp.test attribute.name
         type = attribute.name.replace bindingRegExp, ''
         @buildBinding 'Binding', node, type, attribute.value
+
+    unless block
+      type = node.nodeName.toLowerCase()
+
+      if @components[type] and not node._bound
+        @bindings.push new Rivets.ComponentBinding @, node, type
+        block = true
 
     block
 
