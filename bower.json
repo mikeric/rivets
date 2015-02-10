@@ -2,7 +2,7 @@
   "name": "rivets",
   "description": "Declarative data binding + templating solution.",
   "homepage": "http://rivetsjs.com",
-  "version": "0.7.2",
+  "version": "0.8.0",
   "main": "dist/rivets.js",
   "license": "MIT",
   "authors": [
@@ -18,6 +18,6 @@
     "spec"
   ],
   "dependencies": {
-    "sightglass": "~0.2.3"
+    "sightglass": "~0.2.4"
   }
 }

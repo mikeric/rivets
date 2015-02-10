@@ -2,7 +2,7 @@
   "name": "rivets",
   "description": "Declarative data binding + templating solution.",
   "repo": "mikeric/rivets",
-  "version": "0.7.2",
+  "version": "0.8.0",
   "keywords": [
     "data binding",
     "templating"
@@ -13,6 +13,6 @@
   ],
   "main": "dist/rivets.js",
   "dependencies": {
-    "mikeric/sightglass": "~0.2.3"
+    "mikeric/sightglass": "~0.2.4"
   }
 }

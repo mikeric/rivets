@@ -1,3 +1,9 @@
+# 0.8
+
+#### Changes
+
+- More refined and useful components API. Some documentation is available [here](http://rivetsjs.com/docs/guide/#components).
+
 # 0.7
 
 ### Changes

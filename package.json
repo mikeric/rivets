@@ -1,7 +1,7 @@
 {
   "name": "rivets",
   "description": "Declarative data binding + templating solution.",
-  "version": "0.7.2",
+  "version": "0.8.0",
   "author": "Michael Richards",
   "url": "http://rivetsjs.com",
   "main": "./dist/rivets.js",
@@ -16,7 +16,7 @@
     "url": "https://github.com/mikeric/rivets.git"
   },
   "dependencies": {
-    "sightglass": "~0.2.3"
+    "sightglass": "~0.2.4"
   },
   "scripts": {
     "test": "gulp spec",
