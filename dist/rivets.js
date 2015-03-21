@@ -1,5 +1,5 @@
 // Rivets.js
-// version: 0.8.0
+// version: 0.8.1
 // author: Michael Richards
 // license: MIT
 (function() {
@@ -482,7 +482,7 @@
       _results = [];
       for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
         binding = _ref1[_i];
-        _results.push(binding.sync());
+        _results.push(typeof binding.sync === "function" ? binding.sync() : void 0);
       }
       return _results;
     };
@@ -490,7 +490,8 @@
     View.prototype.publish = function() {
       var binding, _i, _len, _ref1, _results;
       _ref1 = this.select(function(b) {
-        return b.binder.publishes;
+        var _ref1;
+        return (_ref1 = b.binder) != null ? _ref1.publishes : void 0;
       });
       _results = [];
       for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
@@ -513,7 +514,7 @@
       _results = [];
       for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
         binding = _ref1[_i];
-        _results.push(binding.update(models));
+        _results.push(typeof binding.update === "function" ? binding.update(models) : void 0);
       }
       return _results;
     };
@@ -777,6 +778,10 @@
 
     ComponentBinding.prototype.sync = function() {};
 
+    ComponentBinding.prototype.update = function() {};
+
+    ComponentBinding.prototype.publish = function() {};
+
     ComponentBinding.prototype.locals = function() {
       var key, observer, result, value, _ref1, _ref2;
       result = {};
@@ -805,11 +810,13 @@
         _ref1 = this.observers;
         for (key in _ref1) {
           keypath = _ref1[key];
-          this.observers[key] = this.observe(this.view.models, keypath, (function(_this) {
-            return function() {
-              return _this.componentView.models[key] = _this.observers[key].value();
+          this.observers[key] = this.observe(this.view.models, keypath, ((function(_this) {
+            return function(key) {
+              return function() {
+                return _this.componentView.models[key] = _this.observers[key].value();
+              };
             };
-          })(this));
+          })(this)).call(this, key));
         }
         this.bound = true;
       }
@@ -850,11 +857,13 @@
         _results = [];
         for (key in _ref7) {
           observer = _ref7[key];
-          _results.push(this.upstreamObservers[key] = this.observe(this.componentView.models, key, (function(_this) {
-            return function() {
-              return observer.setValue(_this.componentView.models[key]);
+          _results.push(this.upstreamObservers[key] = this.observe(this.componentView.models, key, ((function(_this) {
+            return function(key, observer) {
+              return function() {
+                return observer.setValue(_this.componentView.models[key]);
+              };
             };
-          })(this)));
+          })(this)).call(this, key, observer)));
         }
         return _results;
       }
