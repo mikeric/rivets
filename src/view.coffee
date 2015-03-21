@@ -126,13 +126,13 @@ class Rivets.View
 
   # Syncs up the view with the model by running the routines on all bindings.
   sync: =>
-    binding.sync() for binding in @bindings
+    binding.sync?() for binding in @bindings
 
   # Publishes the input values from the view back to the model (reverse sync).
   publish: =>
-    binding.publish() for binding in @select (b) -> b.binder.publishes
+    binding.publish() for binding in @select (b) -> b.binder?.publishes
 
   # Updates the view's models along with any affected bindings.
   update: (models = {}) =>
     @models[key] = model for key, model of models
-    binding.update models for binding in @bindings
+    binding.update? models for binding in @bindings

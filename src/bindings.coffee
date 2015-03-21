@@ -185,6 +185,14 @@ class Rivets.ComponentBinding extends Rivets.Binding
   # a particular model to update it's value.
   sync: ->
 
+  # Intercepts `Rivets.Binding::update` since component bindings are not bound
+  # to a particular model to update it's value.
+  update: ->
+
+  # Intercepts `Rivets.Binding::publish` since component bindings are not bound
+  # to a particular model to update it's value.
+  publish: ->
+
   # Returns an object map using the component's scope inflections.
   locals: =>
     result = {}
@@ -208,8 +216,9 @@ class Rivets.ComponentBinding extends Rivets.Binding
   bind: =>
     unless @bound
       for key, keypath of @observers
-        @observers[key] = @observe @view.models, keypath, =>
+        @observers[key] = @observe @view.models, keypath, ((key) => =>
           @componentView.models[key] = @observers[key].value()
+        ).call(@, key)
 
       @bound = true
 
@@ -231,12 +240,12 @@ class Rivets.ComponentBinding extends Rivets.Binding
         options[option] = @component[option] ? @view[option]
 
       @componentView = new Rivets.View(@el, scope, options)
-
       @componentView.bind()
 
       for key, observer of @observers
-        @upstreamObservers[key] = @observe @componentView.models, key, =>
+        @upstreamObservers[key] = @observe @componentView.models, key, ((key, observer) => =>
           observer.setValue @componentView.models[key]
+        ).call(@, key, observer)
 
   # Intercept `Rivets.Binding::unbind` to be called on `@componentView`.
   unbind: =>
