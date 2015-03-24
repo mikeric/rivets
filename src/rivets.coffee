@@ -69,6 +69,8 @@ Rivets =
       component = Rivets.public.components[component]
       template = component.template.call @, el
       if template instanceof HTMLElement
+        while el.firstChild
+          el.removeChild(el.firstChild)
         el.appendChild(template)
       else
         el.innerHTML = template
