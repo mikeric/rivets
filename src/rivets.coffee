@@ -67,7 +67,11 @@ Rivets =
     init: (component, el, data = {}) ->
       el ?= document.createElement 'div'
       component = Rivets.public.components[component]
-      el.innerHTML = component.template.call @, el
+      template = component.template.call @, el
+      if template instanceof HTMLElement
+        el.appendChild(template)
+      else
+        el.innerHTML = template
       scope = component.initialize.call @, el, data
 
       view = new Rivets.View(el, scope)
