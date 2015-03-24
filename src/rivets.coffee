@@ -66,7 +66,7 @@ Rivets =
     # returns a Rivets.View instance.
     init: (component, el, data = {}) ->
       el ?= document.createElement 'div'
-      el =  if el instanceof jQuery then el[0]
+      el =  if !!(window['jQuery'] or window['$']) and el instanceof jQuery then el[0] else el
       component = Rivets.public.components[component]
       el.innerHTML = component.template.call @, el
       scope = component.initialize.call @, el, data
