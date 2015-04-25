@@ -225,7 +225,16 @@ class Rivets.ComponentBinding extends Rivets.Binding
     if @componentView?
       @componentView.bind()
     else
+      componentParts = @el.cloneNode(true).children
+
       @el.innerHTML = @component.template.call this
+
+      for p in componentParts
+        instances = @el.getElementsByTagName p.tagName
+
+        for i in instances
+          i.parentNode.replaceChild p.cloneNode(true), i
+
       scope = @component.initialize.call @, @el, @locals()
       @el._bound = true
 

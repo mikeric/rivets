@@ -67,6 +67,9 @@ Rivets =
     init: (component, el, data = {}) ->
       el ?= document.createElement 'div'
       component = Rivets.public.components[component]
+
+      componentParts = el.cloneNode(true).children
+
       template = component.template.call @, el
       if template instanceof HTMLElement
         while el.firstChild
@@ -74,6 +77,13 @@ Rivets =
         el.appendChild(template)
       else
         el.innerHTML = template
+
+      for p in componentParts
+        instances = el.getElementsByTagName p.tagName
+
+        for i in instances
+          i.parentNode.replaceChild p.cloneNode(true), i
+
       scope = component.initialize.call @, el, data
 
       view = new Rivets.View(el, scope)
