@@ -176,8 +176,12 @@ class Rivets.ComponentBinding extends Rivets.Binding
       unless bindingRegExp.test attribute.name
         propertyName = @camelCase attribute.name
 
+        token = Rivets.TypeParser.parse(attribute.value)
+
         if propertyName in (@component.static ? [])
           @static[propertyName] = attribute.value
+        else if token.type is 0
+          @static[propertyName] = token.value
         else
           @observers[propertyName] = attribute.value
 
