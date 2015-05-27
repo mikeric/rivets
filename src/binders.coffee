@@ -29,7 +29,7 @@ Rivets.public.binders.disabled = (el, value) ->
 
 # Makes Element Readonly when value is true.
 Rivets.public.binders.readonly = (el, value) ->
-  el.readOnly = value
+  el.readOnly = !!value
 
 # Checks a checkbox or radio input when the value is true. Also sets the model
 # property when the input is checked or unchecked (two-way binder).
