@@ -6,6 +6,7 @@ Rivets =
     'rootInterface'
     'preloadData'
     'handler'
+    'updateEvent'
   ]
 
   extensions: [
@@ -40,6 +41,9 @@ Rivets =
 
     # Preload data by default.
     preloadData: true
+
+    # Use the 'oninput' event by default so synchronization occurs as changes occur.
+    updateEvent: 'input'
 
     # Default event handler.
     handler: (context, ev, binding) ->
