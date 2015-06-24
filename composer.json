@@ -1,5 +1,5 @@
 {
-	"name": "webmodules/rivets",
+	"name": "mikeric/rivets",
 	"type": "library",
 	"description": "Rivets.js is a lightweight data binding and templating system that facilitates building data-driven views.",
 	"homepage": "http://rivetsjs.com",
