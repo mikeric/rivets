@@ -7,6 +7,6 @@
 	"license": "MIT",
 	"authors": ["Michael Richards"],
 	"require": {
-		"mikeric/sightglass": "~0.2.4"
+		"mikeric/sightglass": "0.2.4"
 	}
 }
