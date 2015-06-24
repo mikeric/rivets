@@ -5,8 +5,7 @@
 	"homepage": "http://rivetsjs.com",
 	"keywords": ["rudra", "API"],
 	"license": "MIT",
-	"authors": ["Michael Richards"],
+	
 	"require": {
-		"mikeric/sightglass": "0.2.4"
 	}
 }
