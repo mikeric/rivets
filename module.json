@@ -1,0 +1,5 @@
+{
+	"webmodules/rivets": {
+		"js": ["dist/rivets.bundled.min.js"]
+	}
+}
