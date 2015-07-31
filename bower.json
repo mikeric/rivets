@@ -1,9 +1,8 @@
 {
-  "name": "rivets",
+  "name": "webmodules-rivets",
   "description": "Declarative data binding + templating solution.",
   "homepage": "http://rivetsjs.com",
-  "version": "0.8.1",
-  "main": "dist/rivets.js",
+  "main": "js/rivets.js",
   "license": "MIT",
   "authors": [
     "Michael Richards"
@@ -18,6 +17,6 @@
     "spec"
   ],
   "dependencies": {
-    "sightglass": "~0.2.4"
+    "webmodules-sightglass": "~0.2.4"
   }
 }

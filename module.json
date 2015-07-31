@@ -1,5 +1,7 @@
 {
+	"name": "webmodules/rivets",
 	"webmodules/rivets": {
-		"js": ["dist/rivets.bundled.min.js"]
+		"js": ["js/rivets.js"],
+		"on": ["webmodules/sightglass"]
 	}
 }
