@@ -33,10 +33,10 @@ $ npm install
 
 #### Building
 
-Rivets.js uses [gulp](http://gulpjs.com/) as it's build tool. Run the following task to compile + minify the source into `dist/`.
+Rivets.js uses [webpack](http://gulpjs.com/) as it's bundling / build tool. Run the following  to compile the source into `dist/`.
 
 ```
-$ gulp build
+$ npm run build
 ```
 
 #### Testing
