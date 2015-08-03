@@ -179,7 +179,7 @@ export class Binding {
       this.formatters.slice(0).reverse().forEach(formatter => {
         let args = formatter.split(/\s+/)
         let id = args.shift()
-        let f = this.views.formatters[id]
+        let f = this.view.formatters[id]
 
         if (defined(f) && f.publish) {
           value = f.publish(value, ...args)
