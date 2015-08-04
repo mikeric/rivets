@@ -120,8 +120,8 @@ export default class View {
     this.els.forEach(parse)
 
     this.bindings.sort((a, b) => {
-      let aPriority = defined(a.binder) ? a.binder.priority : 0
-      let bPriority = defined(b.binder) ? b.binder.priority : 0
+      let aPriority = defined(a.binder) ? (a.binder.priority || 0) : 0
+      let bPriority = defined(b.binder) ? (b.binder.priority || 0) : 0
       return bPriority - aPriority
     })
   }
