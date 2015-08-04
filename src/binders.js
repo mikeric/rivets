@@ -8,7 +8,7 @@ const defined = (value) => {
 }
 
 const getString = (value) => {
-  defined(value) ? value.toString() : undefined
+  return defined(value) ? value.toString() : undefined
 }
 
 const binders = {
