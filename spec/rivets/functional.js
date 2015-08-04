@@ -19,7 +19,7 @@ describe('Functional', function() {
       }
     }
 
-    sightglass.adapters[':'] = adapter
+    rivets.sightglass.adapters[':'] = adapter
     rivets.configure({preloadData: true})
 
     data = new Data({
