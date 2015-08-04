@@ -79,18 +79,15 @@ export class Binding {
   // Applies all the current formatters to the supplied value and returns the
   // formatted value.
   formattedValue(value) {
-    Object.keys(this.formatters).forEach(formatter => {
-      let fi = this.formatters[formatter]
-      let args = formatter.match(/[^\s']+|'([^']|'[^\s])*'|"([^"]|"[^\s])*"/g)
+    this.formatters.forEach((formatterStr, fi) => {
+      let args = formatterStr.match(/[^\s']+|'([^']|'[^\s])*'|"([^"]|"[^\s])*"/g)
       let id = args.shift()
       let formatter = this.view.formatters[id]
       let processedArgs = []
 
       args = args.map(parseType)
 
-      Object.keys(args).forEach(arg => {
-        let ai = args[arg]
-
+      args.forEach((arg, ai) => {
         if (arg.type === 0) {
           processedArgs.push(arg.value)
         } else {
