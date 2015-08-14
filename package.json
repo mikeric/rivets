@@ -19,6 +19,7 @@
     "sightglass": "~0.2.4"
   },
   "scripts": {
+    "pretest": "babel src/parsers.js --out-file spec/lib/parsers.js --modules umd",
     "test": "mocha-phantomjs spec/runner.html",
     "build": "webpack"
   },
