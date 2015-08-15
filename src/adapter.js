@@ -52,8 +52,8 @@ const adapter = {
     let map = this.weakReference(obj)
     let weakmap = this.weakmap
 
-    obj[fn] = () => {
-      let response = original.apply(obj, arguments)
+    obj[fn] = (...args) => {
+      let response = original.apply(obj, args)
 
       Object.keys(map.pointers).forEach(r => {
         let k = map.pointers[r]
