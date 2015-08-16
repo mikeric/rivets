@@ -98,6 +98,8 @@ const binders = {
     bind: function(el) {
       if (!(el.tagName === 'INPUT' && el.type === 'radio')) {
         this.event = el.tagName === 'SELECT' ? 'change' : 'input'
+
+        this.publish = this.publish.bind(this)
         bindEvent(el, this.event, this.publish)
       }
     },
