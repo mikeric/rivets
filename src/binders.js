@@ -11,6 +11,10 @@ const getString = (value) => {
   return defined(value) ? value.toString() : undefined
 }
 
+const times = (n, cb) => {
+  for (let i = 0; i < n; i++) cb()
+}
+
 const binders = {
   // Sets the element's text value.
   text: (el, value) => {
@@ -268,7 +272,7 @@ const binders = {
       let collection = collection || []
 
       if (this.iterated.length > collection.length) {
-        Array(this.iterated.length - collection.length).forEach(() => {
+        times(this.iterated.length - collection.length, () => {
           let view = this.iterated.pop()
           view.unbind()
           this.marker.parentNode.removeChild(view.els[0])

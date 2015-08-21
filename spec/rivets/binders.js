@@ -72,6 +72,18 @@ describe("Rivets.binders", function() {
       Should(fragment.childNodes[1].innerText).be.exactly("howdy");
     });
 
+    it("lets you pop an item", function() {
+      var view = rivets.bind(fragment, model);
+      var originalLength  = model.items.length;
+
+      // one child for each element in the model plus 1 for the comment placeholder
+      Should(fragment.childNodes.length).be.exactly(model.items.length + 1);
+
+      model.items.pop();
+      Should(model.items.length).be.exactly(originalLength - 1);
+      Should(fragment.childNodes.length).be.exactly(model.items.length + 1);
+    })
+
     it("lets you push an item", function() {
       var view = rivets.bind(fragment, model);
       var originalLength  = model.items.length;
