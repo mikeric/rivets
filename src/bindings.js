@@ -26,6 +26,7 @@ export class Binding {
     this.bind = this.bind.bind(this)
     this.unbind = this.unbind.bind(this)
     this.sync = this.sync.bind(this)
+    this.publish = this.publish.bind(this)
   }
 
   // Sets the binder to use when binding and syncing.

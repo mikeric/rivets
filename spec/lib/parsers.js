@@ -16,18 +16,15 @@
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
-
-  // Parser and tokenizer for getting the type and value from a string.
   exports.parseType = parseType;
-
-  // Template parser and tokenizer for mustache-style text content bindings.
-  // Parses the template and returns a set of tokens, separating static portions
-  // of text from binding declarations.
   exports.parseTemplate = parseTemplate;
   var PRIMITIVE = 0;
   var KEYPATH = 1;
   var TEXT = 0;
   var BINDING = 1;
+
+  // Parser and tokenizer for getting the type and value from a string.
+
   function parseType(string) {
     var type = PRIMITIVE;
     var value = string;
@@ -50,6 +47,10 @@
 
     return { type: type, value: value };
   }
+
+  // Template parser and tokenizer for mustache-style text content bindings.
+  // Parses the template and returns a set of tokens, separating static portions
+  // of text from binding declarations.
 
   function parseTemplate(template, delimiters) {
     var tokens = [];
