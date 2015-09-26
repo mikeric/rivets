@@ -100,6 +100,34 @@ describe("Rivets.binders", function() {
     });
   });
 
+  describe("nested-each-*", function() {
+    var fragment;
+    var el;
+    var nestedEl;
+    var model;
+
+    beforeEach(function() {
+      fragment = document.createDocumentFragment();
+      el = document.createElement("span");
+      el.setAttribute("rv-each-item", "items");
+      nestedEl = document.createElement("span");
+      nestedEl.setAttribute("rv-each-nested", "item.val");
+      nestedEl.innerText = "{%item%}-{%nested%}";
+      el.appendChild(nestedEl);
+      fragment.appendChild(el);
+
+      model = { items: [{val: [{val: 0},{val: 1}]},{val: [{val: 2},{val: 3}]},{val: [{val: 4},{val: 5}]}] };
+    });
+
+    it("lets you get all the indexes", function() {
+      var view = rivets.bind(el, model);
+
+      Should(fragment.childNodes[1].childNodes[1].innerText).be.exactly('0-0');
+      Should(fragment.childNodes[1].childNodes[2].innerText).be.exactly('0-1');
+      Should(fragment.childNodes[2].childNodes[2].innerText).be.exactly('1-1');
+    });
+  });
+
   describe("if", function() {
     var fragment;
     var el;
