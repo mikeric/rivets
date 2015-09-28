@@ -156,7 +156,7 @@ export class Binding {
         this.dependencies = []
         this.model = this.observer.target
 
-        if (defined(model) && deps && deps.length) {
+        if (defined(this.model) && deps && deps.length) {
           deps.forEach(dependency => {
             let observer = this.observe(this.model, dependency, this.sync)
             this.dependencies.push(observer)
