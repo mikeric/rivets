@@ -1,6 +1,7 @@
 import rivets from './rivets'
 import {parseType} from './parsers'
 import {getInputValue} from './util'
+import {EXTENSIONS, OPTIONS} from './constants'
 
 const defined = (value) => {
   return value !== undefined && value !== null
