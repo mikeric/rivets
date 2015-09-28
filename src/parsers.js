@@ -35,6 +35,7 @@ export function parseTemplate(template, delimiters) {
   let length = template.length
   let index = 0
   let lastIndex = 0
+  let lastToken = undefined
 
   while (lastIndex < length) {
     index = template.indexOf(delimiters[0], lastIndex)
