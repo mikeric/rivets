@@ -35,7 +35,6 @@ export function parseTemplate(template, delimiters) {
   let length = template.length
   let index = 0
   let lastIndex = 0
-  let lastToken = undefined
 
   while (lastIndex < length) {
     index = template.indexOf(delimiters[0], lastIndex)
@@ -60,7 +59,7 @@ export function parseTemplate(template, delimiters) {
 
       if (index < 0) {
         let substring = template.slice(lastIndex - delimiters[1].length)
-        lastToken = tokens[tokens.length - 1]
+        let lastToken = tokens[tokens.length - 1]
 
         if (lastToken && lastToken.type === TEXT) {
           lastToken.value += substring
