@@ -1,6 +1,7 @@
 import rivets from './rivets'
 import {parseType} from './parsers'
 import {getInputValue} from './util'
+import {EXTENSIONS, OPTIONS} from './constants'
 
 const defined = (value) => {
   return value !== undefined && value !== null
@@ -155,7 +156,7 @@ export class Binding {
         this.dependencies = []
         this.model = this.observer.target
 
-        if (defined(model) && deps && deps.length) {
+        if (defined(this.model) && deps && deps.length) {
           deps.forEach(dependency => {
             let observer = this.observe(this.model, dependency, this.sync)
             this.dependencies.push(observer)
