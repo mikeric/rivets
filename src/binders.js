@@ -125,7 +125,7 @@ const binders = {
       } else {
         if (el.type === 'select-multiple') {
           if (value instanceof Array) {
-            el.options.forEach(option => {
+            Array.from(el.options).forEach(option => {
               option.selected = value.indexOf(option.value) > -1
             })
           }
