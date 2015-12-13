@@ -177,7 +177,7 @@ Rivets.public.binders['each-*'] =
     else
       for view in @iterated
         view.bind()
-    return;
+    return
 
   unbind: (el) ->
     view.unbind() for view in @iterated if @iterated?
