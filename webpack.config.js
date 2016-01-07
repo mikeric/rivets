@@ -1,4 +1,5 @@
-var webpack = require('webpack')
+var webpack = require('webpack');
+var minimize = process.argv.indexOf('-p') === -1 ? false : true;
 
 module.exports = {
   context: __dirname,
@@ -6,7 +7,7 @@ module.exports = {
 
   output: {
     path: __dirname + '/dist',
-    filename: 'rivets.bundled.js',
+    filename: 'rivets.bundled' + (minimize ? '.min.' : '.') + 'js',
     library: 'rivets',
     libraryTarget: 'umd'
   },
