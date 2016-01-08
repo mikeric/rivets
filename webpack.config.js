@@ -1,16 +1,30 @@
 var webpack = require('webpack');
-var minimize = process.argv.indexOf('-p') === -1 ? false : true;
+//options
+var minimize = process.argv.indexOf('--x-minimize') !== -1;
+var standalone = process.argv.indexOf('--x-standalone') !== -1;
+
+var entryKeys = standalone ? ['rivets'] : ['rivets.bundled'];
+
+var entry = entryKeys.reduce(function (memo, key) {
+  memo[key] = './src/export';
+  if (minimize) {
+    memo[key + '.min'] = './src/export';
+  }
+  return memo;
+}, {});
 
 module.exports = {
   context: __dirname,
-  entry: './src/export',
+  entry: entry,
 
   output: {
     path: __dirname + '/dist',
-    filename: 'rivets.bundled' + (minimize ? '.min.' : '.') + 'js',
+    filename: '[name].js',
     library: 'rivets',
     libraryTarget: 'umd'
   },
+
+  externals: standalone ? ['sightglass'] : undefined,
 
   module: {
     loaders: [
@@ -22,7 +36,13 @@ module.exports = {
     ]
   },
 
+  plugins: [
+    new webpack.optimize.UglifyJsPlugin({
+      include: /\.min\.js$/
+    })
+  ],
+
   resolve: {
     extensions: ['', '.js']
   }
-}
+};
