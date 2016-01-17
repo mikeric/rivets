@@ -57,7 +57,12 @@ gulp.task('build', function() {
       .pipe(uglify())
       .pipe(concat('rivets.bundled.min.js'))
       .pipe(header(banner(true)))
-      .pipe(gulp.dest('dist'))
+      .pipe(gulp.dest('dist'));
+	  
+	gulp.src([sightglass, rivets])      
+      .pipe(concat('rivets.bundled.js'))
+      .pipe(header(banner(true)))
+      .pipe(gulp.dest('dist'));  
   })
 })
 
