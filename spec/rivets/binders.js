@@ -56,20 +56,20 @@ describe("Rivets.binders", function() {
 
     it("reflects changes to the model into the DOM", function() {
       var view = rivets.bind(fragment, model);
-      Should(fragment.childNodes[1].innerText).be.exactly("0");
+      Should(fragment.childNodes[1].textContent).be.exactly("0");
 
       model.items[0].val = "howdy";
-      Should(fragment.childNodes[1].innerText).be.exactly("howdy");
+      Should(fragment.childNodes[1].textContent).be.exactly("howdy");
     });
 
     it("reflects changes to the model into the DOM after unbind/bind", function() {
       var view = rivets.bind(fragment, model);
-      Should(fragment.childNodes[1].innerText).be.exactly("0");
+      Should(fragment.childNodes[1].textContent).be.exactly("0");
 
       view.unbind();
       view.bind();
       model.items[0].val = "howdy";
-      Should(fragment.childNodes[1].innerText).be.exactly("howdy");
+      Should(fragment.childNodes[1].textContent).be.exactly("howdy");
     });
 
     it("lets you pop an item", function() {
