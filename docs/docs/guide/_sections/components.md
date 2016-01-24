@@ -1,6 +1,6 @@
 Components let you define reusable views that can be used within any of your templates. For some perspective on where components fit into your templates in relation to binders; binders define custom attributes, while components define custom elements.
 
-A component object must define a `template` function, which returns the template for the component (this can be an HTML string or the actual element). It must also define an `initialize` function, which returns the scope object to bind the view with (this will likely be a controller / viewmodel / presenter).
+A component object can define a `template` function, which returns the template for the component (this can be an HTML string or the actual element or even document fragment). It must also define an `initialize` function, which returns the scope object to bind the view with (this will likely be a controller / viewmodel / presenter).
 
 ```javascript
 rivets.components['todo-item'] = {

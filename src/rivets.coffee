@@ -72,18 +72,6 @@ Rivets =
 
     # Initializes a new instance of a component on the specified element and
     # returns a Rivets.View instance.
-    init: (component, el, data = {}) ->
+    init: (component, el, attributes = {}) ->
       el ?= document.createElement 'div'
-      component = Rivets.public.components[component]
-      template = component.template.call @, el
-      if template instanceof HTMLElement
-        while el.firstChild
-          el.removeChild(el.firstChild)
-        el.appendChild(template)
-      else
-        el.innerHTML = template
-      scope = component.initialize.call @, el, data
-
-      view = new Rivets.View(el, scope)
-      view.bind()
-      view
+      Rivets.ComponentBinding.from(el, attributes, type: component)

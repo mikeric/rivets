@@ -162,6 +162,13 @@ class Rivets.Binding
 
 # A component view encapsulated as a binding within it's parent view.
 class Rivets.ComponentBinding extends Rivets.Binding
+  @from: (el, attributes = {}, options = {}) ->
+    type = options.type || el.nodeName.toLowerCase()
+    component = new Rivets.ComponentBinding(Rivets.public, el, type)
+    component.locals = () -> attributes
+    component.bind()
+    component
+
   # Initializes a component binding for the specified view. The raw component
   # element is passed in along with the component type. Attributes and scope
   # inflections are determined based on the components defined attributes.
@@ -171,7 +178,10 @@ class Rivets.ComponentBinding extends Rivets.Binding
     @observers = {}
     @upstreamObservers = {}
 
-    bindingRegExp = view.bindingRegExp()
+    @parseAttributes() unless @view == Rivets.public
+
+  parseAttributes: ->
+    bindingRegExp = @view.bindingRegExp()
 
     for attribute in @el.attributes or []
       unless bindingRegExp.test attribute.name
@@ -230,7 +240,7 @@ class Rivets.ComponentBinding extends Rivets.Binding
     if @componentView?
       @componentView.bind()
     else
-      @el.innerHTML = @component.template.call this
+      @renderTemplate() if @component.template
       scope = @component.initialize.call @, @el, @locals()
       @el._bound = true
 
@@ -252,6 +262,19 @@ class Rivets.ComponentBinding extends Rivets.Binding
           observer.setValue @componentView.models[key]
         ).call(@, key, observer)
     return
+
+  # Render component template despite of whether it's string or DOM node
+  renderTemplate: =>
+    if typeof @component.template is "function"
+      template = @component.template.call @
+    else
+      template = @component.template
+
+    if template and typeof template.appendChild is "function"
+      @el.removeChild(@el.firstChild) while @el.firstChild
+      @el.appendChild(template)
+    else
+      @el.innerHTML = template
 
   # Intercept `Rivets.Binding::unbind` to be called on `@componentView`.
   unbind: =>

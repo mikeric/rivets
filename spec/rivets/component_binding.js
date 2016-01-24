@@ -7,16 +7,22 @@ describe('Component binding', function() {
     componentRoot = element.firstChild
     scope = { name: 'Rivets' }
     component = rivets.components.test = {
-      initialize: sinon.stub().returns(scope),
-      template: function() {}
+      initialize: sinon.stub().returns(scope)
     }
   })
 
   it('renders "template" as a string', function() {
-    rivets.components.test.template = function() {return '<h1>test</h1>'}
+    rivets.components.test.template = '<h1>test</h1>'
     rivets.bind(element)
 
-    componentRoot.innerHTML.should.equal(component.template())
+    componentRoot.innerHTML.should.equal(component.template)
+  })
+
+  it('allows not to pass "template" method', function() {
+    componentRoot.innerHTML = '<b>{ name }</b>'
+    rivets.bind(element)
+
+    componentRoot.innerHTML.should.equal('<b>' + scope.name + '</b>')
   })
 
   describe('initialize()', function() {
@@ -60,6 +66,18 @@ describe('Component binding', function() {
   describe('when "template" is a function', function() {
     it('renders returned string as component template', function() {
       component.template = sinon.stub().returns('<h1>{ name }</h1>')
+      rivets.bind(element)
+
+      componentRoot.innerHTML.should.equal('<h1>' + scope.name + '</h1>')
+    })
+
+    it('renders returned DOM fragment as component template', function() {
+      var fragment = document.createDocumentFragment()
+      var title = document.createElement('h1')
+
+      title.innerHTML = '{ name }'
+      fragment.appendChild(title)
+      component.template = sinon.stub().returns(fragment)
       rivets.bind(element)
 
       componentRoot.innerHTML.should.equal('<h1>' + scope.name + '</h1>')
