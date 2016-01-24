@@ -30,6 +30,8 @@
     "mocha": "~1.20.1",
     "should": "~4.0.4",
     "sinon": "~1.10.2",
-    "webpack": "^1.7.3"
+    "webpack": "^1.7.3",
+    "mocha-phantomjs": "^3.6.0",
+    "phantomjs": "1.9.7-15"	
   }
 }
