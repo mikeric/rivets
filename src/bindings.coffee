@@ -246,6 +246,7 @@ class Rivets.ComponentBinding extends Rivets.Binding
         @upstreamObservers[key] = @observe @componentView.models, key, ((key, observer) => =>
           observer.setValue @componentView.models[key]
         ).call(@, key, observer)
+    return
 
   # Intercept `Rivets.Binding::unbind` to be called on `@componentView`.
   unbind: =>
