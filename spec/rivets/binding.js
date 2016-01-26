@@ -17,6 +17,32 @@ describe('Rivets.Binding', function() {
     binding.binder.routine.should.equal(rivets.binders.text)
   })
 
+  describe('with formatters', function() {
+    it('register all formatters', function() {
+
+      valueInput = document.createElement('input')
+      valueInput.setAttribute('type','text')
+      valueInput.setAttribute('data-value', "obj.name | awesome | radical | totally")
+
+      view = rivets.bind(valueInput, {obj: { name: 'nothing' }})
+      binding = view.bindings[0]
+
+      binding.formatters.should.be.eql(['awesome', 'radical', 'totally'])
+    })
+
+    it('allows arguments with pipes', function() {
+
+      valueInput = document.createElement('input')
+      valueInput.setAttribute('type','text')
+      valueInput.setAttribute('data-value', "obj.name | awesome | totally 'arg | with || pipes'")
+
+      view = rivets.bind(valueInput, {obj: { name: 'nothing' }})
+      binding = view.bindings[0]
+
+      binding.formatters.should.be.eql(['awesome', "totally 'arg | with || pipes'"])
+    })
+  })
+
   describe('bind()', function() {
     it('subscribes to the model for changes via the adapter', function() {
       sinon.spy(adapter, 'observe')
@@ -271,6 +297,21 @@ describe('Rivets.Binding', function() {
 
       it('applies the formatter with arguments', function() {
         binding.formattedValue('jacket').should.equal('super awesome jacket')
+      })
+    })
+
+    describe('with a formatter string with pipes in argument', function() {
+      beforeEach(function () {
+
+        view.formatters.totally = function (value, prefix) {
+          return prefix + ' totally ' + value
+        }
+
+        binding.formatters.push("totally 'arg | with || pipes'")
+      })
+
+      it('applies the formatter with arguments with pipes', function () {
+        binding.formattedValue('jacket').should.equal('arg | with || pipes totally jacket')
       })
     })
   })

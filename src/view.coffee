@@ -34,7 +34,7 @@ class Rivets.View
   buildBinding: (binding, node, type, declaration) =>
     options = {}
 
-    pipes = (pipe.trim() for pipe in declaration.split '|')
+    pipes = (pipe.trim() for pipe in declaration.match /((?:'[^']*')*(?:(?:[^\|']+(?:'[^']*')*[^\|']*)+|[^\|]+))|^$/g)
     context = (ctx.trim() for ctx in pipes.shift().split '<')
     keypath = context.shift()
 
