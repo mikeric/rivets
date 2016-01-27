@@ -34,10 +34,16 @@ describe('Component binding', function() {
     })
 
     it('receives primitives attributes', function() {
-      componentRoot.setAttribute('primitive', "'value'")
+      componentRoot.setAttribute('primitivestring', "'value'")
+      componentRoot.setAttribute('primitivenumber', "42")
+      componentRoot.setAttribute('primitiveboolean', "true")
       rivets.bind(element, locals)
 
-      component.initialize.calledWith(componentRoot, { item: locals.object, primitive: 'value' }).should.be.true
+      component.initialize.calledWith(componentRoot, { item: locals.object,
+        primitivestring: 'value',
+        primitivenumber: 42,
+        primitiveboolean: true })
+      .should.be.true
     })
 
     it('returns attributes assigned to "static" property as they are', function() {
