@@ -231,6 +231,26 @@ describe('Functional', function() {
         el.getElementsByTagName('li')[0].getAttribute('index').should.equal('0')
         el.getElementsByTagName('li')[1].getAttribute('index').should.equal('1')
       })
+
+      it('should allow binding to the iterated element index by using the %item% syntax', function() {
+        listItem.setAttribute('data-index', '%item%')
+        rivets.bind(el, bindData)
+        el.getElementsByTagName('li')[0].getAttribute('index').should.equal('0')
+        el.getElementsByTagName('li')[1].getAttribute('index').should.equal('1')
+      })
+
+      it('should allow the developer to configure the index attribute available in the iteration', function() {
+        rivets.configure({
+          iterationAlias : function(modelName) {
+            return modelName + 'Index';
+          }
+        });
+
+        listItem.setAttribute('data-index', 'itemIndex')
+        rivets.bind(el, bindData)
+        el.getElementsByTagName('li')[0].getAttribute('index').should.equal('0')
+        el.getElementsByTagName('li')[1].getAttribute('index').should.equal('1')
+      })
     })
   })
 
