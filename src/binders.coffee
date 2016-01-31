@@ -195,7 +195,7 @@ Rivets.public.binders['each-*'] =
 
     for model, index in collection
       data = {index}
-      data['%' + modelName + '%'] = index
+      data[Rivets.public.iterationAlias modelName] = index
       data[modelName] = model
 
       if not @iterated[index]?
