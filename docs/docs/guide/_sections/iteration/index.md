@@ -1,4 +1,4 @@
-To access the index of the current iteration use the syntax `%item%`, Where `item` is the name of the model you provided in `rv-each-[item]`.  Note that when nesting `rv-each`'s the parent index is still accessible within the scope via the model name.
+To access the index of the current iteration use the syntax `%item%`, Where `item` is the name of the model you provided in `rv-each-[item]`.  You can also access the index of the iteration by using the key `index` but using this will access only the current iterations index. Note that when nesting `rv-each`'s the parent index is still accessible within the scope via the model name.
 
 ```html
 <ul>
