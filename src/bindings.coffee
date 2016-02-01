@@ -18,10 +18,10 @@ class Rivets.Binding
     unless @binder = @view.binders[@type]
       for identifier, value of @view.binders
         if identifier isnt '*' and identifier.indexOf('*') isnt -1
-          regexp = new RegExp "^#{identifier.replace(/\*/g, '.+')}$"
+          regexp = new RegExp("^#{identifier.replace(/\*/g, '(.+)')}$")
           if regexp.test @type
             @binder = value
-            @args = new RegExp("^#{identifier.replace(/\*/g, '(.+)')}$").exec @type
+            @args = regexp.exec @type
             @args.shift()
 
     @binder or= @view.binders['*']
@@ -155,6 +155,9 @@ class Rivets.Binding
       @binder.getValue.call @, el
     else
       Rivets.Util.getInputValue el
+
+  attributeName: =>
+    @attrName or= [@view.prefix, @type].join('-').replace '--', '-'
 
 # Rivets.ComponentBinding
 # -----------------------

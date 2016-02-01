@@ -2,7 +2,7 @@
 
 # Sets the element's text value.
 Rivets.public.binders.text = (el, value) ->
-  textProperty = if el.textProperty? then 'textContent' else 'innerText'
+  textProperty = if el.textContent? then 'textContent' else 'innerText'
   el[textProperty] = if value? then value else ''
 
 # Sets the element's HTML content.
@@ -93,13 +93,12 @@ Rivets.public.binders.if =
 
   bind: (el) ->
     unless @marker?
-      attr = [@view.prefix, @type].join('-').replace '--', '-'
-      declaration = el.getAttribute attr
+      declaration = el.getAttribute @attributeName()
 
       @marker = document.createComment " rivets: #{@type} #{declaration} "
       @bound = false
 
-      el.removeAttribute attr
+      el.removeAttribute @attributeName()
       el.parentNode.insertBefore @marker, el
       el.parentNode.removeChild el
 
@@ -160,11 +159,10 @@ Rivets.public.binders['each-*'] =
 
   bind: (el) ->
     unless @marker?
-      attr = [@view.prefix, @type].join('-').replace '--', '-'
       @marker = document.createComment " rivets: #{@type} "
       @iterated = []
 
-      el.removeAttribute attr
+      el.removeAttribute @attributeName()
       el.parentNode.insertBefore @marker, el
       el.parentNode.removeChild el
     else
