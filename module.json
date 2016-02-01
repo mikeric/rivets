@@ -1,0 +1,7 @@
+{
+	"name": "webmodules/rivets",
+	"webmodules/rivets": {
+		"js": ["js/rivets.js"],
+		"on": ["webmodules/sightglass"]
+	}
+}
