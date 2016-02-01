@@ -299,6 +299,21 @@ describe('Rivets.Binding', function() {
         binding.formattedValue('jacket').should.equal('super awesome jacket')
       })
     })
+
+    describe('with a formatter string with pipes in argument', function() {
+      beforeEach(function () {
+
+        view.formatters.totally = function (value, prefix) {
+          return prefix + ' totally ' + value
+        }
+
+        binding.formatters.push("totally 'arg | with || pipes'")
+      })
+
+      it('applies the formatter with arguments with pipes', function () {
+        binding.formattedValue('jacket').should.equal('arg | with || pipes totally jacket')
+      })
+    })
   })
 
   describe('getValue()', function() {
