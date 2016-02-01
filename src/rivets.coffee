@@ -39,7 +39,11 @@ Rivets =
     rootInterface: '.'
 
     # Preload data by default.
-    preloadData: true
+    preloadData: true,
+
+    # Alias for index in rv-each binder
+    iterationAlias : (modelName) ->
+      return '%' + modelName + '%'
 
     # Default event handler.
     handler: (context, ev, binding) ->
