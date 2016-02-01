@@ -2,10 +2,8 @@
 
 # Sets the element's text value.
 Rivets.public.binders.text = (el, value) ->
-  if el.textContent?
-    el.textContent = if value? then value else ''
-  else
-    el.innerText = if value? then value else ''
+  textProperty = if el.textProperty? then 'textContent' else 'innerText'
+  el[textProperty] = if value? then value else ''
 
 # Sets the element's HTML content.
 Rivets.public.binders.html = (el, value) ->
@@ -17,7 +15,7 @@ Rivets.public.binders.show = (el, value) ->
 
 # Hides the element when value is true (negated version of `show` binder).
 Rivets.public.binders.hide = (el, value) ->
-  el.style.display = if value then 'none' else ''
+  Rivets.public.binders.show(el, !value)
 
 # Enables the element when value is true.
 Rivets.public.binders.enabled = (el, value) ->
@@ -25,7 +23,7 @@ Rivets.public.binders.enabled = (el, value) ->
 
 # Disables the element when value is true (negated version of `enabled` binder).
 Rivets.public.binders.disabled = (el, value) ->
-  el.disabled = !!value
+  Rivets.public.binders.enabled(el, !value)
 
 # Checks a checkbox or radio input when the value is true. Also sets the model
 # property when the input is checked or unchecked (two-way binder).
@@ -52,17 +50,12 @@ Rivets.public.binders.unchecked =
   publishes: true
   priority: 2000
 
-  bind: (el) ->
-    Rivets.Util.bindEvent el, 'change', @publish
+  bind: Rivets.public.binders.checked.bind
 
-  unbind: (el) ->
-    Rivets.Util.unbindEvent el, 'change', @publish
+  unbind: Rivets.public.binders.checked.unbind
 
   routine: (el, value) ->
-    if el.type is 'radio'
-      el.checked = el.value?.toString() isnt value?.toString()
-    else
-      el.checked = !value
+    Rivets.public.binders.checked.routine(el, !value)
 
 # Sets the element's value. Also sets the model property when the input changes
 # (two-way binder).
