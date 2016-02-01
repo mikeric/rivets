@@ -60,7 +60,7 @@ export default class View {
   }
 
   buildBinding(binding, node, type, declaration) {
-    let pipes = declaration.split('|').map(pipe => {
+    let pipes = declaration.match(/((?:'[^']*')*(?:(?:[^\|']+(?:'[^']*')*[^\|']*)+|[^\|]+))|^$/g).map(pipe => {
       return pipe.trim()
     })
 
