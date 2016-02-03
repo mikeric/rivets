@@ -280,6 +280,7 @@ const binders = {
 
       collection.forEach((model, index) => {
         let data = {index: index}
+        data[rivets.iterationAlias(modelName)] = index
         data[modelName] = model
 
         if (!defined(this.iterated[index])) {

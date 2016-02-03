@@ -15,6 +15,11 @@ rivets.configure({
   // Template delimiters for text bindings
   templateDelimiters: ['{', '}'],
 
+  // Alias for index in rv-each binder
+  iterationAlias : function(modelName) {
+    return '%' + modelName + '%';
+  },
+
   // Augment the event handler of the on-* binder
   handler: function(target, event, binding) {
     this.call(target, event, binding.view.models)
