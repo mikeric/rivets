@@ -60,13 +60,9 @@ export default class View {
   }
 
   buildBinding(binding, node, type, declaration) {
-    let pipes = declaration.match(/((?:'[^']*')*(?:(?:[^\|']+(?:'[^']*')*[^\|']*)+|[^\|]+))|^$/g).map(pipe => {
-      return pipe.trim()
-    })
+    let pipes = declaration.match(/((?:'[^']*')*(?:(?:[^\|']+(?:'[^']*')*[^\|']*)+|[^\|]+))|^$/g).map(pipe => pipe.trim())
 
-    let context = pipes.shift().split('<').map(ctx => {
-      return ctx.trim()
-    })
+    let context = pipes.shift().split('<').map(ctx => ctx.trim())
 
     let keypath = context.shift()
     let dependencies = context.shift()
