@@ -184,4 +184,29 @@ describe("Rivets.binders", function() {
       Should(fragment.childNodes.length).be.exactly(1);
     });
   });
+
+  describe("Custom binder with no attribute value", function() {
+    rivets.binders["custom-binder"] = function(el, value) {
+      el.innerHTML = "received " + value;
+    };
+    beforeEach(function() {
+      fragment = document.createDocumentFragment();
+      el = document.createElement("div");
+
+      fragment.appendChild(el);
+
+      model = {};
+    });
+
+    it("receives undefined when html attribute is not specified", function() {
+      el.innerHTML = "<div rv-custom-binder></div>";
+      var view = rivets.bind(fragment, model);
+      Should(el.children[0].innerHTML).be.exactly('received undefined');
+    });
+    it("receives undefined when html attribute is not specified", function() {
+      el.innerHTML = "<div rv-custom-binder=''></div>";
+      var view = rivets.bind(fragment, model);
+      Should(el.children[0].innerHTML).be.exactly('received undefined');
+    });
+  });
 });
