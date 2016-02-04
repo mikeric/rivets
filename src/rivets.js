@@ -25,6 +25,12 @@ const rivets = {
   // Preload data by default.
   preloadData: true,
 
+  // Alias for index in rv-each binder
+  iterationAlias : function(modelName) {
+    return '%' + modelName + '%'
+  },
+        
+
   // Default event handler.
   handler: function(context, ev, binding) {
     this.call(context, ev, binding.view.models)
