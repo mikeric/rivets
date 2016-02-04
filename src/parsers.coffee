@@ -23,6 +23,9 @@ class Rivets.TypeParser
       else if string is 'undefined'
         type: @types.primitive
         value: undefined
+      else if string is ''
+        type: @types.primitive
+        value: undefined
       else if isNaN(Number(string)) is false
         type: @types.primitive
         value: Number string
