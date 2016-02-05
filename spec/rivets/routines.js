@@ -4,14 +4,14 @@ describe('Routines', function() {
   var createInputElement = function(type, value) {
     var elem = document.createElement('input')
     elem.setAttribute('type', type)
-    if (value !== undefined){
+    if (value !== undefined) {
       elem.setAttribute('value', value)
     }
     document.body.appendChild(elem)
     return elem
   }
 
-  var createSelectElement = function(optionValues) {
+  var createSelectElement = function(isMultiple, optionValues) {
     var elem = document.createElement('select'),
         options = optionValues.map(function(val) {
           var option = document.createElement('option')
@@ -22,6 +22,7 @@ describe('Routines', function() {
     options.forEach(function(option) {
       elem.appendChild(option)
     })
+    if (isMultiple) elem.multiple = true
     document.body.appendChild(elem)
     return elem
   }
@@ -50,7 +51,10 @@ describe('Routines', function() {
     checkboxInput = createInputElement('checkbox')
 
     // to test the select element scenario
-    selectEl = createSelectElement(['a', 'b', 'c'])
+    selectEl = createSelectElement(false, ['a', 'b', 'c'])
+
+    // to test the select-multiple element scenario
+    selectMultipleEl = createSelectElement(true, ['d', 'e', 'f'])
   })
 
   afterEach(function(){
@@ -110,6 +114,18 @@ describe('Routines', function() {
       rivets.binders.value.routine(selectEl, 'b')
       rivets.binders.value.routine(selectEl, 'c')
       selectEl.value.should.equal('c')
+    })
+
+    it("sets the correct option on a select-multiple element", function() {
+      rivets.binders.value.routine(selectMultipleEl, ['d', 'f'])
+      Array.prototype.slice.call(selectMultipleEl.children)
+      .filter(function(option) {
+        return option.selected
+      })
+      .map(function(option) {
+        return option.value
+      })
+      .should.eql(['d', 'f'])
     })
   })
 
