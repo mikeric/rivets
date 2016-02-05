@@ -190,22 +190,18 @@ describe("Rivets.binders", function() {
       el.innerHTML = "received " + value;
     };
     beforeEach(function() {
-      fragment = document.createDocumentFragment();
       el = document.createElement("div");
-
-      fragment.appendChild(el);
-
-      model = {};
     });
 
     it("receives undefined when html attribute is not specified", function() {
       el.innerHTML = "<div rv-custom-binder></div>";
-      var view = rivets.bind(fragment, model);
+      var view = rivets.bind(el);
       Should(el.children[0].innerHTML).be.exactly('received undefined');
     });
+
     it("receives undefined when html attribute is not specified", function() {
       el.innerHTML = "<div rv-custom-binder=''></div>";
-      var view = rivets.bind(fragment, model);
+      var view = rivets.bind(el);
       Should(el.children[0].innerHTML).be.exactly('received undefined');
     });
   });
