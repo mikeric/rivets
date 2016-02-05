@@ -34,7 +34,7 @@ class Rivets.View
   buildBinding: (binding, node, type, declaration) =>
     options = {}
 
-    pipes = (pipe.trim() for pipe in declaration.split '|')
+    pipes = (pipe.trim() for pipe in declaration.match /((?:'[^']*')*(?:(?:[^\|']+(?:'[^']*')*[^\|']*)+|[^\|]+))|^$/g)
     context = (ctx.trim() for ctx in pipes.shift().split '<')
     keypath = context.shift()
 
@@ -69,6 +69,7 @@ class Rivets.View
 
       unless block
         parse childNode for childNode in (n for n in node.childNodes)
+      return
 
     parse el for el in @els
 
@@ -119,20 +120,25 @@ class Rivets.View
   # Binds all of the current bindings for this view.
   bind: =>
     binding.bind() for binding in @bindings
+    return
 
   # Unbinds all of the current bindings for this view.
   unbind: =>
     binding.unbind() for binding in @bindings
+    return
 
   # Syncs up the view with the model by running the routines on all bindings.
   sync: =>
     binding.sync?() for binding in @bindings
+    return
 
   # Publishes the input values from the view back to the model (reverse sync).
   publish: =>
     binding.publish() for binding in @select (b) -> b.binder?.publishes
+    return
 
   # Updates the view's models along with any affected bindings.
   update: (models = {}) =>
     @models[key] = model for key, model of models
     binding.update? models for binding in @bindings
+    return

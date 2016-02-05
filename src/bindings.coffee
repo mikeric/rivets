@@ -176,8 +176,12 @@ class Rivets.ComponentBinding extends Rivets.Binding
       unless bindingRegExp.test attribute.name
         propertyName = @camelCase attribute.name
 
+        token = Rivets.TypeParser.parse(attribute.value)
+
         if propertyName in (@component.static ? [])
           @static[propertyName] = attribute.value
+        else if token.type is 0
+          @static[propertyName] = token.value
         else
           @observers[propertyName] = attribute.value
 
@@ -246,6 +250,7 @@ class Rivets.ComponentBinding extends Rivets.Binding
         @upstreamObservers[key] = @observe @componentView.models, key, ((key, observer) => =>
           observer.setValue @componentView.models[key]
         ).call(@, key, observer)
+    return
 
   # Intercept `Rivets.Binding::unbind` to be called on `@componentView`.
   unbind: =>

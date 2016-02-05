@@ -100,6 +100,34 @@ describe("Rivets.binders", function() {
     });
   });
 
+  describe("nested-each-*", function() {
+    var fragment;
+    var el;
+    var nestedEl;
+    var model;
+
+    beforeEach(function() {
+      fragment = document.createDocumentFragment();
+      el = document.createElement("span");
+      el.setAttribute("rv-each-item", "items");
+      nestedEl = document.createElement("span");
+      nestedEl.setAttribute("rv-each-nested", "item.val");
+      nestedEl.innerText = "{%item%}-{%nested%}";
+      el.appendChild(nestedEl);
+      fragment.appendChild(el);
+
+      model = { items: [{val: [{val: 0},{val: 1}]},{val: [{val: 2},{val: 3}]},{val: [{val: 4},{val: 5}]}] };
+    });
+
+    it("lets you get all the indexes", function() {
+      var view = rivets.bind(el, model);
+
+      Should(fragment.childNodes[1].childNodes[1].innerText).be.exactly('0-0');
+      Should(fragment.childNodes[1].childNodes[2].innerText).be.exactly('0-1');
+      Should(fragment.childNodes[2].childNodes[2].innerText).be.exactly('1-1');
+    });
+  });
+
   describe("if", function() {
     var fragment;
     var el;
@@ -170,6 +198,31 @@ describe("Rivets.binders", function() {
       model.data.show = undefined;
       // 1 for the comment placeholder
       Should(fragment.childNodes.length).be.exactly(1);
+    });
+  });
+ 
+  describe("Custom binder with no attribute value", function() {
+    rivets.binders["custom-binder"] = function(el, value) {
+      el.innerHTML = "received " + value;
+    };
+    beforeEach(function() {
+      fragment = document.createDocumentFragment();
+      el = document.createElement("div");
+
+      fragment.appendChild(el);
+
+      model = {};
+    });
+
+    it("receives undefined when html attribute is not specified", function() {
+      el.innerHTML = "<div rv-custom-binder></div>";
+      var view = rivets.bind(fragment, model);
+      Should(el.children[0].innerHTML).be.exactly('received undefined');
+    });
+    it("receives undefined when html attribute is not specified", function() {
+      el.innerHTML = "<div rv-custom-binder=''></div>";
+      var view = rivets.bind(fragment, model);
+      Should(el.children[0].innerHTML).be.exactly('received undefined');
     });
   });
 });

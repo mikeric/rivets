@@ -181,6 +181,7 @@ Rivets.public.binders['each-*'] =
 
   unbind: (el) ->
     view.unbind() for view in @iterated if @iterated?
+    return
 
   routine: (el, collection) ->
     modelName = @args[0]
@@ -194,6 +195,7 @@ Rivets.public.binders['each-*'] =
 
     for model, index in collection
       data = {index}
+      data[Rivets.public.iterationAlias modelName] = index
       data[modelName] = model
 
       if not @iterated[index]?
@@ -221,6 +223,7 @@ Rivets.public.binders['each-*'] =
       for binding in @view.bindings
         if binding.el is @marker.parentNode and binding.type is 'value'
           binding.sync()
+    return
 
   update: (models) ->
     data = {}
@@ -229,6 +232,7 @@ Rivets.public.binders['each-*'] =
       data[key] = model unless key is @args[0]
 
     view.update data for view in @iterated
+    return
 
 # Adds or removes the class from the element when value is true or false.
 Rivets.public.binders['class-*'] = (el, value) ->

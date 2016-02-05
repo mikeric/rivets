@@ -20,7 +20,8 @@
   },
   "scripts": {
     "test": "gulp spec",
-    "build": "gulp build"
+    "build": "gulp build",
+    "bump": "gulp bump"
   },
   "devDependencies": {
     "mocha": "~1.20.1",
