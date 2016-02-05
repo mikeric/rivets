@@ -11,6 +11,21 @@ describe('Routines', function() {
     return elem
   }
 
+  var createSelectElement = function(optionValues) {
+    var elem = document.createElement('select'),
+        options = optionValues.map(function(val) {
+          var option = document.createElement('option')
+          option.value = val
+          option.textContent = val + ' text'
+          return option
+        })
+    options.forEach(function(option) {
+      elem.appendChild(option)
+    })
+    document.body.appendChild(elem)
+    return elem
+  }
+
   beforeEach(function() {
     rivets.configure({
       adapter: {
@@ -27,12 +42,15 @@ describe('Routines', function() {
 
     // to test the radio input scenario when its value is "true"
     trueRadioInput = createInputElement('radio', 'true')
-    
+
     // to test the radio input scenario when its value is "false"
     falseRadioInput = createInputElement('radio', 'false')
 
     // to test the checkbox input scenario
     checkboxInput = createInputElement('checkbox')
+
+    // to test the select element scenario
+    selectEl = createSelectElement(['a', 'b', 'c'])
   })
 
   afterEach(function(){
@@ -41,6 +59,7 @@ describe('Routines', function() {
     trueRadioInput.parentNode.removeChild(trueRadioInput)
     falseRadioInput.parentNode.removeChild(falseRadioInput)
     checkboxInput.parentNode.removeChild(checkboxInput)
+    selectEl.parentNode.removeChild(selectEl)
   })
 
   describe('text', function() {
@@ -76,7 +95,7 @@ describe('Routines', function() {
       rivets.binders.value.routine(input, 'pitchfork')
       input.value.should.equal('pitchfork')
     })
-    
+
     it("applies a default value to the element when the model doesn't contain it", function() {
       rivets.binders.value.routine(input, undefined)
       input.value.should.equal('')
@@ -85,6 +104,12 @@ describe('Routines', function() {
     it("sets the element's value to zero when a zero value is passed", function() {
       rivets.binders.value.routine(input, 0)
       input.value.should.equal('0')
+    })
+
+    it("sets the correct option on a select element", function() {
+      rivets.binders.value.routine(selectEl, 'b')
+      rivets.binders.value.routine(selectEl, 'c')
+      selectEl.value.should.equal('c')
     })
   })
 
