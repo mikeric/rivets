@@ -55,6 +55,16 @@ describe('Component binding', function() {
 
       component.initialize.calledWith(componentRoot, { item: locals.object, type: type }).should.be.true
     })
+
+    it('camelcases dashed attributes', function() {
+      var myNiceAttribute = 'text'
+
+      component.static = ['myNiceAttribute']
+      componentRoot.setAttribute('my-nice-attribute', myNiceAttribute)
+      rivets.bind(element, locals)
+
+      component.initialize.calledWith(componentRoot, { item: locals.object, myNiceAttribute: myNiceAttribute }).should.be.true
+    })
   })
 
   describe('when "template" is a function', function() {

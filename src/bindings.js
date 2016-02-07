@@ -330,7 +330,7 @@ export class ComponentBinding extends Binding {
   // element's attribute name into a property name for the component's scope.
   camelCase(string) {
     return string.replace(/-([a-z])/g, grouped => {
-      grouped[1].toUpperCase()
+      return grouped[1].toUpperCase()
     })
   }
 
