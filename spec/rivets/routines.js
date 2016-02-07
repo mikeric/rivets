@@ -64,6 +64,7 @@ describe('Routines', function() {
     falseRadioInput.parentNode.removeChild(falseRadioInput)
     checkboxInput.parentNode.removeChild(checkboxInput)
     selectEl.parentNode.removeChild(selectEl)
+    selectMultipleEl.parentNode.removeChild(selectMultipleEl)
   })
 
   describe('text', function() {
