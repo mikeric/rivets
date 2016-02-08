@@ -144,10 +144,8 @@ const adapter = {
                 let callbacks = map.callbacks
 
                 if (callbacks[keypath]) {
-                  callbacks[keypath].slice().forEach(callback => {
-                    if (callbacks[keypath].indexOf(callback) > -1) {
-                      callback()
-                    }
+                  callbacks[keypath].forEach(cb => {
+                      cb()
                   })
                 }
 
