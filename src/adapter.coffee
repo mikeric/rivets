@@ -62,7 +62,7 @@ Rivets.public.adapters['.'] =
       callbacks[keypath] = []
       desc = Object.getOwnPropertyDescriptor obj, keypath
 
-      unless desc?.get or desc?.set
+      if !desc or !(desc.get or desc.set or !desc.configurable)
         value = obj[keypath]
 
         Object.defineProperty obj, keypath,
