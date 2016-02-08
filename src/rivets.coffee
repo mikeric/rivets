@@ -6,6 +6,7 @@ Rivets =
     'rootInterface'
     'preloadData'
     'handler'
+    'updateEvent'
   ]
 
   extensions: [
@@ -44,6 +45,9 @@ Rivets =
     # Alias for index in rv-each binder
     iterationAlias : (modelName) ->
       return '%' + modelName + '%'
+
+    # Use the 'oninput' event by default so synchronization occurs as changes occur.
+    updateEvent: 'input'
 
     # Default event handler.
     handler: (context, ev, binding) ->
