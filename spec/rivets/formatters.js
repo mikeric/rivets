@@ -1,5 +1,4 @@
 describe("Rivets.formatters", function() {
-  var context
 
   describe("call", function() {
     var model
