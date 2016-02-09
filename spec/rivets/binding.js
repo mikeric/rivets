@@ -32,8 +32,10 @@ describe('Rivets.Binding', function() {
       el.setAttribute('data-show', 'obj.items.length')
     })
 
-    it("does not throw", function() {
-      view = rivets.bind(el, {obj: data});
+    it('does not throw', function() {
+      (function(){
+        rivets.bind(el, { obj: data})
+      }).should.not.throw();
     })
 
   })
