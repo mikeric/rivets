@@ -124,12 +124,28 @@ describe('Rivets.Binding', function() {
       binding.set('sweater')
       binding.binder.routine.calledWith(el, 'awesome sweater').should.be.true
     })
+  })
 
-    it('calls methods with the object as context', function() {
+  describe('functions in bindings', function() {
+    it('does not call methods by default', function() {
+      sinon.spy(binding.binder, 'routine')
+      var fn = function() {};
+      binding.set(fn)
+      binding.binder.routine.calledWith(el, fn).should.be.true
+    })
+
+    it('does calls methods with model if backward compatibility is set', function() {
+      rivets.configure({
+        bindingAutoexecuteFunctions:true
+      })
       binding.model = {foo: 'bar'}
       sinon.spy(binding.binder, 'routine')
       binding.set(function() { return this.foo })
       binding.binder.routine.calledWith(el, binding.model.foo).should.be.true
+      // Back to default !!
+      rivets.configure({
+        bindingAutoexecuteFunctions:false
+      })
     })
   })
 
