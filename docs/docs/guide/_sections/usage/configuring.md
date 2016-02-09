@@ -23,7 +23,10 @@ rivets.configure({
   // Augment the event handler of the on-* binder
   handler: function(target, event, binding) {
     this.call(target, event, binding.view.models)
-  }
+  },
+
+  // Since rivets 0.9 functions are not automatically executed in expressions. If you need backward compatibilty, set this parameter to true
+  bindingAutoexecuteFunctions: false
 
 })
 ```
