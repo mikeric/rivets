@@ -89,7 +89,7 @@ Rivets.public.binders.value =
         el.val if value? then value else ''
     else
       if el.type is 'select-multiple'
-        o.selected = o.value in value for o in el.children if value?
+        o.selected = o.value in value for o in el if value?
       else if value?.toString() isnt el.value?.toString()
         el.value = if value? then value else ''
 

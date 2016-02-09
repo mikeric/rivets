@@ -26,5 +26,5 @@ else
       (el, event, handler) -> el.detachEvent 'on' + event, handler
     getInputValue: (el) ->
       if el.type is 'checkbox' then el.checked
-      else if el.type is 'select-multiple' then o.value for o in el.children when o.selected
+      else if el.type is 'select-multiple' then o.value for o in el when o.selected
       else el.value
