@@ -113,7 +113,10 @@ export default class View {
       }
     }
 
-    this.els.forEach(parse)
+    let elements = this.els, i, len;
+    for (i = 0, len = elements.length; i < len; i++) {
+      parse(elements[i])
+    }
 
     this.bindings.sort((a, b) => {
       let aPriority = defined(a.binder) ? (a.binder.priority || 0) : 0
