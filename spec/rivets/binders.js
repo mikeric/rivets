@@ -56,20 +56,20 @@ describe("Rivets.binders", function() {
 
     it("reflects changes to the model into the DOM", function() {
       var view = rivets.bind(fragment, model);
-      Should(fragment.childNodes[1].innerText).be.exactly("0");
+      Should(fragment.childNodes[1].textContent).be.exactly("0");
 
       model.items[0].val = "howdy";
-      Should(fragment.childNodes[1].innerText).be.exactly("howdy");
+      Should(fragment.childNodes[1].textContent).be.exactly("howdy");
     });
 
     it("reflects changes to the model into the DOM after unbind/bind", function() {
       var view = rivets.bind(fragment, model);
-      Should(fragment.childNodes[1].innerText).be.exactly("0");
+      Should(fragment.childNodes[1].textContent).be.exactly("0");
 
       view.unbind();
       view.bind();
       model.items[0].val = "howdy";
-      Should(fragment.childNodes[1].innerText).be.exactly("howdy");
+      Should(fragment.childNodes[1].textContent).be.exactly("howdy");
     });
 
     it("lets you push an item", function() {
@@ -112,7 +112,7 @@ describe("Rivets.binders", function() {
       el.setAttribute("rv-each-item", "items");
       nestedEl = document.createElement("span");
       nestedEl.setAttribute("rv-each-nested", "item.val");
-      nestedEl.innerText = "{%item%}-{%nested%}";
+      nestedEl.textContent = "{%item%}-{%nested%}";
       el.appendChild(nestedEl);
       fragment.appendChild(el);
 
@@ -122,9 +122,9 @@ describe("Rivets.binders", function() {
     it("lets you get all the indexes", function() {
       var view = rivets.bind(el, model);
 
-      Should(fragment.childNodes[1].childNodes[1].innerText).be.exactly('0-0');
-      Should(fragment.childNodes[1].childNodes[2].innerText).be.exactly('0-1');
-      Should(fragment.childNodes[2].childNodes[2].innerText).be.exactly('1-1');
+      Should(fragment.childNodes[1].childNodes[1].textContent).be.exactly('0-0');
+      Should(fragment.childNodes[1].childNodes[2].textContent).be.exactly('0-1');
+      Should(fragment.childNodes[2].childNodes[2].textContent).be.exactly('1-1');
     });
   });
 
