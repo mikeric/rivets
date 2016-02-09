@@ -11,17 +11,33 @@ describe('Routines', function() {
     return elem
   }
 
+  var createOptionEls = function(val) {
+    var option = document.createElement('option')
+    option.value = val
+    option.textContent = val + ' text'
+    return option
+  }
+
   var createSelectElement = function(isMultiple, optionValues) {
-    var elem = document.createElement('select'),
-        options = optionValues.map(function(val) {
-          var option = document.createElement('option')
-          option.value = val
-          option.textContent = val + ' text'
-          return option
+    var elem = document.createElement('select')
+    var options
+    if (optionValues instanceof Array) {
+      options = optionValues.map(createOptionEls)
+      options.forEach(function(option) {
+        elem.appendChild(option)
+      })
+    } else {
+      //grouped
+      Object.keys(optionValues).forEach(function(group) {
+        var optGroupEl = document.createElement('optgroup')
+        optGroupEl.label = group;
+        options = optionValues[group].map(createOptionEls);
+        options.forEach(function(option) {
+          optGroupEl.appendChild(option)
         })
-    options.forEach(function(option) {
-      elem.appendChild(option)
-    })
+        elem.appendChild(optGroupEl)
+      });
+    }
     if (isMultiple) elem.multiple = true
     document.body.appendChild(elem)
     return elem
@@ -48,14 +64,7 @@ describe('Routines', function() {
     falseRadioInput = createInputElement('radio', 'false')
 
     // to test the checkbox input scenario
-    checkboxInput = createInputElement('checkbox')
-
-    // to test the select element scenario
-    selectEl = createSelectElement(false, ['a', 'b', 'c'])
-
-    // to test the select-multiple element scenario
-    selectMultipleEl = createSelectElement(true, ['d', 'e', 'f'])
-  })
+    checkboxInput = createInputElement('checkbox')  })
 
   afterEach(function(){
     el.parentNode.removeChild(el)
@@ -63,8 +72,6 @@ describe('Routines', function() {
     trueRadioInput.parentNode.removeChild(trueRadioInput)
     falseRadioInput.parentNode.removeChild(falseRadioInput)
     checkboxInput.parentNode.removeChild(checkboxInput)
-    selectEl.parentNode.removeChild(selectEl)
-    selectMultipleEl.parentNode.removeChild(selectMultipleEl)
   })
 
   describe('text', function() {
@@ -111,24 +118,60 @@ describe('Routines', function() {
       input.value.should.equal('0')
     })
 
-    it("sets the correct option on a select element", function() {
-      rivets.binders.value.routine(selectEl, 'b')
-      rivets.binders.value.routine(selectEl, 'c')
-      selectEl.value.should.equal('c')
-    })
+    describe('in a select element', function(){
+      beforeEach(function () {
+        selectEl = createSelectElement(false, ['a', 'b', 'c'])
+        selectMultipleEl = createSelectElement(true, ['d', 'e', 'f'])
+        groupedSelectEl = createSelectElement(false, {'group1': ['a'], 'group2': ['b', 'c']})
+        groupedMultipleSelectEl = createSelectElement(true, {'group1': ['a'], 'group2': ['b', 'c']})
+      })
 
-    it("sets the correct option on a select-multiple element", function() {
-      rivets.binders.value.routine(selectMultipleEl, ['d', 'f'])
-      Array.prototype.slice.call(selectMultipleEl.children)
-      .filter(function(option) {
-        return option.selected
+      it("sets the correct option on a select element", function() {
+        rivets.binders.value.routine(selectEl, 'b')
+        rivets.binders.value.routine(selectEl, 'c')
+        selectEl.value.should.equal('c')
       })
-      .map(function(option) {
-        return option.value
+
+      it("sets the correct option on a select-multiple element", function() {
+        rivets.binders.value.routine(selectMultipleEl, ['d', 'f'])
+        Array.prototype.slice.call(selectMultipleEl.children)
+          .filter(function(option) {
+            return option.selected
+          })
+          .map(function(option) {
+            return option.value
+          })
+          .should.eql(['d', 'f'])
       })
-      .should.eql(['d', 'f'])
+
+      it("sets the correct option on a grouped select element", function() {
+        rivets.binders.value.routine(groupedSelectEl, 'b')
+        rivets.binders.value.routine(groupedSelectEl, 'c')
+        groupedSelectEl.value.should.equal('c')
+      })
+
+      it("sets the correct option on a select-multiple element", function() {
+        var i
+        rivets.binders.value.routine(groupedMultipleSelectEl, ['a', 'c'])
+        Array.prototype.slice.call(groupedMultipleSelectEl.options)
+          .filter(function(option) {
+            return option.selected
+          })
+          .map(function(option) {
+            return option.value
+          })
+          .should.eql(['a', 'c'])
+      })
+
+      afterEach(function () {
+        selectEl.parentNode.removeChild(selectEl)
+        selectMultipleEl.parentNode.removeChild(selectMultipleEl)
+        groupedSelectEl.parentNode.removeChild(groupedSelectEl)
+        groupedMultipleSelectEl.parentNode.removeChild(groupedMultipleSelectEl)
+      })
     })
   })
+
 
   describe('show', function() {
     describe('with a truthy value', function() {
