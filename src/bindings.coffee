@@ -80,7 +80,7 @@ class Rivets.Binding
   # with the suplied value formatted.
   set: (value) =>
     # Since 0.9 : doesn't execute function unless backward compatibility is active
-    value = if (value instanceof Function and !@binder.function and Rivets.public.bindingAutoexecuteFunctions)
+    value = if (value instanceof Function and !@binder.function and Rivets.public.executeFunctions)
       @formattedValue value.call @model
     else
       @formattedValue value

@@ -26,7 +26,7 @@ rivets.configure({
   },
 
   // Since rivets 0.9 functions are not automatically executed in expressions. If you need backward compatibilty, set this parameter to true
-  bindingAutoexecuteFunctions: false
+  executeFunctions: false
 
 })
 ```

@@ -6,7 +6,7 @@ Rivets =
     'rootInterface'
     'preloadData'
     'handler',
-    'bindingAutoexecuteFunctions'
+    'executeFunctions'
   ]
 
   extensions: [
@@ -42,8 +42,8 @@ Rivets =
     # Preload data by default.
     preloadData: true,
 
-    # Auto execution of functions in bindings. Set true to act like rivets 0.8.
-    bindingAutoexecuteFunctions: false,
+    # Execute functions in bindings. Defaultis false since rivets 0.9. Set to true to be backward compatible with rivets 0.8.
+    executeFunctions: false,
 
     # Alias for index in rv-each binder
     iterationAlias : (modelName) ->

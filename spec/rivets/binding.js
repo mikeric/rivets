@@ -134,9 +134,9 @@ describe('Rivets.Binding', function() {
       binding.binder.routine.calledWith(el, fn).should.be.true
     })
 
-    it('does calls methods with model if backward compatibility is set', function() {
+    it('does call methods with model if backward compatibility is set', function() {
       rivets.configure({
-        bindingAutoexecuteFunctions:true
+        executeFunctions:true
       })
       binding.model = {foo: 'bar'}
       sinon.spy(binding.binder, 'routine')
@@ -144,7 +144,7 @@ describe('Rivets.Binding', function() {
       binding.binder.routine.calledWith(el, binding.model.foo).should.be.true
       // Back to default !!
       rivets.configure({
-        bindingAutoexecuteFunctions:false
+        executeFunctions:false
       })
     })
   })
