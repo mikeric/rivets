@@ -5,7 +5,8 @@ Rivets =
     'templateDelimiters'
     'rootInterface'
     'preloadData'
-    'handler'
+    'handler',
+    'executeFunctions'
   ]
 
   extensions: [
@@ -40,6 +41,9 @@ Rivets =
 
     # Preload data by default.
     preloadData: true,
+
+    # Execute functions in bindings. Defaultis false since rivets 0.9. Set to true to be backward compatible with rivets 0.8.
+    executeFunctions: false,
 
     # Alias for index in rv-each binder
     iterationAlias : (modelName) ->
