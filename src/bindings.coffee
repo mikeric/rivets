@@ -221,9 +221,9 @@ class Rivets.ComponentBinding extends Rivets.Binding
   bind: =>
     unless @bound
       for key, keypath of @observers
-        @observers[key] = @observe @view.models, keypath, ((key) => =>
-          @componentView.models[key] = @observers[key].value()
-        ).call(@, key)
+        do (key) =>
+          @observers[key] = @observe @view.models, keypath, =>
+            @upstreamObservers[key].setValue @observers[key].value()
 
       @bound = true
 
@@ -248,17 +248,15 @@ class Rivets.ComponentBinding extends Rivets.Binding
       @componentView.bind()
 
       for key, observer of @observers
-        @upstreamObservers[key] = @observe @componentView.models, key, ((key, observer) => =>
-          observer.setValue @componentView.models[key]
-        ).call(@, key, observer)
+        do (key, observer) =>
+          @upstreamObservers[key] = @observe @componentView.models, key, =>
+            observer.setValue @componentView.models[key]
     return
 
   # Intercept `Rivets.Binding::unbind` to be called on `@componentView`.
   unbind: =>
-    for key, observer of @upstreamObservers
-      observer.unobserve()
-
     for key, observer of @observers
+      @upstreamObservers[key].unobserve()
       observer.unobserve()
 
     @componentView?.unbind.call @

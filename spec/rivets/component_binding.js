@@ -19,6 +19,27 @@ describe('Component binding', function() {
     componentRoot.innerHTML.should.equal(component.template())
   })
 
+  describe('synchronization', function() {
+    var model
+
+    beforeEach(function() {
+      model = { title: 'test' }
+      componentRoot.setAttribute('title', 'title')
+      rivets.bind(element, model)
+      model.title = 'new title'
+    })
+
+    it('updates variable in component scope if appropriate attribute is changed', function() {
+      scope.title.should.equal(model.title)
+    })
+
+    it('updates parent view variable if appropriate variable is changed in component', function() {
+      scope.title = 'another value'
+
+      model.title.should.equal(scope.title)
+    })
+  })
+
   describe('initialize()', function() {
     var locals
 
