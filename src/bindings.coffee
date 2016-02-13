@@ -261,7 +261,9 @@ class Rivets.ComponentBinding extends Rivets.Binding
     for key, observer of @observers
       observer.unobserve()
 
-    @componentView?.unbind.call @
+    if @componentView
+      @component.unbind.call(@, @componentView.models) if typeof @component.unbind is 'function'
+      @componentView.unbind()
 
 # Rivets.TextBinding
 # -----------------------

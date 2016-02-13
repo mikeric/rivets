@@ -66,4 +66,37 @@ describe('Component binding', function() {
     })
   })
 
+  describe('when associate view is unbound', function() {
+    var view, model
+
+    beforeEach(function() {
+      componentRoot.setAttribute('title', 'title')
+      component.template = sinon.stub().returns('{ name }');
+      model = { title: 'Component' }
+      view = rivets.bind(element, model)
+    })
+
+    it('destroyes observers', function() {
+      var originalTitle = model.title += 'new'
+      view.unbind()
+      model.title += 'update'
+
+      scope.title.should.equal(originalTitle)
+    })
+
+    it('unbinds internal view bindings', function() {
+      var originalName = scope.name
+      view.unbind()
+      scope.name += 'smth else'
+
+      componentRoot.innerHTML.should.equal(originalName)
+    })
+
+    it('calls "unbind" method of the component', function() {
+      component.unbind = sinon.spy()
+      view.unbind()
+
+      component.unbind.calledWith(scope).should.be.true
+    })
+  })
 })
