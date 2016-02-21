@@ -13,6 +13,26 @@ describe('Rivets.Binding', function() {
     model = binding.model
   })
 
+  describe('prototypes functions', function() {
+    it('refreshes prototypes functions', function() {
+      el = document.createElement('div')
+      el.setAttribute('data-text', 'obj.date.getTime')
+      var model = {obj: {date: new Date()}}
+      view = rivets.bind(el, model)
+      model.obj.date = new Date();
+      el.innerText.should.equal('' + model.obj.date.getTime())
+    })
+
+    it('refreshes prototypes functions', function() {
+      el = document.createElement('div')
+      el.setAttribute('data-text', 'obj.getName')
+      var model = {obj: {name: 'foo', getName: function() {return this.name}}}
+      view = rivets.bind(el, model)
+      model.obj = {name: 'bar', getName: function() {return this.name}}
+      el.innerText.should.equal('bar')
+    })
+  })
+
   it('gets assigned the proper binder routine matching the identifier', function() {
     binding.binder.routine.should.equal(rivets.binders.text)
   })

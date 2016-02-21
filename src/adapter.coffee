@@ -63,7 +63,7 @@ Rivets.public.adapters['.'] =
       desc = Object.getOwnPropertyDescriptor obj, keypath
 
       unless desc?.get or desc?.set
-        value = obj[keypath]
+        value = if (obj[keypath] instanceof Function && !obj.hasOwnProperty(keypath)) then () -> obj[keypath] else obj[keypath]
 
         Object.defineProperty obj, keypath,
           enumerable: true
