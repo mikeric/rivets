@@ -244,7 +244,7 @@ class Rivets.ComponentBinding extends Rivets.Binding
       for option in Rivets.options
         options[option] = @component[option] ? @view[option]
 
-      @componentView = new Rivets.View(@el, scope, options)
+      @componentView = new Rivets.View(Array.prototype.slice.call(@el.childNodes), scope, options)
       @componentView.bind()
 
       for key, observer of @observers
