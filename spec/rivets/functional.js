@@ -1,7 +1,9 @@
 describe('Functional', function() {
-  var data, bindData, el, input
+  var data, bindData, el, input, originalPrefix
 
   beforeEach(function() {
+    originalPrefix = rivets.prefix;
+    rivets.prefix = 'data';
     adapter = {
       observe: function(obj, keypath, callback) {
         obj.on(keypath, callback)
@@ -32,6 +34,10 @@ describe('Functional', function() {
     el = document.createElement('div')
     input = document.createElement('input')
     input.setAttribute('type', 'text')
+  })
+
+  afterEach(function() {
+    rivets.prefix = originalPrefix
   })
 
   describe('Adapter', function() {

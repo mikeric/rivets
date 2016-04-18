@@ -8,15 +8,25 @@ describe('Component binding', function() {
     scope = { name: 'Rivets' }
     component = rivets.components.test = {
       initialize: sinon.stub().returns(scope),
-      template: function() {}
+      template: function() { return '' }
     }
   })
 
   it('renders "template" as a string', function() {
-    rivets.components.test.template = function() {return '<h1>test</h1>'}
+    component.template = function() {return '<h1>test</h1>'}
     rivets.bind(element)
 
     componentRoot.innerHTML.should.equal(component.template())
+  })
+
+  it('binds binders on component root element only once', function() {
+    rivets.binders['test-binder'] = sinon.spy();
+    componentRoot.setAttribute('rv-test-binder', 'true');
+    rivets.bind(element);
+
+    rivets.binders['test-binder'].calledOnce.should.be.true;
+
+    delete rivets.binders['test-binder'];
   })
 
   describe('initialize()', function() {

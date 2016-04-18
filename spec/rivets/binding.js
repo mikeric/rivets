@@ -1,7 +1,8 @@
 describe('Rivets.Binding', function() {
-  var model, el, view, binding, opts
+  var model, el, view, binding, opts, originalPrefix
 
   beforeEach(function() {
+    originalPrefix = rivets.prefix
     rivets.prefix = 'data'
     adapter = rivets.adapters['.']
 
@@ -11,6 +12,10 @@ describe('Rivets.Binding', function() {
     view = rivets.bind(el, {obj: {name: 'test'}})
     binding = view.bindings[0]
     model = binding.model
+  })
+
+  afterEach(function() {
+    rivets.prefix = originalPrefix
   })
 
   it('gets assigned the proper binder routine matching the identifier', function() {
@@ -94,7 +99,6 @@ describe('Rivets.Binding', function() {
     describe('with a binder.unbind defined', function() {
       beforeEach(function() {
         binding.binder.unbind = function(){}
-      
       })
 
       it('should not throw an error', function() {
