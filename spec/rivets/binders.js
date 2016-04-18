@@ -211,5 +211,23 @@ describe("Rivets.binders", function() {
       // 1 for the comment placeholder
       Should(fragment.childNodes.length).be.exactly(1);
     });
+
+    it("rebindes nested if", function() {
+       var nestedEl = document.createElement("div")
+       nestedEl.setAttribute("rv-if", "data.showNested");
+       nestedEl.innerHTML = "{ data.countNested }";
+       el.appendChild(nestedEl);
+  
+       var view = rivets.bind(fragment, model);
+  
+       model.data.countNested = "1";
+       model.data.showNested = true;
+       Should(nestedEl.innerHTML).be.exactly("1");
+       model.data.show = false;
+       model.data.show = true;
+       model.data.countNested = "42";
+  
+       Should(nestedEl.innerHTML).be.exactly("42");
+     });
   });
 });
