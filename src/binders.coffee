@@ -111,7 +111,9 @@ Rivets.public.binders.if =
       el.parentNode.removeChild el
 
   unbind: ->
-    @nested?.unbind()
+    if @nested
+      @nested.unbind()
+      @bound = false
 
   routine: (el, value) ->
     if !!value is not @bound
