@@ -55,6 +55,12 @@ describe('Component binding', function() {
 
       component.initialize.calledWith(componentRoot, { item: locals.object, type: type }).should.be.true
     })
+  
+    it('initializes component model', function() {
+      element.innerHTML = "<test attr='name'></test>"
+      var componentView = rivets.bind(element, scope)
+      componentView.models.attr.should.be.exactly(scope.name)
+    })
   })
 
   describe('when "template" is a function', function() {
@@ -66,4 +72,15 @@ describe('Component binding', function() {
     })
   })
 
+  describe('Two way binding of attributes', function() {
+    it('binds attributes in two ways', function() {
+      element.innerHTML = "<test attr='name'></test>"
+      var componentView = rivets.bind(element, scope)
+      componentView.models.attr.should.be.exactly(scope.name)
+      componentView.models.attr = "Rivets rocks"
+      scope.name.should.be.exactly(componentView.models.attr)
+      scope.name = "Rivets"
+      componentView.models.attr.should.be.exactly(scope.name)
+    })
+  })
 })

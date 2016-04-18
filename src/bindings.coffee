@@ -248,6 +248,7 @@ class Rivets.ComponentBinding extends Rivets.Binding
       @componentView.bind()
 
       for key, observer of @observers
+        @componentView.models[key] = @observers[key].value()
         @upstreamObservers[key] = @observe @componentView.models, key, ((key, observer) => =>
           observer.setValue @componentView.models[key]
         ).call(@, key, observer)
