@@ -158,6 +158,7 @@ const binders = {
     unbind: function() {
       if (defined(this.nested)) {
         this.nested.unbind()
+        this.bound = false
       }
     },
 
