@@ -55,7 +55,7 @@
         return view;
       },
       init: function(component, el, data) {
-        var scope, view;
+        var componentParts, i, instances, p, scope, template, view, _i, _j, _len, _len1;
         if (data == null) {
           data = {};
         }
@@ -63,7 +63,24 @@
           el = document.createElement('div');
         }
         component = Rivets["public"].components[component];
-        el.innerHTML = component.template.call(this, el);
+        componentParts = el.cloneNode(true).children;
+        template = component.template.call(this, el);
+        if (template instanceof HTMLElement) {
+          while (el.firstChild) {
+            el.removeChild(el.firstChild);
+          }
+          el.appendChild(template);
+        } else {
+          el.innerHTML = template;
+        }
+        for (_i = 0, _len = componentParts.length; _i < _len; _i++) {
+          p = componentParts[_i];
+          instances = el.getElementsByTagName(p.tagName);
+          for (_j = 0, _len1 = instances.length; _j < _len1; _j++) {
+            i = instances[_j];
+            i.parentNode.replaceChild(p.cloneNode(true), i);
+          }
+        }
         scope = component.initialize.call(this, el, data);
         view = new Rivets.View(el, scope);
         view.bind();
@@ -805,7 +822,7 @@
     };
 
     ComponentBinding.prototype.bind = function() {
-      var k, key, keypath, observer, option, options, scope, v, _base, _i, _j, _len, _len1, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _results;
+      var componentParts, i, instances, k, key, keypath, observer, option, options, p, scope, v, _base, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _results;
       if (!this.bound) {
         _ref1 = this.observers;
         for (key in _ref1) {
@@ -823,13 +840,22 @@
       if (this.componentView != null) {
         return this.componentView.bind();
       } else {
+        componentParts = this.el.cloneNode(true).children;
         this.el.innerHTML = this.component.template.call(this);
+        for (_i = 0, _len = componentParts.length; _i < _len; _i++) {
+          p = componentParts[_i];
+          instances = this.el.getElementsByTagName(p.tagName);
+          for (_j = 0, _len1 = instances.length; _j < _len1; _j++) {
+            i = instances[_j];
+            i.parentNode.replaceChild(p.cloneNode(true), i);
+          }
+        }
         scope = this.component.initialize.call(this, this.el, this.locals());
         this.el._bound = true;
         options = {};
         _ref2 = Rivets.extensions;
-        for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-          option = _ref2[_i];
+        for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+          option = _ref2[_k];
           options[option] = {};
           if (this.component[option]) {
             _ref3 = this.component[option];
@@ -847,8 +873,8 @@
           }
         }
         _ref5 = Rivets.options;
-        for (_j = 0, _len1 = _ref5.length; _j < _len1; _j++) {
-          option = _ref5[_j];
+        for (_l = 0, _len3 = _ref5.length; _l < _len3; _l++) {
+          option = _ref5[_l];
           options[option] = (_ref6 = this.component[option]) != null ? _ref6 : this.view[option];
         }
         this.componentView = new Rivets.View(this.el, scope, options);
