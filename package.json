@@ -19,17 +19,18 @@
     "sightglass": "~0.2.4"
   },
   "scripts": {
-    "pretest": "babel src/parsers.js --out-file spec/lib/parsers.js --modules umd",
+    "pretest": "webpack --config=webpack.spec.config.js",
     "test": "mocha-phantomjs spec/runner.html",
-    "build": "webpack"
+    "build": "webpack --x-minimize --x-standalone && webpack --x-minimize"
   },
   "devDependencies": {
     "babel-core": "^4.7.16",
-    "babel-loader": "^4.2.0",
-    "minimist": "~1.1.0",
+    "babel-loader": "^4.2.0",    
     "mocha": "~1.20.1",
     "should": "~4.0.4",
     "sinon": "~1.10.2",
-    "webpack": "^1.7.3"
+    "webpack": "^1.7.3",
+    "mocha-phantomjs": "^3.6.0",
+    "phantomjs": "1.9.7-15"	
   }
 }
