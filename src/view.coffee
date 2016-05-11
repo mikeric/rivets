@@ -140,5 +140,7 @@ class Rivets.View
   # Updates the view's models along with any affected bindings.
   update: (models = {}) =>
     @models[key] = model for key, model of models
-    binding.update? models for binding in @bindings
+    for binding in @bindings
+      binding.update? models
+      binding.sync() if binding instanceof Rivets.TextBinding
     return
