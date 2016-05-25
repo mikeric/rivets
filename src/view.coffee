@@ -34,7 +34,11 @@ class Rivets.View
   buildBinding: (binding, node, type, declaration) =>
     options = {}
 
-    pipes = (pipe.trim() for pipe in declaration.match /((?:'[^']*')*(?:(?:[^\|']+(?:'[^']*')*[^\|']*)+|[^\|]+))|^$/g)
+    pipes = (pipe.trim() for pipe in declaration.match /((?:'[^']*')*(?:(?:[^\|']*(?:'[^']*')*[^\|']*)+|[^\|]+))|^$/g)
+    # filter useless empty strings. Array at length 1 cannot have useless empty strings 
+    if (pipes.length > 1)
+      pipes = pipes.filter((pipe) -> pipe != "")
+
     context = (ctx.trim() for ctx in pipes.shift().split '<')
     keypath = context.shift()
 
