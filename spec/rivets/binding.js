@@ -39,12 +39,12 @@ describe('Rivets.Binding', function() {
 
       valueInput = document.createElement('input')
       valueInput.setAttribute('type','text')
-      valueInput.setAttribute('data-value', "obj.name | awesome | totally 'arg | with || pipes'")
+      valueInput.setAttribute('data-value', "obj.name | awesome | totally 'arg | with || pipes' 'and more args' | and 'others formatters' with 'pi||pes'")
 
       view = rivets.bind(valueInput, {obj: { name: 'nothing' }})
       binding = view.bindings[0]
 
-      binding.formatters.should.be.eql(['awesome', "totally 'arg | with || pipes'"])
+      binding.formatters.should.be.eql(['awesome', "totally 'arg | with || pipes' 'and more args'", "and 'others formatters' with 'pi||pes'"])
     })
   })
 
