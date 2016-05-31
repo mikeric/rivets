@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+	 "mocha-phantomjs": {
+		"version":"4.0.2",
+		 "dependencies": {
+		 "phantomjs": {
+			"version": "~2.1.7",
+			"from": "phantomjs@1.9.7-15"
+		 }
+		}
+  }
+  }
+}

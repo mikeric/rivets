@@ -25,7 +25,7 @@ const factory = sightglass => {
       el = document.createElement('div')
     }
 
-    let component = rivets.components[component]
+    component = rivets.components[component]
     el.innerHTML = component.template.call(rivets, el)
     let scope = component.initialize.call(rivets, el, data)
 
