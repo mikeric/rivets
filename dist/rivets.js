@@ -1,5 +1,5 @@
 // Rivets.js
-// version: 0.9.0
+// version: 0.9.1
 // author: Michael Richards
 // license: MIT
 (function() {
@@ -329,7 +329,7 @@
       options = {};
       pipes = (function() {
         var _i, _len, _ref1, _results;
-        _ref1 = declaration.match(/((?:'[^']*')*(?:(?:[^\|']+(?:'[^']*')*[^\|']*)+|[^\|]+))|^$/g);
+        _ref1 = declaration.match(/((?:'[^']*')*(?:(?:[^\|']*(?:'[^']*')+[^\|']*)+|[^\|]+))|^$/g);
         _results = [];
         for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
           pipe = _ref1[_i];
