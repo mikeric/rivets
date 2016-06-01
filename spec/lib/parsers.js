@@ -1,7 +1,7 @@
 (function (global, factory) {
-  if (typeof define === 'function' && define.amd) {
+  if (typeof define === "function" && define.amd) {
     define(['exports'], factory);
-  } else if (typeof exports !== 'undefined') {
+  } else if (typeof exports !== "undefined") {
     factory(exports);
   } else {
     var mod = {
@@ -13,7 +13,7 @@
 })(this, function (exports) {
   'use strict';
 
-  Object.defineProperty(exports, '__esModule', {
+  Object.defineProperty(exports, "__esModule", {
     value: true
   });
   exports.parseType = parseType;
@@ -24,7 +24,6 @@
   var BINDING = 1;
 
   // Parser and tokenizer for getting the type and value from a string.
-
   function parseType(string) {
     var type = PRIMITIVE;
     var value = string;
@@ -51,7 +50,6 @@
   // Template parser and tokenizer for mustache-style text content bindings.
   // Parses the template and returns a set of tokens, separating static portions
   // of text from binding declarations.
-
   function parseTemplate(template, delimiters) {
     var tokens = [];
     var length = template.length;
@@ -81,7 +79,7 @@
 
         if (index < 0) {
           var substring = template.slice(lastIndex - delimiters[1].length);
-          lastToken = tokens[tokens.length - 1];
+          var lastToken = tokens[tokens.length - 1];
 
           if (lastToken && lastToken.type === TEXT) {
             lastToken.value += substring;

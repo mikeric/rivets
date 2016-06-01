@@ -2,7 +2,7 @@
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
 	else if(typeof define === 'function' && define.amd)
-		define(factory);
+		define([], factory);
 	else if(typeof exports === 'object')
 		exports["rivets"] = factory();
 	else
@@ -54,461 +54,562 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
+	  if (true) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [module, exports, __webpack_require__(1), __webpack_require__(2), __webpack_require__(4), __webpack_require__(8), __webpack_require__(9)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  } else if (typeof exports !== "undefined") {
+	    factory(module, exports, require('sightglass'), require('./rivets'), require('./view'), require('./adapter'), require('./binders'));
+	  } else {
+	    var mod = {
+	      exports: {}
+	    };
+	    factory(mod, mod.exports, global.sightglass, global.rivets, global.view, global.adapter, global.binders);
+	    global._export = mod.exports;
+	  }
+	})(this, function (module, exports, _sightglass, _rivets, _view, _adapter, _binders) {
+	  'use strict';
 
-	var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+	  Object.defineProperty(exports, "__esModule", {
+	    value: true
+	  });
 
-	var sightglass = _interopRequire(__webpack_require__(1));
+	  var _sightglass2 = _interopRequireDefault(_sightglass);
 
-	var rivets = _interopRequire(__webpack_require__(2));
+	  var _rivets2 = _interopRequireDefault(_rivets);
 
-	var View = _interopRequire(__webpack_require__(4));
+	  var _view2 = _interopRequireDefault(_view);
 
-	var adapter = _interopRequire(__webpack_require__(8));
+	  var _adapter2 = _interopRequireDefault(_adapter);
 
-	var binders = _interopRequire(__webpack_require__(9));
+	  var _binders2 = _interopRequireDefault(_binders);
 
-	// Module factory. Integrates sightglass and public API methods. Returns the
-	// public interface.
-	var factory = function (sightglass) {
-	  rivets.sightglass = sightglass;
-	  rivets.binders = binders;
-	  rivets.adapters["."] = adapter;
+	  function _interopRequireDefault(obj) {
+	    return obj && obj.__esModule ? obj : {
+	      default: obj
+	    };
+	  }
 
-	  // Binds some data to a template / element. Retuddrns a Rivets.View instance.
-	  rivets.bind = function (el) {
-	    var models = arguments[1] === undefined ? {} : arguments[1];
-	    var options = arguments[2] === undefined ? {} : arguments[2];
+	  // Module factory. Integrates sightglass and public API methods. Returns the
+	  // public interface.
+	  var factory = function factory(sightglass) {
+	    _rivets2.default.sightglass = sightglass;
+	    _rivets2.default.binders = _binders2.default;
+	    _rivets2.default.adapters['.'] = _adapter2.default;
 
-	    var view = new View(el, models, options);
-	    view.bind();
-	    return view;
+	    // Binds some data to a template / element. Retuddrns a Rivets.View instance.
+	    _rivets2.default.bind = function (el) {
+	      var models = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+	      var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+
+	      var view = new _view2.default(el, models, options);
+	      view.bind();
+	      return view;
+	    };
+
+	    // Initializes a new instance of a component on the specified element and
+	    // returns a Rivets.View instance.
+	    _rivets2.default.init = function (_component, el) {
+	      var data = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+
+	      if (!el) {
+	        el = document.createElement('div');
+	      }
+
+	      var component = _rivets2.default.components[_component];
+	      el.innerHTML = component.template.call(_rivets2.default, el);
+	      var scope = component.initialize.call(_rivets2.default, el, data);
+
+	      var view = new _view2.default(el, scope);
+	      view.bind();
+	      return view;
+	    };
+
+	    return _rivets2.default;
 	  };
 
-	  // Initializes a new instance of a component on the specified element and
-	  // returns a Rivets.View instance.
-	  rivets.init = function (component, el) {
-	    var data = arguments[2] === undefined ? {} : arguments[2];
-
-	    if (!el) {
-	      el = document.createElement("div");
-	    }
-
-	    var component = rivets.components[component];
-	    el.innerHTML = component.template.call(rivets, el);
-	    var scope = component.initialize.call(rivets, el, data);
-
-	    var view = new View(el, scope);
-	    view.bind();
-	    return view;
-	  };
-
-	  return rivets;
-	};
-
-	module.exports = factory(sightglass);
+	  exports.default = factory(_sightglass2.default);
+	  module.exports = exports['default'];
+	});
 
 /***/ },
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;"use strict";
-
-	(function () {
-	  // Public sightglass interface.
-	  function sightglass(obj, keypath, callback, options) {
-	    return new Observer(obj, keypath, callback, options);
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
+	  if (true) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [module], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  } else if (typeof exports !== "undefined") {
+	    factory(module);
+	  } else {
+	    var mod = {
+	      exports: {}
+	    };
+	    factory(mod);
+	    global.index = mod.exports;
 	  }
+	})(this, function (module) {
+	  'use strict';
 
-	  // Batteries not included.
-	  sightglass.adapters = {};
+	  var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+	    return typeof obj;
+	  } : function (obj) {
+	    return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
+	  };
 
-	  // Constructs a new keypath observer and kicks things off.
-	  function Observer(obj, keypath, callback, options) {
-	    this.options = options || {};
-	    this.options.adapters = this.options.adapters || {};
-	    this.obj = obj;
-	    this.keypath = keypath;
-	    this.callback = callback;
-	    this.objectPath = [];
-	    this.parse();
-
-	    if (isObject(this.target = this.realize())) {
-	      this.set(true, this.key, this.target, this.callback);
+	  (function () {
+	    // Public sightglass interface.
+	    function sightglass(obj, keypath, callback, options) {
+	      return new Observer(obj, keypath, callback, options);
 	    }
-	  }
 
-	  // Tokenizes the provided keypath string into interface + path tokens for the
-	  // observer to work with.
-	  Observer.tokenize = function (keypath, interfaces, root) {
-	    var tokens = [];
-	    var current = { i: root, path: "" };
-	    var index, chr;
+	    // Batteries not included.
+	    sightglass.adapters = {};
 
-	    for (index = 0; index < keypath.length; index++) {
-	      chr = keypath.charAt(index);
+	    // Constructs a new keypath observer and kicks things off.
+	    function Observer(obj, keypath, callback, options) {
+	      this.options = options || {};
+	      this.options.adapters = this.options.adapters || {};
+	      this.obj = obj;
+	      this.keypath = keypath;
+	      this.callback = callback;
+	      this.objectPath = [];
+	      this.update = this.update.bind(this);
+	      this.parse();
 
-	      if (!! ~interfaces.indexOf(chr)) {
-	        tokens.push(current);
-	        current = { i: chr, path: "" };
+	      if (isObject(this.target = this.realize())) {
+	        this.set(true, this.key, this.target, this.callback);
+	      }
+	    }
+
+	    // Tokenizes the provided keypath string into interface + path tokens for the
+	    // observer to work with.
+	    Observer.tokenize = function (keypath, interfaces, root) {
+	      var tokens = [];
+	      var current = { i: root, path: '' };
+	      var index, chr;
+
+	      for (index = 0; index < keypath.length; index++) {
+	        chr = keypath.charAt(index);
+
+	        if (!! ~interfaces.indexOf(chr)) {
+	          tokens.push(current);
+	          current = { i: chr, path: '' };
+	        } else {
+	          current.path += chr;
+	        }
+	      }
+
+	      tokens.push(current);
+	      return tokens;
+	    };
+
+	    // Parses the keypath using the interfaces defined on the view. Sets variables
+	    // for the tokenized keypath as well as the end key.
+	    Observer.prototype.parse = function () {
+	      var interfaces = this.interfaces();
+	      var root, path;
+
+	      if (!interfaces.length) {
+	        error('Must define at least one adapter interface.');
+	      }
+
+	      if (!! ~interfaces.indexOf(this.keypath[0])) {
+	        root = this.keypath[0];
+	        path = this.keypath.substr(1);
 	      } else {
-	        current.path += chr;
-	      }
-	    }
+	        if (typeof (root = this.options.root || sightglass.root) === 'undefined') {
+	          error('Must define a default root adapter.');
+	        }
 
-	    tokens.push(current);
-	    return tokens;
-	  };
-
-	  // Parses the keypath using the interfaces defined on the view. Sets variables
-	  // for the tokenized keypath as well as the end key.
-	  Observer.prototype.parse = function () {
-	    var interfaces = this.interfaces();
-	    var root, path;
-
-	    if (!interfaces.length) {
-	      error("Must define at least one adapter interface.");
-	    }
-
-	    if (!! ~interfaces.indexOf(this.keypath[0])) {
-	      root = this.keypath[0];
-	      path = this.keypath.substr(1);
-	    } else {
-	      if (typeof (root = this.options.root || sightglass.root) === "undefined") {
-	        error("Must define a default root adapter.");
+	        path = this.keypath;
 	      }
 
-	      path = this.keypath;
-	    }
+	      this.tokens = Observer.tokenize(path, interfaces, root);
+	      this.key = this.tokens.pop();
+	    };
 
-	    this.tokens = Observer.tokenize(path, interfaces, root);
-	    this.key = this.tokens.pop();
-	  };
+	    // Realizes the full keypath, attaching observers for every key and correcting
+	    // old observers to any changed objects in the keypath.
+	    Observer.prototype.realize = function () {
+	      var current = this.obj;
+	      var unreached = false;
+	      var prev;
 
-	  // Realizes the full keypath, attaching observers for every key and correcting
-	  // old observers to any changed objects in the keypath.
-	  Observer.prototype.realize = function () {
-	    var current = this.obj;
-	    var unreached = false;
-	    var prev;
-
-	    this.tokens.forEach(function (token, index) {
-	      if (isObject(current)) {
-	        if (typeof this.objectPath[index] !== "undefined") {
-	          if (current !== (prev = this.objectPath[index])) {
-	            this.set(false, token, prev, this.update.bind(this));
-	            this.set(true, token, current, this.update.bind(this));
+	      this.tokens.forEach(function (token, index) {
+	        if (isObject(current)) {
+	          if (typeof this.objectPath[index] !== 'undefined') {
+	            if (current !== (prev = this.objectPath[index])) {
+	              this.set(false, token, prev, this.update);
+	              this.set(true, token, current, this.update);
+	              this.objectPath[index] = current;
+	            }
+	          } else {
+	            this.set(true, token, current, this.update);
 	            this.objectPath[index] = current;
 	          }
+
+	          current = this.get(token, current);
 	        } else {
-	          this.set(true, token, current, this.update.bind(this));
-	          this.objectPath[index] = current;
-	        }
+	          if (unreached === false) {
+	            unreached = index;
+	          }
 
-	        current = this.get(token, current);
-	      } else {
-	        if (unreached === false) {
-	          unreached = index;
+	          if (prev = this.objectPath[index]) {
+	            this.set(false, token, prev, this.update);
+	          }
 	        }
+	      }, this);
 
-	        if (prev = this.objectPath[index]) {
-	          this.set(false, token, prev, this.update.bind(this));
-	        }
+	      if (unreached !== false) {
+	        this.objectPath.splice(unreached);
 	      }
-	    }, this);
 
-	    if (unreached !== false) {
-	      this.objectPath.splice(unreached);
-	    }
+	      return current;
+	    };
 
-	    return current;
-	  };
+	    // Updates the keypath. This is called when any intermediary key is changed.
+	    Observer.prototype.update = function () {
+	      var next, oldValue;
 
-	  // Updates the keypath. This is called when any intermediary key is changed.
-	  Observer.prototype.update = function () {
-	    var next, oldValue;
+	      if ((next = this.realize()) !== this.target) {
+	        if (isObject(this.target)) {
+	          this.set(false, this.key, this.target, this.callback);
+	        }
 
-	    if ((next = this.realize()) !== this.target) {
+	        if (isObject(next)) {
+	          this.set(true, this.key, next, this.callback);
+	        }
+
+	        oldValue = this.value();
+	        this.target = next;
+
+	        if (this.value() !== oldValue) this.callback();
+	      }
+	    };
+
+	    // Reads the current end value of the observed keypath. Returns undefined if
+	    // the full keypath is unreachable.
+	    Observer.prototype.value = function () {
+	      if (isObject(this.target)) {
+	        return this.get(this.key, this.target);
+	      }
+	    };
+
+	    // Sets the current end value of the observed keypath. Calling setValue when
+	    // the full keypath is unreachable is a no-op.
+	    Observer.prototype.setValue = function (value) {
+	      if (isObject(this.target)) {
+	        this.adapter(this.key).set(this.target, this.key.path, value);
+	      }
+	    };
+
+	    // Gets the provided key on an object.
+	    Observer.prototype.get = function (key, obj) {
+	      return this.adapter(key).get(obj, key.path);
+	    };
+
+	    // Observes or unobserves a callback on the object using the provided key.
+	    Observer.prototype.set = function (active, key, obj, callback) {
+	      var action = active ? 'observe' : 'unobserve';
+	      this.adapter(key)[action](obj, key.path, callback);
+	    };
+
+	    // Returns an array of all unique adapter interfaces available.
+	    Observer.prototype.interfaces = function () {
+	      var interfaces = Object.keys(this.options.adapters);
+
+	      Object.keys(sightglass.adapters).forEach(function (i) {
+	        if (! ~interfaces.indexOf(i)) {
+	          interfaces.push(i);
+	        }
+	      });
+
+	      return interfaces;
+	    };
+
+	    // Convenience function to grab the adapter for a specific key.
+	    Observer.prototype.adapter = function (key) {
+	      return this.options.adapters[key.i] || sightglass.adapters[key.i];
+	    };
+
+	    // Unobserves the entire keypath.
+	    Observer.prototype.unobserve = function () {
+	      var obj;
+
+	      this.tokens.forEach(function (token, index) {
+	        if (obj = this.objectPath[index]) {
+	          this.set(false, token, obj, this.update);
+	        }
+	      }, this);
+
 	      if (isObject(this.target)) {
 	        this.set(false, this.key, this.target, this.callback);
 	      }
+	    };
 
-	      if (isObject(next)) {
-	        this.set(true, this.key, next, this.callback);
-	      }
-
-	      oldValue = this.value();
-	      this.target = next;
-
-	      if (this.value() !== oldValue) this.callback();
+	    // Check if a value is an object than can be observed.
+	    function isObject(obj) {
+	      return (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === 'object' && obj !== null;
 	    }
-	  };
 
-	  // Reads the current end value of the observed keypath. Returns undefined if
-	  // the full keypath is unreachable.
-	  Observer.prototype.value = function () {
-	    if (isObject(this.target)) {
-	      return this.get(this.key, this.target);
+	    // Error thrower.
+	    function error(message) {
+	      throw new Error('[sightglass] ' + message);
 	    }
-	  };
 
-	  // Sets the current end value of the observed keypath. Calling setValue when
-	  // the full keypath is unreachable is a no-op.
-	  Observer.prototype.setValue = function (value) {
-	    if (isObject(this.target)) {
-	      this.adapter(this.key).set(this.target, this.key.path, value);
+	    // Export module for Node and the browser.
+	    if (typeof module !== 'undefined' && module.exports) {
+	      module.exports = sightglass;
+	    } else if (true) {
+	      !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+	        return this.sightglass = sightglass;
+	      }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    } else {
+	      this.sightglass = sightglass;
 	    }
-	  };
-
-	  // Gets the provided key on an object.
-	  Observer.prototype.get = function (key, obj) {
-	    return this.adapter(key).get(obj, key.path);
-	  };
-
-	  // Observes or unobserves a callback on the object using the provided key.
-	  Observer.prototype.set = function (active, key, obj, callback) {
-	    var action = active ? "observe" : "unobserve";
-	    this.adapter(key)[action](obj, key.path, callback);
-	  };
-
-	  // Returns an array of all unique adapter interfaces available.
-	  Observer.prototype.interfaces = function () {
-	    var interfaces = Object.keys(this.options.adapters);
-
-	    Object.keys(sightglass.adapters).forEach(function (i) {
-	      if (! ~interfaces.indexOf(i)) {
-	        interfaces.push(i);
-	      }
-	    });
-
-	    return interfaces;
-	  };
-
-	  // Convenience function to grab the adapter for a specific key.
-	  Observer.prototype.adapter = function (key) {
-	    return this.options.adapters[key.i] || sightglass.adapters[key.i];
-	  };
-
-	  // Unobserves the entire keypath.
-	  Observer.prototype.unobserve = function () {
-	    var obj;
-
-	    this.tokens.forEach(function (token, index) {
-	      if (obj = this.objectPath[index]) {
-	        this.set(false, token, obj, this.update.bind(this));
-	      }
-	    }, this);
-
-	    if (isObject(this.target)) {
-	      this.set(false, this.key, this.target, this.callback);
-	    }
-	  };
-
-	  // Check if a value is an object than can be observed.
-	  function isObject(obj) {
-	    return typeof obj === "object" && obj !== null;
-	  }
-
-	  // Error thrower.
-	  function error(message) {
-	    throw new Error("[sightglass] " + message);
-	  }
-
-	  // Export module for Node and the browser.
-	  if (typeof module !== "undefined" && module.exports) {
-	    module.exports = sightglass;
-	  } else if (true) {
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-	      return this.sightglass = sightglass;
-	    }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	  } else {
-	    this.sightglass = sightglass;
-	  }
-	}).call(undefined);
+	  }).call(undefined);
+	});
 
 /***/ },
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
-
-	var _constants = __webpack_require__(3);
-
-	var OPTIONS = _constants.OPTIONS;
-	var EXTENSIONS = _constants.EXTENSIONS;
-
-	var rivets = {
-	  // Global binders.
-	  binders: {},
-
-	  // Global components.
-	  components: {},
-
-	  // Global formatters.
-	  formatters: {},
-
-	  // Global sightglass adapters.
-	  adapters: {},
-
-	  // Default attribute prefix.
-	  prefix: "rv",
-
-	  // Default template delimiters.
-	  templateDelimiters: ["{", "}"],
-
-	  // Default sightglass root interface.
-	  rootInterface: ".",
-
-	  // Preload data by default.
-	  preloadData: true,
-
-	  // Default event handler.
-	  handler: function handler(context, ev, binding) {
-	    this.call(context, ev, binding.view.models);
-	  },
-
-	  // Merges an object literal into the corresponding global options.
-	  configure: function configure() {
-	    var _this = this;
-
-	    var options = arguments[0] === undefined ? {} : arguments[0];
-
-	    Object.keys(options).forEach(function (option) {
-	      var value = options[option];
-
-	      if (EXTENSIONS.indexOf(option) > -1) {
-	        Object.keys(value).forEach(function (key) {
-	          _this[option][key] = value[key];
-	        });
-	      } else {
-	        _this[option] = value;
-	      }
-	    });
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
+	  if (true) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [module, exports, __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  } else if (typeof exports !== "undefined") {
+	    factory(module, exports, require('./constants'));
+	  } else {
+	    var mod = {
+	      exports: {}
+	    };
+	    factory(mod, mod.exports, global.constants);
+	    global.rivets = mod.exports;
 	  }
-	};
+	})(this, function (module, exports, _constants) {
+	  'use strict';
 
-	module.exports = rivets;
+	  Object.defineProperty(exports, "__esModule", {
+	    value: true
+	  });
+
+
+	  var rivets = {
+	    // Global binders.
+	    binders: {},
+
+	    // Global components.
+	    components: {},
+
+	    // Global formatters.
+	    formatters: {},
+
+	    // Global sightglass adapters.
+	    adapters: {},
+
+	    // Default attribute prefix.
+	    prefix: 'rv',
+
+	    // Default template delimiters.
+	    templateDelimiters: ['{', '}'],
+
+	    // Default sightglass root interface.
+	    rootInterface: '.',
+
+	    // Preload data by default.
+	    preloadData: true,
+
+	    // Alias for index in rv-each binder
+	    iterationAlias: function iterationAlias(modelName) {
+	      return '%' + modelName + '%';
+	    },
+
+	    // Default event handler.
+	    handler: function handler(context, ev, binding) {
+	      this.call(context, ev, binding.view.models);
+	    },
+
+	    // Merges an object literal into the corresponding global options.
+	    configure: function configure() {
+	      var _this = this;
+
+	      var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+	      Object.keys(options).forEach(function (option) {
+	        var value = options[option];
+
+	        if (_constants.EXTENSIONS.indexOf(option) > -1) {
+	          Object.keys(value).forEach(function (key) {
+	            _this[option][key] = value[key];
+	          });
+	        } else {
+	          _this[option] = value;
+	        }
+	      });
+	    }
+	  };
+
+	  exports.default = rivets;
+	  module.exports = exports['default'];
+	});
 
 /***/ },
 /* 3 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
+	  if (true) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  } else if (typeof exports !== "undefined") {
+	    factory(exports);
+	  } else {
+	    var mod = {
+	      exports: {}
+	    };
+	    factory(mod.exports);
+	    global.constants = mod.exports;
+	  }
+	})(this, function (exports) {
+	  'use strict';
 
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
+	  Object.defineProperty(exports, "__esModule", {
+	    value: true
+	  });
+	  var OPTIONS = exports.OPTIONS = ['prefix', 'templateDelimiters', 'rootInterface', 'preloadData', 'handler'];
+
+	  var EXTENSIONS = exports.EXTENSIONS = ['binders', 'formatters', 'components', 'adapters'];
 	});
-	var OPTIONS = ["prefix", "templateDelimiters", "rootInterface", "preloadData", "handler"];
-
-	exports.OPTIONS = OPTIONS;
-	var EXTENSIONS = ["binders", "formatters", "components", "adapters"];
-	exports.EXTENSIONS = EXTENSIONS;
 
 /***/ },
 /* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
+	  if (true) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [module, exports, __webpack_require__(2), __webpack_require__(3), __webpack_require__(5), __webpack_require__(6)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  } else if (typeof exports !== "undefined") {
+	    factory(module, exports, require('./rivets'), require('./constants'), require('./bindings'), require('./parsers'));
+	  } else {
+	    var mod = {
+	      exports: {}
+	    };
+	    factory(mod, mod.exports, global.rivets, global.constants, global.bindings, global.parsers);
+	    global.view = mod.exports;
+	  }
+	})(this, function (module, exports, _rivets, _constants, _bindings, _parsers) {
+	  'use strict';
 
-	var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+	  Object.defineProperty(exports, "__esModule", {
+	    value: true
+	  });
 
-	var _createClass = (function () { function defineProperties(target, props) { for (var key in props) { var prop = props[key]; prop.configurable = true; if (prop.value) prop.writable = true; } Object.defineProperties(target, props); } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	  var _rivets2 = _interopRequireDefault(_rivets);
 
-	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
-
-	var rivets = _interopRequire(__webpack_require__(2));
-
-	var _constants = __webpack_require__(3);
-
-	var OPTIONS = _constants.OPTIONS;
-	var EXTENSIONS = _constants.EXTENSIONS;
-
-	var _bindings = __webpack_require__(5);
-
-	var Binding = _bindings.Binding;
-	var TextBinding = _bindings.TextBinding;
-	var ComponentBinding = _bindings.ComponentBinding;
-
-	var parseTemplate = __webpack_require__(6).parseTemplate;
-
-	var defined = function (value) {
-	  return value !== undefined && value !== null;
-	};
-
-	// A collection of bindings built from a set of parent nodes.
-
-	var View = (function () {
-	  // The DOM elements and the model objects for binding are passed into the
-	  // constructor along with any local options that should be used throughout the
-	  // context of the view and it's bindings.
-
-	  function View(els, models) {
-	    var _this = this;
-
-	    var options = arguments[2] === undefined ? {} : arguments[2];
-
-	    _classCallCheck(this, View);
-
-	    if (els.jquery || els instanceof Array) {
-	      this.els = els;
-	    } else {
-	      this.els = [els];
-	    }
-
-	    this.models = models;
-
-	    EXTENSIONS.forEach(function (extensionType) {
-	      _this[extensionType] = {};
-
-	      if (options[extensionType]) {
-	        Object.keys(options[extensionType]).forEach(function (key) {
-	          _this[extensionType][key] = options[extensionType][key];
-	        });
-	      }
-
-	      Object.keys(rivets[extensionType]).forEach(function (key) {
-	        if (!defined(_this[extensionType][key])) {
-	          _this[extensionType][key] = rivets[extensionType][key];
-	        }
-	      });
-	    });
-
-	    OPTIONS.forEach(function (option) {
-	      _this[option] = defined(options[option]) ? options[option] : rivets[option];
-	    });
-
-	    this.build();
+	  function _interopRequireDefault(obj) {
+	    return obj && obj.__esModule ? obj : {
+	      default: obj
+	    };
 	  }
 
-	  _createClass(View, {
-	    options: {
+	  function _classCallCheck(instance, Constructor) {
+	    if (!(instance instanceof Constructor)) {
+	      throw new TypeError("Cannot call a class as a function");
+	    }
+	  }
+
+	  var _createClass = function () {
+	    function defineProperties(target, props) {
+	      for (var i = 0; i < props.length; i++) {
+	        var descriptor = props[i];
+	        descriptor.enumerable = descriptor.enumerable || false;
+	        descriptor.configurable = true;
+	        if ("value" in descriptor) descriptor.writable = true;
+	        Object.defineProperty(target, descriptor.key, descriptor);
+	      }
+	    }
+
+	    return function (Constructor, protoProps, staticProps) {
+	      if (protoProps) defineProperties(Constructor.prototype, protoProps);
+	      if (staticProps) defineProperties(Constructor, staticProps);
+	      return Constructor;
+	    };
+	  }();
+
+	  var defined = function defined(value) {
+	    return value !== undefined && value !== null;
+	  };
+
+	  // A collection of bindings built from a set of parent nodes.
+
+	  var View = function () {
+	    // The DOM elements and the model objects for binding are passed into the
+	    // constructor along with any local options that should be used throughout the
+	    // context of the view and it's bindings.
+
+	    function View(els, models) {
+	      var _this = this;
+
+	      var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+
+	      _classCallCheck(this, View);
+
+	      if (els.jquery || els instanceof Array) {
+	        this.els = els;
+	      } else {
+	        this.els = [els];
+	      }
+
+	      this.models = models;
+
+	      _constants.EXTENSIONS.forEach(function (extensionType) {
+	        _this[extensionType] = {};
+
+	        if (options[extensionType]) {
+	          Object.keys(options[extensionType]).forEach(function (key) {
+	            _this[extensionType][key] = options[extensionType][key];
+	          });
+	        }
+
+	        Object.keys(_rivets2.default[extensionType]).forEach(function (key) {
+	          if (!defined(_this[extensionType][key])) {
+	            _this[extensionType][key] = _rivets2.default[extensionType][key];
+	          }
+	        });
+	      });
+
+	      _constants.OPTIONS.forEach(function (option) {
+	        _this[option] = defined(options[option]) ? options[option] : _rivets2.default[option];
+	      });
+
+	      this.build();
+	    }
+
+	    _createClass(View, [{
+	      key: 'options',
 	      value: function options() {
-	        var _this = this;
+	        var _this2 = this;
 
 	        var options = {};
 
-	        EXTENSIONS.concat(OPTIONS).forEach(function (option) {
-	          options[option] = _this[option];
+	        _constants.EXTENSIONS.concat(_constants.OPTIONS).forEach(function (option) {
+	          options[option] = _this2[option];
 	        });
 
 	        return options;
 	      }
-	    },
-	    bindingRegExp: {
-
-	      // Regular expression used to match binding attributes.
-
+	    }, {
+	      key: 'bindingRegExp',
 	      value: function bindingRegExp() {
-	        return new RegExp("^" + this.prefix + "-");
+	        return new RegExp('^' + this.prefix + '-');
 	      }
-	    },
-	    buildBinding: {
+	    }, {
+	      key: 'buildBinding',
 	      value: function buildBinding(binding, node, type, declaration) {
-	        var pipes = declaration.split("|").map(function (pipe) {
+	        var pipes = declaration.match(/((?:'[^']*')*(?:(?:[^\|']+(?:'[^']*')*[^\|']*)+|[^\|]+))|^$/g).map(function (pipe) {
 	          return pipe.trim();
 	        });
 
-	        var context = pipes.shift().split("<").map(function (ctx) {
+	        var context = pipes.shift().split('<').map(function (ctx) {
 	          return ctx.trim();
 	        });
 
@@ -522,25 +623,21 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        this.bindings.push(new binding(this, node, type, keypath, options));
 	      }
-	    },
-	    build: {
-
-	      // Parses the DOM tree and builds `Binding` instances for every matched
-	      // binding declaration.
-
+	    }, {
+	      key: 'build',
 	      value: function build() {
-	        var _this = this;
+	        var _this3 = this;
 
 	        this.bindings = [];
 
-	        var parse = function (node) {
+	        var parse = function parse(node) {
 	          var block = false;
 
 	          if (node.nodeType === 3) {
-	            var delimiters = _this.templateDelimiters;
+	            var delimiters = _this3.templateDelimiters;
 
 	            if (delimiters) {
-	              var tokens = parseTemplate(node.data, delimiters);
+	              var tokens = (0, _parsers.parseTemplate)(node.data, delimiters);
 
 	              if (tokens.length) {
 	                if (!(tokens.length === 1 && tokens[0].type === 0)) {
@@ -549,7 +646,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    node.parentNode.insertBefore(text, node);
 
 	                    if (token.type === 1) {
-	                      _this.buildBinding(TextBinding, text, null, token.value);
+	                      _this3.buildBinding(_bindings.TextBinding, text, null, token.value);
 	                    }
 	                  });
 
@@ -558,7 +655,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	              }
 	            }
 	          } else if (node.nodeType === 1) {
-	            block = _this.traverse(node);
+	            block = _this3.traverse(node);
 	          }
 
 	          if (!block) {
@@ -566,7 +663,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	          }
 	        };
 
-	        this.els.forEach(parse);
+	        var elements = this.els,
+	            i = void 0,
+	            len = void 0;
+	        for (i = 0, len = elements.length; i < len; i++) {
+	          parse(elements[i]);
+	        }
 
 	        this.bindings.sort(function (a, b) {
 	          var aPriority = defined(a.binder) ? a.binder.priority || 0 : 0;
@@ -574,27 +676,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	          return bPriority - aPriority;
 	        });
 	      }
-	    },
-	    traverse: {
+	    }, {
+	      key: 'traverse',
 	      value: function traverse(node) {
-	        var _this = this;
+	        var _this4 = this;
 
 	        var bindingRegExp = this.bindingRegExp();
-	        var block = node.nodeName === "SCRIPT" || node.nodeName === "STYLE";
+	        var block = node.nodeName === 'SCRIPT' || node.nodeName === 'STYLE';
 	        var attributes = null;
 
 	        Array.prototype.slice.call(node.attributes).forEach(function (attribute) {
 	          if (bindingRegExp.test(attribute.name)) {
 	            (function () {
-	              var type = attribute.name.replace(bindingRegExp, "");
-	              var binder = _this.binders[type];
+	              var type = attribute.name.replace(bindingRegExp, '');
+	              var binder = _this4.binders[type];
 
 	              if (!binder) {
-	                Object.keys(_this.binders).forEach(function (identifier) {
-	                  var value = _this.binders[identifier];
+	                Object.keys(_this4.binders).forEach(function (identifier) {
+	                  var value = _this4.binders[identifier];
 
-	                  if (identifier !== "*" && identifier.indexOf("*") > -1) {
-	                    var regexp = new RegExp("^" + identifier.replace(/\*/g, ".+") + "$");
+	                  if (identifier !== '*' && identifier.indexOf('*') > -1) {
+	                    var regexp = new RegExp('^' + identifier.replace(/\*/g, '.+') + '$');
 
 	                    if (regexp.test(type)) {
 	                      binder = value;
@@ -604,7 +706,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	              }
 
 	              if (!defined(binder)) {
-	                binder = _this.binders["*"];
+	                binder = _this4.binders['*'];
 	              }
 
 	              if (binder.block) {
@@ -619,8 +721,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        attributes.forEach(function (attribute) {
 	          if (bindingRegExp.test(attribute.name)) {
-	            var type = attribute.name.replace(bindingRegExp, "");
-	            _this.buildBinding(Binding, node, type, attribute.value);
+	            var type = attribute.name.replace(bindingRegExp, '');
+	            _this4.buildBinding(_bindings.Binding, node, type, attribute.value);
 	          }
 	        });
 
@@ -628,56 +730,41 @@ return /******/ (function(modules) { // webpackBootstrap
 	          var type = node.nodeName.toLowerCase();
 
 	          if (this.components[type] && !node._bound) {
-	            this.bindings.push(new ComponentBinding(this, node, type));
+	            this.bindings.push(new _bindings.ComponentBinding(this, node, type));
 	            block = true;
 	          }
 	        }
 
 	        return block;
 	      }
-	    },
-	    select: {
-
-	      // Returns an array of bindings where the supplied function evaluates to true.
-
+	    }, {
+	      key: 'select',
 	      value: function select(fn) {
 	        return this.bindings.filter(fn);
 	      }
-	    },
-	    bind: {
-
-	      // Binds all of the current bindings for this view.
-
+	    }, {
+	      key: 'bind',
 	      value: function bind() {
 	        this.bindings.forEach(function (binding) {
 	          binding.bind();
 	        });
 	      }
-	    },
-	    unbind: {
-
-	      // Unbinds all of the current bindings for this view.
-
+	    }, {
+	      key: 'unbind',
 	      value: function unbind() {
 	        this.bindings.forEach(function (binding) {
 	          binding.unbind();
 	        });
 	      }
-	    },
-	    sync: {
-
-	      // Syncs up the view with the model by running the routines on all bindings.
-
+	    }, {
+	      key: 'sync',
 	      value: function sync() {
 	        this.bindings.forEach(function (binding) {
 	          binding.sync();
 	        });
 	      }
-	    },
-	    publish: {
-
-	      // Publishes the input values from the view back to the model (reverse sync).
-
+	    }, {
+	      key: 'publish',
 	      value: function publish() {
 	        var publishes = this.select(function (binding) {
 	          if (defined(binding.binder)) {
@@ -689,18 +776,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	          binding.publish();
 	        });
 	      }
-	    },
-	    update: {
-
-	      // Updates the view's models along with any affected bindings.
-
+	    }, {
+	      key: 'update',
 	      value: function update() {
-	        var _this = this;
+	        var _this5 = this;
 
-	        var models = arguments[0] === undefined ? {} : arguments[0];
+	        var models = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
 	        Object.keys(models).forEach(function (key) {
-	          _this.models[key] = models[key];
+	          _this5.models[key] = models[key];
 	        });
 
 	        this.bindings.forEach(function (binding) {
@@ -709,80 +793,170 @@ return /******/ (function(modules) { // webpackBootstrap
 	          }
 	        });
 	      }
-	    }
-	  });
+	    }]);
 
-	  return View;
-	})();
+	    return View;
+	  }();
 
-	module.exports = View;
+	  exports.default = View;
+	  module.exports = exports['default'];
+	});
 
 /***/ },
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
+	  if (true) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(2), __webpack_require__(6), __webpack_require__(7), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  } else if (typeof exports !== "undefined") {
+	    factory(exports, require('./rivets'), require('./parsers'), require('./util'), require('./constants'));
+	  } else {
+	    var mod = {
+	      exports: {}
+	    };
+	    factory(mod.exports, global.rivets, global.parsers, global.util, global.constants);
+	    global.bindings = mod.exports;
+	  }
+	})(this, function (exports, _rivets, _parsers, _util, _constants) {
+	  'use strict';
 
-	var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+	  Object.defineProperty(exports, "__esModule", {
+	    value: true
+	  });
+	  exports.TextBinding = exports.ComponentBinding = exports.Binding = undefined;
 
-	var _toConsumableArray = function (arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } };
+	  var _rivets2 = _interopRequireDefault(_rivets);
 
-	var _get = function get(object, property, receiver) { var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc && desc.writable) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
-
-	var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var key in props) { var prop = props[key]; prop.configurable = true; if (prop.value) prop.writable = true; } Object.defineProperties(target, props); } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var rivets = _interopRequire(__webpack_require__(2));
-
-	var parseType = __webpack_require__(6).parseType;
-
-	var getInputValue = __webpack_require__(7).getInputValue;
-
-	var defined = function (value) {
-	  return value !== undefined && value !== null;
-	};
-
-	// A single binding between a model attribute and a DOM element.
-
-	var Binding = exports.Binding = (function () {
-	  // All information about the binding is passed into the constructor; the
-	  // containing view, the DOM node, the type of binding, the model object and the
-	  // keypath at which to listen for changes.
-
-	  function Binding(view, el, type, keypath) {
-	    var options = arguments[4] === undefined ? {} : arguments[4];
-
-	    _classCallCheck(this, Binding);
-
-	    this.view = view;
-	    this.el = el;
-	    this.type = type;
-	    this.keypath = keypath;
-	    this.options = options;
-	    this.formatters = options.formatters || [];
-	    this.dependencies = [];
-	    this.formatterObservers = {};
-	    this.model = undefined;
-	    this.setBinder();
-
-	    this.bind = this.bind.bind(this);
-	    this.unbind = this.unbind.bind(this);
-	    this.sync = this.sync.bind(this);
-	    this.publish = this.publish.bind(this);
+	  function _interopRequireDefault(obj) {
+	    return obj && obj.__esModule ? obj : {
+	      default: obj
+	    };
 	  }
 
-	  _createClass(Binding, {
-	    setBinder: {
+	  var _get = function get(object, property, receiver) {
+	    if (object === null) object = Function.prototype;
+	    var desc = Object.getOwnPropertyDescriptor(object, property);
 
-	      // Sets the binder to use when binding and syncing.
+	    if (desc === undefined) {
+	      var parent = Object.getPrototypeOf(object);
 
+	      if (parent === null) {
+	        return undefined;
+	      } else {
+	        return get(parent, property, receiver);
+	      }
+	    } else if ("value" in desc) {
+	      return desc.value;
+	    } else {
+	      var getter = desc.get;
+
+	      if (getter === undefined) {
+	        return undefined;
+	      }
+
+	      return getter.call(receiver);
+	    }
+	  };
+
+	  function _possibleConstructorReturn(self, call) {
+	    if (!self) {
+	      throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	    }
+
+	    return call && (typeof call === "object" || typeof call === "function") ? call : self;
+	  }
+
+	  function _inherits(subClass, superClass) {
+	    if (typeof superClass !== "function" && superClass !== null) {
+	      throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+	    }
+
+	    subClass.prototype = Object.create(superClass && superClass.prototype, {
+	      constructor: {
+	        value: subClass,
+	        enumerable: false,
+	        writable: true,
+	        configurable: true
+	      }
+	    });
+	    if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	  }
+
+	  function _toConsumableArray(arr) {
+	    if (Array.isArray(arr)) {
+	      for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) {
+	        arr2[i] = arr[i];
+	      }
+
+	      return arr2;
+	    } else {
+	      return Array.from(arr);
+	    }
+	  }
+
+	  function _classCallCheck(instance, Constructor) {
+	    if (!(instance instanceof Constructor)) {
+	      throw new TypeError("Cannot call a class as a function");
+	    }
+	  }
+
+	  var _createClass = function () {
+	    function defineProperties(target, props) {
+	      for (var i = 0; i < props.length; i++) {
+	        var descriptor = props[i];
+	        descriptor.enumerable = descriptor.enumerable || false;
+	        descriptor.configurable = true;
+	        if ("value" in descriptor) descriptor.writable = true;
+	        Object.defineProperty(target, descriptor.key, descriptor);
+	      }
+	    }
+
+	    return function (Constructor, protoProps, staticProps) {
+	      if (protoProps) defineProperties(Constructor.prototype, protoProps);
+	      if (staticProps) defineProperties(Constructor, staticProps);
+	      return Constructor;
+	    };
+	  }();
+
+	  var defined = function defined(value) {
+	    return value !== undefined && value !== null;
+	  };
+
+	  // A single binding between a model attribute and a DOM element.
+
+	  var Binding = exports.Binding = function () {
+	    // All information about the binding is passed into the constructor; the
+	    // containing view, the DOM node, the type of binding, the model object and the
+	    // keypath at which to listen for changes.
+
+	    function Binding(view, el, type, keypath) {
+	      var options = arguments.length <= 4 || arguments[4] === undefined ? {} : arguments[4];
+
+	      _classCallCheck(this, Binding);
+
+	      this.view = view;
+	      this.el = el;
+	      this.type = type;
+	      this.keypath = keypath;
+	      this.options = options;
+	      this.formatters = options.formatters || [];
+	      this.dependencies = [];
+	      this.formatterObservers = {};
+	      this.model = undefined;
+	      this.setBinder();
+
+	      this.bind = this.bind.bind(this);
+	      this.unbind = this.unbind.bind(this);
+	      this.sync = this.sync.bind(this);
+	      this.publish = this.publish.bind(this);
+	    }
+
+	    // Sets the binder to use when binding and syncing.
+
+
+	    _createClass(Binding, [{
+	      key: 'setBinder',
 	      value: function setBinder() {
 	        var _this = this;
 
@@ -792,12 +966,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	          Object.keys(this.view.binders).forEach(function (identifier) {
 	            var value = _this.view.binders[identifier];
 
-	            if (identifier !== "*" && identifier.indexOf("*") > -1) {
-	              var regexp = new RegExp("^" + identifier.replace(/\*/g, ".+") + "$");
+	            if (identifier !== '*' && identifier.indexOf('*') > -1) {
+	              var regexp = new RegExp('^' + identifier.replace(/\*/g, '.+') + '$');
 
 	              if (regexp.test(_this.type)) {
 	                _this.binder = value;
-	                _this.args = new RegExp("^" + identifier.replace(/\*/g, "(.+)") + "$").exec(_this.type);
+	                _this.args = new RegExp('^' + identifier.replace(/\*/g, '(.+)') + '$').exec(_this.type);
 	                _this.args.shift();
 	              }
 	            }
@@ -805,28 +979,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        if (!defined(this.binder)) {
-	          this.binder = this.view.binders["*"];
+	          this.binder = this.view.binders['*'];
 	        }
 
 	        if (this.binder instanceof Function) {
 	          this.binder = { routine: this.binder };
 	        }
 	      }
-	    },
-	    observe: {
 
 	      // Observes the object keypath to run the provided callback.
 
+	    }, {
+	      key: 'observe',
 	      value: function observe(obj, keypath, callback) {
-	        return rivets.sightglass(obj, keypath, callback, {
+	        return _rivets2.default.sightglass(obj, keypath, callback, {
 	          root: this.view.rootInterface,
 	          adapters: this.view.adapters
 	        });
 	      }
-	    },
-	    parseTarget: {
+	    }, {
+	      key: 'parseTarget',
 	      value: function parseTarget() {
-	        var token = parseType(this.keypath);
+	        var token = (0, _parsers.parseType)(this.keypath);
 
 	        if (token.type === 0) {
 	          this.value = token.value;
@@ -835,36 +1009,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	          this.model = this.observer.target;
 	        }
 	      }
-	    },
-	    formattedValue: {
 
 	      // Applies all the current formatters to the supplied value and returns the
 	      // formatted value.
 
+	    }, {
+	      key: 'formattedValue',
 	      value: function formattedValue(value) {
-	        var _this = this;
+	        var _this2 = this;
 
 	        this.formatters.forEach(function (formatterStr, fi) {
 	          var args = formatterStr.match(/[^\s']+|'([^']|'[^\s])*'|"([^"]|"[^\s])*"/g);
 	          var id = args.shift();
-	          var formatter = _this.view.formatters[id];
+	          var formatter = _this2.view.formatters[id];
 	          var processedArgs = [];
 
-	          args = args.map(parseType);
+	          args = args.map(_parsers.parseType);
 
 	          args.forEach(function (arg, ai) {
 	            if (arg.type === 0) {
 	              processedArgs.push(arg.value);
 	            } else {
-	              if (!defined(_this.formatterObservers[fi])) {
-	                _this.formatterObservers[fi] = {};
+	              if (!defined(_this2.formatterObservers[fi])) {
+	                _this2.formatterObservers[fi] = {};
 	              }
 
-	              var observer = _this.formatterObservers[fi][ai];
+	              var observer = _this2.formatterObservers[fi][ai];
 
 	              if (!observer) {
-	                observer = _this.observe(_this.view.models, arg.value, _this.sync);
-	                _this.formatterObservers[fi][ai] = observer;
+	                observer = _this2.observe(_this2.view.models, arg.value, _this2.sync);
+	                _this2.formatterObservers[fi][ai] = observer;
 	              }
 
 	              processedArgs.push(observer.value());
@@ -880,11 +1054,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        return value;
 	      }
-	    },
-	    eventHandler: {
 
 	      // Returns an event handler for the binding around the supplied function.
 
+	    }, {
+	      key: 'eventHandler',
 	      value: function eventHandler(fn) {
 	        var binding = this;
 	        var handler = binding.view.handler;
@@ -893,14 +1067,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	          handler.call(fn, this, ev, binding);
 	        };
 	      }
-	    },
-	    set: {
 
 	      // Sets the value for the binding. This Basically just runs the binding routine
 	      // with the suplied value formatted.
 
+	    }, {
+	      key: 'set',
 	      value: function set(value) {
-	        if (value instanceof Function && !this.binder["function"]) {
+	        if (value instanceof Function && !this.binder.function) {
 	          value = this.formattedValue(value.call(this.model));
 	        } else {
 	          value = this.formattedValue(value);
@@ -910,13 +1084,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	          this.binder.routine.call(this, this.el, value);
 	        }
 	      }
-	    },
-	    sync: {
 
 	      // Syncs up the view binding with the model.
 
+	    }, {
+	      key: 'sync',
 	      value: function sync() {
-	        var _this = this;
+	        var _this3 = this;
 
 	        if (this.observer) {
 	          if (this.model !== this.observer.target) {
@@ -929,10 +1103,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.dependencies = [];
 	            this.model = this.observer.target;
 
-	            if (defined(model) && deps && deps.length) {
+	            if (defined(this.model) && deps && deps.length) {
 	              deps.forEach(function (dependency) {
-	                var observer = _this.observe(_this.model, dependency, _this.sync);
-	                _this.dependencies.push(observer);
+	                var observer = _this3.observe(_this3.model, dependency, _this3.sync);
+	                _this3.dependencies.push(observer);
 	              });
 	            }
 	          }
@@ -942,41 +1116,41 @@ return /******/ (function(modules) { // webpackBootstrap
 	          this.set(this.value);
 	        }
 	      }
-	    },
-	    publish: {
 
 	      // Publishes the value currently set on the input element back to the model.
 
+	    }, {
+	      key: 'publish',
 	      value: function publish() {
-	        var _this = this;
+	        var _this4 = this;
 
 	        if (this.observer) {
 	          (function () {
-	            var value = _this.getValue(_this.el);
+	            var value = _this4.getValue(_this4.el);
 
-	            _this.formatters.slice(0).reverse().forEach(function (formatter) {
+	            _this4.formatters.slice(0).reverse().forEach(function (formatter) {
 	              var args = formatter.split(/\s+/);
 	              var id = args.shift();
-	              var f = _this.view.formatters[id];
+	              var f = _this4.view.formatters[id];
 
 	              if (defined(f) && f.publish) {
 	                value = f.publish.apply(f, [value].concat(_toConsumableArray(args)));
 	              }
 	            });
 
-	            _this.observer.setValue(value);
+	            _this4.observer.setValue(value);
 	          })();
 	        }
 	      }
-	    },
-	    bind: {
 
 	      // Subscribes to the model for changes at the specified keypath. Bi-directional
 	      // routines will also listen for changes on the element to propagate them back
 	      // to the model.
 
+	    }, {
+	      key: 'bind',
 	      value: function bind() {
-	        var _this = this;
+	        var _this5 = this;
 
 	        this.parseTarget();
 
@@ -986,8 +1160,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        if (defined(this.model) && defined(this.options.dependencies)) {
 	          this.options.dependencies.forEach(function (dependency) {
-	            var observer = _this.observe(_this.model, dependency, _this.sync);
-	            _this.dependencies.push(observer);
+	            var observer = _this5.observe(_this5.model, dependency, _this5.sync);
+	            _this5.dependencies.push(observer);
 	          });
 	        }
 
@@ -995,13 +1169,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	          this.sync();
 	        }
 	      }
-	    },
-	    unbind: {
 
 	      // Unsubscribes from the model and the element.
 
+	    }, {
+	      key: 'unbind',
 	      value: function unbind() {
-	        var _this = this;
+	        var _this6 = this;
 
 	        if (defined(this.binder.unbind)) {
 	          this.binder.unbind.call(this, this.el);
@@ -1018,7 +1192,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.dependencies = [];
 
 	        Object.keys(this.formatterObservers).forEach(function (fi) {
-	          var args = _this.formatterObservers[fi];
+	          var args = _this6.formatterObservers[fi];
 
 	          Object.keys(args).forEach(function (ai) {
 	            args[ai].unobserve();
@@ -1027,14 +1201,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        this.formatterObservers = {};
 	      }
-	    },
-	    update: {
 
 	      // Updates the binding's model from what is currently set on the view. Unbinds
 	      // the old model first and then re-binds with the new model.
 
+	    }, {
+	      key: 'update',
 	      value: function update() {
-	        var models = arguments[0] === undefined ? {} : arguments[0];
+	        var models = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
 	        if (defined(this.observer)) {
 	          this.model = this.observer.target;
@@ -1044,134 +1218,129 @@ return /******/ (function(modules) { // webpackBootstrap
 	          this.binder.update.call(this, models);
 	        }
 	      }
-	    },
-	    getValue: {
 
 	      // Returns elements value
 
+	    }, {
+	      key: 'getValue',
 	      value: function getValue(el) {
 	        if (this.binder && defined(this.binder.getValue)) {
 	          return this.binder.getValue.call(this, el);
 	        } else {
-	          return getInputValue(el);
+	          return (0, _util.getInputValue)(el);
 	        }
 	      }
-	    }
-	  });
+	    }]);
 
-	  return Binding;
-	})();
+	    return Binding;
+	  }();
 
-	// component view encapsulated as a binding within it's parent view.
+	  var ComponentBinding = exports.ComponentBinding = function (_Binding) {
+	    _inherits(ComponentBinding, _Binding);
 
-	var ComponentBinding = exports.ComponentBinding = (function (_Binding) {
-	  // Initializes a component binding for the specified view. The raw component
-	  // element is passed in along with the component type. Attributes and scope
-	  // inflections are determined based on the components defined attributes.
+	    // Initializes a component binding for the specified view. The raw component
+	    // element is passed in along with the component type. Attributes and scope
+	    // inflections are determined based on the components defined attributes.
 
-	  function ComponentBinding(view, el, type) {
-	    var _this = this;
+	    function ComponentBinding(view, el, type) {
+	      _classCallCheck(this, ComponentBinding);
 
-	    _classCallCheck(this, ComponentBinding);
+	      var _this7 = _possibleConstructorReturn(this, Object.getPrototypeOf(ComponentBinding).call(this, view, el, type));
 
-	    this.view = view;
-	    this.el = el;
-	    this.type = type;
-	    this.component = this.view.components[this.type];
-	    this["static"] = {};
-	    this.observers = {};
-	    this.upstreamObservers = {};
+	      _this7.component = _this7.view.components[_this7.type];
+	      _this7.static = {};
+	      _this7.observers = {};
+	      _this7.upstreamObservers = {};
 
-	    var bindingRegExp = view.bindingRegExp();
+	      var bindingRegExp = view.bindingRegExp();
 
-	    if (this.el.attributes) {
-	      this.el.attributes.forEach(function (attribute) {
-	        if (!bindingRegExp.test(attribute.name)) {
-	          var propertyName = _this.camelCase(attribute.name);
-	          var stat = _this.component["static"];
+	      if (_this7.el.attributes) {
+	        _this7.el.attributes.forEach(function (attribute) {
+	          if (!bindingRegExp.test(attribute.name)) {
+	            var propertyName = _this7.camelCase(attribute.name);
+	            var stat = _this7.component.static;
 
-	          if (stat && stat.indexOf(propertyName) > -1) {
-	            _this["static"][propertyName] = attribute.value;
-	          } else {
-	            _this.observers[propertyName] = attribute.value;
+	            if (stat && stat.indexOf(propertyName) > -1) {
+	              _this7.static[propertyName] = attribute.value;
+	            } else {
+	              _this7.observers[propertyName] = attribute.value;
+	            }
 	          }
-	        }
-	      });
+	        });
+	      }
+	      return _this7;
 	    }
-	  }
 
-	  _inherits(ComponentBinding, _Binding);
+	    // Intercepts `Rivets.Binding::sync` since component bindings are not bound to
+	    // a particular model to update it's value.
 
-	  _createClass(ComponentBinding, {
-	    sync: {
 
-	      // Intercepts `Rivets.Binding::sync` since component bindings are not bound to
-	      // a particular model to update it's value.
-
+	    _createClass(ComponentBinding, [{
+	      key: 'sync',
 	      value: function sync() {}
-	    },
-	    update: {
 
 	      // Intercepts `Rivets.Binding::update` since component bindings are not bound
 	      // to a particular model to update it's value.
 
+	    }, {
+	      key: 'update',
 	      value: function update() {}
-	    },
-	    publish: {
 
 	      // Intercepts `Rivets.Binding::publish` since component bindings are not bound
 	      // to a particular model to update it's value.
 
+	    }, {
+	      key: 'publish',
 	      value: function publish() {}
-	    },
-	    locals: {
 
 	      // Returns an object map using the component's scope inflections.
 
+	    }, {
+	      key: 'locals',
 	      value: function locals() {
-	        var _this = this;
+	        var _this8 = this;
 
 	        var result = {};
 
-	        Object.keys(this["static"]).forEach(function (key) {
-	          result[key] = _this["static"][key];
+	        Object.keys(this.static).forEach(function (key) {
+	          result[key] = _this8.static[key];
 	        });
 
 	        Object.keys(this.observers).forEach(function (key) {
-	          result[key] = _this.observers[key].value();
+	          result[key] = _this8.observers[key].value();
 	        });
 
 	        return result;
 	      }
-	    },
-	    camelCase: {
 
 	      // Returns a camel-cased version of the string. Used when translating an
 	      // element's attribute name into a property name for the component's scope.
 
+	    }, {
+	      key: 'camelCase',
 	      value: function camelCase(string) {
 	        return string.replace(/-([a-z])/g, function (grouped) {
 	          grouped[1].toUpperCase();
 	        });
 	      }
-	    },
-	    bind: {
 
 	      // Intercepts `Rivets.Binding::bind` to build `@componentView` with a localized
 	      // map of models from the root view. Bind `@componentView` on subsequent calls.
 
+	    }, {
+	      key: 'bind',
 	      value: function bind() {
-	        var _this = this;
+	        var _this9 = this;
 
 	        if (!this.bound) {
 	          Object.keys(this.observers).forEach(function (key) {
-	            var keypath = _this.observers[key];
+	            var keypath = _this9.observers[key];
 
-	            _this.observers[key] = _this.observe(_this.view.models, keypath, (function (key) {
+	            _this9.observers[key] = _this9.observe(_this9.view.models, keypath, function (key) {
 	              return function () {
-	                _this.componentView.models[key] = _this.observers[key].value();
+	                _this9.componentView.models[key] = _this9.observers[key].value();
 	              };
-	            }).call(_this, key));
+	            }.call(_this9, key));
 	          });
 
 	          this.bound = true;
@@ -1181,887 +1350,957 @@ return /******/ (function(modules) { // webpackBootstrap
 	          this.componentView.bind();
 	        } else {
 	          (function () {
-	            _this.el.innerHTML = _this.component.template.call(_this);
-	            var scope = _this.component.initialize.call(_this, _this.el, _this.locals());
-	            _this.el._bound = true;
+	            _this9.el.innerHTML = _this9.component.template.call(_this9);
+	            var scope = _this9.component.initialize.call(_this9, _this9.el, _this9.locals());
+	            _this9.el._bound = true;
 
 	            var options = {};
 
-	            EXTENSIONS.forEach(function (extensionType) {
+	            _constants.EXTENSIONS.forEach(function (extensionType) {
 	              options[extensionType] = {};
 
-	              if (_this.component[extensionType]) {
-	                Object.keys(_this.component[extensionType]).forEach(function (key) {
-	                  options[extensionType][key] = _this.component[extensionType][key];
+	              if (_this9.component[extensionType]) {
+	                Object.keys(_this9.component[extensionType]).forEach(function (key) {
+	                  options[extensionType][key] = _this9.component[extensionType][key];
 	                });
 	              }
 
-	              Object.keys(_this.view[extensionType]).forEach(function (key) {
+	              Object.keys(_this9.view[extensionType]).forEach(function (key) {
 	                if (!defined(options[extensionType][key])) {
-	                  options[extensionType][key] = _this.view[extensionType][key];
+	                  options[extensionType][key] = _this9.view[extensionType][key];
 	                }
 	              });
 	            });
 
-	            OPTIONS.forEach(function (option) {
-	              if (defined(_this.component[option])) {
-	                options[option] = _this.component[option];
+	            _constants.OPTIONS.forEach(function (option) {
+	              if (defined(_this9.component[option])) {
+	                options[option] = _this9.component[option];
 	              } else {
-	                options[option] = _this.view[option];
+	                options[option] = _this9.view[option];
 	              }
 	            });
 
-	            _this.componentView = new View(_this.el, scope, options);
-	            _this.componentView.bind();
+	            _this9.componentView = new View(_this9.el, scope, options);
+	            _this9.componentView.bind();
 
-	            Object.keys(_this.observers).forEach(function (key) {
-	              var observer = _this.observers[key];
-	              var models = _this.componentView.models;
+	            Object.keys(_this9.observers).forEach(function (key) {
+	              var observer = _this9.observers[key];
+	              var models = _this9.componentView.models;
 
-	              var upstream = _this.observe(models, key, (function (key, observer) {
+	              var upstream = _this9.observe(models, key, function (key, observer) {
 	                return function () {
-	                  observer.setValue(_this.componentView.models[key]);
+	                  observer.setValue(_this9.componentView.models[key]);
 	                };
-	              }).call(_this, key, observer));
+	              }.call(_this9, key, observer));
 
-	              _this.upstreamObservers[key] = upstream;
+	              _this9.upstreamObservers[key] = upstream;
 	            });
 	          })();
 	        }
 	      }
-	    },
-	    unbind: {
 
 	      // Intercept `Rivets.Binding::unbind` to be called on `@componentView`.
 
+	    }, {
+	      key: 'unbind',
 	      value: function unbind() {
-	        var _this = this;
+	        var _this10 = this;
 
 	        Object.keys(this.upstreamObservers).forEach(function (key) {
-	          _this.upstreamObservers[key].unobserve();
+	          _this10.upstreamObservers[key].unobserve();
 	        });
 
 	        Object.keys(this.observers).forEach(function (key) {
-	          _this.observers[key].unobserve();
+	          _this10.observers[key].unobserve();
 	        });
 
 	        if (defined(this.componentView)) {
 	          this.componentView.unbind.call(this);
 	        }
 	      }
+	    }]);
+
+	    return ComponentBinding;
+	  }(Binding);
+
+	  var TextBinding = exports.TextBinding = function (_Binding2) {
+	    _inherits(TextBinding, _Binding2);
+
+	    // Initializes a text binding for the specified view and text node.
+
+	    function TextBinding(view, el, type, keypath) {
+	      var options = arguments.length <= 4 || arguments[4] === undefined ? {} : arguments[4];
+
+	      _classCallCheck(this, TextBinding);
+
+	      var _this11 = _possibleConstructorReturn(this, Object.getPrototypeOf(TextBinding).call(this, view, el, type));
+
+	      _this11.keypath = keypath;
+	      _this11.options = options;
+	      _this11.formatters = _this11.options.formatters || [];
+	      _this11.dependencies = [];
+	      _this11.formatterObservers = {};
+
+	      _this11.binder = {
+	        routine: function routine(node, value) {
+	          node.data = defined(value) ? value : '';
+	        }
+	      };
+
+	      _this11.sync = _this11.sync.bind(_this11);
+	      return _this11;
 	    }
-	  });
 
-	  return ComponentBinding;
-	})(Binding);
+	    // Wrap the call to `sync` to avoid function context issues.
 
-	// A text node binding, defined internally to deal with text and element node
-	// differences while avoiding it being overwritten.
 
-	var TextBinding = exports.TextBinding = (function (_Binding2) {
-	  // Initializes a text binding for the specified view and text node.
-
-	  function TextBinding(view, el, type, keypath) {
-	    var options = arguments[4] === undefined ? {} : arguments[4];
-
-	    _classCallCheck(this, TextBinding);
-
-	    this.view = view;
-	    this.el = el;
-	    this.type = type;
-	    this.keypath = keypath;
-	    this.options = options;
-	    this.formatters = this.options.formatters || [];
-	    this.dependencies = [];
-	    this.formatterObservers = {};
-
-	    this.binder = {
-	      routine: function (node, value) {
-	        node.data = defined(value) ? value : "";
-	      }
-	    };
-
-	    this.sync = this.sync.bind(this);
-	  }
-
-	  _inherits(TextBinding, _Binding2);
-
-	  _createClass(TextBinding, {
-	    sync: {
-
-	      // Wrap the call to `sync` to avoid function context issues.
-
+	    _createClass(TextBinding, [{
+	      key: 'sync',
 	      value: function sync() {
-	        _get(Object.getPrototypeOf(TextBinding.prototype), "sync", this).call(this);
+	        _get(Object.getPrototypeOf(TextBinding.prototype), 'sync', this).call(this);
 	      }
-	    }
-	  });
+	    }]);
 
-	  return TextBinding;
-	})(Binding);
+	    return TextBinding;
+	  }(Binding);
+	});
 
 /***/ },
 /* 6 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	
-
-	// Parser and tokenizer for getting the type and value from a string.
-	"use strict";
-
-	exports.parseType = parseType;
-
-	// Template parser and tokenizer for mustache-style text content bindings.
-	// Parses the template and returns a set of tokens, separating static portions
-	// of text from binding declarations.
-	exports.parseTemplate = parseTemplate;
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var PRIMITIVE = 0;
-	var KEYPATH = 1;
-	var TEXT = 0;
-	var BINDING = 1;
-	function parseType(string) {
-	  var type = PRIMITIVE;
-	  var value = string;
-
-	  if (/^'.*'$|^".*"$/.test(string)) {
-	    value = string.slice(1, -1);
-	  } else if (string === "true") {
-	    value = true;
-	  } else if (string === "false") {
-	    value = false;
-	  } else if (string === "null") {
-	    value = null;
-	  } else if (string === "undefined") {
-	    value = undefined;
-	  } else if (isNaN(Number(string)) === false) {
-	    value = Number(string);
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
+	  if (true) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  } else if (typeof exports !== "undefined") {
+	    factory(exports);
 	  } else {
-	    type = KEYPATH;
+	    var mod = {
+	      exports: {}
+	    };
+	    factory(mod.exports);
+	    global.parsers = mod.exports;
+	  }
+	})(this, function (exports) {
+	  'use strict';
+
+	  Object.defineProperty(exports, "__esModule", {
+	    value: true
+	  });
+	  exports.parseType = parseType;
+	  exports.parseTemplate = parseTemplate;
+	  var PRIMITIVE = 0;
+	  var KEYPATH = 1;
+	  var TEXT = 0;
+	  var BINDING = 1;
+
+	  // Parser and tokenizer for getting the type and value from a string.
+	  function parseType(string) {
+	    var type = PRIMITIVE;
+	    var value = string;
+
+	    if (/^'.*'$|^".*"$/.test(string)) {
+	      value = string.slice(1, -1);
+	    } else if (string === 'true') {
+	      value = true;
+	    } else if (string === 'false') {
+	      value = false;
+	    } else if (string === 'null') {
+	      value = null;
+	    } else if (string === 'undefined') {
+	      value = undefined;
+	    } else if (isNaN(Number(string)) === false) {
+	      value = Number(string);
+	    } else {
+	      type = KEYPATH;
+	    }
+
+	    return { type: type, value: value };
 	  }
 
-	  return { type: type, value: value };
-	}
+	  // Template parser and tokenizer for mustache-style text content bindings.
+	  // Parses the template and returns a set of tokens, separating static portions
+	  // of text from binding declarations.
+	  function parseTemplate(template, delimiters) {
+	    var tokens = [];
+	    var length = template.length;
+	    var index = 0;
+	    var lastIndex = 0;
 
-	function parseTemplate(template, delimiters) {
-	  var tokens = [];
-	  var length = template.length;
-	  var index = 0;
-	  var lastIndex = 0;
-
-	  while (lastIndex < length) {
-	    index = template.indexOf(delimiters[0], lastIndex);
-
-	    if (index < 0) {
-	      tokens.push({
-	        type: TEXT,
-	        value: template.slice(lastIndex)
-	      });
-
-	      break;
-	    } else {
-	      if (index > 0 && lastIndex < index) {
-	        tokens.push({
-	          type: TEXT,
-	          value: template.slice(lastIndex, index)
-	        });
-	      }
-
-	      lastIndex = index + delimiters[0].length;
-	      index = template.indexOf(delimiters[1], lastIndex);
+	    while (lastIndex < length) {
+	      index = template.indexOf(delimiters[0], lastIndex);
 
 	      if (index < 0) {
-	        var substring = template.slice(lastIndex - delimiters[1].length);
-	        lastToken = tokens[tokens.length - 1];
+	        tokens.push({
+	          type: TEXT,
+	          value: template.slice(lastIndex)
+	        });
 
-	        if (lastToken && lastToken.type === TEXT) {
-	          lastToken.value += substring;
-	        } else {
+	        break;
+	      } else {
+	        if (index > 0 && lastIndex < index) {
 	          tokens.push({
 	            type: TEXT,
-	            value: substring
+	            value: template.slice(lastIndex, index)
 	          });
 	        }
 
-	        break;
+	        lastIndex = index + delimiters[0].length;
+	        index = template.indexOf(delimiters[1], lastIndex);
+
+	        if (index < 0) {
+	          var substring = template.slice(lastIndex - delimiters[1].length);
+	          var lastToken = tokens[tokens.length - 1];
+
+	          if (lastToken && lastToken.type === TEXT) {
+	            lastToken.value += substring;
+	          } else {
+	            tokens.push({
+	              type: TEXT,
+	              value: substring
+	            });
+	          }
+
+	          break;
+	        }
+
+	        var value = template.slice(lastIndex, index).trim();
+
+	        tokens.push({
+	          type: BINDING,
+	          value: value
+	        });
+
+	        lastIndex = index + delimiters[1].length;
 	      }
-
-	      var value = template.slice(lastIndex, index).trim();
-
-	      tokens.push({
-	        type: BINDING,
-	        value: value
-	      });
-
-	      lastIndex = index + delimiters[1].length;
 	    }
-	  }
 
-	  return tokens;
-	}
+	    return tokens;
+	  }
+	});
 
 /***/ },
 /* 7 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
-
-	exports.bindEvent = bindEvent;
-	exports.unbindEvent = unbindEvent;
-	exports.getInputValue = getInputValue;
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var $ = window.jQuery || window.$;
-
-	function bindEvent(el, event, handler) {
-	  if ($) {
-	    $(el).on(event, handler);
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
+	  if (true) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  } else if (typeof exports !== "undefined") {
+	    factory(exports);
 	  } else {
-	    el.addEventListener(event, handler, false);
+	    var mod = {
+	      exports: {}
+	    };
+	    factory(mod.exports);
+	    global.util = mod.exports;
 	  }
-	}
+	})(this, function (exports) {
+	  'use strict';
 
-	function unbindEvent(el, event, handler) {
-	  if ($) {
-	    $(el).off(event, handler);
-	  } else {
-	    el.removeEventListener(event, handler, false);
-	  }
-	}
+	  Object.defineProperty(exports, "__esModule", {
+	    value: true
+	  });
+	  exports.bindEvent = bindEvent;
+	  exports.unbindEvent = unbindEvent;
+	  exports.getInputValue = getInputValue;
 
-	function getInputValue(el) {
-	  if ($) {
-	    var $el = $(el);
+	  var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+	    return typeof obj;
+	  } : function (obj) {
+	    return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
+	  };
 
-	    if ($el.attr("type") === "checkbox") {
-	      return $el.is(":checked");
+	  var $ = window.jQuery || window.$;
+
+	  function bindEvent(el, event, handler) {
+	    if ($) {
+	      $(el).on(event, handler);
 	    } else {
-	      return $el.val();
+	      el.addEventListener(event, handler, false);
 	    }
-	  } else {
-	    if (el.type === "checkbox") {
-	      return el.checked;
-	    } else if (el.type === "select-multiple") {
-	      var _ret = (function () {
-	        var results = [];
+	  }
 
-	        el.options.forEach(function (option) {
-	          if (option.selected) {
-	            results.push(option.value);
-	          }
-	        });
+	  function unbindEvent(el, event, handler) {
+	    if ($) {
+	      $(el).off(event, handler);
+	    } else {
+	      el.removeEventListener(event, handler, false);
+	    }
+	  }
 
-	        return {
-	          v: results
-	        };
-	      })();
+	  function getInputValue(el) {
+	    if ($) {
+	      var $el = $(el);
 
-	      if (typeof _ret === "object") {
-	        return _ret.v;
+	      if ($el.attr('type') === 'checkbox') {
+	        return $el.is(':checked');
+	      } else {
+	        return $el.val();
 	      }
 	    } else {
-	      return el.value;
+	      if (el.type === 'checkbox') {
+	        return el.checked;
+	      } else if (el.type === 'select-multiple') {
+	        var _ret = function () {
+	          var results = [];
+
+	          el.options.forEach(function (option) {
+	            if (option.selected) {
+	              results.push(option.value);
+	            }
+	          });
+
+	          return {
+	            v: results
+	          };
+	        }();
+
+	        if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+	      } else {
+	        return el.value;
+	      }
 	    }
 	  }
-	}
+	});
 
 /***/ },
 /* 8 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	// The default `.` adapter thats comes with Rivets.js. Allows subscribing to
-	// properties on plain objects, implemented in ES5 natives using
-	// `Object.defineProperty`.
-
-	"use strict";
-
-	var defined = function (value) {
-	  return value !== undefined && value !== null;
-	};
-
-	var ARRAY_METHODS = ["push", "pop", "shift", "unshift", "sort", "reverse", "splice"];
-
-	var adapter = {
-	  id: "_rv",
-	  counter: 0,
-	  weakmap: {},
-
-	  weakReference: function weakReference(obj) {
-	    if (!obj.hasOwnProperty(this.id)) {
-	      var id = this.counter++;
-
-	      Object.defineProperty(obj, this.id, {
-	        value: id
-	      });
-	    }
-
-	    if (!this.weakmap[obj[this.id]]) {
-	      this.weakmap[obj[this.id]] = {
-	        callbacks: {}
-	      };
-	    }
-
-	    return this.weakmap[obj[this.id]];
-	  },
-
-	  cleanupWeakReference: function cleanupWeakReference(ref, id) {
-	    if (!Object.keys(ref.callbacks).length) {
-	      if (!(ref.pointers && Object.keys(ref.pointers).length)) {
-	        delete this.weakmap[id];
-	      }
-	    }
-	  },
-
-	  stubFunction: function stubFunction(obj, fn) {
-	    var original = obj[fn];
-	    var map = this.weakReference(obj);
-	    var weakmap = this.weakmap;
-
-	    obj[fn] = function () {
-	      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	        args[_key] = arguments[_key];
-	      }
-
-	      var response = original.apply(obj, args);
-
-	      Object.keys(map.pointers).forEach(function (r) {
-	        var k = map.pointers[r];
-
-	        if (defined(weakmap[r])) {
-	          if (weakmap[r].callbacks[k] instanceof Array) {
-	            weakmap[r].callbacks[k].forEach(function (callback) {
-	              callback();
-	            });
-	          }
-	        }
-	      });
-
-	      return response;
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
+	  if (true) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [module, exports], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  } else if (typeof exports !== "undefined") {
+	    factory(module, exports);
+	  } else {
+	    var mod = {
+	      exports: {}
 	    };
-	  },
+	    factory(mod, mod.exports);
+	    global.adapter = mod.exports;
+	  }
+	})(this, function (module, exports) {
+	  'use strict';
 
-	  observeMutations: function observeMutations(obj, ref, keypath) {
-	    var _this = this;
+	  Object.defineProperty(exports, "__esModule", {
+	    value: true
+	  });
+	  // The default `.` adapter thats comes with Rivets.js. Allows subscribing to
+	  // properties on plain objects, implemented in ES5 natives using
+	  // `Object.defineProperty`.
 
-	    if (obj instanceof Array) {
-	      var map = this.weakReference(obj);
+	  var defined = function defined(value) {
+	    return value !== undefined && value !== null;
+	  };
 
-	      if (!defined(map.pointers)) {
-	        map.pointers = {};
+	  var ARRAY_METHODS = ['push', 'pop', 'shift', 'unshift', 'sort', 'reverse', 'splice'];
 
-	        ARRAY_METHODS.forEach(function (fn) {
-	          _this.stubFunction(obj, fn);
+	  var adapter = {
+	    id: '_rv',
+	    counter: 0,
+	    weakmap: {},
+
+	    weakReference: function weakReference(obj) {
+	      if (!obj.hasOwnProperty(this.id)) {
+	        var id = this.counter++;
+
+	        Object.defineProperty(obj, this.id, {
+	          value: id
 	        });
 	      }
 
-	      if (!defined(map.pointers[ref])) {
-	        map.pointers[ref] = [];
+	      if (!this.weakmap[obj[this.id]]) {
+	        this.weakmap[obj[this.id]] = {
+	          callbacks: {}
+	        };
 	      }
 
-	      if (map.pointers[ref].indexOf(keypath) === -1) {
-	        map.pointers[ref].push(keypath);
-	      }
-	    }
-	  },
+	      return this.weakmap[obj[this.id]];
+	    },
 
-	  unobserveMutations: function unobserveMutations(obj, ref, keypath) {
-	    if (obj instanceof Array && defined(obj[this.id])) {
-	      var map = this.weakmap[obj[this.id]];
-
-	      if (map) {
-	        var pointers = map.pointers[ref];
-
-	        if (pointers) {
-	          var idx = pointers.indexOf(keypath);
-
-	          if (idx > -1) {
-	            pointers.splice(idx, 1);
-	          }
-
-	          if (!pointers.length) {
-	            delete map.pointers[ref];
-	          }
-
-	          this.cleanupWeakReference(map, obj[this.id]);
+	    cleanupWeakReference: function cleanupWeakReference(ref, id) {
+	      if (!Object.keys(ref.callbacks).length) {
+	        if (!(ref.pointers && Object.keys(ref.pointers).length)) {
+	          delete this.weakmap[id];
 	        }
 	      }
-	    }
-	  },
+	    },
 
-	  observe: function observe(obj, keypath, callback) {
-	    var _this = this;
+	    stubFunction: function stubFunction(obj, fn) {
+	      var original = obj[fn];
+	      var map = this.weakReference(obj);
+	      var weakmap = this.weakmap;
 
-	    var callbacks = this.weakReference(obj).callbacks;
+	      obj[fn] = function () {
+	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	          args[_key] = arguments[_key];
+	        }
 
-	    if (!defined(callbacks[keypath])) {
-	      callbacks[keypath] = [];
-	      var desc = Object.getOwnPropertyDescriptor(obj, keypath);
+	        var response = original.apply(obj, args);
 
-	      if (!(desc && (desc.get || desc.set))) {
-	        (function () {
-	          var value = obj[keypath];
+	        Object.keys(map.pointers).forEach(function (r) {
+	          var k = map.pointers[r];
 
-	          Object.defineProperty(obj, keypath, {
-	            enumerable: true,
+	          if (defined(weakmap[r])) {
+	            if (weakmap[r].callbacks[k] instanceof Array) {
+	              weakmap[r].callbacks[k].forEach(function (callback) {
+	                callback();
+	              });
+	            }
+	          }
+	        });
 
-	            get: function () {
-	              return value;
-	            },
+	        return response;
+	      };
+	    },
 
-	            set: function (newValue) {
-	              if (newValue !== value) {
-	                _this.unobserveMutations(value, obj[_this.id], keypath);
-	                value = newValue;
-	                var map = _this.weakmap[obj[_this.id]];
+	    observeMutations: function observeMutations(obj, ref, keypath) {
+	      var _this = this;
 
-	                if (map) {
-	                  (function () {
-	                    var callbacks = map.callbacks;
+	      if (obj instanceof Array) {
+	        var map = this.weakReference(obj);
 
-	                    if (callbacks[keypath]) {
-	                      callbacks[keypath].slice().forEach(function (callback) {
-	                        if (callbacks[keypath].indexOf(callback) > -1) {
-	                          callback();
-	                        }
+	        if (!defined(map.pointers)) {
+	          map.pointers = {};
+
+	          ARRAY_METHODS.forEach(function (fn) {
+	            _this.stubFunction(obj, fn);
+	          });
+	        }
+
+	        if (!defined(map.pointers[ref])) {
+	          map.pointers[ref] = [];
+	        }
+
+	        if (map.pointers[ref].indexOf(keypath) === -1) {
+	          map.pointers[ref].push(keypath);
+	        }
+	      }
+	    },
+
+	    unobserveMutations: function unobserveMutations(obj, ref, keypath) {
+	      if (obj instanceof Array && defined(obj[this.id])) {
+	        var map = this.weakmap[obj[this.id]];
+
+	        if (map) {
+	          var pointers = map.pointers[ref];
+
+	          if (pointers) {
+	            var idx = pointers.indexOf(keypath);
+
+	            if (idx > -1) {
+	              pointers.splice(idx, 1);
+	            }
+
+	            if (!pointers.length) {
+	              delete map.pointers[ref];
+	            }
+
+	            this.cleanupWeakReference(map, obj[this.id]);
+	          }
+	        }
+	      }
+	    },
+
+	    observe: function observe(obj, keypath, callback) {
+	      var _this2 = this;
+
+	      var callbacks = this.weakReference(obj).callbacks;
+
+	      if (!defined(callbacks[keypath])) {
+	        callbacks[keypath] = [];
+	        var desc = Object.getOwnPropertyDescriptor(obj, keypath);
+
+	        if (!(desc && (desc.get || desc.set))) {
+	          (function () {
+	            var value = obj[keypath];
+
+	            Object.defineProperty(obj, keypath, {
+	              enumerable: true,
+
+	              get: function get() {
+	                return value;
+	              },
+
+	              set: function set(newValue) {
+	                if (newValue !== value) {
+	                  _this2.unobserveMutations(value, obj[_this2.id], keypath);
+	                  value = newValue;
+	                  var map = _this2.weakmap[obj[_this2.id]];
+
+	                  if (map) {
+	                    var _callbacks = map.callbacks;
+
+	                    if (_callbacks[keypath]) {
+	                      _callbacks[keypath].forEach(function (cb) {
+	                        cb();
 	                      });
 	                    }
 
-	                    _this.observeMutations(newValue, obj[_this.id], keypath);
-	                  })();
+	                    _this2.observeMutations(newValue, obj[_this2.id], keypath);
+	                  }
 	                }
 	              }
-	            }
-	          });
-	        })();
-	      }
-	    }
-
-	    if (callbacks[keypath].indexOf(callback) === -1) {
-	      callbacks[keypath].push(callback);
-	    }
-
-	    this.observeMutations(obj[keypath], obj[this.id], keypath);
-	  },
-
-	  unobserve: function unobserve(obj, keypath, callback) {
-	    var map = this.weakmap[obj[this.id]];
-
-	    if (map) {
-	      var callbacks = map.callbacks[keypath];
-
-	      if (callbacks) {
-	        var idx = callbacks.indexOf(callback);
-
-	        if (idx > -1) {
-	          callbacks.splice(idx, 1);
-
-	          if (!callbacks.length) {
-	            delete map.callbacks[keypath];
-	          }
+	            });
+	          })();
 	        }
-
-	        this.unobserveMutations(obj[keypath], obj[this.id], keypath);
-	        this.cleanupWeakReference(map, obj[this.id]);
 	      }
+
+	      if (callbacks[keypath].indexOf(callback) === -1) {
+	        callbacks[keypath].push(callback);
+	      }
+
+	      this.observeMutations(obj[keypath], obj[this.id], keypath);
+	    },
+
+	    unobserve: function unobserve(obj, keypath, callback) {
+	      var map = this.weakmap[obj[this.id]];
+
+	      if (map) {
+	        var callbacks = map.callbacks[keypath];
+
+	        if (callbacks) {
+	          var idx = callbacks.indexOf(callback);
+
+	          if (idx > -1) {
+	            callbacks.splice(idx, 1);
+
+	            if (!callbacks.length) {
+	              delete map.callbacks[keypath];
+	            }
+	          }
+
+	          this.unobserveMutations(obj[keypath], obj[this.id], keypath);
+	          this.cleanupWeakReference(map, obj[this.id]);
+	        }
+	      }
+	    },
+
+	    get: function get(obj, keypath) {
+	      return obj[keypath];
+	    },
+
+	    set: function set(obj, keypath, value) {
+	      obj[keypath] = value;
 	    }
-	  },
+	  };
 
-	  get: function get(obj, keypath) {
-	    return obj[keypath];
-	  },
-
-	  set: function (obj, keypath, value) {
-	    obj[keypath] = value;
-	  }
-	};
-
-	module.exports = adapter;
+	  exports.default = adapter;
+	  module.exports = exports['default'];
+	});
 
 /***/ },
 /* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
-
-	var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
-	var _taggedTemplateLiteral = function (strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); };
-
-	var rivets = _interopRequire(__webpack_require__(2));
-
-	var _util = __webpack_require__(7);
-
-	var bindEvent = _util.bindEvent;
-	var unbindEvent = _util.unbindEvent;
-
-	var CHANGE_EVENT = "change";
-
-	var defined = function (value) {
-	  return value !== undefined && value !== null;
-	};
-
-	var getString = function (value) {
-	  return defined(value) ? value.toString() : undefined;
-	};
-
-	var times = function (n, cb) {
-	  for (var i = 0; i < n; i++) {
-	    cb();
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
+	  if (true) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [module, exports, __webpack_require__(2), __webpack_require__(7)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  } else if (typeof exports !== "undefined") {
+	    factory(module, exports, require('./rivets'), require('./util'));
+	  } else {
+	    var mod = {
+	      exports: {}
+	    };
+	    factory(mod, mod.exports, global.rivets, global.util);
+	    global.binders = mod.exports;
 	  }
-	};
+	})(this, function (module, exports, _rivets, _util) {
+	  'use strict';
 
-	var binders = {
-	  // Sets the element's text value.
-	  text: function (el, value) {
-	    el.textContent = defined(value) ? value : "";
-	  },
+	  Object.defineProperty(exports, "__esModule", {
+	    value: true
+	  });
 
-	  // Sets the element's HTML content.
-	  html: function (el, value) {
-	    el.innerHTML = defined(value) ? value : "";
-	  },
+	  var _rivets2 = _interopRequireDefault(_rivets);
 
-	  // Shows the element when value is true.
-	  show: function (el, value) {
-	    el.style.display = value ? "" : "none";
-	  },
+	  function _interopRequireDefault(obj) {
+	    return obj && obj.__esModule ? obj : {
+	      default: obj
+	    };
+	  }
 
-	  // Hides the element when value is true (negated version of `show` binder).
-	  hide: function (el, value) {
-	    el.style.display = value ? "none" : "";
-	  },
+	  var _templateObject = _taggedTemplateLiteral([' rivets: ', ' ', ' '], [' rivets: ', ' ', ' ']),
+	      _templateObject2 = _taggedTemplateLiteral([' rivets: ', ' '], [' rivets: ', ' ']);
 
-	  // Enables the element when value is true.
-	  enabled: function (el, value) {
-	    el.disabled = !value;
-	  },
-
-	  // Disables the element when value is true (negated version of `enabled` binder).
-	  disabled: function (el, value) {
-	    el.disabled = !!value;
-	  },
-
-	  // Checks a checkbox or radio input when the value is true. Also sets the model
-	  // property when the input is checked or unchecked (two-way binder).
-	  checked: {
-	    publishes: true,
-	    priority: 2000,
-
-	    bind: function bind(el) {
-	      bindEvent(el, CHANGE_EVENT, this.publish);
-	    },
-
-	    unbind: function unbind(el) {
-	      unbindEvent(el, CHANGE_EVENT, this.publish);
-	    },
-
-	    routine: function routine(el, value) {
-	      if (el.type === "radio") {
-	        el.checked = getString(el.value) === getString(value);
-	      } else {
-	        el.checked = !!value;
+	  function _taggedTemplateLiteral(strings, raw) {
+	    return Object.freeze(Object.defineProperties(strings, {
+	      raw: {
+	        value: Object.freeze(raw)
 	      }
+	    }));
+	  }
+
+	  var CHANGE_EVENT = 'change';
+
+	  var defined = function defined(value) {
+	    return value !== undefined && value !== null;
+	  };
+
+	  var getString = function getString(value) {
+	    return defined(value) ? value.toString() : undefined;
+	  };
+
+	  var times = function times(n, cb) {
+	    for (var i = 0; i < n; i++) {
+	      cb();
 	    }
-	  },
+	  };
 
-	  // Unchecks a checkbox or radio input when the value is true (negated version of
-	  // `checked` binder). Also sets the model property when the input is checked or
-	  // unchecked (two-way binder).
-	  unchecked: {
-	    publishes: true,
-	    priority: 2000,
-
-	    bind: function bind(el) {
-	      bindEvent(el, CHANGE_EVENT, this.publish);
+	  var binders = {
+	    // Sets the element's text value.
+	    text: function text(el, value) {
+	      el.textContent = defined(value) ? value : '';
 	    },
 
-	    unbind: function unbind(el) {
-	      unbindEvent(el, CHANGE_EVENT, this.publish);
+	    // Sets the element's HTML content.
+	    html: function html(el, value) {
+	      el.innerHTML = defined(value) ? value : '';
 	    },
 
-	    routine: function routine(el, value) {
-	      if (el.type === "radio") {
-	        el.checked = getString(el.value) !== getString(value);
-	      } else {
-	        el.checked = !value;
-	      }
-	    }
-	  },
-
-	  // Sets the element's value. Also sets the model property when the input changes
-	  // (two-way binder).
-	  value: {
-	    publishes: true,
-	    priority: 3000,
-
-	    bind: function bind(el) {
-	      if (!(el.tagName === "INPUT" && el.type === "radio")) {
-	        this.event = el.tagName === "SELECT" ? "change" : "input";
-
-	        bindEvent(el, this.event, this.publish);
-	      }
+	    // Shows the element when value is true.
+	    show: function show(el, value) {
+	      el.style.display = value ? '' : 'none';
 	    },
 
-	    unbind: function unbind(el) {
-	      if (!(el.tagName === "INPUT" && el.type === "radio")) {
-	        unbindEvent(el, this.event, this.publish);
-	      }
+	    // Hides the element when value is true (negated version of `show` binder).
+	    hide: function hide(el, value) {
+	      el.style.display = value ? 'none' : '';
 	    },
 
-	    routine: function routine(el, value) {
-	      if (el.tagName === "INPUT" && el.type === "radio") {
-	        el.setAttribute("value", value);
-	      } else if (window.jQuery) {
-	        el = jQuery(el);
-
-	        if (getString(value) !== getString(el.val())) {
-	          el.val(defined(value) ? value : "");
-	        }
-	      } else {
-	        if (el.type === "select-multiple") {
-	          if (value instanceof Array) {
-	            el.options.forEach(function (option) {
-	              option.selected = value.indexOf(option.value) > -1;
-	            });
-	          }
-	        } else if (getString(value) !== getString(el.value)) {
-	          el.value = defined(value) ? value : "";
-	        }
-	      }
-	    }
-	  },
-
-	  // Inserts and binds the element and it's child nodes into the DOM when true.
-	  "if": {
-	    block: true,
-	    priority: 4000,
-
-	    bind: function bind(el) {
-	      if (!defined(this.marker)) {
-	        var attr = [this.view.prefix, this.type].join("-").replace("--", "-");
-	        var declaration = el.getAttribute(attr);
-
-	        this.marker = document.createComment(_taggedTemplateLiteral([" rivets: ", " ", " "], [" rivets: ", " ", " "]), this.type, declaration);
-	        this.bound = false;
-
-	        el.removeAttribute(attr);
-	        el.parentNode.insertBefore(this.marker, el);
-	        el.parentNode.removeChild(el);
-	      }
+	    // Enables the element when value is true.
+	    enabled: function enabled(el, value) {
+	      el.disabled = !value;
 	    },
 
-	    unbind: function unbind() {
-	      if (defined(this.nested)) {
-	        this.nested.unbind();
-	      }
+	    // Disables the element when value is true (negated version of `enabled` binder).
+	    disabled: function disabled(el, value) {
+	      el.disabled = !!value;
 	    },
 
-	    routine: function routine(el, value) {
-	      var _this = this;
+	    // Checks a checkbox or radio input when the value is true. Also sets the model
+	    // property when the input is checked or unchecked (two-way binder).
+	    checked: {
+	      publishes: true,
+	      priority: 2000,
 
-	      if (!!value === !this.bound) {
-	        if (value) {
-	          (function () {
-	            var models = {};
+	      bind: function bind(el) {
+	        (0, _util.bindEvent)(el, CHANGE_EVENT, this.publish);
+	      },
 
-	            Object.keys(_this.view.models).forEach(function (key) {
-	              models[key] = _this.view.models[key];
-	            });
+	      unbind: function unbind(el) {
+	        (0, _util.unbindEvent)(el, CHANGE_EVENT, this.publish);
+	      },
 
-	            if (defined(_this.nested)) {
-	              _this.nested.bind();
-	            } else {
-	              _this.nested = rivets.bind(el, models, _this.view.options());
-	            }
-
-	            _this.marker.parentNode.insertBefore(el, _this.marker.nextSibling);
-	            _this.bound = true;
-	          })();
+	      routine: function routine(el, value) {
+	        if (el.type === 'radio') {
+	          el.checked = getString(el.value) === getString(value);
 	        } else {
+	          el.checked = !!value;
+	        }
+	      }
+	    },
+
+	    // Unchecks a checkbox or radio input when the value is true (negated version of
+	    // `checked` binder). Also sets the model property when the input is checked or
+	    // unchecked (two-way binder).
+	    unchecked: {
+	      publishes: true,
+	      priority: 2000,
+
+	      bind: function bind(el) {
+	        (0, _util.bindEvent)(el, CHANGE_EVENT, this.publish);
+	      },
+
+	      unbind: function unbind(el) {
+	        (0, _util.unbindEvent)(el, CHANGE_EVENT, this.publish);
+	      },
+
+	      routine: function routine(el, value) {
+	        if (el.type === 'radio') {
+	          el.checked = getString(el.value) !== getString(value);
+	        } else {
+	          el.checked = !value;
+	        }
+	      }
+	    },
+
+	    // Sets the element's value. Also sets the model property when the input changes
+	    // (two-way binder).
+	    value: {
+	      publishes: true,
+	      priority: 3000,
+
+	      bind: function bind(el) {
+	        if (!(el.tagName === 'INPUT' && el.type === 'radio')) {
+	          this.event = el.tagName === 'SELECT' ? 'change' : 'input';
+
+	          (0, _util.bindEvent)(el, this.event, this.publish);
+	        }
+	      },
+
+	      unbind: function unbind(el) {
+	        if (!(el.tagName === 'INPUT' && el.type === 'radio')) {
+	          (0, _util.unbindEvent)(el, this.event, this.publish);
+	        }
+	      },
+
+	      routine: function routine(el, value) {
+	        if (el.tagName === 'INPUT' && el.type === 'radio') {
+	          el.setAttribute('value', value);
+	        } else if (window.jQuery) {
+	          el = jQuery(el);
+
+	          if (getString(value) !== getString(el.val())) {
+	            el.val(defined(value) ? value : '');
+	          }
+	        } else {
+	          if (el.type === 'select-multiple') {
+	            if (value instanceof Array) {
+	              Array.from(el.options).forEach(function (option) {
+	                option.selected = value.indexOf(option.value) > -1;
+	              });
+	            }
+	          } else if (getString(value) !== getString(el.value)) {
+	            el.value = defined(value) ? value : '';
+	          }
+	        }
+	      }
+	    },
+
+	    // Inserts and binds the element and it's child nodes into the DOM when true.
+	    if: {
+	      block: true,
+	      priority: 4000,
+
+	      bind: function bind(el) {
+	        if (!defined(this.marker)) {
+	          var attr = [this.view.prefix, this.type].join('-').replace('--', '-');
+	          var declaration = el.getAttribute(attr);
+
+	          this.marker = document.createComment(_templateObject, this.type, declaration);
+	          this.bound = false;
+
+	          el.removeAttribute(attr);
+	          el.parentNode.insertBefore(this.marker, el);
 	          el.parentNode.removeChild(el);
+	        }
+	      },
+
+	      unbind: function unbind() {
+	        if (defined(this.nested)) {
 	          this.nested.unbind();
 	          this.bound = false;
 	        }
+	      },
+
+	      routine: function routine(el, value) {
+	        var _this = this;
+
+	        if (!!value === !this.bound) {
+	          if (value) {
+	            (function () {
+	              var models = {};
+
+	              Object.keys(_this.view.models).forEach(function (key) {
+	                models[key] = _this.view.models[key];
+	              });
+
+	              if (defined(_this.nested)) {
+	                _this.nested.bind();
+	              } else {
+	                _this.nested = _rivets2.default.bind(el, models, _this.view.options());
+	              }
+
+	              _this.marker.parentNode.insertBefore(el, _this.marker.nextSibling);
+	              _this.bound = true;
+	            })();
+	          } else {
+	            el.parentNode.removeChild(el);
+	            this.nested.unbind();
+	            this.bound = false;
+	          }
+	        }
+	      },
+
+	      update: function update(models) {
+	        if (defined(this.nested)) {
+	          this.nested.update(models);
+	        }
 	      }
 	    },
 
-	    update: function update(models) {
-	      if (defined(this.nested)) {
-	        this.nested.update(models);
-	      }
-	    }
-	  },
+	    // Removes and unbinds the element and it's child nodes into the DOM when true
+	    // (negated version of `if` binder).
+	    unless: {
+	      block: true,
+	      priority: 4000,
 
-	  // Removes and unbinds the element and it's child nodes into the DOM when true
-	  // (negated version of `if` binder).
-	  unless: {
-	    block: true,
-	    priority: 4000,
+	      bind: function bind(el) {
+	        _rivets2.default.binders.if.bind.call(this, el);
+	      },
 
-	    bind: function bind(el) {
-	      rivets.binders["if"].bind.call(this, el);
-	    },
+	      unbind: function unbind() {
+	        _rivets2.default.binders.if.unbind.call(this);
+	      },
 
-	    unbind: function unbind() {
-	      rivets.binders["if"].unbind.call(this);
-	    },
+	      routine: function routine(el, value) {
+	        _rivets2.default.binders.if.routine.call(this, el, !value);
+	      },
 
-	    routine: function routine(el, value) {
-	      rivets.binders["if"].routine.call(this, el, !value);
-	    },
-
-	    update: function update(models) {
-	      rivets.binders["if"].update.call(this, models);
-	    }
-	  },
-
-	  // Binds an event handler on the element.
-	  "on-*": {
-	    "function": true,
-	    priority: 1000,
-
-	    unbind: function unbind(el) {
-	      if (defined(this.handler)) {
-	        unbindEvent(el, this.args[0], this.handler);
+	      update: function update(models) {
+	        _rivets2.default.binders.if.update.call(this, models);
 	      }
 	    },
 
-	    routine: function routine(el, value) {
-	      if (defined(this.handler)) {
-	        unbindEvent(el, this.args[0], this.handler);
+	    // Binds an event handler on the element.
+	    'on-*': {
+	      function: true,
+	      priority: 1000,
+
+	      unbind: function unbind(el) {
+	        if (defined(this.handler)) {
+	          (0, _util.unbindEvent)(el, this.args[0], this.handler);
+	        }
+	      },
+
+	      routine: function routine(el, value) {
+	        if (defined(this.handler)) {
+	          (0, _util.unbindEvent)(el, this.args[0], this.handler);
+	        }
+
+	        this.handler = this.eventHandler(value);
+	        (0, _util.bindEvent)(el, this.args[0], this.handler);
 	      }
+	    },
 
-	      this.handler = this.eventHandler(value);
-	      bindEvent(el, this.args[0], this.handler);
-	    }
-	  },
+	    // Appends bound instances of the element in place for each item in the array.
+	    'each-*': {
+	      block: true,
+	      priority: 4000,
 
-	  // Appends bound instances of the element in place for each item in the array.
-	  "each-*": {
-	    block: true,
-	    priority: 4000,
+	      bind: function bind(el) {
+	        if (!defined(this.marker)) {
+	          var attr = [this.view.prefix, this.type].join('-').replace('--', '-');
+	          this.marker = document.createComment(_templateObject2, this.type);
+	          this.iterated = [];
 
-	    bind: function bind(el) {
-	      if (!defined(this.marker)) {
-	        var attr = [this.view.prefix, this.type].join("-").replace("--", "-");
-	        this.marker = document.createComment(_taggedTemplateLiteral([" rivets: ", " "], [" rivets: ", " "]), this.type);
-	        this.iterated = [];
+	          el.removeAttribute(attr);
+	          el.parentNode.insertBefore(this.marker, el);
+	          el.parentNode.removeChild(el);
+	        } else {
+	          this.iterated.forEach(function (view) {
+	            view.bind();
+	          });
+	        }
+	      },
 
-	        el.removeAttribute(attr);
-	        el.parentNode.insertBefore(this.marker, el);
-	        el.parentNode.removeChild(el);
-	      } else {
-	        this.iterated.forEach(function (view) {
-	          view.bind();
+	      unbind: function unbind(el) {
+	        if (defined(this.iterated)) {
+	          this.iterated.forEach(function (view) {
+	            view.unbind();
+	          });
+	        }
+	      },
+
+	      routine: function routine(el, _collection) {
+	        var _this2 = this;
+
+	        var modelName = this.args[0];
+	        var collection = _collection || [];
+
+	        if (this.iterated.length > collection.length) {
+	          times(this.iterated.length - collection.length, function () {
+	            var view = _this2.iterated.pop();
+	            view.unbind();
+	            _this2.marker.parentNode.removeChild(view.els[0]);
+	          });
+	        }
+
+	        collection.forEach(function (model, index) {
+	          var data = { index: index };
+	          data[_rivets2.default.iterationAlias(modelName)] = index;
+	          data[modelName] = model;
+
+	          if (!defined(_this2.iterated[index])) {
+	            Object.keys(_this2.view.models).forEach(function (key) {
+	              if (!defined(data[key])) {
+	                data[key] = _this2.view.models[key];
+	              }
+	            });
+
+	            var previous = _this2.marker;
+
+	            if (_this2.iterated.length) {
+	              previous = _this2.iterated[_this2.iterated.length - 1].els[0];
+	            }
+
+	            var options = _this2.view.options();
+	            options.preloadData = true;
+
+	            var template = el.cloneNode(true);
+	            var view = _rivets2.default.bind(template, data, options);
+	            _this2.iterated.push(view);
+	            _this2.marker.parentNode.insertBefore(template, previous.nextSibling);
+	          } else if (_this2.iterated[index].models[modelName] !== model) {
+	            _this2.iterated[index].update(data);
+	          }
 	        });
-	      }
-	    },
 
-	    unbind: function unbind(el) {
-	      if (defined(this.iterated)) {
-	        this.iterated.forEach(function (view) {
-	          view.unbind();
-	        });
-	      }
-	    },
-
-	    routine: function routine(el, collection) {
-	      var _this = this;
-
-	      var modelName = this.args[0];
-	      var collection = collection || [];
-
-	      if (this.iterated.length > collection.length) {
-	        times(this.iterated.length - collection.length, function () {
-	          var view = _this.iterated.pop();
-	          view.unbind();
-	          _this.marker.parentNode.removeChild(view.els[0]);
-	        });
-	      }
-
-	      collection.forEach(function (model, index) {
-	        var data = { index: index };
-	        data[modelName] = model;
-
-	        if (!defined(_this.iterated[index])) {
-	          Object.keys(_this.view.models).forEach(function (key) {
-	            if (!defined(data[key])) {
-	              data[key] = _this.view.models[key];
+	        if (el.nodeName === 'OPTION') {
+	          this.view.bindings.forEach(function (binding) {
+	            if (binding.el === _this2.marker.parentNode && binding.type === 'value') {
+	              binding.sync();
 	            }
 	          });
-
-	          var previous = _this.marker;
-
-	          if (_this.iterated.length) {
-	            previous = _this.iterated[_this.iterated.length - 1].els[0];
-	          }
-
-	          var options = _this.view.options();
-	          options.preloadData = true;
-
-	          var template = el.cloneNode(true);
-	          var view = rivets.bind(template, data, options);
-	          _this.iterated.push(view);
-	          _this.marker.parentNode.insertBefore(template, previous.nextSibling);
-	        } else if (_this.iterated[index].models[modelName] !== model) {
-	          _this.iterated[index].update(data);
 	        }
-	      });
+	      },
 
-	      if (el.nodeName === "OPTION") {
-	        this.view.bindings.forEach(function (binding) {
-	          if (binding.el === _this.marker.parentNode && binding.type === "value") {
-	            binding.sync();
+	      update: function update(models) {
+	        var _this3 = this;
+
+	        var data = {};
+
+	        Object.keys(models).forEach(function (key) {
+	          if (key !== _this3.args[0]) {
+	            data[key] = models[key];
 	          }
+	        });
+
+	        this.iterated.forEach(function (view) {
+	          view.update(data);
 	        });
 	      }
 	    },
 
-	    update: function update(models) {
-	      var _this = this;
+	    // Adds or removes the class from the element when value is true or false.
+	    'class-*': function _class(el, value) {
+	      var elClass = ' ' + el.className + ' ';
 
-	      var data = {};
-
-	      Object.keys(models).forEach(function (key) {
-	        if (key !== _this.args[0]) {
-	          data[key] = models[key];
+	      if (!value === elClass.indexOf(' ' + this.args[0] + ' ') > -1) {
+	        if (value) {
+	          el.className = el.className + ' ' + this.args[0];
+	        } else {
+	          el.className = elClass.replace(' ' + this.args[0] + ' ', ' ').trim();
 	        }
-	      });
+	      }
+	    },
 
-	      this.iterated.forEach(function (view) {
-	        view.update(data);
-	      });
-	    }
-	  },
-
-	  // Adds or removes the class from the element when value is true or false.
-	  "class-*": function _class(el, value) {
-	    var elClass = " " + el.className + " ";
-
-	    if (!value === elClass.indexOf(" " + this.args[0] + " ") > -1) {
-	      if (value) {
-	        el.className = "" + el.className + " " + this.args[0];
+	    // Sets the attribute on the element. If no binder above is matched it will fall
+	    // back to using this binder.
+	    '*': function _(el, value) {
+	      if (defined(value)) {
+	        el.setAttribute(this.type, value);
 	      } else {
-	        el.className = elClass.replace(" " + this.args[0] + " ", " ").trim();
+	        el.removeAttribute(this.type);
 	      }
 	    }
-	  },
+	  };
 
-	  // Sets the attribute on the element. If no binder above is matched it will fall
-	  // back to using this binder.
-	  "*": function _(el, value) {
-	    if (defined(value)) {
-	      el.setAttribute(this.type, value);
-	    } else {
-	      el.removeAttribute(this.type);
-	    }
-	  }
-	};
-
-	module.exports = binders;
+	  exports.default = binders;
+	  module.exports = exports['default'];
+	});
 
 /***/ }
 /******/ ])

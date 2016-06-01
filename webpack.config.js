@@ -16,7 +16,14 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: '/node_modules/',
-        loader: 'babel-loader'
+        loader: 'babel',
+        query: {
+            presets: ['es2015'],
+            plugins: [
+                'add-module-exports',
+                'transform-es2015-modules-umd'
+            ]
+        }
       }
     ]
   },

@@ -267,9 +267,9 @@ const binders = {
       }
     },
 
-    routine: function(el, collection) {
+    routine: function(el, _collection) {
       let modelName = this.args[0]
-      let collection = collection || []
+      let collection = _collection || []
 
       if (this.iterated.length > collection.length) {
         times(this.iterated.length - collection.length, () => {
