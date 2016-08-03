@@ -14,7 +14,6 @@
 - Support for pipes in quoted arguments [#432](https://github.com/mikeric/rivets/issues/432)
 - Support for constant string in component HTML attributes [#478](https://github.com/mikeric/rivets/issues/478)
 - Fix rebind bug when a templated used nested `rv-if` binders [#611](https://github.com/mikeric/rivets/issues/611)
-- Fix binding on prototype functions [#572](https://github.com/mikeric/rivets/issues/572)
 
 ### Upgrading from 0.8
 - Since 0.9 Rivets will not execute functions by default. This will allow passing arguments to function with the `call` formatter.
