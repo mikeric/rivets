@@ -217,6 +217,24 @@ describe("Rivets.binders", function() {
 
       Should(nestedEl.innerHTML).be.exactly("42");
     });
+
+    it("does not throw when root scope is reset", function () {
+      el.setAttribute('rv-if', 'scope.error.errors');
+      el.innerHTML = '<div>{scope.error.errors.email}</div>';
+      model = {
+        scope: {
+          error: {
+            errors: {
+              email: 'not a valid address'
+            }
+          }
+        }
+      };
+      var view = rivets.bind(el, model);
+      (function(){
+        model.scope.error = {};
+      }).should.not.throw();
+    })
   });
  
   describe("Custom binder with no attribute value", function() {
