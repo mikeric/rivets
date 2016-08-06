@@ -244,7 +244,7 @@ describe("Rivets.binders", function() {
     });
   });
 
-    describe('unobserve removes right callback', function() {
+  describe('Array observe and unobserve', function() {
     var fragment;
     var el1;
     var elEach;
@@ -253,6 +253,19 @@ describe("Rivets.binders", function() {
     var model;
 
     beforeEach(function() {
+      /*
+        DOM for test
+        <div>
+          <div rv-if="scope.visible">
+            <div>
+              <div rv-each-item="scope.items">{item.data}</div>
+            </div>
+          </div>
+          <div>
+            <div rv-each-item="scope.items">{item.data}</div>
+          </div>
+        </div>
+      */
       fragment = document.createElement("div");
       el1 = document.createElement("div");
       el1.setAttribute("rv-if", "scope.visible");
@@ -273,7 +286,7 @@ describe("Rivets.binders", function() {
       model = { scope: {items: [], visible:true }};
     });
 
-    it('unobserves right', function() {
+    it('observes array changes after another array binding is unbound', function() {
       var view = rivets.bind(fragment, model);
       model.scope.items.push({data:"data"});
       Should(el3.childNodes.length).be.exactly(2);
