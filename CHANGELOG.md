@@ -1,6 +1,62 @@
+# 0.9.1
+
+### Changes
+
+- Fix bug in expression with multiple strings [#620](https://github.com/mikeric/rivets/issues/620)
+
+# 0.9.0
+
+### Changes
+
+- Fix binders which received 0 instead of undefined when HTML attributes were empty [#567](https://github.com/mikeric/rivets/issues/567)
+- Now functions are not executed by Rivets in expressions. To call the function you need to use the `call` formatter. See documentation [here](...) [#571](https://github.com/mikeric/rivets/issues/571)
+- Support for nested rv-each with an index for each iteration. Index names can be configured, see documentation [here](http://rivetsjs.com/docs/guide/#usage-configuring) [#551](https://github.com/mikeric/rivets/issues/551)
+- Support for pipes in quoted arguments [#432](https://github.com/mikeric/rivets/issues/432)
+- Support for constant string in component HTML attributes [#478](https://github.com/mikeric/rivets/issues/478)
+- Fix rebind bug when a templated used nested `rv-if` binders [#611](https://github.com/mikeric/rivets/issues/611)
+
+### Upgrading from 0.8
+- Since 0.9 Rivets will not execute functions by default. This will allow passing arguments to function with the `call` formatter.
+
+    - Calling function in 0.8
+    ```
+    { item.myFunction }
+    ```
+    - Calling function in 0.9
+    ```
+    { item.myFunction | call}
+    ```
+    - Calling function in 0.9 with arguments
+    ```
+    { item.myFunction | call myArgument 'argument as string'}
+    ```
+
+    - You can force function executions to have your application work in `0.9` without using the `call` formatter. This is done with the configuration
+    ```
+    rivets.configure({
+        // Since rivets 0.9 functions are not automatically executed in expressions. If you need backward compatibilty, set this parameter to true
+        executeFunctions: true
+    });
+    ```
+
+- Using multiple indexes in nested `rv-each`. Since `0.9` rivets allows to have a specific index variable for each iteration.
+    ```
+    <ul>
+      <li rv-each-todo="todos">
+        <ul>
+          <li rv-each-item="todo.items">
+            <span>item #{ %item% } in todo #{ %todo%}</span>
+            <!-- Here the index will be the same as %item% -->
+          </li>
+        </ul>
+      </li>
+    <ul>
+    ```
+    The `index` is still available for compatibility reasons but you must be aware that it will only represent the last iteration.
+
 # 0.8
 
-#### Changes
+### Changes
 
 - More refined and useful components API. Some documentation is available [here](http://rivetsjs.com/docs/guide/#components).
 
