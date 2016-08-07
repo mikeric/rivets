@@ -28,7 +28,7 @@ To use the component inside of a template, simply use an element with the same t
 
 These keypaths will also be observed in both directions so that the component will update if the value changes from the outside and it will set the value if the component changes it from the inside.
 
-Additionally, if you want certain attributes to be static instead of an observed keypath, you can list them out on the `static` property fo your components.
+Additionally, if you want certain attributes to be static instead of an observed keypath, you can list them out on the `static` property for your components.
 
 ```javascript
 rivets.components['todo-item'] = {
