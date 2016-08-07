@@ -64,8 +64,19 @@
     "title": "Computed Properties",
     "sections": {}
   },
+  "functions-call": {
+    "title": "Call functions",
+    "sections": {}
+  },
   "iteration": {
     "title": "Iteration binding",
-    "sections": {}
+    "sections": {
+      "iteration": {
+        "title": "Iterate"
+      },
+      "index": {
+        "title": "Iteration index"
+      }
+    }
   }
 }
