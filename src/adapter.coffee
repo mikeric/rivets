@@ -93,8 +93,8 @@ Rivets.public.adapters['.'] =
 
           unless callbacks.length
             delete map.callbacks[keypath]
+            @unobserveMutations obj[keypath], obj[@id], keypath
 
-        @unobserveMutations obj[keypath], obj[@id], keypath
         @cleanupWeakReference map, obj[@id]
 
   get: (obj, keypath) ->
