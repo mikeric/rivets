@@ -225,6 +225,40 @@ describe('Rivets.Binding', function() {
       binding.binder.routine.calledWith(valueInput, 'fred is awesome').should.be.true
     })
 
+    it("should resolve formatter arguments to their values", function() {
+      rivets.formatters.withArguments = {
+        publish: function(value, arg1, arg2) {
+          return value + ':' + arg1 + ':' + arg2
+        },
+        read: function(value, arg1, arg2) {
+          return value + '-' + arg1 + '-' + arg2
+        }
+      }
+
+      valueInput = document.createElement('input')
+      valueInput.setAttribute('type', 'text')
+      valueInput.setAttribute('data-value', "obj.name | withArguments config.age 'male'")
+
+      view = rivets.bind(valueInput, {
+        obj: {
+          name: 'nothing'
+        },
+        config: {
+          age: 50
+        }
+      })
+
+      binding = view.bindings[0]
+      model = binding.model
+
+      valueInput.value = 'bobby'
+      binding.publish({target: valueInput})
+      adapter.set.calledWith(model, 'name', 'bobby:50:male').should.be.true
+
+      binding.set('andy')
+      binding.binder.routine.calledWith(valueInput, 'andy-50-male').should.be.true
+    })
+
     it("should not fail or format if the specified binding function doesn't exist", function() {
       rivets.formatters.awesome = { }
       valueInput = document.createElement('input')
