@@ -1,4 +1,4 @@
-const PRIMITIVE = 0
+export const PRIMITIVE = 0
 const KEYPATH = 1
 const TEXT = 0
 const BINDING = 1
@@ -24,7 +24,7 @@ export function parseType(string) {
     type = KEYPATH
   }
 
-  return {type: type, value: value}
+  return {type, value}
 }
 
 // Template parser and tokenizer for mustache-style text content bindings.
