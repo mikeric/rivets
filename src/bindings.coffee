@@ -35,7 +35,7 @@ class Rivets.Binding
   parseTarget: =>
     token = Rivets.TypeParser.parse @keypath
 
-    if token.type is 0
+    if token.type is Rivets.TypeParser.types.primitive
       @value = token.value
     else
       @observer = @observe @view.models, @keypath, @sync
@@ -181,7 +181,7 @@ class Rivets.ComponentBinding extends Rivets.Binding
 
         if propertyName in (@component.static ? [])
           @static[propertyName] = attribute.value
-        else if token.type is 0
+        else if token.type is Rivets.TypeParser.types.primitive
           @static[propertyName] = token.value
         else
           @observers[propertyName] = attribute.value
