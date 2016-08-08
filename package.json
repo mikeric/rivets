@@ -19,17 +19,26 @@
     "sightglass": "~0.2.4"
   },
   "scripts": {
-    "pretest": "babel src/parsers.js --out-file spec/lib/parsers.js --modules umd",
+    "pretest": "babel src/parsers.js --out-file spec/lib/parsers.js --presets es2015 --plugins transform-es2015-modules-umd",
     "test": "mocha-phantomjs spec/runner.html",
     "build": "webpack"
   },
   "devDependencies": {
-    "babel-core": "^4.7.16",
-    "babel-loader": "^4.2.0",
+
     "minimist": "~1.1.0",
-    "mocha": "~1.20.1",
+    "mocha": "2.5.3",
     "should": "~4.0.4",
     "sinon": "~1.10.2",
-    "webpack": "^1.7.3"
+    "webpack": "1.13.1",
+    "babel-core": "6.9.1",
+    "babel-cli": "^6.0.0",
+    "mocha-phantomjs": "4.0.2",
+    "babel-loader" : "6.2.4",
+    "commander": "^2.8.1",
+    "mocha-phantomjs-core" : "1.3.1",
+    "babel-preset-es2015": "6.9.0",
+    "babel-plugin-transform-es2015-modules-umd": "6.8.0",
+    "phantomjs": "2.1.7",
+    "babel-plugin-add-module-exports" : "0.2.1"
   }
 }

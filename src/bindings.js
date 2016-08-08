@@ -267,9 +267,8 @@ export class ComponentBinding extends Binding {
   // element is passed in along with the component type. Attributes and scope
   // inflections are determined based on the components defined attributes.
   constructor(view, el, type) {
-    this.view = view
-    this.el = el
-    this.type = type
+    super(view, el, type);
+
     this.component = this.view.components[this.type]
     this.static = {}
     this.observers = {}
@@ -282,7 +281,7 @@ export class ComponentBinding extends Binding {
         if (!bindingRegExp.test(attribute.name)) {
           let propertyName = this.camelCase(attribute.name)
           let stat = this.component.static
-
+        
           if (stat && stat.indexOf(propertyName) > -1) {
             this.static[propertyName] = attribute.value
           } else {
@@ -418,9 +417,8 @@ export class ComponentBinding extends Binding {
 export class TextBinding extends Binding {
   // Initializes a text binding for the specified view and text node.
   constructor(view, el, type, keypath, options = {}) {
-    this.view = view
-    this.el = el
-    this.type = type
+    super(view, el, type);
+          
     this.keypath = keypath
     this.options = options
     this.formatters = this.options.formatters || []
