@@ -266,30 +266,30 @@ export class ComponentBinding extends Binding {
   // Initializes a component binding for the specified view. The raw component
   // element is passed in along with the component type. Attributes and scope
   // inflections are determined based on the components defined attributes.
-    constructor(view, el, type) {
-		super(view, el, type);
+  constructor(view, el, type) {
+    super(view, el, type);
 
-		this.component = this.view.components[this.type]
-		this.static = {}
-		this.observers = {}
-		this.upstreamObservers = {}
+    this.component = this.view.components[this.type]
+    this.static = {}
+    this.observers = {}
+    this.upstreamObservers = {}
 
-		let bindingRegExp = view.bindingRegExp()
+    let bindingRegExp = view.bindingRegExp()
 
-		if (this.el.attributes) {
-		  this.el.attributes.forEach(attribute => {
-			if (!bindingRegExp.test(attribute.name)) {
-			  let propertyName = this.camelCase(attribute.name)
-			  let stat = this.component.static
-
-			  if (stat && stat.indexOf(propertyName) > -1) {
-				this.static[propertyName] = attribute.value
-			  } else {
-				this.observers[propertyName] = attribute.value
-			  }
-			}
-		  })
-		}
+    if (this.el.attributes) {
+      this.el.attributes.forEach(attribute => {
+        if (!bindingRegExp.test(attribute.name)) {
+          let propertyName = this.camelCase(attribute.name)
+          let stat = this.component.static
+        
+          if (stat && stat.indexOf(propertyName) > -1) {
+            this.static[propertyName] = attribute.value
+          } else {
+            this.observers[propertyName] = attribute.value
+          }
+        }
+      })
+    }
   }
 
 
@@ -416,22 +416,22 @@ export class ComponentBinding extends Binding {
 // differences while avoiding it being overwritten.
 export class TextBinding extends Binding {
   // Initializes a text binding for the specified view and text node.
-    constructor(view, el, type, keypath, options = {}) {
-		super(view, el, type);
-		  
-		this.keypath = keypath
-		this.options = options
-		this.formatters = this.options.formatters || []
-		this.dependencies = []
-		this.formatterObservers = {}
+  constructor(view, el, type, keypath, options = {}) {
+    super(view, el, type);
+          
+    this.keypath = keypath
+    this.options = options
+    this.formatters = this.options.formatters || []
+    this.dependencies = []
+    this.formatterObservers = {}
 
-		this.binder = {
-		  routine: (node, value) => {
-			node.data = defined(value) ? value : ''
-		  }
-		}
+    this.binder = {
+      routine: (node, value) => {
+        node.data = defined(value) ? value : ''
+      }
+    }
 
-		this.sync = this.sync.bind(this)
+    this.sync = this.sync.bind(this)
   }
 
   // Wrap the call to `sync` to avoid function context issues.
