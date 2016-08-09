@@ -10,6 +10,9 @@ This function will get called for this binding on `view.unbind()`. Use it to res
 
 The routine function is called when an observed attribute on the model changes and is used to update the DOM. When defining a one-way binder as a single function, it is actually the routine function that you're defining.
 
+### binder.getValue
+The getValue function is called when the binder wants to set the value on the model. This function takes the HTML element as only parameter
+
 #### binder.publishes
 
 Set this to true if you want view.publish() to call publish on these bindings.
