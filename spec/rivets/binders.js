@@ -230,4 +230,25 @@ describe("Rivets.binders", function() {
        Should(nestedEl.innerHTML).be.exactly("42");
      });
   });
+
+  describe("Custom binder with no attribute value", function() {
+    rivets.binders["custom-binder"] = function(el, value) {
+      el.innerHTML = "received " + value;
+    };
+    beforeEach(function() {
+      el = document.createElement("div");
+    });
+
+    it("receives undefined when html attribute is not specified", function() {
+      el.innerHTML = "<div rv-custom-binder></div>";
+      var view = rivets.bind(el);
+      Should(el.children[0].innerHTML).be.exactly('received undefined');
+    });
+
+    it("receives undefined when html attribute is not specified", function() {
+      el.innerHTML = "<div rv-custom-binder=''></div>";
+      var view = rivets.bind(el);
+      Should(el.children[0].innerHTML).be.exactly('received undefined');
+    });
+  });
 });

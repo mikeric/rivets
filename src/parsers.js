@@ -18,6 +18,9 @@ export function parseType(string) {
     value = null
   } else if (string === 'undefined') {
     value = undefined
+  } else if (string === '') {
+    // string==='' means the Html attribute is empty, binder should receive undefined 
+    value = undefined
   } else if (isNaN(Number(string)) === false) {
     value = Number(string)
   } else {
