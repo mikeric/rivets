@@ -176,12 +176,13 @@ export class Binding {
   publish() {
     if (this.observer) {
       let value = this.getValue(this.el)
+      const lastformatterIndex = this.formatters.length - 1
 
-      this.formatters.slice(0).reverse().forEach((formatter, fi) => {
-        let args = formatter.split(/\s+/)
-        let id = args.shift()
-        let f = this.view.formatters[id]
-
+      this.formatters.slice(0).reverse().forEach((formatter, fiReversed) => {
+        const fi = lastformatterIndex - fiReversed
+        const args = formatter.split(/\s+/)
+        const id = args.shift()
+        const f = this.view.formatters[id]
         const processedArgs = this.parseFormatterArguments(args, fi)
 
         if (defined(f) && f.publish) {
