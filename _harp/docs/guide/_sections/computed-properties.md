@@ -5,3 +5,12 @@ Computed properties are functions that get re-evaluated when one or more depende
 ```
 
 Note that the dependency keypaths stem from the target object, not the view's model context. So for the above declaration, the target is the `event` object, with dependencies on `event.start` and `event.end`.
+
+The `<` notation can be used directly after the function and before any formatter.
+
+```html
+<!-- KO -->
+<span rv-text="event.duration | anyFormatter < start end">KO</span>
+<!-- OK -->
+<span rv-text="event.duration < start end | myFormatter">OK</span>
+```

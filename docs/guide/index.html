@@ -1,4 +1,4 @@
-<html><head><title>Rivets.js — Lightweight and powerful data binding + templating solution for building modern web applications</title><link rel="stylesheet" href="/css/bootstrap.css"/><link rel="stylesheet" href="/css/type.css"/><link rel="stylesheet" href="/css/screen.css"/><link rel="stylesheet" href="/css/syntax.css"/><link rel="stylesheet" href="/css/responsive.css"/><script src="/js/jquery.js"></script><script src="/js/bootstrap.min.js"></script><script src="/js/highlight.js"></script><script src="/js/app.js"></script><meta name="viewport" content="width=device-width, initial-scale=1.0"/><script type="text/javascript">hljs.initHighlightingOnLoad();
+<!DOCTYPE html><html><head><title>Rivets.js — Lightweight and powerful data binding + templating solution for building modern web applications</title><link rel="stylesheet" href="/css/bootstrap.css"><link rel="stylesheet" href="/css/type.css"><link rel="stylesheet" href="/css/screen.css"><link rel="stylesheet" href="/css/syntax.css"><link rel="stylesheet" href="/css/responsive.css"><script src="/js/jquery.js"></script><script src="/js/bootstrap.min.js"></script><script src="/js/highlight.js"></script><script src="/js/app.js"></script><meta name="viewport" content="width=device-width, initial-scale=1.0"><script type="text/javascript">hljs.initHighlightingOnLoad();
 
 var _gaq = _gaq || [];
 _gaq.push(['_setAccount', 'UA-6079274-2']);
@@ -180,8 +180,8 @@ _gaq.push(['_trackPageview']);
 <p>Each adapter is defined to a unique interface (a single character) which is used to separate the keys in a keypath. The interfaces used in a keypath determine which adapter to use for each intermediary key.</p>
 <pre><code>user.address:city
 </code></pre><p>The above keypath will use the <code>.</code> adapter to access the <code>address</code> key on the <code>user</code> object, and the <code>:</code> adapter to access the <code>city</code> key on the <code>address</code> object. If you can imagine for a second that <code>address</code> is just a normal property on the user object pointing to a Backbone model, but <code>city</code> is actually an attribute on that Backbone model, you can see how this kind of notation is actually very succint and expressive.</p>
-<h3 id="adapters-default">The built-in adapter</h3><p>Rivets.js ships with a <code>.</code> adapter for subscribing to properties on plain JavaScript objects. The adapter is self-implemented using ES5 natives such as <code>Object.defineProperty</code>. In the future, this adapter will be implemented purely using <code>Object.observe</code> as soon as browser support permits.</p>
-<p>If you need to support non-ES5 browsers (&lt; IE 9), you can replace this adapter to use polyfills or with a third-party library that has the browser support you need. If you&#39;re only targetting Chrome Canary, feel free to replace it with an <code>Object.observe</code> adapter now and enter data binding bliss.</p>
+<h3 id="adapters-default">The built-in adapter</h3><p>Rivets.js ships with a <code>.</code> adapter for subscribing to properties on plain JavaScript objects. The adapter is self-implemented using ES5 natives such as <code>Object.defineProperty</code>.</p>
+<p>If you need to support non-ES5 browsers (&lt; IE 9), you can replace this adapter to use polyfills or with a third-party library that has the browser support you need.</p>
 <h3 id="adapters-creating">Creating an adapter</h3><p>Adapters are defined on <code>rivets.adapters</code> with the interface as the property name and the adapter object as the value. An adapter is just an object that responds to <code>observe</code>, <code>unobserve</code>, <code>get</code> and <code>set</code>.</p>
 <p>The following <code>:</code> adapter works for Backbone.js models / Stapes.js modules.</p>
 <pre><code class="language-javascript">rivets.adapters[&#39;:&#39;] = {
@@ -203,6 +203,12 @@ _gaq.push(['_trackPageview']);
 <pre><code class="language-html">&lt;span rv-text=&quot;event.duration &lt; start end&quot;&gt;&lt;/span&gt;
 </code></pre>
 <p>Note that the dependency keypaths stem from the target object, not the view&#39;s model context. So for the above declaration, the target is the <code>event</code> object, with dependencies on <code>event.start</code> and <code>event.end</code>.</p>
+<p>The <code>&lt;</code> notation can be used directly after the function and before any formatter.</p>
+<pre><code class="language-html">&lt;!-- KO --&gt;
+&lt;span rv-text=&quot;event.duration | anyFormatter &lt; start end&quot;&gt;KO&lt;/span&gt;
+&lt;!-- OK --&gt;
+&lt;span rv-text=&quot;event.duration &lt; start end | myFormatter&quot;&gt;OK&lt;/span&gt;
+</code></pre>
 <h2 id="functions-call">Call functions</h2><p>To call a function in an expression, rivets includes a special formatter <code>call</code>. This formatter will call the function, any formatter parameter will become an argument sent to the function. The following text binding will call the function <code>event.duration</code> with the two arguments <code>event.start</code> and <code>event.end</code>.</p>
 <pre><code class="language-html">&lt;span rv-text=&quot;event.duration | call event.start event.end&quot;&gt;&lt;/span&gt;
 </code></pre>
