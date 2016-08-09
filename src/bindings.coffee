@@ -35,11 +35,29 @@ class Rivets.Binding
   parseTarget: =>
     token = Rivets.TypeParser.parse @keypath
 
-    if token.type is 0
+    if token.type is Rivets.TypeParser.types.primitive
       @value = token.value
     else
       @observer = @observe @view.models, @keypath, @sync
       @model = @observer.target
+
+  parseFormatterArguments: (args, formatterIndex) =>
+    args = (Rivets.TypeParser.parse(arg) for arg in args)
+    processedArgs = []
+
+    for arg, ai in args
+      processedArgs.push if arg.type is Rivets.TypeParser.types.primitive
+        arg.value
+      else
+        @formatterObservers[formatterIndex] or= {}
+
+        unless observer = @formatterObservers[formatterIndex][ai]
+          observer = @observe @view.models, arg.value, @sync
+          @formatterObservers[formatterIndex][ai] = observer
+
+        observer.value()
+
+    processedArgs
 
   # Applies all the current formatters to the supplied value and returns the
   # formatted value.
@@ -49,20 +67,7 @@ class Rivets.Binding
       id = args.shift()
       formatter = @view.formatters[id]
 
-      args = (Rivets.TypeParser.parse(arg) for arg in args)
-      processedArgs = []
-
-      for arg, ai in args
-        processedArgs.push if arg.type is 0
-          arg.value
-        else
-          @formatterObservers[fi] or= {}
-
-          unless observer = @formatterObservers[fi][ai]
-            observer = @observe @view.models, arg.value, @sync
-            @formatterObservers[fi][ai] = observer
-
-          observer.value()
+      processedArgs = @parseFormatterArguments args, fi
 
       if formatter?.read instanceof Function
         value = formatter.read.call @model, value, processedArgs...
@@ -107,13 +112,17 @@ class Rivets.Binding
   publish: =>
     if @observer
       value = @getValue @el
+      lastformatterIndex = @formatters.length - 1
 
-      for formatter in @formatters.slice(0).reverse()
+      for formatter, fiReversed in @formatters.slice(0).reverse()
+        fi = lastformatterIndex - fiReversed
         args = formatter.split /\s+/
         id = args.shift()
 
+        processedArgs = @parseFormatterArguments args, fi
+
         if @view.formatters[id]?.publish
-          value = @view.formatters[id].publish value, args...
+          value = @view.formatters[id].publish value, processedArgs...
 
       @observer.setValue value
 
@@ -181,7 +190,7 @@ class Rivets.ComponentBinding extends Rivets.Binding
 
         if propertyName in (@component.static ? [])
           @static[propertyName] = attribute.value
-        else if token.type is 0
+        else if token.type is Rivets.TypeParser.types.primitive
           @static[propertyName] = token.value
         else
           @observers[propertyName] = attribute.value
