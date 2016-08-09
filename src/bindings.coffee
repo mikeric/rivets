@@ -112,8 +112,10 @@ class Rivets.Binding
   publish: =>
     if @observer
       value = @getValue @el
+      lastformatterIndex = @formatters.length - 1
 
-      for formatter, fi in @formatters.slice(0).reverse()
+      for formatter, fiReversed in @formatters.slice(0).reverse()
+        fi = lastformatterIndex - fiReversed
         args = formatter.split /\s+/
         id = args.shift()
 
