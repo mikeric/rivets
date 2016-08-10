@@ -1,3 +1,9 @@
+# 0.9.4
+
+### Changes
+
+- Updated sightglass to `v0.2.6`, fixing [#572](https://github.com/mikeric/rivets/issues/572)
+
 # 0.9.2
 
 ### Changes
