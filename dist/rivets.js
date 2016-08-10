@@ -1,5 +1,5 @@
 // Rivets.js
-// version: 0.9.1
+// version: 0.9.2
 // author: Michael Richards
 // license: MIT
 (function() {
@@ -548,6 +548,7 @@
       this.set = __bind(this.set, this);
       this.eventHandler = __bind(this.eventHandler, this);
       this.formattedValue = __bind(this.formattedValue, this);
+      this.parseFormatterArguments = __bind(this.parseFormatterArguments, this);
       this.parseTarget = __bind(this.parseTarget, this);
       this.observe = __bind(this.observe, this);
       this.setBinder = __bind(this.setBinder, this);
@@ -592,7 +593,7 @@
     Binding.prototype.parseTarget = function() {
       var token;
       token = Rivets.TypeParser.parse(this.keypath);
-      if (token.type === 0) {
+      if (token.type === Rivets.TypeParser.types.primitive) {
         return this.value = token.value;
       } else {
         this.observer = this.observe(this.view.models, this.keypath, this.sync);
@@ -600,28 +601,34 @@
       }
     };
 
+    Binding.prototype.parseFormatterArguments = function(args, formatterIndex) {
+      var ai, arg, observer, processedArgs, _base, _i, _len;
+      args = (function() {
+        var _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = args.length; _i < _len; _i++) {
+          arg = args[_i];
+          _results.push(Rivets.TypeParser.parse(arg));
+        }
+        return _results;
+      })();
+      processedArgs = [];
+      for (ai = _i = 0, _len = args.length; _i < _len; ai = ++_i) {
+        arg = args[ai];
+        processedArgs.push(arg.type === Rivets.TypeParser.types.primitive ? arg.value : ((_base = this.formatterObservers)[formatterIndex] || (_base[formatterIndex] = {}), !(observer = this.formatterObservers[formatterIndex][ai]) ? (observer = this.observe(this.view.models, arg.value, this.sync), this.formatterObservers[formatterIndex][ai] = observer) : void 0, observer.value()));
+      }
+      return processedArgs;
+    };
+
     Binding.prototype.formattedValue = function(value) {
-      var ai, arg, args, fi, formatter, id, observer, processedArgs, _base, _i, _j, _len, _len1, _ref1, _ref2;
+      var args, fi, formatter, id, processedArgs, _i, _len, _ref1, _ref2;
       _ref1 = this.formatters;
       for (fi = _i = 0, _len = _ref1.length; _i < _len; fi = ++_i) {
         formatter = _ref1[fi];
         args = formatter.match(/[^\s']+|'([^']|'[^\s])*'|"([^"]|"[^\s])*"/g);
         id = args.shift();
         formatter = this.view.formatters[id];
-        args = (function() {
-          var _j, _len1, _results;
-          _results = [];
-          for (_j = 0, _len1 = args.length; _j < _len1; _j++) {
-            arg = args[_j];
-            _results.push(Rivets.TypeParser.parse(arg));
-          }
-          return _results;
-        })();
-        processedArgs = [];
-        for (ai = _j = 0, _len1 = args.length; _j < _len1; ai = ++_j) {
-          arg = args[ai];
-          processedArgs.push(arg.type === 0 ? arg.value : ((_base = this.formatterObservers)[fi] || (_base[fi] = {}), !(observer = this.formatterObservers[fi][ai]) ? (observer = this.observe(this.view.models, arg.value, this.sync), this.formatterObservers[fi][ai] = observer) : void 0, observer.value()));
-        }
+        processedArgs = this.parseFormatterArguments(args, fi);
         if ((formatter != null ? formatter.read : void 0) instanceof Function) {
           value = (_ref2 = formatter.read).call.apply(_ref2, [this.model, value].concat(__slice.call(processedArgs)));
         } else if (formatter instanceof Function) {
@@ -674,16 +681,19 @@
     };
 
     Binding.prototype.publish = function() {
-      var args, formatter, id, value, _i, _len, _ref1, _ref2, _ref3;
+      var args, fi, fiReversed, formatter, id, lastformatterIndex, processedArgs, value, _i, _len, _ref1, _ref2, _ref3;
       if (this.observer) {
         value = this.getValue(this.el);
+        lastformatterIndex = this.formatters.length - 1;
         _ref1 = this.formatters.slice(0).reverse();
-        for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-          formatter = _ref1[_i];
+        for (fiReversed = _i = 0, _len = _ref1.length; _i < _len; fiReversed = ++_i) {
+          formatter = _ref1[fiReversed];
+          fi = lastformatterIndex - fiReversed;
           args = formatter.split(/\s+/);
           id = args.shift();
+          processedArgs = this.parseFormatterArguments(args, fi);
           if ((_ref2 = this.view.formatters[id]) != null ? _ref2.publish : void 0) {
-            value = (_ref3 = this.view.formatters[id]).publish.apply(_ref3, [value].concat(__slice.call(args)));
+            value = (_ref3 = this.view.formatters[id]).publish.apply(_ref3, [value].concat(__slice.call(processedArgs)));
           }
         }
         return this.observer.setValue(value);
@@ -779,7 +789,7 @@
           token = Rivets.TypeParser.parse(attribute.value);
           if (__indexOf.call((_ref2 = this.component["static"]) != null ? _ref2 : [], propertyName) >= 0) {
             this["static"][propertyName] = attribute.value;
-          } else if (token.type === 0) {
+          } else if (token.type === Rivets.TypeParser.types.primitive) {
             this["static"][propertyName] = token.value;
           } else {
             this.observers[propertyName] = attribute.value;
@@ -1333,10 +1343,12 @@
                   if (map = _this.weakmap[obj[_this.id]]) {
                     callbacks = map.callbacks;
                     if (callbacks[keypath]) {
-                      _ref1 = callbacks[keypath];
+                      _ref1 = callbacks[keypath].slice();
                       for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
                         cb = _ref1[_i];
-                        cb();
+                        if (__indexOf.call(callbacks[keypath], cb) >= 0) {
+                          cb();
+                        }
                       }
                     }
                     return _this.observeMutations(newValue, obj[_this.id], keypath);
@@ -1360,9 +1372,9 @@
             callbacks.splice(idx, 1);
             if (!callbacks.length) {
               delete map.callbacks[keypath];
+              this.unobserveMutations(obj[keypath], obj[this.id], keypath);
             }
           }
-          this.unobserveMutations(obj[keypath], obj[this.id], keypath);
           return this.cleanupWeakReference(map, obj[this.id]);
         }
       }
