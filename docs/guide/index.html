@@ -203,9 +203,9 @@ _gaq.push(['_trackPageview']);
 <pre><code class="language-html">&lt;span rv-text=&quot;event.duration &lt; start end&quot;&gt;&lt;/span&gt;
 </code></pre>
 <p>Note that the dependency keypaths stem from the target object, not the view&#39;s model context. So for the above declaration, the target is the <code>event</code> object, with dependencies on <code>event.start</code> and <code>event.end</code>.</p>
-<p>The <code>&lt;</code> notation can be used directly after the function and before any formatter.</p>
-<pre><code class="language-html">&lt;!-- KO --&gt;
-&lt;span rv-text=&quot;event.duration | anyFormatter &lt; start end&quot;&gt;KO&lt;/span&gt;
+<p>The <code>&lt;</code> notation must only be used directly after the function and before any formatter.</p>
+<pre><code class="language-html">&lt;!-- Wrong --&gt;
+&lt;span rv-text=&quot;event.duration | anyFormatter &lt; start end&quot;&gt;Wrong&lt;/span&gt;
 &lt;!-- OK --&gt;
 &lt;span rv-text=&quot;event.duration &lt; start end | myFormatter&quot;&gt;OK&lt;/span&gt;
 </code></pre>
