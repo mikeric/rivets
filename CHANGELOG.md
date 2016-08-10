@@ -24,7 +24,7 @@
 ### Changes
 
 - Fix binders which received 0 instead of undefined when HTML attributes were empty [#567](https://github.com/mikeric/rivets/issues/567)
-- Now functions are not executed by Rivets in expressions. To call the function you need to use the `call` formatter. See documentation [here](...) [#571](https://github.com/mikeric/rivets/issues/571)
+- Now functions are not executed by Rivets in expressions. To call the function you need to use the `call` formatter. See documentation [here](http://rivetsjs.com/docs/guide/#functions-call) [#571](https://github.com/mikeric/rivets/issues/571)
 - Support for nested rv-each with an index for each iteration. Index names can be configured, see documentation [here](http://rivetsjs.com/docs/guide/#usage-configuring) [#551](https://github.com/mikeric/rivets/issues/551)
 - Support for pipes in quoted arguments [#432](https://github.com/mikeric/rivets/issues/432)
 - Support for constant string in component HTML attributes [#478](https://github.com/mikeric/rivets/issues/478)
