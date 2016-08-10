@@ -27,4 +27,3 @@ rivets.binders['mobi-calendar'] = {
 };
 
 ```
-
