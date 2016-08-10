@@ -1,3 +1,12 @@
+# 0.9.2
+
+### Changes
+
+- Fix issue when resetting a model [#644](https://github.com/mikeric/rivets/issues/644)
+- Fix publish function in two-way formatters [#649](https://github.com/mikeric/rivets/issues/649)
+- Fix array binding [#650](https://github.com/mikeric/rivets/issues/650)
+- Fix observers on prototype functions [#572](https://github.com/mikeric/rivets/issues/572)
+
 # 0.9.1
 
 ### Changes
