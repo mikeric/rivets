@@ -265,13 +265,30 @@ describe('Functional', function() {
 
   describe('Input', function() {
     it('should update the model value', function() {
-      input.setAttribute('data-value', 'data:foo')
-      rivets.bind(input, bindData)
-      input.value = 'some new value'
-      var event = document.createEvent('HTMLEvents')
-      event.initEvent('input', true, true)
-      input.dispatchEvent(event)
-      input.value.should.equal(data.get('foo'))
+      input.setAttribute('data-value', 'data:foo');
+      rivets.bind(input, bindData);
+      input.value = 'some new value';
+      var event = document.createEvent('HTMLEvents');
+      event.initEvent('input', true, true);
+      input.dispatchEvent(event);
+      data.get('foo').should.equal('some new value');
+    });
+
+    it('should allow to change the event listened', function() {
+      var event;
+      input.setAttribute('data-value', 'data:foo');
+      input.setAttribute('event-name', 'blur');
+      rivets.bind(input, bindData);
+      input.value = 'some new value';
+      event = document.createEvent('HTMLEvents');
+      event.initEvent('input', true, true);
+      input.dispatchEvent(event);
+      data.get('foo').should.equal('bar');
+
+      event = document.createEvent('HTMLEvents');
+      event.initEvent('blur', true, true);
+      input.dispatchEvent(event);
+      data.get('foo').should.equal('some new value');
     })
   })
 })
