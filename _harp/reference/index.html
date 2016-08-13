@@ -10,44 +10,60 @@ _gaq.push(['_trackPageview']);
   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 })();
 </script></head><body data-spy="scroll" data-target="#nav"><header><div class="container"><div class="row"><div class="col col-xs-6"><h3 class="logotype"><a href="/">RIVETS</a></h3></div><div class="col col-xs-6 right visible-xs"><i id="hamburger">&#9776;</i></div><div id="menu" class="col col-sm-6 col-xs-12 right hidden-xs"><ul class="list-unstyled"><li><a href="/docs/guide">Guide</a></li><li><a href="/docs/reference">Binder Reference</a></li><li><a href="http://github.com/mikeric/rivets">GitHub</a></li></ul></div></div></div></header><section class="docs"><div class="container"><div class="row"><article class="col col-md-9"><h2 id="text">text</h2><p>Sets the element&#39;s text content.</p>
-<pre><code class="language-html">&lt;h1 rv-text=&quot;user.name&quot;&gt;&lt;/h1&gt;</code></pre>
+<pre><code class="language-html">&lt;h1 rv-text=&quot;user.name&quot;&gt;&lt;/h1&gt;
+</code></pre>
 <p>You can also bind text using interpolation.</p>
-<pre><code class="language-html">&lt;p&gt;{ user.name } is { user.age } years old.&lt;/p&gt;</code></pre>
+<pre><code class="language-html">&lt;p&gt;{ user.name } is { user.age } years old.&lt;/p&gt;
+</code></pre>
 <h2 id="html">html</h2><p>Sets the element&#39;s HTML content.</p>
-<pre><code class="language-html">&lt;section rv-html=&quot;item.summary&quot;&gt;&lt;/section&gt;</code></pre>
+<pre><code class="language-html">&lt;section rv-html=&quot;item.summary&quot;&gt;&lt;/section&gt;
+</code></pre>
 <h2 id="show">show</h2><p>Shows the element when the value evaluates to true and hides the element when the value evaluates to false.</p>
-<pre><code class="language-html">&lt;button rv-show=&quot;user.admin&quot;&gt;Remove&lt;/button&gt;</code></pre>
+<pre><code class="language-html">&lt;button rv-show=&quot;user.admin&quot;&gt;Remove&lt;/button&gt;
+</code></pre>
 <h2 id="hide">hide</h2><p>Hides the element when the value evaluates to true and shows the element when the value evaluates to false.</p>
-<pre><code class="language-html">&lt;section rv-hide=&quot;feature.disabled&quot;&gt;&lt;/section&gt;</code></pre>
+<pre><code class="language-html">&lt;section rv-hide=&quot;feature.disabled&quot;&gt;&lt;/section&gt;
+</code></pre>
 <h2 id="enabled">enabled</h2><p>Enables the element when the value evaluates to true and disables the element when the value evaluates to false.</p>
-<pre><code class="language-html">&lt;button rv-enabled=&quot;user.canVote&quot;&gt;Upvote&lt;/button&gt;</code></pre>
+<pre><code class="language-html">&lt;button rv-enabled=&quot;user.canVote&quot;&gt;Upvote&lt;/button&gt;
+</code></pre>
 <h2 id="disabled">disabled</h2><p>Disables the element when the value evaluates to true and enables the element when the value evaluates to false.</p>
-<pre><code class="language-html">&lt;button rv-disabled=&quot;user.suspended&quot;&gt;Upvote&lt;/button&gt;</code></pre>
+<pre><code class="language-html">&lt;button rv-disabled=&quot;user.suspended&quot;&gt;Upvote&lt;/button&gt;
+</code></pre>
 <h2 id="if">if</h2><p>Inserts and binds the element as well as it&#39;s child nodes into the DOM when the value evaluates to true and removes / unbinds the element when the value evaluates to false.</p>
-<pre><code class="language-html">&lt;section rv-if=&quot;item.editable&quot;&gt;&lt;/section&gt;</code></pre>
+<pre><code class="language-html">&lt;section rv-if=&quot;item.editable&quot;&gt;&lt;/section&gt;
+</code></pre>
 <h2 id="unless">unless</h2><p>Removes and unbinds the element as well as it&#39;s child nodes when the value evaluates to true and inserts / binds the element when the value evaluates to false.</p>
-<pre><code class="language-html">&lt;section rv-unless=&quot;item.locked&quot;&gt;&lt;/section&gt;</code></pre>
+<pre><code class="language-html">&lt;section rv-unless=&quot;item.locked&quot;&gt;&lt;/section&gt;
+</code></pre>
 <h2 id="value">value</h2><p>Sets the element&#39;s value when the attribute changes and sets the bound object&#39;s value when the input element changes from user input (two-way).</p>
-<pre><code class="language-html">&lt;input rv-value=&quot;item.name&quot;&gt;</code></pre>
+<pre><code class="language-html">&lt;input rv-value=&quot;item.name&quot;&gt;
+</code></pre>
 <h2 id="checked">checked</h2><p>Checks the input when the value evaluates to true and unchecks the input when the value evaluates to false. This also sets the bound object&#39;s value to true/false when the user checks/unchecks the input (two-way).</p>
 <p><em>Use this instead of value when binding to checkboxes or radio buttons.</em></p>
-<pre><code class="language-html">&lt;input type=&quot;checkbox&quot; rv-checked=&quot;item.enabled&quot;&gt;</code></pre>
+<pre><code class="language-html">&lt;input type=&quot;checkbox&quot; rv-checked=&quot;item.enabled&quot;&gt;
+</code></pre>
 <h2 id="unchecked">unchecked</h2><p>Unchecks the input when the value evaluates to true and checks the input when the value evaluates to false. This also sets the bound object&#39;s value to false/true when the user checks/unchecks the input (two-way).</p>
 <p><em>Use this instead of value when binding to checkboxes or radio buttons.</em></p>
-<pre><code class="language-html">&lt;input type=&quot;checkbox&quot; rv-unchecked=&quot;item.disabled&quot;&gt;</code></pre>
+<pre><code class="language-html">&lt;input type=&quot;checkbox&quot; rv-unchecked=&quot;item.disabled&quot;&gt;
+</code></pre>
 <h2 id="on-[event]">on-[event]</h2><p>Binds an event listener on the element using the event specified in <code>[event]</code> and the bound object (should return a function) as the callback.</p>
 <p><em>If the end value of the binding changes to a different function, this binder will automatically unbind the old callback and bind a new listener to the new function.</em></p>
-<pre><code class="language-html">&lt;button rv-on-click=&quot;item.destroy&quot;&gt;Remove&lt;/button&gt;</code></pre>
+<pre><code class="language-html">&lt;button rv-on-click=&quot;item.destroy&quot;&gt;Remove&lt;/button&gt;
+</code></pre>
 <h2 id="each-[item]">each-[item]</h2><p>Appends a new instance of the element in place for each item in an array. Each element is bound with a completely new nested view that contains an additional property (named whatever value is in place of <code>[item]</code>) which points to the current iterated item in the array.</p>
 <p><em>Also note that you may bind to the iterated item directly on the parent element which contains the actual <code>rv-each</code> declaration.</em></p>
 <pre><code class="language-html">&lt;ul&gt;
   &lt;li rv-each-todo=&quot;todos&quot;&gt;
     &lt;input type=&quot;checkbox&quot; rv-checked=&quot;todo.done&quot;&gt; { todo.name }
   &lt;/li&gt;
-&lt;ul&gt;</code></pre>
+&lt;ul&gt;
+</code></pre>
 <h2 id="class-[classname]">class-[classname]</h2><p>Adds a class (whatever value is in place of <code>[classname]</code>) on the element when the value evaluates to true and removes that class if the value evaluates to false.</p>
-<pre><code class="language-html">&lt;li rv-class-completed=&quot;todo.done&quot;&gt;{ todo.name }&lt;/li&gt;</code></pre>
+<pre><code class="language-html">&lt;li rv-class-completed=&quot;todo.done&quot;&gt;{ todo.name }&lt;/li&gt;
+</code></pre>
 <h2 id="[attribute]">[attribute]</h2><p>Sets the value of an attribute (whatever value is in place of <code>[attribute]</code>) on the element.</p>
 <p><em>If your binding declaration does not match any of the above routines, it will fallback to use this binding.</em></p>
-<pre><code class="language-html">&lt;input type=&quot;text&quot; rv-placeholder=&quot;field.placeholder&quot;&gt;</code></pre>
+<pre><code class="language-html">&lt;input type=&quot;text&quot; rv-placeholder=&quot;field.placeholder&quot;&gt;
+</code></pre>
 </article><aside class="col col-md-3 hidden-sm hidden-xs"><div class="pull-right"><nav id="nav" data-spy="affix" data-offset-top="145"><ul class="nav"><li><a href="#text"><strong>text</strong></a></li><li><a href="#html"><strong>html</strong></a></li><li><a href="#show"><strong>show</strong></a></li><li><a href="#hide"><strong>hide</strong></a></li><li><a href="#enabled"><strong>enabled</strong></a></li><li><a href="#disabled"><strong>disabled</strong></a></li><li><a href="#if"><strong>if</strong></a></li><li><a href="#unless"><strong>unless</strong></a></li><li><a href="#value"><strong>value</strong></a></li><li><a href="#checked"><strong>checked</strong></a></li><li><a href="#unchecked"><strong>unchecked</strong></a></li><li><a href="#on-[event]"><strong>on-[event]</strong></a></li><li><a href="#each-[item]"><strong>each-[item]</strong></a></li><li><a href="#class-[classname]"><strong>class-[classname]</strong></a></li><li><a href="#[attribute]"><strong>[attribute]</strong></a></li></ul></nav></div></aside></div></div></section></body></html>

@@ -107,7 +107,7 @@ _gaq.push(['_trackPageview']);
 <h3 id="binders-api">API</h3><h4>binder.bind</h4><p>This function will get called for this binding on the initial <code>view.bind()</code>. Use it to store some initial state on the binding, or to set up any event listeners on the element.</p>
 <h4>binder.unbind</h4><p>This function will get called for this binding on <code>view.unbind()</code>. Use it to reset any state on the element that would have been changed from the routine getting called, or to unbind any event listeners on the element that you&#39;ve set up in the <code>binder.bind</code> function.</p>
 <h4>binder.routine</h4><p>The routine function is called when an observed attribute on the model changes and is used to update the DOM. When defining a one-way binder as a single function, it is actually the routine function that you&#39;re defining.</p>
-<h3>binder.getValue</h3><p>The getValue function is called when the binder wants to set the value on the model. This function takes the HTML element as only parameter</p>
+<h4>binder.getValue</h4><p>The getValue function is called when the binder wants to set the value on the model. This function takes the HTML element as only parameter</p>
 <h4>binder.publishes</h4><p>Set this to true if you want view.publish() to call publish on these bindings.</p>
 <h4>binder.block</h4><p>Blocks the current node and child nodes from being parsed (used for iteration binding as well as the if/unless binders).</p>
 <h2 id="formatters">Formatters</h2><p>Formatters are functions that mutate the incoming and/or outgoing value of a binding. You can use them to format dates, numbers, currencies, etc. and because they work in a similar fashion to the Unix pipeline, the output of each feeds directly as input to the next one, so you can stack as many of them together as you like.</p>
@@ -165,7 +165,7 @@ _gaq.push(['_trackPageview']);
 <pre><code class="language-html">&lt;todo-item item=&quot;myItem&quot;&gt;&lt;/todo-item&gt;
 </code></pre>
 <p>These keypaths will also be observed in both directions so that the component will update if the value changes from the outside and it will set the value if the component changes it from the inside.</p>
-<p>Additionally, if you want certain attributes to be static instead of an observed keypath, you can list them out on the <code>static</code> property fo your components.</p>
+<p>Additionally, if you want certain attributes to be static instead of an observed keypath, you can list them out on the <code>static</code> property for your components.</p>
 <pre><code class="language-javascript">rivets.components[&#39;todo-item&#39;] = {
   static: [&#39;list-style&#39;],
   …
