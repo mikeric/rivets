@@ -3,27 +3,22 @@ Two-way binders, like one-way binders, can update the DOM when a model property 
 In order to update the model when the user interacts with the DOM, you need to tell Rivets.js how to bind and unbind to that DOM element to set the value on the model. Instead of defining the binder as a single function, two-way binders are defined as an object containing a few extra functions.
 
 ```javascript
-rivets.binders['mobi-calendar'] = {
-    bind: function(el) {
-        var opts = {};
-        opts.onSet = this.publish;
-
-        this.mobiScrollInstance = mobiscroll.calendar(el, opts);
-    },
-
-    unbind: function(el) {
-        this.mobiScrollInstance.destroy();
-    },
-
-    routine: function(el, value) {
-        if (value) {
-            this.mobiScrollInstance.setVal(new Date(value), true);  
-        }
-    },
-
-    getValue : function(el) {
-        return new Date(this.mobiScrollInstance.getVal()).getTime();    
-    }
+rivets.binders['content-editable'] = {
+  bind: function(el) {
+    el.setAttribute("contenteditable", true);
+    el.addEventListener("keyup", this.publish);
+  },
+  
+  unbind: function(el) {
+    el.removeEventListener("keyup", this.publish);
+  },
+  
+  getValue : function(el) {
+    return el.innerText;    
+  },
+  
+  routine: function(el, value) {
+    el.innerText = value;
+  }
 };
-
 ```
