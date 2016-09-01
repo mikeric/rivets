@@ -6,7 +6,7 @@ Binds an event listener on the element using the event specified in `[event]` an
 <button rv-on-click="item.destroy">Remove</button>
 ```
 
-*The callback function is passed 1: an event object and 2: the bound context which will also include named refrences to nested bindings.*
+*The callback function is passed 1: an event object and 2: the bound context which will also include named references to nested bindings.*
 
 ```html
 <ul>
