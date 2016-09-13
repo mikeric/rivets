@@ -2,6 +2,7 @@
 # -----------
 
 if window['jQuery'] or window['$']
+  jQuery = window['jQuery'] or window['$']
   [bindMethod, unbindMethod] = if 'on' of jQuery.prototype then ['on', 'off'] else ['bind', 'unbind']
 
   Rivets.Util =
