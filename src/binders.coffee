@@ -72,8 +72,9 @@ Rivets.public.binders.value =
 
   bind: (el) ->
     unless el.tagName is 'INPUT' and el.type is 'radio'
-      @event = if el.tagName is 'SELECT' then 'change' else 'input'
-      Rivets.Util.bindEvent el, @event, @publish
+      Rivets.Util.bindEvent el, 'change', @publish
+      unless el.tagName is 'SELECT'
+        Rivets.Util.bindEvent el, 'input', @publish
 
   unbind: (el) ->
     unless el.tagName is 'INPUT' and el.type is 'radio'
