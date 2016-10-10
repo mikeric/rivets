@@ -217,18 +217,36 @@ describe("Rivets.binders", function() {
        nestedEl.setAttribute("rv-if", "data.showNested");
        nestedEl.innerHTML = "{ data.countNested }";
        el.appendChild(nestedEl);
-  
+
        var view = rivets.bind(fragment, model);
-  
+
        model.data.countNested = "1";
        model.data.showNested = true;
        Should(nestedEl.innerHTML).be.exactly("1");
        model.data.show = false;
        model.data.show = true;
        model.data.countNested = "42";
-  
+
        Should(nestedEl.innerHTML).be.exactly("42");
      });
+
+    it("does not throw when root scope is reset", function () {
+      el.setAttribute('rv-if', 'scope.error.errors');
+      el.innerHTML = '<div>{scope.error.errors.email}</div>';
+      model = {
+        scope: {
+          error: {
+            errors: {
+              email: 'not a valid address'
+            }
+          }
+        }
+      };
+      var view = rivets.bind(el, model);
+      (function(){
+        model.scope.error = {};
+      }).should.not.throw();
+    })
   });
 
   describe("Custom binder with no attribute value", function() {
