@@ -178,10 +178,11 @@ const adapter = {
 
           if (!callbacks.length) {
             delete map.callbacks[keypath]
+            this.unobserveMutations(obj[keypath], obj[this.id], keypath)
           }
         }
 
-        this.unobserveMutations(obj[keypath], obj[this.id], keypath)
+
         this.cleanupWeakReference(map, obj[this.id])
       }
     }
