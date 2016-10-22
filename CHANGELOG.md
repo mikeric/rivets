@@ -1,3 +1,7 @@
+# 0.9.6
+
+**No changes (version bump due to error in publishing 0.9.5)**
+
 # 0.9.5
 
 ### Changes
