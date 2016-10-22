@@ -1,9 +1,9 @@
 // Rivets.js
-// version: 0.9.3
+// version: 0.9.4
 // author: Michael Richards
 // license: MIT
 (function() {
-  var Rivets, bindMethod, unbindMethod, _ref,
+  var Rivets, bindMethod, jQuery, unbindMethod, _ref,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __slice = [].slice,
     __hasProp = {}.hasOwnProperty,
@@ -85,6 +85,7 @@
   };
 
   if (window['jQuery'] || window['$']) {
+    jQuery = window['jQuery'] || window['$'];
     _ref = 'on' in jQuery.prototype ? ['on', 'off'] : ['bind', 'unbind'], bindMethod = _ref[0], unbindMethod = _ref[1];
     Rivets.Util = {
       bindEvent: function(el, event, handler) {
