@@ -1,3 +1,9 @@
+# 0.9.5
+
+### Changes
+
+- Use global object `$` (jQuery or jQuery alternative) if available, fixing [#646](https://github.com/mikeric/rivets/issues/646)
+
 # 0.9.4
 
 ### Changes
