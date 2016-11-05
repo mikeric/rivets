@@ -26,6 +26,11 @@ Rivets.public.binders.enabled = (el, value) ->
 # Disables the element when value is true (negated version of `enabled` binder).
 Rivets.public.binders.disabled = (el, value) ->
   el.disabled = !!value
+  
+# Sets the element's child element
+rivets.binders.el = (el, value) ->
+  el.innerHTML = ''
+  el.appendChild(value) if value?.nodeName?
 
 # Checks a checkbox or radio input when the value is true. Also sets the model
 # property when the input is checked or unchecked (two-way binder).
