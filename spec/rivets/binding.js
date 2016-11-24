@@ -22,6 +22,29 @@ describe('Rivets.Binding', function() {
     binding.binder.routine.should.equal(rivets.binders.text)
   })
 
+  describe('when bind to non configurable properties', function() {
+    beforeEach(function () {
+      data = {
+        name: 'x',
+        items: []
+      }
+      Object.defineProperty(data, 'name', {
+        enumerable: true,
+        configurable: false,
+        writable: true,
+        value: 'y'
+      });
+      el.setAttribute('data-show', 'obj.items.length')
+    })
+
+    it('does not throw', function() {
+      (function(){
+        rivets.bind(el, { obj: data})
+      }).should.not.throw();
+    })
+
+  })
+
   describe('with formatters', function() {
     it('register all formatters', function() {
 
@@ -63,6 +86,7 @@ describe('Rivets.Binding', function() {
       binding.bind()
       binding.binder.bind.called.should.be.true
     })
+
 
     describe('with preloadData set to true', function() {
       beforeEach(function() {
