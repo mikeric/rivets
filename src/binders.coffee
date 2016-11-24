@@ -26,6 +26,14 @@ Rivets.public.binders.enabled = (el, value) ->
 # Disables the element when value is true (negated version of `enabled` binder).
 Rivets.public.binders.disabled = (el, value) ->
   el.disabled = !!value
+  
+# Renders a jQuery object inside the element
+rivets.binders.$ = ( el, value ) ->
+  $(el).html(value)
+
+  # Remove the attribute from the element
+  attr = [@view.config.prefix, @type].join('-').replace '--', '-'
+  el.removeAttribute attr
 
 # Checks a checkbox or radio input when the value is true. Also sets the model
 # property when the input is checked or unchecked (two-way binder).
