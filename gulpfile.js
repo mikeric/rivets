@@ -51,7 +51,7 @@ gulp.task('build', function() {
     .pipe(gulp.dest('dist'))
 
   rivets.on('end', function() {
-    sightglass = 'node_modules/sightglass/index.js'
+    sightglass = 'lib/sightglass.js'
     rivets = 'dist/rivets.js'
 
     gulp.src([sightglass, rivets])
