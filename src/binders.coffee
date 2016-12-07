@@ -195,7 +195,7 @@ Rivets.public.binders['each-*'] =
         view.unbind()
         @marker.parentNode.removeChild view.els[0]
 
-    for model, index in collection
+    collection.forEach (model, index) =>
       data = {index}
       data[Rivets.public.iterationAlias modelName] = index
       data[modelName] = model
