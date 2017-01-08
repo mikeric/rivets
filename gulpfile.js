@@ -67,6 +67,10 @@ gulp.task('spec', function() {
     .pipe(mocha({reporter: 'dot'}))
 })
 
+gulp.task('spec:watch', function() {
+  gulp.watch("src/*.coffee", ['spec'])
+});
+
 gulp.task('bump', function() {
   gulp.src(manifests)
     .pipe(bump({type: argv.t, version: argv.v}))
