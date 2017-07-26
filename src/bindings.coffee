@@ -239,28 +239,37 @@ class Rivets.ComponentBinding extends Rivets.Binding
     if @componentView?
       @componentView.bind()
     else
-      @el.innerHTML = @component.template.call this
-      scope = @component.initialize.call @, @el, @locals()
-      @el._bound = true
+      if @component.template.length == 0
+        @execBind.call this, @component.template.call this
+      else if @component.template.length == 1
+        @component.template.call this, (template) =>
+          @execBind.call this, template
 
-      options = {}
-
-      for option in Rivets.extensions
-        options[option] = {}
-        options[option][k] = v for k, v of @component[option] if @component[option]
-        options[option][k] ?= v for k, v of @view[option]
-
-      for option in Rivets.options
-        options[option] = @component[option] ? @view[option]
-
-      @componentView = new Rivets.View(Array.prototype.slice.call(@el.childNodes), scope, options)
-      @componentView.bind()
-
-      for key, observer of @observers
-        @upstreamObservers[key] = @observe @componentView.models, key, ((key, observer) => =>
-          observer.setValue @componentView.models[key]
-        ).call(@, key, observer)
     return
+
+  # execbinding with template
+  execBind: (template) =>
+    @el.innerHTML = template
+    scope = @component.initialize.call @, @el, @locals()
+    @el._bound = true
+
+    options = {}
+
+    for option in Rivets.extensions
+      options[option] = {}
+      options[option][k] = v for k, v of @component[option] if @component[option]
+      options[option][k] ?= v for k, v of @view[option]
+
+    for option in Rivets.options
+      options[option] = @component[option] ? @view[option]
+
+    @componentView = new Rivets.View(Array.prototype.slice.call(@el.childNodes), scope, options)
+    @componentView.bind()
+
+    for key, observer of @observers
+      @upstreamObservers[key] = @observe @componentView.models, key, ((key, observer) => =>
+        observer.setValue @componentView.models[key]
+      ).call(@, key, observer)
 
   # Intercept `Rivets.Binding::unbind` to be called on `@componentView`.
   unbind: =>
