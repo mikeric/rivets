@@ -20,6 +20,18 @@ rivets.components['todo-item'] = {
 }
 ```
 
+To load a template asynchronously, use a callback in `template` function
+```javascript
+rivets.components['todo-item'] = {
+  // Return the template for the component.
+  template: function(done) {
+    setTimeout(function() {
+        done(JST['todos/todo-item']);
+    }, 100);
+  }
+}
+```
+
 To use the component inside of a template, simply use an element with the same tag name as the component's key. All attributes on the element will get evaluated as keypaths before being passed into the component's `initialize` function.
 
 ```html
