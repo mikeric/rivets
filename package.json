@@ -1,9 +1,9 @@
 {
   "name": "rivets",
-  "description": "Declarative data binding + templating solution.",
+  "description": "Declarative data binding and templating.",
   "version": "0.9.6",
   "author": "Michael Richards",
-  "url": "http://rivetsjs.com",
+  "url": "https://github.com/mikeric/rivets",
   "main": "./dist/rivets.js",
   "licenses": [
     {
