@@ -31,6 +31,45 @@ describe("Rivets.binders", function() {
     })
   })
 
+  describe('copy-obj', function() {
+    var root;
+    var ul, span;
+    var model;
+
+    beforeEach(function() {
+      root = document.createElement("div");
+      ul = document.createElement("ul");
+      root.appendChild(ul);
+      var li = document.createElement("li");
+      ul.appendChild(li);
+      li.setAttribute("rv-each-item", "items");
+      li.setAttribute("rv-text", "simple");
+      span = document.createElement("span");
+      root.appendChild(span);
+      span.setAttribute("rv-text", "simple");
+
+      model = { simple: 0, items: [{val: 0},{val: 1},{val: 2}] };
+    });
+
+    it("binds to the model creating a list item for each element in items", function() {
+      console.log('before bind:', root.outerHTML);
+      var view = rivets.bind(root, model);
+
+      console.log('after bind', root.outerHTML);
+      Should(ul.childNodes.length).be.exactly(model.items.length + 1);
+      Should(span.textContent).equal('0');
+      Should(ul.childNodes[1].textContent).equal('0');
+      Should(ul.childNodes[2].textContent).equal('0');
+      Should(ul.childNodes[3].textContent).equal('0');
+      model.simple = 2;
+      console.log('after change', root.outerHTML);
+      Should(span.textContent).equal('2');
+      Should(ul.childNodes[1].textContent).equal('2');
+      Should(ul.childNodes[2].textContent).equal('2');
+      Should(ul.childNodes[3].textContent).equal('2');
+    });
+  });
+
   describe("each-*", function() {
     var fragment;
     var el;
