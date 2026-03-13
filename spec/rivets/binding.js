@@ -449,6 +449,21 @@ describe('Rivets.Binding', function() {
         binding.formattedValue('jacket').should.equal('arg | with || pipes totally jacket')
       })
     })
+
+    describe('with a formatter string with quoted string arguments', function() {
+      beforeEach(function () {
+
+        view.formatters.reverse = function (value, first, second) {
+          return second + ' ' + first + ' ' + value
+        }
+
+        binding.formatters.push("reverse 'single quote' \"double quote\"")
+      })
+
+      it('applies the formatter with quoted string arguments', function () {
+        binding.formattedValue('jacket').should.equal('double quote single quote jacket')
+      })
+    })
   })
 
   describe('getValue()', function() {
